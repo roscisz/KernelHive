@@ -8,12 +8,17 @@
 #ifndef UNITMANAGER_H_
 #define UNITMANAGER_H_
 
-class UnitManager {
+#include "ClusterProxy.h"
+
+class UnitManager : IClusterListener {
+private:
+	ClusterProxy *clusterProxy;
 public:
 	UnitManager();
 	virtual ~UnitManager();
 
 	void listen();
+	void onMessage(char *message);
 };
 
 #endif /* UNITMANAGER_H_ */

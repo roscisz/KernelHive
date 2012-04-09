@@ -9,27 +9,21 @@
 #include <unistd.h>
 #include <strings.h>
 #include "UnitManager.h"
-#include "ClusterProxy.h"
+#include "Logger.h"
 
 UnitManager::UnitManager() {
 
-	ClusterProxy *cluster = new ClusterProxy("localhost", 31338, this);
-
-	while(true) {
-		// FIXME: define MAX message size
-#define BUFSIZE 32
-		char buf[BUFSIZE];
-
-	    printf("Please enter msg: ");
-	    bzero(buf, BUFSIZE);
-	    fgets(buf, BUFSIZE, stdin);
-
-	    cluster->sendMessage((char*) buf);
+	try {
+		this->clusterProxy = new ClusterProxy("localhost", 31338);
+	}
+	catch(const char *msg) {
+		Logger::log(FATAL, "Couldn't open Cluster Proxy: %s\n", msg);
+		exit(EXIT_FAILURE);
 	}
 
+	this->clusterProxy->registerListener(this);
 
-	// Connect to the engine using conf
-	printf("Connecting unit to the egine.\n");
+	// TODO: report unit state to the cluster
 }
 
 UnitManager::~UnitManager() {
@@ -37,9 +31,11 @@ UnitManager::~UnitManager() {
 }
 
 void UnitManager::listen() {
-	// Loop listening on daemon port
+	clusterProxy->listenOnSocket();
+}
 
-	// When given a task to do, run a worker
+void UnitManager::onMessage(char *message) {
+	printf("Echo from server: %s", message);
 
-
+	// TODO: When given a task to do, run a worker
 }
