@@ -1,0 +1,8 @@
+A Main.cpp file containing the main() function should be added in the src
+directory in order for the Makefile to create the executable.
+
+Environment setup:
+	* LD_LIBRARY_PATH environment variable should include the OpenCL libraries
+	* CPLUS_INCLUDE_PATH environment variable should include the OpenCL header
+	  files
+
