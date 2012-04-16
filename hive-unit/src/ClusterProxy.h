@@ -15,8 +15,10 @@
 
 #include "IClusterListener.h"
 
-#define MAX_MESSAGE_BYTES 32
+#define MAX_MESSAGE_BYTES 1024
 #define CONNECTION_RETRY_SECONDS 10
+
+namespace KernelHive {
 
 class ClusterProxy {
 private:
@@ -36,7 +38,10 @@ public:
 	virtual ~ClusterProxy();
 	void registerListener(IClusterListener *listener);
 	void sendMessage(char *msg);
+	void sendUpdate();
 	void listenOnSocket();
 };
 
 #endif /* CLUSTERPROXY_H_ */
+
+}

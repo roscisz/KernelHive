@@ -10,6 +10,9 @@
 #include <strings.h>
 #include "UnitManager.h"
 #include "Logger.h"
+#include "commons/OpenClPlatform.h"
+
+namespace KernelHive {
 
 UnitManager::UnitManager() {
 
@@ -22,8 +25,6 @@ UnitManager::UnitManager() {
 	}
 
 	this->clusterProxy->registerListener(this);
-
-	// TODO: report unit state to the cluster
 }
 
 UnitManager::~UnitManager() {
@@ -38,4 +39,6 @@ void UnitManager::onMessage(char *message) {
 	printf("Echo from server: %s", message);
 
 	// TODO: When given a task to do, run a worker
+}
+
 }

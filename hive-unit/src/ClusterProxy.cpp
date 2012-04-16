@@ -12,6 +12,9 @@
 #include <errno.h>
 #include "ClusterProxy.h"
 #include "Logger.h"
+#include "commons/OpenClPlatform.h"
+
+namespace KernelHive {
 
 ClusterProxy::ClusterProxy(const char *host, int port) {
 	this->clusterAddress = prepareClusterAddress(host, port);
@@ -50,6 +53,7 @@ void ClusterProxy::tryConnectingUntilDone() {
 			sleep(CONNECTION_RETRY_SECONDS);
 			continue;
 		}
+		sendUpdate();
 		break;
 	}
 }
@@ -84,6 +88,22 @@ char* ClusterProxy::readMessage() {
 void ClusterProxy::sendMessage(char *msg) {
 	if (write(sockfd, msg, strlen(msg)) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
+	printf("Sent message %s\n");
+}
+
+/* FIXME: this method should be rewritten
+ * after OpenClPlatrorm changes.
+ */
+void ClusterProxy::sendUpdate() {
+	//const char *cpus = OpenClPlatform::getCpuDevicesInfo().c_str();
+	char message[MAX_MESSAGE_BYTES];
+	//sprintf(message, "UPDATE %s", cpus);
+	//sendMessage(message);
+
+
+	const char *gpus = OpenClPlatform::getGpuDevicesInfo().c_str();
+	sprintf(message, "UPDATE %s", gpus);
+	sendMessage(message);
 }
 
 void ClusterProxy::disconnectFromSocket() {
@@ -107,4 +127,6 @@ struct sockaddr_in ClusterProxy::prepareClusterAddress(const char *host, int por
 }
 
 ClusterProxy::~ClusterProxy() {
+}
+
 }

@@ -8,6 +8,8 @@
 #ifndef ICLUSTERLISTENER_H_
 #define ICLUSTERLISTENER_H_
 
+namespace KernelHive {
+
 class IClusterListener {
 public:
 	IClusterListener();
@@ -16,3 +18,5 @@ public:
 };
 
 #endif /* ICLUSTERLISTENER_H_ */
+
+}

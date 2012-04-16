@@ -24,7 +24,7 @@ int main() {
 	// TODO: Read configuration
 	// TODO: Connect to signals
 
-	UnitManager* unitManager = new UnitManager();
+	KernelHive::UnitManager* unitManager = new KernelHive::UnitManager();
 	unitManager->listen();
 
 	return 0;
@@ -38,7 +38,7 @@ void daemonize()
 		prepareWorkingDirectory();
 	}
     catch(const char *msg) {
-    	Logger::log(FATAL, msg);
+    	KernelHive::Logger::log(KernelHive::FATAL, msg);
 		exit(EXIT_FAILURE);
     }
 }

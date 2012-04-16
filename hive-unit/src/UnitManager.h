@@ -10,6 +10,8 @@
 
 #include "ClusterProxy.h"
 
+namespace KernelHive {
+
 class UnitManager : IClusterListener {
 private:
 	ClusterProxy *clusterProxy;
@@ -20,5 +22,7 @@ public:
 	void listen();
 	void onMessage(char *message);
 };
+
+}
 
 #endif /* UNITMANAGER_H_ */

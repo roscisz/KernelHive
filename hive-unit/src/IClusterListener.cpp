@@ -7,6 +7,8 @@
 
 #include "IClusterListener.h"
 
+namespace KernelHive {
+
 IClusterListener::IClusterListener() {
 	// TODO Auto-generated constructor stub
 
@@ -14,4 +16,6 @@ IClusterListener::IClusterListener() {
 
 IClusterListener::~IClusterListener() {
 	// TODO Auto-generated destructor stub
+}
+
 }

@@ -8,6 +8,8 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
+namespace KernelHive {
+
 enum Priority {
     DEBUG,
     INFO,
@@ -24,3 +26,5 @@ public:
 };
 
 #endif /* LOGGER_H_ */
+
+}

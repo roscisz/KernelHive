@@ -9,6 +9,8 @@
 #include <stdarg.h>
 #include "Logger.h"
 
+namespace KernelHive {
+
 void Logger::log(Priority priority, const char* fmt, ...) {
 	va_list fmt_args;
 
@@ -33,4 +35,6 @@ char *Logger::priorityToString(Priority priority) {
 	default:
 		return "UNDEFINED ERROR: ";
 	}
+}
+
 }
