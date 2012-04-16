@@ -14,7 +14,7 @@ import org.kernelhive.communication.UnitProxy;
 
 public class ClusterManager implements IServerListener {
 	
-	private Dictionary<SocketChannel, UnitProxy> units = new Hashtable<SocketChannel, UnitProxy>();
+	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
 		
 	public ClusterManager() {
 		try {
@@ -29,8 +29,8 @@ public class ClusterManager implements IServerListener {
 	public void onConnection(SocketChannel channel) {
 		
 		System.out.println("Got connection from channel " + channel);
-		units.put(channel, new UnitProxy(channel));
-		System.out.println("Now we have " + units.size() + " clients");
+		unitsMap.put(channel, new UnitProxy(channel));
+		System.out.println("Now we have " + unitsMap.size() + " clients");
 		
 	}
 
@@ -38,17 +38,21 @@ public class ClusterManager implements IServerListener {
 	public void onMessage(SocketChannel channel, String message) {
 
 		System.out.println("Message " + message + " from channel " + channel);
-		UnitProxy proxy = units.get(channel);
-		proxy.sendMessage("RE: " + message);
-		
+		UnitProxy proxy = unitsMap.get(channel);
+		proxy.processMessage(message);
+
+		// FIXME: remove debug code
+		for(UnitProxy unit : unitsMap.values())
+			System.out.println(unit.toString());
+
 	}
 
 	@Override
 	public void onDisconnection(SocketChannel channel) {
 		
 		System.out.println("Channel " + channel + " disconnected.");
-		units.remove(channel);
-		System.out.println("Now we have " + units.size() + " clients");		
+		unitsMap.remove(channel);
+		System.out.println("Now we have " + unitsMap.size() + " clients");		
 		
 	}
 

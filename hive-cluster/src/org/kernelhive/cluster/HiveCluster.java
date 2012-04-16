@@ -33,6 +33,8 @@ public class HiveCluster implements Daemon {
 	public void start() throws Exception {
 		ClusterManager cm = new ClusterManager();	
 		
+		// TODO: connect to the execution engine
+		
 		while(true);
 	}
 

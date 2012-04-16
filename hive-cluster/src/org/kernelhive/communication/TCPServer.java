@@ -104,7 +104,7 @@ public class TCPServer implements Runnable {
 		}*/
 
 		// FIXME: define MAX message size
-		ByteBuffer buffer = ByteBuffer.allocate(32);
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
 		
 		try {
 			if(client.read(buffer) <= 0) {
