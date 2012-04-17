@@ -2,10 +2,10 @@ package org.kernelhive.communication;
 
 import java.nio.channels.SocketChannel;
 
-public interface IServerListener {
+public interface TCPServerListener {
 	
 	public void onConnection(SocketChannel channel);
-	public void onMessage(SocketChannel channel, String message);
+	public void onTCPMessage(SocketChannel channel, String message);
 	public void onDisconnection(SocketChannel channel);
 
 }

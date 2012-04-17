@@ -8,17 +8,20 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.kernelhive.communication.CommunicationException;
-import org.kernelhive.communication.IServerListener;
+import org.kernelhive.communication.TCPServerListener;
 import org.kernelhive.communication.TCPServer;
+import org.kernelhive.communication.UDPServer;
+import org.kernelhive.communication.UDPServerListener;
 import org.kernelhive.communication.UnitProxy;
 
-public class ClusterManager implements IServerListener {
+public class ClusterManager implements TCPServerListener, UDPServerListener {
 	
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
 		
 	public ClusterManager() {
 		try {
 			TCPServer unitServer = new TCPServer("localhost", 31338, this);
+			UDPServer runnerServer = new UDPServer(31339, this);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
 			e.printStackTrace();
@@ -35,7 +38,7 @@ public class ClusterManager implements IServerListener {
 	}
 
 	@Override
-	public void onMessage(SocketChannel channel, String message) {
+	public void onTCPMessage(SocketChannel channel, String message) {
 
 		System.out.println("Message " + message + " from channel " + channel);
 		UnitProxy proxy = unitsMap.get(channel);
@@ -54,6 +57,11 @@ public class ClusterManager implements IServerListener {
 		unitsMap.remove(channel);
 		System.out.println("Now we have " + unitsMap.size() + " clients");		
 		
+	}
+
+	@Override
+	public void onUDPMessage(String message) {
+		System.out.println("Got UDP message " + message);		
 	}
 
 }

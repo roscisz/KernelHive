@@ -21,11 +21,11 @@ public class TCPServer implements Runnable {
 	
 	private static int MAX_MESSAGE_BYTES = 1024;
 	
-	private IServerListener listener;
+	private TCPServerListener listener;
 	private ServerSocketChannel server;
 	private Selector selector;
 	
-	public TCPServer(String host, int port, IServerListener listener) throws CommunicationException {
+	public TCPServer(String host, int port, TCPServerListener listener) throws CommunicationException {
 		this.listener = listener;
 		
 		try {
@@ -34,7 +34,7 @@ public class TCPServer implements Runnable {
 			throw new CommunicationException(e);
 		}		
 		
-		System.out.println("Server starts listening on " + host + ":" + port + ".");
+		System.out.println("TCP server starts listening on " + host + ":" + port + ".");
 		
 		// FIXME: Who's responsible for thread management?
 		new Thread(this).start();
@@ -92,7 +92,7 @@ public class TCPServer implements Runnable {
 		try {
 			ByteBuffer buffer = readBuffer(client);
 			String message = Decoder.decode(buffer);
-			listener.onMessage(client, message);
+			listener.onTCPMessage(client, message);
 		}
 		catch(CommunicationException ce) {
 			return;
