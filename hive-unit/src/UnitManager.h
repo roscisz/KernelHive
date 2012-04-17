@@ -9,10 +9,11 @@
 #define UNITMANAGER_H_
 
 #include "ClusterProxy.h"
+#include "commons/TCPClientListener.h"
 
 namespace KernelHive {
 
-class UnitManager : IClusterListener {
+class UnitManager : public TCPClientListener {
 private:
 	ClusterProxy *clusterProxy;
 public:
@@ -21,6 +22,7 @@ public:
 
 	void listen();
 	void onMessage(char *message);
+	void onConnected();
 };
 
 }

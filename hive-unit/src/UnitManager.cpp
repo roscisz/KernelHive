@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <strings.h>
 #include "UnitManager.h"
-#include "Logger.h"
+#include "commons/Logger.h"
 #include "commons/OpenClPlatform.h"
 
 namespace KernelHive {
@@ -39,6 +39,10 @@ void UnitManager::onMessage(char *message) {
 	printf("Echo from server: %s", message);
 
 	// TODO: When given a task to do, run a worker
+}
+
+void UnitManager::onConnected() {
+	clusterProxy->sendUpdate();
 }
 
 }

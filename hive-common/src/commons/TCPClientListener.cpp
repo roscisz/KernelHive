@@ -5,16 +5,16 @@
  *      Author: roy
  */
 
-#include "IClusterListener.h"
+#include "TCPClientListener.h"
 
 namespace KernelHive {
 
-IClusterListener::IClusterListener() {
+TCPClientListener::TCPClientListener() {
 	// TODO Auto-generated constructor stub
 
 }
 
-IClusterListener::~IClusterListener() {
+TCPClientListener::~TCPClientListener() {
 	// TODO Auto-generated destructor stub
 }
 
