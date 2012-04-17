@@ -21,7 +21,7 @@ public class Device {
 		
 		name = parameters[0];
 		vendor = parameters[1];
-		isAvailable = Boolean.parseBoolean(parameters[2]);
+		isAvailable = !parameters[2].equals("0");
 		computeUnitsNumber = Integer.parseInt(parameters[3]);
 		clock = Integer.parseInt(parameters[4]);
 		globalMemoryBytes = Integer.parseInt(parameters[5]);

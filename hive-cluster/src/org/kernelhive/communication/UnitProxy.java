@@ -17,17 +17,6 @@ public class UnitProxy {
 	public UnitProxy(SocketChannel socketChannel) {
 		this.socketChannel = socketChannel;
 	}
-	
-	public void sendMessage(String message) {
-		
-		try {
-			socketChannel.write(Decoder.encode(message));
-		} catch (CharacterCodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public void processMessage(String message) {
 		String[] command = message.split(commandSeparator, 2);

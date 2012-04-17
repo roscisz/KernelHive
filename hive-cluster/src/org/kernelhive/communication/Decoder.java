@@ -13,18 +13,28 @@ public class Decoder {
 	private static CharsetDecoder decoder = charset.newDecoder();
 	private static CharsetEncoder encoder = charset.newEncoder();
 	
-	public static String decode(ByteBuffer buffer) throws CharacterCodingException {		
+	public static String decode(ByteBuffer buffer) throws CommunicationException {		
 		buffer.flip();		
 		// FIXME: Setting the charset somewhere
 		
 		CharsetDecoder decoder = charset.newDecoder();
 		CharBuffer charBuffer;
-		charBuffer = decoder.decode(buffer);
+		try {
+			charBuffer = decoder.decode(buffer);
+		}
+		catch(CharacterCodingException cce) {
+			throw new CommunicationException(cce);
+		}
 		return charBuffer.toString();
 	}
 	
-	public static ByteBuffer encode(String message) throws CharacterCodingException {
-		return encoder.encode(CharBuffer.wrap(message));		
+	public static ByteBuffer encode(String message) throws CommunicationException {
+		try {
+			return encoder.encode(CharBuffer.wrap(message));		
+		}
+		catch(CharacterCodingException cce) {
+			throw new CommunicationException(cce);
+		}
 	}
 				
 }

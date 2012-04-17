@@ -14,7 +14,12 @@ import java.nio.charset.CharsetDecoder;
 import java.util.Iterator;
 import java.util.Set;
 
+/*
+ * TODO: TCP buffering
+ */
 public class TCPServer implements Runnable {
+	
+	private static int MAX_MESSAGE_BYTES = 1024;
 	
 	private IServerListener listener;
 	private ServerSocketChannel server;
@@ -22,16 +27,10 @@ public class TCPServer implements Runnable {
 	
 	public TCPServer(String host, int port, IServerListener listener) throws CommunicationException {
 		this.listener = listener;
+		
 		try {
-			server = ServerSocketChannel.open();
-			server.configureBlocking(false);
-			
-			server.socket().bind(new InetSocketAddress(host, port));
-			selector = Selector.open();
-			server.register(selector, SelectionKey.OP_ACCEPT);
+			prepareSocket(host, port);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			throw new CommunicationException(e);
 		}		
 		
@@ -41,84 +40,83 @@ public class TCPServer implements Runnable {
 		new Thread(this).start();
 	}
 
+	private void prepareSocket(String host, int port) throws IOException {
+		server = ServerSocketChannel.open();
+		server.configureBlocking(false);		
+		server.socket().bind(new InetSocketAddress(host, port));
+		
+		selector = Selector.open();
+		server.register(selector, SelectionKey.OP_ACCEPT);
+	}
+
 	@Override
 	public void run() {
 		// FIXME: WHEN TO STOP
 		while(true) {
 			try {
-				selector.select();
-			} catch (IOException e) {
-				e.printStackTrace();
-				continue;
+				handleSelector();
 			}
-			Set<SelectionKey> keys = selector.selectedKeys();
-			Iterator<SelectionKey> i = keys.iterator();
-			
-			while(i.hasNext()) {
-				processKey((SelectionKey) i.next());
-				i.remove();				
+			catch(IOException e) {
+				e.printStackTrace();				
 			}
-			/*
-			for(SelectionKey key : keys) {	
-				processKey(key);				
-			}
-			*/						
 		}
+	}
+	
+	private void handleSelector() throws IOException {
+		selector.select();
 		
+		Set<SelectionKey> keys = selector.selectedKeys();
+		Iterator<SelectionKey> i = keys.iterator();
+		
+		while(i.hasNext()) {
+			processKey((SelectionKey) i.next());
+			i.remove();				
+		}
 	}
 
-	private void processKey(SelectionKey key) {
+	private void processKey(SelectionKey key) throws IOException {
 		if(key.isAcceptable()) processConnection(key);
 		else if(key.isReadable()) processMessage(key);
-				
-	
-		// else I don't know this type of key...
-		
 	}
 
-	private void processConnection(SelectionKey key) {
-		SocketChannel socketChannel;
-		try {
-			socketChannel = server.accept();
-			socketChannel.configureBlocking(false);
-			socketChannel.register(selector, SelectionKey.OP_READ);
-			listener.onConnection(socketChannel);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+	private void processConnection(SelectionKey key) throws IOException {
+		SocketChannel socketChannel = server.accept();
+		socketChannel.configureBlocking(false);
+		socketChannel.register(selector, SelectionKey.OP_READ);
+		listener.onConnection(socketChannel);
 	}
 	
-	private void processMessage(SelectionKey key) {
+	private void processMessage(SelectionKey key) throws IOException {
 		SocketChannel client = (SocketChannel) key.channel();
 		
-		/*
-		if(!client.isOpen()) {
-			System.out.println("AHA!");
-			//key.cancel();
-			try {
-				client.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
-		}*/
-
-		// FIXME: define MAX message size
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		
 		try {
-			if(client.read(buffer) <= 0) {
-				client.close();
-				listener.onDisconnection(client);
-				return;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			ByteBuffer buffer = readBuffer(client);
+			String message = Decoder.decode(buffer);
+			listener.onMessage(client, message);
 		}
-					
+		catch(CommunicationException ce) {
+			return;
+		}
+	}
+	
+	private ByteBuffer readBuffer(SocketChannel client) throws CommunicationException, IOException {
+		ByteBuffer buffer = ByteBuffer.allocate(MAX_MESSAGE_BYTES);
+
+		if(client.read(buffer) <= 0) {
+			client.close();
+			listener.onDisconnection(client);
+			throw new CommunicationException(null);
+		}
+		
+		return buffer;
+	}
+
+	public static void sendMessage(SocketChannel socketChannel, String message) {		
 		try {
-			listener.onMessage(client, Decoder.decode(buffer));
-		} catch (CharacterCodingException e) {
+			socketChannel.write(Decoder.encode(message));
+		} catch (CommunicationException ce) {
+			ce.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
