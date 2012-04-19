@@ -12,9 +12,18 @@
 #include "commons/Logger.h"
 #include "commons/OpenClPlatform.h"
 
+#include "network/UDPClient.h"
+#include "threading/ThreadManager.h"
+#include "SampleWorker.h"
+
 namespace KernelHive {
 
 UnitManager::UnitManager() {
+
+	// Testing worker
+	SampleWorker *worker = new SampleWorker("localhost", 31339);
+	worker->work();
+	delete worker;
 
 	try {
 		this->clusterProxy = new ClusterProxy("localhost", 31338);

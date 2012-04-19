@@ -9,7 +9,7 @@
 #define UNITMANAGER_H_
 
 #include "ClusterProxy.h"
-#include "commons/TCPClientListener.h"
+#include "network/TCPClientListener.h"
 
 namespace KernelHive {
 

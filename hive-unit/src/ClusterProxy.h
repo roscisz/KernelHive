@@ -12,7 +12,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include "commons/TCPClient.h"
+#include "network/TCPClient.h"
 
 namespace KernelHive {
 
