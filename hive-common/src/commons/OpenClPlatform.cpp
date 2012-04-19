@@ -7,34 +7,6 @@
 
 namespace KernelHive {
 
-	/*static*/ cl_uint OpenClPlatform::getAvailablePlatformsCount() {
-		cl_uint count = 0;
-
-		cl_int retVal = clGetPlatformIDs(0, NULL, &count);
-		if (retVal != CL_SUCCESS) {
-			// TODO throw exception
-		}
-
-		return count;
-	}
-
-	/*static*/ void OpenClPlatform::getAvailablePlatformsIds(cl_platform_id* ids, cl_uint count) {
-		cl_int retVal = clGetPlatformIDs(count, ids, &count);
-		if (retVal != CL_SUCCESS) {
-			// TODO throw exception
-		}
-	}
-
-	/*static*/ std::string OpenClPlatform::getGpuDevicesInfo() {
-		OpenClPlatform platform;
-		return getDevicesInfo(platform.getGpuDevices(), platform.getGpuDevicesCount());
-	}
-
-	/*static*/ std::string OpenClPlatform::getCpuDevicesInfo() {
-		OpenClPlatform platform;
-		return getDevicesInfo(platform.getCpuDevices(), platform.getCpuDevicesCount());
-	}
-
 // ========================================================================= //
 // 							Public Members									 //
 // ========================================================================= //
@@ -49,6 +21,12 @@ namespace KernelHive {
 			initializeDevices(CL_DEVICE_TYPE_GPU, &gpuDevices, &gpuDevicesCount);
 			initializeDevices(CL_DEVICE_TYPE_CPU, &cpuDevices, &cpuDevicesCount);
 		}
+	}
+
+	OpenClPlatform::OpenClPlatform(cl_platform_id platformId) {
+		clPlatformId = platformId;
+		initializeDevices(CL_DEVICE_TYPE_GPU, &gpuDevices, &gpuDevicesCount);
+		initializeDevices(CL_DEVICE_TYPE_CPU, &cpuDevices, &cpuDevicesCount);
 	}
 
 	OpenClPlatform::OpenClPlatform(OpenClPlatform& platform) {
@@ -136,7 +114,6 @@ namespace KernelHive {
 
 		returnCode = clGetDeviceIDs(clPlatformId, deviceType,
 				NULL, NULL, numDevices);
-
 		if (returnCode == CL_SUCCESS) {
 			*deviceIds = new cl_device_id[*numDevices];
 			returnCode = clGetDeviceIDs(clPlatformId, deviceType,

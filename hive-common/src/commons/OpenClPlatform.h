@@ -22,6 +22,11 @@ namespace KernelHive {
 		OpenClPlatform();
 
 		/**
+		 * The default constructor.
+		 */
+		OpenClPlatform(cl_platform_id platformId);
+
+		/**
 		 * The copy constructor.
 		 *
 		 * @param platform the platform
@@ -32,37 +37,6 @@ namespace KernelHive {
 		 * The destructor.
 		 */
 		virtual ~OpenClPlatform();
-
-		/**
-		 * Gets the number of platforms available on this host.
-		 *
-		 * @return the count of platforms available
-		 */
-		static cl_uint getAvailablePlatformsCount();
-
-		/**
-		 * Gets the IDs of available OpenCL platforms.
-		 *
-		 * @param ids the initialized IDs array
-		 * @param count the number of IDs to fetch
-		 */
-		static void getAvailablePlatformsIds(cl_platform_id* ids, cl_uint count);
-
-		/**
-		 * Gets the GPU devices information.
-		 *
-		 * @return a string containing the GPU devices
-		 * 		information
-		 */
-		static std::string getGpuDevicesInfo();
-
-		/**
-		 * Gets the CPU devices information.
-		 *
-		 * @return a string containing the CPU devices
-		 * 		information
-		 */
-		static std::string getCpuDevicesInfo();
 
 		/**
 		 * Gets the OpenCL identifier of this platform.

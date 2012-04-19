@@ -22,6 +22,7 @@ OBJECTS = \
 	OpenClHelper.o \
 	OpenClPlatform.o \
 	OpenClDevice.o \
+	OpenClHost.o \
 	Main.o
 
 # The default target:

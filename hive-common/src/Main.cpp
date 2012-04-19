@@ -1,13 +1,14 @@
 #include <iostream>
 #include <fstream>
+#include <CL/cl.h>
 
-#include "commons/OpenClPlatform.h"
+#include "commons/OpenClHost.h"
 
 using namespace KernelHive;
 
 int main(int argc, char** argv) {
 
-	std::cout << OpenClPlatform::getAvailablePlatformsCount() << std::endl;
+	std::cout << OpenClHost::getDevicesInfo() << std::endl;
 
 	return 0;
 }
