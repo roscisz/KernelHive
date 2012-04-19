@@ -41,6 +41,14 @@ namespace KernelHive {
 		static cl_uint getAvailablePlatformsCount();
 
 		/**
+		 * Gets the IDs of available OpenCL platforms.
+		 *
+		 * @param ids the initialized IDs array
+		 * @param count the number of IDs to fetch
+		 */
+		static void getAvailablePlatformsIds(cl_platform_id* ids, cl_uint count);
+
+		/**
 		 * Gets the GPU devices information.
 		 *
 		 * @return a string containing the GPU devices
