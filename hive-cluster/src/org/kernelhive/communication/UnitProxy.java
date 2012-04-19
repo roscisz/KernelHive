@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UnitProxy {
 	private static String commandSeparator = " ";
-	private static String deviceSeparator = "\\|";
+	private static String deviceSeparator = ";";
 	
 	private SocketChannel socketChannel;
 	private List<Device> devices = new ArrayList<Device>();

@@ -12,7 +12,7 @@
 #include <errno.h>
 #include "ClusterProxy.h"
 #include "commons/Logger.h"
-#include "commons/OpenClPlatform.h"
+#include "commons/OpenClHost.h"
 
 namespace KernelHive {
 
@@ -20,18 +20,10 @@ ClusterProxy::ClusterProxy(const char *host, int port) : TCPClient(host, port) {
 
 }
 
-/* FIXME: this method should be rewritten
- * after OpenClPlatrorm changes.
- */
 void ClusterProxy::sendUpdate() {
-	//const char *cpus = OpenClPlatform::getCpuDevicesInfo().c_str();
 	char message[MAX_MESSAGE_BYTES];
-	//sprintf(message, "UPDATE %s", cpus);
-	//sendMessage(message);
-
-
-	const char *gpus = OpenClPlatform::getGpuDevicesInfo().c_str();
-	sprintf(message, "UPDATE %s", gpus);
+	const char *devices = OpenClHost::getDevicesInfo().c_str();
+	sprintf(message, "UPDATE %s", devices);
 	sendMessage(message);
 }
 
