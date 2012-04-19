@@ -10,9 +10,8 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
 
+#include "NetworkClient.h"
 #include "TCPClientListener.h"
 
 #define MAX_MESSAGE_BYTES 1024
@@ -20,19 +19,15 @@
 
 namespace KernelHive {
 
-class TCPClient {
+class TCPClient : public NetworkClient {
 private:
 	TCPClientListener *listener;
-	int sockfd;
-	struct sockaddr_in clusterAddress;
 
 	void tryConnectingUntilDone();
 	void reconnectSocket();
-	int openSocket();
 	void connectToSocket();
 	char* readMessage();
 	void disconnectFromSocket();
-	struct sockaddr_in prepareClusterAddress(const char *host, int port);
 public:
 	TCPClient(const char *host, int port);
 	virtual ~TCPClient();

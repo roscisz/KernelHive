@@ -6,18 +6,17 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #include "TCPClient.h"
-#include "Logger.h"
-#include "OpenClPlatform.h"
+#include "../commons/Logger.h"
+#include "../commons/OpenClPlatform.h"
 
 namespace KernelHive {
 
-TCPClient::TCPClient(const char *host, int port) {
-	this->clusterAddress = prepareClusterAddress(host, port);
+TCPClient::TCPClient(const char *host, int port) : NetworkClient(host, port) {
+
 }
 
 void TCPClient::registerListener(TCPClientListener *listener) {
@@ -45,7 +44,7 @@ void TCPClient::listenOnSocket() {
 void TCPClient::tryConnectingUntilDone() {
 	while(true) {
 		try {
-			this->sockfd = openSocket();
+			this->sockfd = openSocket(SOCK_STREAM);
 			connectToSocket();
 		}
 		catch(const char *msg) {
@@ -63,14 +62,8 @@ void TCPClient::reconnectSocket() {
 	tryConnectingUntilDone();
 }
 
-int TCPClient::openSocket() {
-	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0)	throw("Couldn't open socket.\n");
-	return sockfd;
-}
-
 void TCPClient::connectToSocket() {
-	if (connect(sockfd, (struct sockaddr *)&clusterAddress, sizeof(clusterAddress)) < 0)
+	if (connect(sockfd, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0)
 		throw(strerror(errno));
 }
 
@@ -88,27 +81,11 @@ char* TCPClient::readMessage() {
 void TCPClient::sendMessage(char *msg) {
 	if (write(sockfd, msg, strlen(msg)) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
-	printf("Sent message %s\n");
+	printf("Sent TCP message %s\n");
 }
 
 void TCPClient::disconnectFromSocket() {
 	shutdown(sockfd, SHUT_RDWR);
-}
-
-struct sockaddr_in TCPClient::prepareClusterAddress(const char *host, int port) {
-	struct hostent *server;
-	struct sockaddr_in serveraddr;
-
-	server = gethostbyname(host);
-	if (server == NULL) throw("No such host.\n");
-
-	bzero((char *) &serveraddr, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	bcopy((char *)server->h_addr,
-			(char *)&serveraddr.sin_addr.s_addr, server->h_length);
-	serveraddr.sin_port = htons(port);
-
-	return serveraddr;
 }
 
 TCPClient::~TCPClient() {
