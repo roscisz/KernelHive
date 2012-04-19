@@ -4,7 +4,8 @@
 
 # Compiler settings:
 COMPILER = g++
-COMPILER_FLAGS = -Wall -g
+COMPILER_FLAGS = -Wall
+DEBUG_FLAGS =  -g -pthread
 OPENCL_FLAGS = -l OpenCL -L ${LD_LIBRARY_PATH} -I ${CPLUS_INCLUDE_PATH}
 
 # Search path:
@@ -43,9 +44,9 @@ compile: $(OBJECTS)
 
 # Executable file building rule:
 $(EXECUTABLE) : $(OBJECTS)
-	$(COMPILER) $(COMPILER_FLAGS) $(OPENCL_FLAGS) -o $@ $^
+	$(COMPILER) $(COMPILER_FLAGS) $(DEBUG_FLAGS) $(OPENCL_FLAGS) -o $@ $^
 
 # The pattern for object files:
 %.o : %.cpp
-	$(COMPILER) $(COMPILER_FLAGS) $(OPENCL_FLAGS) -c $^ -o $@
+	$(COMPILER) $(COMPILER_FLAGS) $(DEBUG_FLAGS) $(OPENCL_FLAGS) -c $^ -o $@
 

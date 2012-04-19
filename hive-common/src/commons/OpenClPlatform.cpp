@@ -7,6 +7,17 @@
 
 namespace KernelHive {
 
+	/*static*/ cl_uint OpenClPlatform::getAvailablePlatformsCount() {
+		cl_uint count = 0;
+
+		cl_int retVal = clGetPlatformIDs(0, NULL, &count);
+		if (retVal != CL_SUCCESS) {
+			// TODO throw exception
+		}
+
+		return count;
+	}
+
 	/*static*/ std::string OpenClPlatform::getGpuDevicesInfo() {
 		OpenClPlatform platform;
 		return getDevicesInfo(platform.getGpuDevices(), platform.getGpuDevicesCount());

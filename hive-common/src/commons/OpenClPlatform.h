@@ -14,7 +14,7 @@ namespace KernelHive {
 
 	public:
 		/** The separator character used in the information strings. */
-		static const char DEVICES_INFO_SEPARATOR = '|';
+		static const char DEVICES_INFO_SEPARATOR = ';';
 
 		/**
 		 * The default constructor.
@@ -32,6 +32,13 @@ namespace KernelHive {
 		 * The destructor.
 		 */
 		virtual ~OpenClPlatform();
+
+		/**
+		 * Gets the number of platforms available on this host.
+		 *
+		 * @return the count of platforms available
+		 */
+		static cl_uint getAvailablePlatformsCount();
 
 		/**
 		 * Gets the GPU devices information.

@@ -7,8 +7,7 @@ using namespace KernelHive;
 
 int main(int argc, char** argv) {
 
-	std::cout << OpenClPlatform::getGpuDevicesInfo() << std::endl;
-	std::cout << OpenClPlatform::getCpuDevicesInfo() << std::endl;
+	std::cout << OpenClPlatform::getAvailablePlatformsCount() << std::endl;
 
 	return 0;
 }
