@@ -3,18 +3,18 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="/home/marcel/Projects/kernelhive-gui/dist/kernelhive-gui.jar">
+        <jar destfile="./dist/kernelhive-gui.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="pl.gda.pg.eti.kernelhive.gui.MainFrame"/>
                 <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ jgraphx.jar jsyntaxpane-0.9.5-b29.jar jlfgr-1_0.jar"/>
+                <attribute name="Rsrc-Class-Path" value="./ jgraphx.jar jlfgr-1_0.jar rsyntaxtextarea.jar"/>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
-            <fileset dir="/home/marcel/Projects/kernelhive-gui/bin"/>
-            <zipfileset dir="/home/marcel/Projects/libs/jgraphx-1.10/lib" includes="jgraphx.jar"/>
-            <zipfileset dir="/home/marcel/Projects/libs/jsyntaxpane-0.9.5" includes="jsyntaxpane-0.9.5-b29.jar"/>
-            <zipfileset dir="/home/marcel/Projects/kernelhive-gui/res" includes="jlfgr-1_0.jar"/>
+            <fileset dir="./bin"/>
+            <zipfileset dir="./lib/jgraphx-1.10" includes="jgraphx.jar"/>
+            <zipfileset dir="./res" includes="jlfgr-1_0.jar"/>
+            <zipfileset dir="./lib/rsyntaxtextarea_2.0.2" includes="rsyntaxtextarea.jar"/>
         </jar>
     </target>
 </project>

@@ -22,10 +22,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * 
- * @author mschally
- * <br/>
  * Main Frame of the Application
+ * @author mschally
+ * @version 1.0
  */
 public class MainFrame extends JFrame {
 	

@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraphx-1.10"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jsyntaxpane-0.9.5"/>
 	<classpathentry kind="lib" path="res/jlfgr-1_0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/rsyntaxtextarea-2.0.2"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
