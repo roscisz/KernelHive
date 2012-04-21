@@ -1,25 +1,31 @@
-package pl.gda.pg.eti.kernelhive.gui;
+package pl.gda.pg.eti.kernelhive.gui.frame;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Label;
-import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.ResourceBundle;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
+import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 
 /**
  * Main Frame of the Application
@@ -32,7 +38,7 @@ public class MainFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -2018750030834289098L;
-	private static ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new Locale("en", "US"));
+	private static ResourceBundle BUNDLE = AppConfiguration.getInstance().getLanguageResourceBundle();
 	
 	private JPanel contentPane;
 	private JMenuBar mainMenuBar;
@@ -74,129 +80,248 @@ public class MainFrame extends JFrame {
 	private JMenuItem mntmContents;
 	private JMenuItem mntmAbout;
 	private JToolBar toolBar;
-	private Panel statusbar;
+	private JPanel statusbar;
 	private JSplitPane centerPane;
 	private JTabbedPane workspacePane;
 	private JTabbedPane sidebarPane;
+	private JPanel projectPanel;
+	private JPanel repositoryPanel;
+	private JSeparator separator;
+	private JSeparator separator_1;
+	private JSeparator separator_2;
+	private JSeparator separator_3;
+	private JSeparator separator_4;
+	private JSeparator separator_5;
+	private JSeparator separator_6;
+	private JSeparator separator_7;
+	private JSeparator separator_8;
+	private JSeparator separator_9;
+	private JSeparator separator_10;
+	private JSeparator separator_11;
+	private JMenuItem mntmProperties;
+	private JButton btnStart;
+	private JButton btnPause;
+	private JButton btnStop;
+	private JMenuItem mntmPreferences;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
 		setPreferredSize(new Dimension(800, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 800, 600);
 
 		mainMenuBar = new JMenuBar();
 		setJMenuBar(mainMenuBar);
 
-		mnFile = new JMenu(BUNDLE.getString("MainFrame.mnFile.text"));  
+		mnFile = new JMenu(BUNDLE.getString("MainFrame.mnFile.text"));
+		mnFile.setMnemonic(KeyEvent.VK_F);
 		mainMenuBar.add(mnFile);
 
 		mntmNew = new JMenuItem(BUNDLE.getString("MainFrame.mntmNew.text"));  
+		mntmNew.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/New16.gif")));
+		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+		mntmNew.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				NewProjectDialog npd = new NewProjectDialog();
+				npd.setVisible(true);
+				
+			}
+		});
 		mnFile.add(mntmNew);
 
 		mntmOpen = new JMenuItem(BUNDLE.getString("MainFrame.mntmOpen.text"));  
+		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+		mntmOpen.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Open16.gif")));
 		mnFile.add(mntmOpen);
+		
+		separator = new JSeparator();
+		mnFile.add(separator);
 
 		mntmClose = new JMenuItem(BUNDLE.getString("MainFrame.mntmClose.text"));  
+		mntmClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
 		mnFile.add(mntmClose);
 
 		mntmCloseAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmCloseAll.text"));  
 		mnFile.add(mntmCloseAll);
+		
+		separator_1 = new JSeparator();
+		mnFile.add(separator_1);
 
 		mntmSave = new JMenuItem(BUNDLE.getString("MainFrame.mntmSave.text"));  
+		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		mntmSave.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Save16.gif")));
 		mnFile.add(mntmSave);
 
 		mntmSaveAs = new JMenuItem(BUNDLE.getString("MainFrame.mntmSaveAs.text"));  
+		mntmSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		mntmSaveAs.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/SaveAs16.gif")));
 		mnFile.add(mntmSaveAs);
 
 		mntmSaveAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmSaveAll.text"));  
+		mntmSaveAll.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/SaveAll16.gif")));
 		mnFile.add(mntmSaveAll);
+		
+		separator_2 = new JSeparator();
+		mnFile.add(separator_2);
 
 		mntmRefresh = new JMenuItem(BUNDLE.getString("MainFrame.mntmRefresh.text"));  
+		mntmRefresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+		mntmRefresh.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Refresh16.gif")));
 		mnFile.add(mntmRefresh);
+		
+		separator_3 = new JSeparator();
+		mnFile.add(separator_3);
 
 		mntmImport = new JMenuItem(BUNDLE.getString("MainFrame.mntmImport.text"));  
+		mntmImport.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Import16.gif")));
 		mnFile.add(mntmImport);
 
 		mntmExport = new JMenuItem(BUNDLE.getString("MainFrame.mntmExport.text"));  
+		mntmExport.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Export16.gif")));
 		mnFile.add(mntmExport);
+		
+		separator_4 = new JSeparator();
+		mnFile.add(separator_4);
 
 		mntmExit = new JMenuItem(BUNDLE.getString("MainFrame.mntmExit.text"));  
+		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
 		mnFile.add(mntmExit);
 
 		mnEdit = new JMenu(BUNDLE.getString("MainFrame.mnEdit.text"));  
+		mnEdit.setMnemonic(KeyEvent.VK_E);
 		mainMenuBar.add(mnEdit);
 
 		mntmUndo = new JMenuItem(BUNDLE.getString("MainFrame.mntmUndo.text"));  
+		mntmUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
+		mntmUndo.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Undo16.gif")));
 		mnEdit.add(mntmUndo);
 
 		mntmRedo = new JMenuItem(BUNDLE.getString("MainFrame.mntmRedo.text"));  
+		mntmRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		mntmRedo.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Redo16.gif")));
 		mnEdit.add(mntmRedo);
+		
+		separator_5 = new JSeparator();
+		mnEdit.add(separator_5);
 
 		mntmCut = new JMenuItem(BUNDLE.getString("MainFrame.mntmCut.text"));  
+		mntmCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
+		mntmCut.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Cut16.gif")));
 		mnEdit.add(mntmCut);
 
 		mntmCopy = new JMenuItem(BUNDLE.getString("MainFrame.mntmCopy.text"));  
+		mntmCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
+		mntmCopy.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Copy16.gif")));
 		mnEdit.add(mntmCopy);
 
 		mntmPaste = new JMenuItem(BUNDLE.getString("MainFrame.mntmPaste.text"));  
+		mntmPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
+		mntmPaste.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Paste16.gif")));
 		mnEdit.add(mntmPaste);
+		
+		separator_6 = new JSeparator();
+		mnEdit.add(separator_6);
 
 		mntmDelete = new JMenuItem(BUNDLE.getString("MainFrame.mntmDelete.text"));  
+		mntmDelete.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Delete16.gif")));
 		mnEdit.add(mntmDelete);
+		
+		separator_7 = new JSeparator();
+		mnEdit.add(separator_7);
 
 		mntmSelectAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmSelectAll.text"));  
+		mntmSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
 		mnEdit.add(mntmSelectAll);
+		
+		separator_8 = new JSeparator();
+		mnEdit.add(separator_8);
 
 		mntmSetEncoding = new JMenuItem(BUNDLE.getString("MainFrame.mntmSetEncoding.text"));  
 		mnEdit.add(mntmSetEncoding);
+		
+		mntmPreferences = new JMenuItem(BUNDLE.getString("MainFrame.mntmPreferences.text")); //$NON-NLS-1$
+		mntmPreferences.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Preferences16.gif")));
+		mnEdit.add(mntmPreferences);
 
 		mnView = new JMenu(BUNDLE.getString("MainFrame.mnView.text"));  
+		mnView.setMnemonic(KeyEvent.VK_V);
 		mainMenuBar.add(mnView);
 
 		chckbxmntmToolbox = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmToolbox.text"));  
+		chckbxmntmToolbox.setSelected(true);
 		mnView.add(chckbxmntmToolbox);
 
 		chckbxmntmStatusbar = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmStatusbar.text"));  
+		chckbxmntmStatusbar.setSelected(true);
 		mnView.add(chckbxmntmStatusbar);
 
 		chckbxmntmSidePanel = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmSidePanel.text"));  
+		chckbxmntmSidePanel.setSelected(true);
 		mnView.add(chckbxmntmSidePanel);
+		
+		separator_9 = new JSeparator();
+		mnView.add(separator_9);
 
 		mntmFullscreen = new JMenuItem(BUNDLE.getString("MainFrame.mntmFullscreen.text"));  
+		mntmFullscreen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
 		mnView.add(mntmFullscreen);
 
 		mnSearch = new JMenu(BUNDLE.getString("MainFrame.mnSearch.text"));  
+		mnSearch.setMnemonic(KeyEvent.VK_S);
 		mainMenuBar.add(mnSearch);
 
 		mntmFindreplace = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindreplace.text"));  
+		mntmFindreplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+		mntmFindreplace.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Find16.gif")));
 		mnSearch.add(mntmFindreplace);
 
 		mntmFindNext = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindNext.text"));  
+		mntmFindNext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
 		mnSearch.add(mntmFindNext);
 
 		mntmFindPrevious = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindPrevious.text"));  
+		mntmFindPrevious.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mnSearch.add(mntmFindPrevious);
 		
+		separator_10 = new JSeparator();
+		mnSearch.add(separator_10);
+		
 		mntmClearHighlight = new JMenuItem(BUNDLE.getString("MainFrame.mntmClearHighlight.text"));  
+		mntmClearHighlight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mnSearch.add(mntmClearHighlight);
+		
+		separator_11 = new JSeparator();
+		mnSearch.add(separator_11);
 
 		mntmGoToLine = new JMenuItem(BUNDLE.getString("MainFrame.mntmGoToLine.text"));  
+		mntmGoToLine.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
 		mnSearch.add(mntmGoToLine);
 
 		mnProject = new JMenu(BUNDLE.getString("MainFrame.mnProject.text"));  
+		mnProject.setMnemonic(KeyEvent.VK_P);
 		mainMenuBar.add(mnProject);
+		
+		mntmProperties = new JMenuItem(BUNDLE.getString("MainFrame.mntmProperties.text")); //$NON-NLS-1$
+		mntmProperties.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Properties16.gif")));
+		mnProject.add(mntmProperties);
 
 		mnTools = new JMenu(BUNDLE.getString("MainFrame.mnTools.text"));  
+		mnTools.setMnemonic(KeyEvent.VK_T);
 		mainMenuBar.add(mnTools);
 
 		mnHelp = new JMenu(BUNDLE.getString("MainFrame.mnHelp.text"));  
+		mnHelp.setMnemonic(KeyEvent.VK_H);
 		mainMenuBar.add(mnHelp);
 
 		mntmContents = new JMenuItem(BUNDLE.getString("MainFrame.mntmContents.text"));  
+		mntmContents.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+		mntmContents.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/About16.gif")));
 		mnHelp.add(mntmContents);
 
 		mntmAbout = new JMenuItem(BUNDLE.getString("MainFrame.mntmAbout.text"));  
+		mntmAbout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Information16.gif")));
 		mnHelp.add(mntmAbout);
 
 		contentPane = new JPanel();
@@ -207,41 +332,53 @@ public class MainFrame extends JFrame {
 
 		toolBar = new JToolBar();
 		contentPane.add(toolBar, BorderLayout.NORTH);
+		
+		btnStart = new JButton(BUNDLE.getString("MainFrame.btnStart.text")); //$NON-NLS-1$
+		btnStart.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Play24.gif")));
+		toolBar.add(btnStart);
+		
+		btnPause = new JButton(BUNDLE.getString("MainFrame.btnPause.text")); //$NON-NLS-1$
+		btnPause.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Pause24.gif")));
+		toolBar.add(btnPause);
+		
+		btnStop = new JButton(BUNDLE.getString("MainFrame.btnStop.text")); //$NON-NLS-1$
+		btnStop.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Stop24.gif")));
+		toolBar.add(btnStop);
 
-		statusbar = new Panel();
+		statusbar = new JPanel();
 		contentPane.add(statusbar, BorderLayout.SOUTH);
 		statusbar.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
 		// TODO XXX what info in statusbar?
-		Label label = new Label("New label");
+		JLabel label = new JLabel("New label");
 		statusbar.add(label);
 
-		Label label_1 = new Label("New label");
+		JLabel label_1 = new JLabel("New label");
 		statusbar.add(label_1);
 
-		Label label_2 = new Label("New label");
+		JLabel label_2 = new JLabel("New label");
 		statusbar.add(label_2);
 
-		Label label_3 = new Label("New label");
+		JLabel label_3 = new JLabel("New label");
 		statusbar.add(label_3);
 		//
 
 		centerPane = new JSplitPane();
 		contentPane.add(centerPane, BorderLayout.CENTER);
+		centerPane.setDividerLocation(200);
 
 		workspacePane = new JTabbedPane(JTabbedPane.TOP);
 		centerPane.setRightComponent(workspacePane);
 
 		sidebarPane = new JTabbedPane(JTabbedPane.TOP);
 		centerPane.setLeftComponent(sidebarPane);
+		sidebarPane.setMinimumSize(new Dimension(180, 0));
 
-		// TODO XXX what tabs in side pane?
-		JPanel panel_1 = new JPanel();
-		sidebarPane.addTab("New tab", null, panel_1, null);
+		projectPanel = new JPanel();
+		sidebarPane.addTab("Project", null, projectPanel, null);
 
-		JPanel panel_2 = new JPanel();
-		sidebarPane.addTab("New tab", null, panel_2, null);
-		//
+		repositoryPanel = new JPanel();
+		sidebarPane.addTab("Repository", null, repositoryPanel, null);		
 	}
 
 	/**
@@ -249,22 +386,6 @@ public class MainFrame extends JFrame {
 	 */
 	public MainFrame() {
 		initUI();
-	}
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainFrame frame = new MainFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	public JMenuBar getMainMenuBar() {
@@ -579,11 +700,11 @@ public class MainFrame extends JFrame {
 		this.toolBar = toolBar;
 	}
 
-	public Panel getStatusbar() {
+	public JPanel getStatusbar() {
 		return statusbar;
 	}
 
-	public void setStatusbar(Panel statusbar) {
+	public void setStatusbar(JPanel statusbar) {
 		this.statusbar = statusbar;
 	}
 
@@ -609,6 +730,54 @@ public class MainFrame extends JFrame {
 
 	public void setSidebarPane(JTabbedPane sidebarPane) {
 		this.sidebarPane = sidebarPane;
+	}
+
+	public JPanel getProjectPanel() {
+		return projectPanel;
+	}
+
+	public void setProjectPanel(JPanel projectPanel) {
+		this.projectPanel = projectPanel;
+	}
+
+	public JPanel getRepositoryPanel() {
+		return repositoryPanel;
+	}
+
+	public void setRepositoryPanel(JPanel repositoryPanel) {
+		this.repositoryPanel = repositoryPanel;
+	}
+
+	public JMenuItem getMntmProperties() {
+		return mntmProperties;
+	}
+
+	public void setMntmProperties(JMenuItem mntmProperties) {
+		this.mntmProperties = mntmProperties;
+	}
+
+	public JButton getBtnStart() {
+		return btnStart;
+	}
+
+	public void setBtnStart(JButton btnStart) {
+		this.btnStart = btnStart;
+	}
+
+	public JButton getBtnPause() {
+		return btnPause;
+	}
+
+	public void setBtnPause(JButton btnPause) {
+		this.btnPause = btnPause;
+	}
+
+	public JButton getBtnStop() {
+		return btnStop;
+	}
+
+	public void setBtnStop(JButton btnStop) {
+		this.btnStop = btnStop;
 	}
 	
 	

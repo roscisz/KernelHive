@@ -7,5 +7,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraphx-1.10"/>
 	<classpathentry kind="lib" path="res/jlfgr-1_0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/rsyntaxtextarea-2.0.2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-configuration-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-lang-2.6"/>
+	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-logging-1.1"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
