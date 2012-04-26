@@ -90,7 +90,7 @@ namespace KernelHive {
 			*numDevices = devicesCount;
 			*devices = new OpenClDevice*[*numDevices];
 			for (unsigned int i = 0; i < *numDevices; i++) {
-				*devices[i] = new OpenClDevice(deviceIds[i]);
+				*devices[i] = new OpenClDevice(clPlatformId, deviceIds[i]);
 			}
 			if (deviceIds != NULL) {
 				delete[] deviceIds;

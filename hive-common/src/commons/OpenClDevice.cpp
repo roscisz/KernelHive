@@ -10,7 +10,8 @@ namespace KernelHive {
 // 							Public Members									 //
 // ========================================================================= //
 
-	OpenClDevice::OpenClDevice(cl_device_id clDeviceId) {
+	OpenClDevice::OpenClDevice(cl_platform_id clPlatformId, cl_device_id clDeviceId) {
+		this->clPlatformId = clPlatformId;
 		this->clDeviceId = clDeviceId;
 	}
 
@@ -113,6 +114,10 @@ namespace KernelHive {
 		return val;
 	}
 
+	cl_platform_id OpenClDevice::getClPlatformId() {
+		return this->clPlatformId;
+	}
+
 	cl_device_id OpenClDevice::getClDeviceId() {
 		return this->clDeviceId;
 	}
@@ -121,5 +126,17 @@ namespace KernelHive {
 // 							Private Members									 //
 // ========================================================================= //
 
+	void OpenClDevice::initDevice() {
+		initContext();
+		initCommandQueue();
+	}
+
+	void OpenClDevice::initContext() {
+
+	}
+
+	void OpenClDevice::initCommandQueue() {
+
+	}
 
 } /* namespace KernelHive */

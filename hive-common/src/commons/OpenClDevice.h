@@ -21,9 +21,11 @@ namespace KernelHive {
 		/**
 		 * The constructor.
 		 *
+		 * @param clPlatformId an OpenCL id of a platform if the
+		 * 		device
 		 * @param clDeviceId the OpenCL ID of this device
 		 */
-		OpenClDevice(cl_device_id clDeviceId);
+		OpenClDevice(cl_platform_id clPlatformId, cl_device_id clDeviceId);
 
 		/**
 		 * The copy constructor.
@@ -107,9 +109,34 @@ namespace KernelHive {
 		 */
 		cl_device_id getClDeviceId();
 
+		/**
+		 * Returns an OpenCL id of this device's platform.
+		 *
+		 * @return an OpenCL id of this device's platform
+		 */
+		cl_platform_id getClPlatformId();
+
 	private:
+		/** An OpenCL id of this device's platform. */
+		cl_platform_id clPlatformId;
+
 		/** The OpenCL ID of this device. */
 		cl_device_id clDeviceId;
+
+		/** The OpenCL context associated with this device. */
+		cl_context clContext;
+
+		/** The OpenCL command queue used by this device. */
+		cl_command_queue clCommandQueue;
+
+		/** Performs internal initialization of a device. */
+		void initDevice();
+
+		/** Initializes the OpenCL context for this device. */
+		void initContext();
+
+		/** Initializes an OpenCL command queue for this device. */
+		void initCommandQueue();
 
 	};
 
