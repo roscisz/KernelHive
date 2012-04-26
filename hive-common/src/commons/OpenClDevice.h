@@ -4,6 +4,8 @@
 #include <CL/cl.h>
 #include <string>
 
+#include "OpenClException.h"
+
 namespace KernelHive {
 
 	/**

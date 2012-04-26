@@ -13,10 +13,13 @@ namespace KernelHive {
 	OpenClDevice::OpenClDevice(cl_platform_id clPlatformId, cl_device_id clDeviceId) {
 		this->clPlatformId = clPlatformId;
 		this->clDeviceId = clDeviceId;
+		initDevice();
 	}
 
 	OpenClDevice::OpenClDevice(OpenClDevice& device) {
+		this->clPlatformId = device.getClPlatformId();
 		this->clDeviceId = device.getClDeviceId();
+		initDevice();
 	}
 
 	OpenClDevice::~OpenClDevice() {
@@ -132,7 +135,16 @@ namespace KernelHive {
 	}
 
 	void OpenClDevice::initContext() {
-
+		const cl_context_properties properties[] = {
+				CL_CONTEXT_PLATFORM, (cl_context_properties)clPlatformId,
+				0
+		};
+		cl_int errorCode;
+		clContext = clCreateContext(properties, 1, &clDeviceId, NULL, NULL, &errorCode);
+		if (errorCode != CL_SUCCESS) {
+			std::string message = "Error initializing OpenCL context";
+			throw OpenClException(message, errorCode);
+		}
 	}
 
 	void OpenClDevice::initCommandQueue() {

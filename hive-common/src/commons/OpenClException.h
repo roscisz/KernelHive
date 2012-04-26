@@ -17,12 +17,7 @@ namespace KernelHive {
 		 * @param message the error message of this exception
 		 * @param openClErrorCode the OpenCL error code
 		 */
-		OpenClException(std::string message, cl_int openClErrorCode);
-
-		/**
-		 * The copy constructor.
-		 */
-		OpenClException(OpenClException& exception);
+		OpenClException(std::string& message, cl_int openClErrorCode);
 
 		/**
 		 * The destructor.
