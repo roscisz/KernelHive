@@ -19,6 +19,7 @@ EXECUTABLE = commons-test
 
 # Object files genereated during the build:
 OBJECTS = \
+	OpenClException.o \
 	OpenClHelper.o \
 	OpenClPlatform.o \
 	OpenClDevice.o \
