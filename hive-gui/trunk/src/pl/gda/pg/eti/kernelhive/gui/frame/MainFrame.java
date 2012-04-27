@@ -1,17 +1,21 @@
 package pl.gda.pg.eti.kernelhive.gui.frame;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -24,8 +28,21 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.view.mxGraph;
 
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
+import pl.gda.pg.eti.kernelhive.gui.controller.MainFrameController;
+import pl.gda.pg.eti.kernelhive.gui.project.KernelHiveProject;
+import pl.gda.pg.eti.kernelhive.gui.source.editor.SourceCodeEditor;
 
 /**
  * Main Frame of the Application
@@ -34,11 +51,9 @@ import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
  */
 public class MainFrame extends JFrame {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2018750030834289098L;
 	private static ResourceBundle BUNDLE = AppConfiguration.getInstance().getLanguageResourceBundle();
+	private static Logger LOG = Logger.getLogger(MainFrame.class.getName());
 	
 	private JPanel contentPane;
 	private JMenuBar mainMenuBar;
@@ -83,7 +98,7 @@ public class MainFrame extends JFrame {
 	private JPanel statusbar;
 	private JSplitPane centerPane;
 	private JTabbedPane workspacePane;
-	private JTabbedPane sidebarPane;
+	private JTabbedPane sidePane;
 	private JPanel projectPanel;
 	private JPanel repositoryPanel;
 	private JSeparator separator;
@@ -103,16 +118,32 @@ public class MainFrame extends JFrame {
 	private JButton btnPause;
 	private JButton btnStop;
 	private JMenuItem mntmPreferences;
+	
+	private MainFrameController controller;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
 		setPreferredSize(new Dimension(800, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
-
-		mainMenuBar = new JMenuBar();
-		setJMenuBar(mainMenuBar);
-
+		
+		contentPane = new JPanel();
+		contentPane.setPreferredSize(new Dimension(800, 600));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		centerPane = new JSplitPane();
+		contentPane.add(centerPane, BorderLayout.CENTER);
+		centerPane.setDividerLocation(200);
+		
+		initMenu();
+		initStatusbar();
+		initSidePane();
+		initToolbar();
+		initWorkspace();
+	}
+	
+	private void initFileMenu(){
 		mnFile = new JMenu(BUNDLE.getString("MainFrame.mnFile.text"));
 		mnFile.setMnemonic(KeyEvent.VK_F);
 		mainMenuBar.add(mnFile);
@@ -124,9 +155,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				NewProjectDialog npd = new NewProjectDialog();
-				npd.setVisible(true);
-				
+				controller.newProject();
 			}
 		});
 		mnFile.add(mntmNew);
@@ -134,6 +163,29 @@ public class MainFrame extends JFrame {
 		mntmOpen = new JMenuItem(BUNDLE.getString("MainFrame.mntmOpen.text"));  
 		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		mntmOpen.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Open16.gif")));
+		mntmOpen.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.openProject();
+				//TODO remove
+				JPanel panel = new JPanel(new BorderLayout());
+				mxGraph graph = new mxGraph();
+				Object parent = graph.getDefaultParent();
+				graph.getModel().beginUpdate();
+				try{
+					mxCell v1 = (mxCell)graph.insertVertex(parent, "Node1", new KernelHiveProject(), 20, 20, 80, 30);
+					mxCell v2 = (mxCell)graph.insertVertex(parent, "Node2", new KernelHiveProject(), 240, 150, 80, 30);
+					graph.insertEdge(parent, "Edge", "", v1, v2);
+				}finally{
+					graph.getModel().endUpdate();
+				}
+				mxGraphComponent graphComp = new mxGraphComponent(graph);
+				panel.add(graphComp);
+				workspacePane.addTab("workflow", panel);
+				//
+			}
+		});
 		mnFile.add(mntmOpen);
 		
 		separator = new JSeparator();
@@ -141,9 +193,34 @@ public class MainFrame extends JFrame {
 
 		mntmClose = new JMenuItem(BUNDLE.getString("MainFrame.mntmClose.text"));  
 		mntmClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
+		mntmClose.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO remove
+				JPanel panel = SourceCodeEditor.createNewEditor();
+				workspacePane.addTab("source", panel);
+				Component[] comps = workspacePane.getComponents();
+				for(Component c : comps){
+					if(c instanceof JPanel){
+						JPanel p = (JPanel) c;
+						
+					}
+				}
+				//
+				controller.closeTab();				
+			}
+		});
 		mnFile.add(mntmClose);
 
-		mntmCloseAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmCloseAll.text"));  
+		mntmCloseAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmCloseAll.text")); 
+		mntmCloseAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.closeProject();				
+			}
+		});
 		mnFile.add(mntmCloseAll);
 		
 		separator_1 = new JSeparator();
@@ -152,15 +229,39 @@ public class MainFrame extends JFrame {
 		mntmSave = new JMenuItem(BUNDLE.getString("MainFrame.mntmSave.text"));  
 		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		mntmSave.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Save16.gif")));
+		mntmSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnFile.add(mntmSave);
 
 		mntmSaveAs = new JMenuItem(BUNDLE.getString("MainFrame.mntmSaveAs.text"));  
 		mntmSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmSaveAs.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/SaveAs16.gif")));
+		mntmSaveAs.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnFile.add(mntmSaveAs);
 
 		mntmSaveAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmSaveAll.text"));  
 		mntmSaveAll.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/SaveAll16.gif")));
+		mntmSaveAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnFile.add(mntmSaveAll);
 		
 		separator_2 = new JSeparator();
@@ -169,6 +270,14 @@ public class MainFrame extends JFrame {
 		mntmRefresh = new JMenuItem(BUNDLE.getString("MainFrame.mntmRefresh.text"));  
 		mntmRefresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
 		mntmRefresh.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Refresh16.gif")));
+		mntmRefresh.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnFile.add(mntmRefresh);
 		
 		separator_3 = new JSeparator();
@@ -187,8 +296,19 @@ public class MainFrame extends JFrame {
 
 		mntmExit = new JMenuItem(BUNDLE.getString("MainFrame.mntmExit.text"));  
 		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
+		mntmExit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnFile.add(mntmExit);
 
+	}
+	
+	private void initEditMenu(){
 		mnEdit = new JMenu(BUNDLE.getString("MainFrame.mnEdit.text"));  
 		mnEdit.setMnemonic(KeyEvent.VK_E);
 		mainMenuBar.add(mnEdit);
@@ -244,7 +364,9 @@ public class MainFrame extends JFrame {
 		mntmPreferences = new JMenuItem(BUNDLE.getString("MainFrame.mntmPreferences.text")); //$NON-NLS-1$
 		mntmPreferences.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Preferences16.gif")));
 		mnEdit.add(mntmPreferences);
-
+	}
+	
+	private void initViewMenu(){
 		mnView = new JMenu(BUNDLE.getString("MainFrame.mnView.text"));  
 		mnView.setMnemonic(KeyEvent.VK_V);
 		mainMenuBar.add(mnView);
@@ -267,7 +389,9 @@ public class MainFrame extends JFrame {
 		mntmFullscreen = new JMenuItem(BUNDLE.getString("MainFrame.mntmFullscreen.text"));  
 		mntmFullscreen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
 		mnView.add(mntmFullscreen);
-
+	}
+	
+	private void initSearchMenu(){
 		mnSearch = new JMenu(BUNDLE.getString("MainFrame.mnSearch.text"));  
 		mnSearch.setMnemonic(KeyEvent.VK_S);
 		mainMenuBar.add(mnSearch);
@@ -298,7 +422,9 @@ public class MainFrame extends JFrame {
 		mntmGoToLine = new JMenuItem(BUNDLE.getString("MainFrame.mntmGoToLine.text"));  
 		mntmGoToLine.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
 		mnSearch.add(mntmGoToLine);
-
+	}
+	
+	private void initProjectMenu(){
 		mnProject = new JMenu(BUNDLE.getString("MainFrame.mnProject.text"));  
 		mnProject.setMnemonic(KeyEvent.VK_P);
 		mainMenuBar.add(mnProject);
@@ -306,11 +432,15 @@ public class MainFrame extends JFrame {
 		mntmProperties = new JMenuItem(BUNDLE.getString("MainFrame.mntmProperties.text")); //$NON-NLS-1$
 		mntmProperties.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Properties16.gif")));
 		mnProject.add(mntmProperties);
-
+	}
+	
+	private void initToolsMenu(){
 		mnTools = new JMenu(BUNDLE.getString("MainFrame.mnTools.text"));  
 		mnTools.setMnemonic(KeyEvent.VK_T);
 		mainMenuBar.add(mnTools);
-
+	}
+	
+	private void initHelpMenu(){
 		mnHelp = new JMenu(BUNDLE.getString("MainFrame.mnHelp.text"));  
 		mnHelp.setMnemonic(KeyEvent.VK_H);
 		mainMenuBar.add(mnHelp);
@@ -323,13 +453,27 @@ public class MainFrame extends JFrame {
 		mntmAbout = new JMenuItem(BUNDLE.getString("MainFrame.mntmAbout.text"));  
 		mntmAbout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Information16.gif")));
 		mnHelp.add(mntmAbout);
+	}
 
-		contentPane = new JPanel();
-		contentPane.setPreferredSize(new Dimension(800, 600));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
+	private void initMenu(){
+		mainMenuBar = new JMenuBar();
+		setJMenuBar(mainMenuBar);
 
+		initFileMenu();
+		initEditMenu();
+		initViewMenu();
+		initSearchMenu();
+		initProjectMenu();
+		initToolsMenu();
+		initHelpMenu();
+	}
+	
+	private void initWorkspace(){
+		workspacePane = new JTabbedPane(JTabbedPane.TOP);
+		centerPane.setRightComponent(workspacePane);
+	}
+	
+	private void initToolbar(){
 		toolBar = new JToolBar();
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		
@@ -344,11 +488,13 @@ public class MainFrame extends JFrame {
 		btnStop = new JButton(BUNDLE.getString("MainFrame.btnStop.text")); //$NON-NLS-1$
 		btnStop.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Stop24.gif")));
 		toolBar.add(btnStop);
-
+	}
+	
+	private void initStatusbar(){
 		statusbar = new JPanel();
 		contentPane.add(statusbar, BorderLayout.SOUTH);
 		statusbar.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-
+		
 		// TODO XXX what info in statusbar?
 		JLabel label = new JLabel("New label");
 		statusbar.add(label);
@@ -362,32 +508,32 @@ public class MainFrame extends JFrame {
 		JLabel label_3 = new JLabel("New label");
 		statusbar.add(label_3);
 		//
-
-		centerPane = new JSplitPane();
-		contentPane.add(centerPane, BorderLayout.CENTER);
-		centerPane.setDividerLocation(200);
-
-		workspacePane = new JTabbedPane(JTabbedPane.TOP);
-		centerPane.setRightComponent(workspacePane);
-
-		sidebarPane = new JTabbedPane(JTabbedPane.TOP);
-		centerPane.setLeftComponent(sidebarPane);
-		sidebarPane.setMinimumSize(new Dimension(180, 0));
+	}
+	
+	private void initSidePane(){
+		sidePane = new JTabbedPane(JTabbedPane.TOP);
+		centerPane.setLeftComponent(sidePane);
+		sidePane.setMinimumSize(new Dimension(180, 0));
 
 		projectPanel = new JPanel();
-		sidebarPane.addTab("Project", null, projectPanel, null);
+		sidePane.addTab("Project", null, projectPanel, null);
 
 		repositoryPanel = new JPanel();
-		sidebarPane.addTab("Repository", null, repositoryPanel, null);		
+		sidePane.addTab("Repository", null, repositoryPanel, null);		
 	}
-
+	
 	/**
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		controller = new MainFrameController(this);
 		initUI();
 	}
 
+	/*
+	 * getters and setters
+	 */
+	
 	public JMenuBar getMainMenuBar() {
 		return mainMenuBar;
 	}
@@ -725,11 +871,11 @@ public class MainFrame extends JFrame {
 	}
 
 	public JTabbedPane getSidebarPane() {
-		return sidebarPane;
+		return sidePane;
 	}
 
 	public void setSidebarPane(JTabbedPane sidebarPane) {
-		this.sidebarPane = sidebarPane;
+		this.sidePane = sidebarPane;
 	}
 
 	public JPanel getProjectPanel() {
@@ -778,8 +924,5 @@ public class MainFrame extends JFrame {
 
 	public void setBtnStop(JButton btnStop) {
 		this.btnStop = btnStop;
-	}
-	
-	
-	
+	}	
 }
