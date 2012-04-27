@@ -33,5 +33,16 @@ public class ResourcePathValidator {
 		}
 		return vr;
 	}
+	
+	public static ValidationResult validateFileNotExists(String filePath){
+		ValidationResult vr = null;
+		File f = new File(filePath);
+		if(!f.exists()){
+			vr = new ValidationResult("OK", ValidationResultType.VALID);
+		} else{
+			vr = new ValidationResult("NOT OK", ValidationResultType.INVALID);
+		}
+		return vr;
+	}
 
 }

@@ -1,6 +1,7 @@
 package pl.gda.pg.eti.kernelhive.gui.controller;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -23,6 +24,17 @@ public class MainFrameController {
 		npd.setVisible(true);
 		if(npd.getStatus()==NewProjectDialog.APPROVE_OPTION){
 			//TODO
+			try {
+				File projectFile = new File(npd.getProjectDirectory()+
+						System.getProperty("file.separator")+
+						npd.getProjectName()+
+						System.getProperty("file.separator")+
+						".project");
+				projectFile.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

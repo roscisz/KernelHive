@@ -13,7 +13,7 @@ import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
  */
 public class KernelHiveMain {
 
-	private static Logger LOG = Logger.getLogger(KernelHiveMain.class.getName());
+	private static final Logger LOG = Logger.getLogger(KernelHiveMain.class.getName());
 	
 	/**
 	 * Launch the application.

@@ -92,5 +92,17 @@ public class ResourcePathValidatorTest {
 		ValidationResult vr = ResourcePathValidator.validateFile(filepathInvalid);
 		assertEquals(ValidationResultType.INVALID, vr.getType());
 	}
+	
+	@Test
+	public void testValidateFileNotExistsValidPath(){
+		ValidationResult vr = ResourcePathValidator.validateFileNotExists(filepathInvalid);
+		assertEquals(ValidationResultType.VALID, vr.getType());
+	}
+	
+	@Test
+	public void testValidateFileNotExistsInvalidPath(){
+		ValidationResult vr = ResourcePathValidator.validateFileNotExists(filepathValid);
+		assertEquals(ValidationResultType.INVALID, vr.getType());
+	}
 
 }

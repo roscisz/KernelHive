@@ -39,6 +39,7 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxGraph;
 
+import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.controller.MainFrameController;
 import pl.gda.pg.eti.kernelhive.gui.project.KernelHiveProject;
@@ -168,6 +169,8 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				controller.openProject();
+				
+				
 				//TODO remove
 				JPanel panel = new JPanel(new BorderLayout());
 				mxGraph graph = new mxGraph();
@@ -198,16 +201,12 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO remove
-				JPanel panel = SourceCodeEditor.createNewEditor();
-				workspacePane.addTab("source", panel);
-				Component[] comps = workspacePane.getComponents();
-				for(Component c : comps){
-					if(c instanceof JPanel){
-						JPanel p = (JPanel) c;
-						
-					}
-				}
+				JPanel sourcePanel = SourceCodeEditor.createNewEditor();
+				workspacePane.add("source", sourcePanel);
+				workspacePane.setTabComponentAt(0, new JTabPanel(sourcePanel, workspacePane));
+				workspacePane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 				//
+				
 				controller.closeTab();				
 			}
 		});
