@@ -34,6 +34,8 @@ public class AppConfiguration {
 			return _appconfig;
 		}
 	}
+	
+	protected AppConfiguration() {	}
 
 	public void reloadConfiguration() throws ConfigurationException {
 		this.config = new PropertiesConfiguration("config.properties");

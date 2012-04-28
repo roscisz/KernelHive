@@ -177,8 +177,8 @@ public class MainFrame extends JFrame {
 				Object parent = graph.getDefaultParent();
 				graph.getModel().beginUpdate();
 				try{
-					mxCell v1 = (mxCell)graph.insertVertex(parent, "Node1", new KernelHiveProject(), 20, 20, 80, 30);
-					mxCell v2 = (mxCell)graph.insertVertex(parent, "Node2", new KernelHiveProject(), 240, 150, 80, 30);
+					mxCell v1 = (mxCell)graph.insertVertex(parent, "Node1", null, 20, 20, 80, 30);
+					mxCell v2 = (mxCell)graph.insertVertex(parent, "Node2", null, 240, 150, 80, 30);
 					graph.insertEdge(parent, "Edge", "", v1, v2);
 				}finally{
 					graph.getModel().endUpdate();
