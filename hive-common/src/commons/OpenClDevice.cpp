@@ -136,10 +136,12 @@ namespace KernelHive {
 
 	void OpenClDevice::initContext() {
 		const cl_context_properties properties[] = {
-				CL_CONTEXT_PLATFORM, (cl_context_properties)clPlatformId,
+				CL_CONTEXT_PLATFORM,
+				(cl_context_properties) clPlatformId,
 				0
 		};
 		cl_int errorCode;
+		// TODO think about adding that callback function to the context
 		clContext = clCreateContext(properties, 1, &clDeviceId, NULL, NULL, &errorCode);
 		if (errorCode != CL_SUCCESS) {
 			std::string message = "Error initializing OpenCL context";
@@ -148,7 +150,12 @@ namespace KernelHive {
 	}
 
 	void OpenClDevice::initCommandQueue() {
-
+		cl_int errorCode;
+		clCommandQueue = clCreateCommandQueue(clContext, clDeviceId, NULL, &errorCode);
+		if (errorCode != CL_SUCCESS) {
+			std::string message = "Error initializing OpenCL command queue";
+			throw OpenClException(message, errorCode);
+		}
 	}
 
 } /* namespace KernelHive */
