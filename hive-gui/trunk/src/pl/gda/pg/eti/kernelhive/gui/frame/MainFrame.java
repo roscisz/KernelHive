@@ -30,6 +30,8 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
@@ -44,6 +46,9 @@ import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.controller.MainFrameController;
 import pl.gda.pg.eti.kernelhive.gui.project.KernelHiveProject;
 import pl.gda.pg.eti.kernelhive.gui.source.editor.SourceCodeEditor;
+import javax.swing.JTree;
+import javax.swing.JScrollPane;
+import javax.swing.BoxLayout;
 
 /**
  * Main Frame of the Application
@@ -119,8 +124,10 @@ public class MainFrame extends JFrame {
 	private JButton btnPause;
 	private JButton btnStop;
 	private JMenuItem mntmPreferences;
+	private JTree projectTree;
 	
 	private MainFrameController controller;
+	private JScrollPane projectScrollPane;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
@@ -201,7 +208,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO remove
-				JPanel sourcePanel = SourceCodeEditor.createNewEditor();
+				JPanel sourcePanel = SourceCodeEditor.createNewEditor(SourceCodeEditor.CPLUSPLUS);
 				workspacePane.add("source", sourcePanel);
 				workspacePane.setTabComponentAt(0, new JTabPanel(sourcePanel, workspacePane));
 				workspacePane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
@@ -516,7 +523,14 @@ public class MainFrame extends JFrame {
 
 		projectPanel = new JPanel();
 		sidePane.addTab("Project", null, projectPanel, null);
-
+		projectPanel.setLayout(new BorderLayout(0, 0));
+		
+		projectScrollPane = new JScrollPane();
+		projectPanel.add(projectScrollPane, BorderLayout.CENTER);
+		
+		//projectTree = new JTree();
+		//projectScrollPane.setViewportView(projectTree);
+		
 		repositoryPanel = new JPanel();
 		sidePane.addTab("Repository", null, repositoryPanel, null);		
 	}
@@ -869,14 +883,6 @@ public class MainFrame extends JFrame {
 		this.workspacePane = workspacePane;
 	}
 
-	public JTabbedPane getSidebarPane() {
-		return sidePane;
-	}
-
-	public void setSidebarPane(JTabbedPane sidebarPane) {
-		this.sidePane = sidebarPane;
-	}
-
 	public JPanel getProjectPanel() {
 		return projectPanel;
 	}
@@ -923,5 +929,47 @@ public class MainFrame extends JFrame {
 
 	public void setBtnStop(JButton btnStop) {
 		this.btnStop = btnStop;
-	}	
+	}
+
+	public JTabbedPane getSidePane() {
+		return sidePane;
+	}
+
+	public void setSidePane(JTabbedPane sidePane) {
+		this.sidePane = sidePane;
+	}
+
+	public JMenuItem getMntmPreferences() {
+		return mntmPreferences;
+	}
+
+	public void setMntmPreferences(JMenuItem mntmPreferences) {
+		this.mntmPreferences = mntmPreferences;
+	}
+
+	public JScrollPane getProjectScrollPane() {
+		return projectScrollPane;
+	}
+
+	public void setProjectScrollPane(JScrollPane projectScrollPane) {
+		this.projectScrollPane = projectScrollPane;
+	}
+
+	public JTree getProjectTree() {
+		return projectTree;
+	}
+
+	public void setProjectTree(JTree projectTree) {
+		this.projectTree = projectTree;
+	}
+
+	public MainFrameController getController() {
+		return controller;
+	}
+
+	public void setController(MainFrameController controller) {
+		this.controller = controller;
+	}
+	
+	
 }

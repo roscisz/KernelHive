@@ -7,8 +7,12 @@ import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.file.io.FileUtils;
@@ -26,24 +30,29 @@ public class MainFrameController {
 	
 	public MainFrameController(MainFrame frame){
 		this.frame = frame;
-		
 	}
-	
 	
 	public void newProject(){
 		NewProjectDialog npd = new NewProjectDialog();
 		npd.setVisible(true);
 		if(npd.getStatus()==NewProjectDialog.APPROVE_OPTION){
 			try {
-				File projectFile = FileUtils.createNewFile(npd.getProjectDirectory()+
-						System.getProperty("file.separator")+
-						npd.getProjectName()+
-						System.getProperty("file.separator")+
-						".project");
-				project = new KernelHiveProject(projectFile);	
+				project = new KernelHiveProject(npd.getProjectDirectory(), npd.getProjectName());
+				project.initProject();
 				frame.setTitle(npd.getProjectName()+" - "+BUNDLE.getString("MainFrame.this.title"));
+				
+				//test
+				DefaultMutableTreeNode top = new DefaultMutableTreeNode(npd.getProjectName());
+				for(int i=0; i<30; i++){
+					top.add(new DefaultMutableTreeNode("t1reererererererererererererererererererererer"));
+				}
+				JTree tree = new JTree(top);
+				frame.setProjectTree(tree);
+				frame.getProjectScrollPane().setViewportView(frame.getProjectTree());
+				//
+				
 				//TODO load files to treeview
-			} catch (IOException e) {
+			} catch (ConfigurationException e) {
 				JOptionPane.showMessageDialog(frame, 
 						BUNDLE.getString("MainFrameController.newProject.cannotCreate.text"), 
 						BUNDLE.getString("MainFrameController.newProject.cannotCreate.title"), 
@@ -58,10 +67,14 @@ public class MainFrameController {
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setMultiSelectionEnabled(false);
-		FileFilter ff = new FileNameExtensionFilter("project", "project");
+		FileFilter ff = new FileNameExtensionFilter("xml", "xml");
 		fc.setFileFilter(ff);
 		if(fc.showDialog(frame.getContentPane(), "Select")==JFileChooser.APPROVE_OPTION){
 			File file = fc.getSelectedFile();
+			KernelHiveProject project = new KernelHiveProject(file.getParent(), null);
+			project.load();
+			//TODO load files to treeview
+			//TODO load graph nodes to workflow composition tab
 		}
 	}
 	
@@ -75,5 +88,9 @@ public class MainFrameController {
 	
 	public void closeTab(){
 		
-	}	
+	}
+	
+	public void openTab(){
+		
+	}
 }

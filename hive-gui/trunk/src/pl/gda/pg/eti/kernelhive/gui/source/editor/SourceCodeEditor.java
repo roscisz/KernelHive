@@ -9,13 +9,18 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class SourceCodeEditor {
+	
+	public static final String CPLUSPLUS = SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS;
+	public static final String C = SyntaxConstants.SYNTAX_STYLE_C;
+	public static final String XML = SyntaxConstants.SYNTAX_STYLE_XML;
+	public static final String PROPERTIES = SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE;
 
-	public static JPanel createNewEditor(){
+	public static JPanel createNewEditor(String syntax){
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		
 		RSyntaxTextArea textarea = new RSyntaxTextArea();
-		textarea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);
+		textarea.setSyntaxEditingStyle(syntax);
 		textarea.setCodeFoldingEnabled(true);
 		textarea.setAnimateBracketMatching(true);
 		textarea.setAutoIndentEnabled(true);
