@@ -41,12 +41,34 @@ namespace KernelHive {
 		BufferMap::iterator iterator = buffers.find(name);
 		if (iterator != buffers.end()) {
 			errorCode = clReleaseMemObject(buffers[name]);
-			if ( errorCode == CL_SUCCESS) {
+			if (errorCode == CL_SUCCESS) {
 				buffers.erase(name);
 			} else {
 				std::string message = "Error releasing an OpenCL buffer object";
 				throw OpenClException(message, errorCode);
 			}
+		}
+	}
+
+	void ExecutionContext::writeToBuffer(std::string bufferName,
+			size_t offset, size_t size, const void* ptr)
+	{
+		cl_int errorCode = clEnqueueWriteBuffer(clCommandQueue, buffers[bufferName],
+				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
+		if (errorCode != CL_SUCCESS) {
+			std::string message = "Error reading from a buffer";
+			throw OpenClException(message, errorCode);
+		}
+	}
+
+	void ExecutionContext::readFromBuffer(std::string bufferName,
+			size_t offset, size_t size, void* ptr)
+	{
+		cl_int errorCode = clEnqueueReadBuffer(clCommandQueue, buffers[bufferName],
+				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
+		if (errorCode != CL_SUCCESS) {
+			std::string message = "Error reading from a buffer";
+			throw OpenClException(message, errorCode);
 		}
 	}
 

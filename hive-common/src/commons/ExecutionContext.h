@@ -50,6 +50,28 @@ namespace KernelHive {
 		 */
 		void releaseBuffer(const std::string& name);
 
+		/**
+		 * Performs a blocking write to a buffer previously created in this
+		 * execution context.
+		 *
+		 * @param bufferName the name of the buffer to write to
+		 * @param offset the offset from the beginning of the buffer, in bytes
+		 * @param size the number of bytes to write to, in bytes
+		 * @param ptr the pointer to data which should be written to the buffer
+		 */
+		void writeToBuffer(std::string bufferName, size_t offset, size_t size, const void* ptr);
+
+		/**
+		 * Performs a blocking read from a buffer previously created in this
+		 * execution context.
+		 *
+		 * @param bufferName the name of the buffer to read from
+		 * @param offset the offset from the beginning of the buffer, in bytes
+		 * @param size the number of bytes to read, in bytes
+		 * @param ptr the pointer to data to which buffer's data should be read
+		 */
+		void readFromBuffer(std::string bufferName, size_t offset, size_t size, void* ptr);
+
 	private:
 		/** The OpenCL device to use for this context. */
 		OpenClDevice device;
