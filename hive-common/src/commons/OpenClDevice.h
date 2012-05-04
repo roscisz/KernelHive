@@ -32,7 +32,7 @@ namespace KernelHive {
 		/**
 		 * The copy constructor.
 		 */
-		OpenClDevice(OpenClDevice& device);
+		OpenClDevice(const OpenClDevice& device);
 
 		/**
 		 * The destructor.
@@ -124,21 +124,6 @@ namespace KernelHive {
 
 		/** The OpenCL ID of this device. */
 		cl_device_id clDeviceId;
-
-		/** The OpenCL context associated with this device. */
-		cl_context clContext;
-
-		/** The OpenCL command queue used by this device. */
-		cl_command_queue clCommandQueue;
-
-		/** Performs internal initialization of a device. */
-		void initDevice();
-
-		/** Initializes the OpenCL context for this device. */
-		void initContext();
-
-		/** Initializes an OpenCL command queue for this device. */
-		void initCommandQueue();
 
 	};
 

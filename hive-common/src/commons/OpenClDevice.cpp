@@ -13,13 +13,11 @@ namespace KernelHive {
 	OpenClDevice::OpenClDevice(cl_platform_id clPlatformId, cl_device_id clDeviceId) {
 		this->clPlatformId = clPlatformId;
 		this->clDeviceId = clDeviceId;
-		initDevice();
 	}
 
-	OpenClDevice::OpenClDevice(OpenClDevice& device) {
-		this->clPlatformId = device.getClPlatformId();
-		this->clDeviceId = device.getClDeviceId();
-		initDevice();
+	OpenClDevice::OpenClDevice(const OpenClDevice& device) {
+		this->clPlatformId = device.clPlatformId;
+		this->clDeviceId = device.clDeviceId;
 	}
 
 	OpenClDevice::~OpenClDevice() {
@@ -128,34 +126,5 @@ namespace KernelHive {
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
-
-	void OpenClDevice::initDevice() {
-		initContext();
-		initCommandQueue();
-	}
-
-	void OpenClDevice::initContext() {
-		const cl_context_properties properties[] = {
-				CL_CONTEXT_PLATFORM,
-				(cl_context_properties) clPlatformId,
-				0
-		};
-		cl_int errorCode;
-		// TODO think about adding that callback function to the context
-		clContext = clCreateContext(properties, 1, &clDeviceId, NULL, NULL, &errorCode);
-		if (errorCode != CL_SUCCESS) {
-			std::string message = "Error initializing OpenCL context";
-			throw OpenClException(message, errorCode);
-		}
-	}
-
-	void OpenClDevice::initCommandQueue() {
-		cl_int errorCode;
-		clCommandQueue = clCreateCommandQueue(clContext, clDeviceId, NULL, &errorCode);
-		if (errorCode != CL_SUCCESS) {
-			std::string message = "Error initializing OpenCL command queue";
-			throw OpenClException(message, errorCode);
-		}
-	}
 
 } /* namespace KernelHive */
