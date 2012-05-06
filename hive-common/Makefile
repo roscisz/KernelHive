@@ -24,6 +24,7 @@ OBJECTS = \
 	OpenClPlatform.o \
 	OpenClDevice.o \
 	OpenClHost.o \
+	OpenClEvent.o \
 	ExecutionContext.o \
 	Main.o
 

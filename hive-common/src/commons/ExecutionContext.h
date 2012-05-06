@@ -59,7 +59,7 @@ namespace KernelHive {
 		 * @param size the number of bytes to write to, in bytes
 		 * @param ptr the pointer to data which should be written to the buffer
 		 */
-		void writeToBuffer(std::string bufferName, size_t offset, size_t size, const void* ptr);
+		void write(std::string bufferName, size_t offset, size_t size, const void* ptr);
 
 		/**
 		 * Performs a blocking read from a buffer previously created in this
@@ -70,7 +70,7 @@ namespace KernelHive {
 		 * @param size the number of bytes to read, in bytes
 		 * @param ptr the pointer to data to which buffer's data should be read
 		 */
-		void readFromBuffer(std::string bufferName, size_t offset, size_t size, void* ptr);
+		void read(std::string bufferName, size_t offset, size_t size, void* ptr);
 
 	private:
 		/** The OpenCL device to use for this context. */

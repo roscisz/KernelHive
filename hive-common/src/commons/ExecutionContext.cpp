@@ -48,8 +48,8 @@ namespace KernelHive {
 		}
 	}
 
-	void ExecutionContext::writeToBuffer(std::string bufferName,
-			size_t offset, size_t size, const void* ptr)
+	void ExecutionContext::write(std::string bufferName, size_t offset,
+			size_t size, const void* ptr)
 	{
 		cl_int errorCode = clEnqueueWriteBuffer(clCommandQueue, buffers[bufferName],
 				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
@@ -58,8 +58,8 @@ namespace KernelHive {
 		}
 	}
 
-	void ExecutionContext::readFromBuffer(std::string bufferName,
-			size_t offset, size_t size, void* ptr)
+	void ExecutionContext::read(std::string bufferName, size_t offset,
+			size_t size, void* ptr)
 	{
 		cl_int errorCode = clEnqueueReadBuffer(clCommandQueue, buffers[bufferName],
 				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
