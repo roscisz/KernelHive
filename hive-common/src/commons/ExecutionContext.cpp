@@ -54,8 +54,20 @@ namespace KernelHive {
 		cl_int errorCode = clEnqueueWriteBuffer(clCommandQueue, buffers[bufferName],
 				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
-			throw OpenClException("Error reading from a buffer", errorCode);
+			throw OpenClException("Error writing to a buffer", errorCode);
 		}
+	}
+
+	OpenClEvent ExecutionContext::enqueueWrite(std::string bufferName, size_t offset,
+			size_t size, const void* ptr)
+	{
+		cl_event event;
+		cl_int errorCode = clEnqueueWriteBuffer(clCommandQueue, buffers[bufferName],
+				CL_FALSE, offset, size, ptr, 0, NULL, &event);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error enqueueing a write to a buffer", errorCode);
+		}
+		return OpenClEvent(event);
 	}
 
 	void ExecutionContext::read(std::string bufferName, size_t offset,
@@ -66,6 +78,18 @@ namespace KernelHive {
 		if (errorCode != CL_SUCCESS) {
 			throw OpenClException("Error reading from a buffer", errorCode);
 		}
+	}
+
+	OpenClEvent ExecutionContext::enqueueRead(std::string bufferName, size_t offset,
+			size_t size, void* ptr)
+	{
+		cl_event event;
+		cl_int errorCode = clEnqueueReadBuffer(clCommandQueue, buffers[bufferName],
+				CL_FALSE, offset, size, ptr, 0, NULL, &event);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error enqueueing a read from a buffer", errorCode);
+		}
+		return OpenClEvent(event);
 	}
 
 // ========================================================================= //

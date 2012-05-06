@@ -5,6 +5,7 @@
 #include <map>
 
 #include "OpenClDevice.h"
+#include "OpenClEvent.h"
 
 namespace KernelHive {
 
@@ -62,6 +63,19 @@ namespace KernelHive {
 		void write(std::string bufferName, size_t offset, size_t size, const void* ptr);
 
 		/**
+		 * Enqueues a non-blocking write to a buffer previously created in this
+		 * execution context.
+		 *
+		 * @param bufferName the name of the buffer to write to
+		 * @param offset the offset from the beginning of the buffer, in bytes
+		 * @param size the number of bytes to write to, in bytes
+		 * @param ptr the pointer to data which should be written to the buffer
+		 * @return an OpenClEvent object which represents this operation in the
+		 * 		command queue
+		 */
+		OpenClEvent enqueueWrite(std::string bufferName, size_t offset, size_t size, const void* ptr);
+
+		/**
 		 * Performs a blocking read from a buffer previously created in this
 		 * execution context.
 		 *
@@ -71,6 +85,19 @@ namespace KernelHive {
 		 * @param ptr the pointer to data to which buffer's data should be read
 		 */
 		void read(std::string bufferName, size_t offset, size_t size, void* ptr);
+
+		/**
+		 * Enqueues a non-blocking read from a buffer previously created in this
+		 * execution context.
+		 *
+		 * @param bufferName the name of the buffer to read from
+		 * @param offset the offset from the beginning of the buffer, in bytes
+		 * @param size the number of bytes to read, in bytes
+		 * @param ptr the pointer to data to which buffer's data should be read
+		 * @return an OpenClEvent object which represents this operation in the
+		 * 		command queue
+		 */
+		OpenClEvent enqueueRead(std::string bufferName, size_t offset, size_t size, void* ptr);
 
 	private:
 		/** The OpenCL device to use for this context. */
