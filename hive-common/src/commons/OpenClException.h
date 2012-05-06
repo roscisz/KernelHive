@@ -12,12 +12,20 @@ namespace KernelHive {
 	class OpenClException {
 	public:
 		/**
-		 * The constructor.
+		 * The constructor - initialized with a string class.
 		 *
 		 * @param message the error message of this exception
 		 * @param openClErrorCode the OpenCL error code
 		 */
 		OpenClException(std::string& message, cl_int openClErrorCode);
+
+		/**
+		 * The constructor - initialized with a C string.
+		 *
+		 * @param message the error message of this exception
+		 * @param openClErrorCode the OpenCL error code
+		 */
+		OpenClException(const char* message, cl_int openClErrorCode);
 
 		/**
 		 * The destructor.

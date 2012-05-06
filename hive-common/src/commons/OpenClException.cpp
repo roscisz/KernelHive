@@ -11,6 +11,11 @@ namespace KernelHive {
 		this->openClErrorCode = openClErrorCode;
 	}
 
+	OpenClException::OpenClException(const char* message, cl_int openClErrorCode) {
+		this->message = message;
+		this->openClErrorCode = openClErrorCode;
+	}
+
 	OpenClException::~OpenClException() {
 		// TODO Auto-generated destructor stub
 	}

@@ -31,8 +31,7 @@ namespace KernelHive {
 		if (errorCode == CL_SUCCESS) {
 			buffers[name] = buffer;
 		} else {
-			std::string message = "Error creating an OpenCL buffer object";
-			throw OpenClException(message, errorCode);
+			throw OpenClException("Error creating an OpenCL buffer object", errorCode);
 		}
 	}
 
@@ -44,8 +43,7 @@ namespace KernelHive {
 			if (errorCode == CL_SUCCESS) {
 				buffers.erase(name);
 			} else {
-				std::string message = "Error releasing an OpenCL buffer object";
-				throw OpenClException(message, errorCode);
+				throw OpenClException("Error releasing an OpenCL buffer object", errorCode);
 			}
 		}
 	}
@@ -56,8 +54,7 @@ namespace KernelHive {
 		cl_int errorCode = clEnqueueWriteBuffer(clCommandQueue, buffers[bufferName],
 				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
-			std::string message = "Error reading from a buffer";
-			throw OpenClException(message, errorCode);
+			throw OpenClException("Error reading from a buffer", errorCode);
 		}
 	}
 
@@ -67,8 +64,7 @@ namespace KernelHive {
 		cl_int errorCode = clEnqueueReadBuffer(clCommandQueue, buffers[bufferName],
 				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
-			std::string message = "Error reading from a buffer";
-			throw OpenClException(message, errorCode);
+			throw OpenClException("Error reading from a buffer", errorCode);
 		}
 	}
 
@@ -87,8 +83,7 @@ namespace KernelHive {
 		// TODO think about adding that callback function to the context
 		clContext = clCreateContext(properties, 1, &deviceId, NULL, NULL, &errorCode);
 		if (errorCode != CL_SUCCESS) {
-			std::string message = "Error initializing OpenCL context";
-			throw OpenClException(message, errorCode);
+			throw OpenClException("Error initializing OpenCL context", errorCode);
 		}
 	}
 
@@ -96,8 +91,7 @@ namespace KernelHive {
 		cl_int errorCode;
 		clCommandQueue = clCreateCommandQueue(clContext, device.getClDeviceId(), NULL, &errorCode);
 		if (errorCode != CL_SUCCESS) {
-			std::string message = "Error initializing OpenCL command queue";
-			throw OpenClException(message, errorCode);
+			throw OpenClException("Error initializing OpenCL command queue", errorCode);
 		}
 	}
 
