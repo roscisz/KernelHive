@@ -99,6 +99,14 @@ namespace KernelHive {
 		 */
 		OpenClEvent enqueueRead(std::string bufferName, size_t offset, size_t size, void* ptr);
 
+		/**
+		 * Waits for provided OpenCL events to finish.
+		 *
+		 * @param eventsCount the number of events to wait for
+		 * @param events the events to wait for
+		 */
+		void waitForEvents(size_t eventsCount, OpenClEvent* events);
+
 	private:
 		/** The OpenCL device to use for this context. */
 		OpenClDevice device;

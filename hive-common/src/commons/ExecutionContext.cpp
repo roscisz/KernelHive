@@ -92,6 +92,18 @@ namespace KernelHive {
 		return OpenClEvent(event);
 	}
 
+	void ExecutionContext::waitForEvents(size_t eventsCount, OpenClEvent* events) {
+		cl_event* clEvents = new cl_event[eventsCount];
+		for (size_t i = 0; i < eventsCount; i++) {
+			clEvents[i] = events[i].getOpenClEvent();
+		}
+		cl_int errorCode = clWaitForEvents(eventsCount, clEvents);
+		delete [] clEvents;
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error waiting for events to finish", errorCode);
+		}
+	}
+
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
