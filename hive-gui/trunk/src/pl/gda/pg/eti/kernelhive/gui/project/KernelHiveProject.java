@@ -31,6 +31,7 @@ public class KernelHiveProject implements Serializable, IProject {
 		config = new XMLConfiguration();
 	}
 	
+	@Deprecated
 	//brzydkie, projekt musi sobie sam tworzyc poczatkowa strukture pliku zeby apache configurations moglo go sobie w ogole otworzyc :(
 	private void initXmlConfigFile() throws IOException{
 		FileOutputStream fos = new FileOutputStream(projectFile);
@@ -49,7 +50,7 @@ public class KernelHiveProject implements Serializable, IProject {
 						projectName+
 						System.getProperty("file.separator")+
 						projectName+".xml");
-				initXmlConfigFile();
+				//initXmlConfigFile();
 				
 			} catch (IOException e) {
 				LOG.severe("KH: error creating new file");

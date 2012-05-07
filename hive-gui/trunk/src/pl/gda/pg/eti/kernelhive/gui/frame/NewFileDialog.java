@@ -2,51 +2,50 @@ package pl.gda.pg.eti.kernelhive.gui.frame;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.ImageIcon;
 
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.validator.ResourcePathValidator;
 import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult;
 import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult.ValidationResultType;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
+public class NewFileDialog extends JDialog {
 
-public class NewProjectDialog extends JDialog {
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6014149952911009233L;
 	public static final int APPROVE_OPTION = 0;
 	public static final int CANCEL_OPTION = 1;
 
-	private static final long serialVersionUID = 3060001596955474123L;
 	private static ResourceBundle BUNDLE = AppConfiguration.getInstance().getLanguageResourceBundle();
 	private static Logger LOG = Logger.getLogger(NewProjectDialog.class.getName());
 	
 	private final JPanel contentPanel = new JPanel();
-	private JTextField tfProjectName;
-	private JTextField tfProjectDir;
+	private JTextField tfFileName;
+	private JTextField tfFileDir;
 	private JLabel lblChoosenFolderPath;
 	private JButton okButton;
 	private JButton cancelButton;
 	private int retval;
 	
-	/**
-	 * Create the dialog.
-	 */
-	public NewProjectDialog() {
+	public NewFileDialog() {
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
@@ -54,26 +53,26 @@ public class NewProjectDialog extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
-		JLabel lblProjectName = new JLabel(BUNDLE.getString("NewProjectDialog.lblProjectName.text")); //$NON-NLS-1$
-		lblProjectName.setBounds(12, 12, 100, 15);
-		contentPanel.add(lblProjectName);
+		JLabel lblFileName = new JLabel("Name"); 
+		lblFileName.setBounds(12, 12, 100, 15);
+		contentPanel.add(lblFileName);
 		
-		JLabel lblProjectFolder = new JLabel(BUNDLE.getString("NewProjectDialog.lblProjectFolder.text")); //$NON-NLS-1$
-		lblProjectFolder.setBounds(12, 39, 100, 15);
-		contentPanel.add(lblProjectFolder);
+		JLabel lblFileFolder = new JLabel("Directory");
+		lblFileFolder.setBounds(12, 39, 100, 15);
+		contentPanel.add(lblFileFolder);
 		
-		tfProjectName = new JTextField();
-		tfProjectName.setBounds(130, 10, 190, 19);
-		contentPanel.add(tfProjectName);
-		tfProjectName.setColumns(10);
+		tfFileName = new JTextField();
+		tfFileName.setBounds(130, 10, 190, 19);
+		contentPanel.add(tfFileName);
+		tfFileName.setColumns(10);
 		
-		tfProjectDir = new JTextField();
-		tfProjectDir.setBounds(130, 37, 190, 19);
-		tfProjectDir.addCaretListener(new CaretListener() {
+		tfFileDir = new JTextField();
+		tfFileDir.setBounds(130, 37, 190, 19);
+		tfFileDir.addCaretListener(new CaretListener() {
 			
 			@Override
 			public void caretUpdate(CaretEvent arg0) {
-				ValidationResult vr = ResourcePathValidator.validateDirectory(tfProjectDir.getText());
+				ValidationResult vr = ResourcePathValidator.validateDirectory(tfFileDir.getText());
 				if(vr.getType()==ValidationResultType.INVALID){
 					okButton.setEnabled(false);
 					lblChoosenFolderPath.setVisible(true);
@@ -84,8 +83,8 @@ public class NewProjectDialog extends JDialog {
 				
 			}
 		});
-		contentPanel.add(tfProjectDir);
-		tfProjectDir.setColumns(10);
+		contentPanel.add(tfFileDir);
+		tfFileDir.setColumns(10);
 		
 		JButton button = new JButton("...");
 		button.setBounds(332, 34, 35, 25);
@@ -99,14 +98,14 @@ public class NewProjectDialog extends JDialog {
 				fc.setMultiSelectionEnabled(false);
 				if(fc.showDialog(contentPanel, "Select")==JFileChooser.APPROVE_OPTION){
 					File file = fc.getSelectedFile();
-					tfProjectDir.setText(file.getAbsolutePath());
+					tfFileDir.setText(file.getAbsolutePath());
 				}
 				
 			}
 		});
 		contentPanel.add(button);
 		
-		lblChoosenFolderPath = new JLabel(BUNDLE.getString("NewProjectDialog.lblChoosenFolderPath.text")); //$NON-NLS-1$
+		lblChoosenFolderPath = new JLabel("Error - invalid filepath");
 		lblChoosenFolderPath.setVisible(false);
 		lblChoosenFolderPath.setIcon(new ImageIcon(NewProjectDialog.class.getResource("/com/sun/java/swing/plaf/windows/icons/Error.gif")));
 		lblChoosenFolderPath.setBounds(12, 66, 279, 49);
@@ -131,7 +130,7 @@ public class NewProjectDialog extends JDialog {
 				});
 			}
 			{
-				cancelButton = new JButton(BUNDLE.getString("NewProjectDialog.cancelButton.text")); //$NON-NLS-1$
+				cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 				cancelButton.addActionListener(new ActionListener() {
@@ -151,12 +150,11 @@ public class NewProjectDialog extends JDialog {
 		return retval;
 	}
 	
-	public String getProjectName(){
-		return this.tfProjectName.getText();
+	public String getFileName(){
+		return this.tfFileName.getText();
 	}
 	
-	public String getProjectDirectory(){
-		return this.tfProjectDir.getText();
+	public String getFileDirectory(){
+		return this.tfFileDir.getText();
 	}
-	
 }

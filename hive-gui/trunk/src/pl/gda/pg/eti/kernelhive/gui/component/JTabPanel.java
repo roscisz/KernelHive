@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import org.junit.experimental.categories.Categories.ExcludeCategory;
+
 public class JTabPanel extends JPanel {
 
 	private static final long serialVersionUID = 8529416373302749016L;
@@ -29,20 +31,23 @@ public class JTabPanel extends JPanel {
 	private static final Logger LOG = Logger.getLogger(JTabPanel.class.getName());
 	
 	private final JTabbedPane pane;
-	private final JPanel panel;
+	private final JTabContent content;
+	private final JLabel label;
 	
-	public JTabPanel(JPanel tabPanel, JTabbedPane tabbedPane){
+	public JTabPanel(JTabContent tabPanel, JTabbedPane tabbedPane){
 		super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		this.panel = tabPanel;
+		this.content = tabPanel;
+		this.content.setTabPanel(this);
 		if(tabbedPane==null){
 			LOG.severe("Tabbed Pane is null!");
 			throw new NullPointerException("Tabbed Pane is null!");
 		}
 		this.pane = tabbedPane;
 		setOpaque(false);
-		JLabel label = new JLabel(){
+		label = new JLabel(){
 			private static final long serialVersionUID = -5214456099552542411L;
 
+			@Override
 			public String getText(){
 				int i = pane.indexOfTabComponent(JTabPanel.this);
 				if(i!=-1){
@@ -50,7 +55,16 @@ public class JTabPanel extends JPanel {
 				}
 				return null;
 			}
+			
+			@Override
+			public void setText(String text){
+				int i = pane.indexOfTabComponent(JTabPanel.this);
+				if(i!=-1){
+					pane.setTitleAt(i, text);
+				}
+			}			
 		};
+		
 		
 		add(label);
 		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
@@ -100,10 +114,9 @@ public class JTabPanel extends JPanel {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int i = pane.indexOfComponent(panel);
+			int i = pane.indexOfComponent(content);
 			if(i != -1){
-				//TODO check if file needs to be saved!!!
-				pane.remove(i);
+				content.getFrame().getController().closeTab(JTabPanel.this);
 			}
 			
 		}
@@ -126,5 +139,17 @@ public class JTabPanel extends JPanel {
 			g2.dispose();
 		}
 		
+	}
+
+	public JLabel getLabel(){
+		return label;
+	}
+	
+	public JTabContent getPanel(){
+		return content;
+	}
+	
+	public JTabbedPane getPane(){
+		return pane;
 	}
 }

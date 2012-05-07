@@ -1,21 +1,18 @@
 package pl.gda.pg.eti.kernelhive.gui.frame;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -28,10 +25,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
@@ -41,14 +34,11 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxGraph;
 
-import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.controller.MainFrameController;
-import pl.gda.pg.eti.kernelhive.gui.project.KernelHiveProject;
-import pl.gda.pg.eti.kernelhive.gui.source.editor.SourceCodeEditor;
+
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
-import javax.swing.BoxLayout;
 
 /**
  * Main Frame of the Application
@@ -133,7 +123,7 @@ public class MainFrame extends JFrame {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
 		setPreferredSize(new Dimension(800, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 600);
+		setBounds(100, 100, 1024, 768);
 		
 		contentPane = new JPanel();
 		contentPane.setPreferredSize(new Dimension(800, 600));
@@ -176,24 +166,6 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				controller.openProject();
-				
-				
-				//TODO remove
-				JPanel panel = new JPanel(new BorderLayout());
-				mxGraph graph = new mxGraph();
-				Object parent = graph.getDefaultParent();
-				graph.getModel().beginUpdate();
-				try{
-					mxCell v1 = (mxCell)graph.insertVertex(parent, "Node1", null, 20, 20, 80, 30);
-					mxCell v2 = (mxCell)graph.insertVertex(parent, "Node2", null, 240, 150, 80, 30);
-					graph.insertEdge(parent, "Edge", "", v1, v2);
-				}finally{
-					graph.getModel().endUpdate();
-				}
-				mxGraphComponent graphComp = new mxGraphComponent(graph);
-				panel.add(graphComp);
-				workspacePane.addTab("workflow", panel);
-				//
 			}
 		});
 		mnFile.add(mntmOpen);
@@ -207,14 +179,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO remove
-				JPanel sourcePanel = SourceCodeEditor.createNewEditor(SourceCodeEditor.CPLUSPLUS);
-				workspacePane.add("source", sourcePanel);
-				workspacePane.setTabComponentAt(0, new JTabPanel(sourcePanel, workspacePane));
-				workspacePane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
-				//
-				
-				controller.closeTab();				
+				controller.closeTab(null);
 			}
 		});
 		mnFile.add(mntmClose);
@@ -239,7 +204,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				controller.saveTab(null);
 				
 			}
 		});
@@ -252,8 +217,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.saveTabAs(null);				
 			}
 		});
 		mnFile.add(mntmSaveAs);
@@ -264,8 +228,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.saveAll();
 			}
 		});
 		mnFile.add(mntmSaveAll);
@@ -280,8 +243,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.refresh();
 			}
 		});
 		mnFile.add(mntmRefresh);
@@ -291,10 +253,24 @@ public class MainFrame extends JFrame {
 
 		mntmImport = new JMenuItem(BUNDLE.getString("MainFrame.mntmImport.text"));  
 		mntmImport.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Import16.gif")));
+		mntmImport.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO
+			}
+		});
 		mnFile.add(mntmImport);
 
 		mntmExport = new JMenuItem(BUNDLE.getString("MainFrame.mntmExport.text"));  
 		mntmExport.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Export16.gif")));
+		mntmExport.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
 		mnFile.add(mntmExport);
 		
 		separator_4 = new JSeparator();
@@ -306,8 +282,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.exit();
 			}
 		});
 		mnFile.add(mntmExit);
@@ -322,11 +297,27 @@ public class MainFrame extends JFrame {
 		mntmUndo = new JMenuItem(BUNDLE.getString("MainFrame.mntmUndo.text"));  
 		mntmUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
 		mntmUndo.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Undo16.gif")));
+		mntmUndo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnEdit.add(mntmUndo);
 
 		mntmRedo = new JMenuItem(BUNDLE.getString("MainFrame.mntmRedo.text"));  
 		mntmRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmRedo.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Redo16.gif")));
+		mntmRedo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnEdit.add(mntmRedo);
 		
 		separator_5 = new JSeparator();
@@ -335,16 +326,40 @@ public class MainFrame extends JFrame {
 		mntmCut = new JMenuItem(BUNDLE.getString("MainFrame.mntmCut.text"));  
 		mntmCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
 		mntmCut.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Cut16.gif")));
+		mntmCut.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnEdit.add(mntmCut);
 
 		mntmCopy = new JMenuItem(BUNDLE.getString("MainFrame.mntmCopy.text"));  
 		mntmCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
 		mntmCopy.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Copy16.gif")));
+		mntmCopy.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnEdit.add(mntmCopy);
 
 		mntmPaste = new JMenuItem(BUNDLE.getString("MainFrame.mntmPaste.text"));  
 		mntmPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 		mntmPaste.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Paste16.gif")));
+		mntmPaste.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnEdit.add(mntmPaste);
 		
 		separator_6 = new JSeparator();
@@ -359,6 +374,14 @@ public class MainFrame extends JFrame {
 
 		mntmSelectAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmSelectAll.text"));  
 		mntmSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
+		mntmSelectAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnEdit.add(mntmSelectAll);
 		
 		separator_8 = new JSeparator();
@@ -369,9 +392,16 @@ public class MainFrame extends JFrame {
 		
 		mntmPreferences = new JMenuItem(BUNDLE.getString("MainFrame.mntmPreferences.text")); //$NON-NLS-1$
 		mntmPreferences.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Preferences16.gif")));
+		mntmPreferences.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.showPreferences();
+			}
+		});
 		mnEdit.add(mntmPreferences);
 	}
-	
+
 	private void initViewMenu(){
 		mnView = new JMenu(BUNDLE.getString("MainFrame.mnView.text"));  
 		mnView.setMnemonic(KeyEvent.VK_V);
@@ -379,14 +409,35 @@ public class MainFrame extends JFrame {
 
 		chckbxmntmToolbox = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmToolbox.text"));  
 		chckbxmntmToolbox.setSelected(true);
+		chckbxmntmToolbox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.displayToolbox(chckbxmntmToolbox.getState());
+			}
+		});
 		mnView.add(chckbxmntmToolbox);
 
 		chckbxmntmStatusbar = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmStatusbar.text"));  
 		chckbxmntmStatusbar.setSelected(true);
+		chckbxmntmStatusbar.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.displayStatusbar(chckbxmntmStatusbar.getState());				
+			}
+		});
 		mnView.add(chckbxmntmStatusbar);
 
 		chckbxmntmSidePanel = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmSidePanel.text"));  
 		chckbxmntmSidePanel.setSelected(true);
+		chckbxmntmSidePanel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.displaySidePanel(chckbxmntmSidePanel.getState());				
+			}
+		});
 		mnView.add(chckbxmntmSidePanel);
 		
 		separator_9 = new JSeparator();
@@ -437,12 +488,27 @@ public class MainFrame extends JFrame {
 		
 		mntmProperties = new JMenuItem(BUNDLE.getString("MainFrame.mntmProperties.text")); //$NON-NLS-1$
 		mntmProperties.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Properties16.gif")));
+		mntmProperties.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.showProjectProperties();
+			}
+		});
 		mnProject.add(mntmProperties);
 	}
 	
 	private void initToolsMenu(){
 		mnTools = new JMenu(BUNDLE.getString("MainFrame.mnTools.text"));  
 		mnTools.setMnemonic(KeyEvent.VK_T);
+		mnTools.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mainMenuBar.add(mnTools);
 	}
 	
@@ -454,10 +520,26 @@ public class MainFrame extends JFrame {
 		mntmContents = new JMenuItem(BUNDLE.getString("MainFrame.mntmContents.text"));  
 		mntmContents.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		mntmContents.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/About16.gif")));
+		mntmContents.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnHelp.add(mntmContents);
 
 		mntmAbout = new JMenuItem(BUNDLE.getString("MainFrame.mntmAbout.text"));  
 		mntmAbout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Information16.gif")));
+		mntmAbout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mnHelp.add(mntmAbout);
 	}
 
@@ -476,6 +558,7 @@ public class MainFrame extends JFrame {
 	
 	private void initWorkspace(){
 		workspacePane = new JTabbedPane(JTabbedPane.TOP);
+		workspacePane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 		centerPane.setRightComponent(workspacePane);
 	}
 	
@@ -527,9 +610,6 @@ public class MainFrame extends JFrame {
 		
 		projectScrollPane = new JScrollPane();
 		projectPanel.add(projectScrollPane, BorderLayout.CENTER);
-		
-		//projectTree = new JTree();
-		//projectScrollPane.setViewportView(projectTree);
 		
 		repositoryPanel = new JPanel();
 		sidePane.addTab("Repository", null, repositoryPanel, null);		

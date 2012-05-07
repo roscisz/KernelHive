@@ -17,28 +17,43 @@ public class FileUtils {
 	 * creates new file 
 	 * @param filePath - File path
 	 * @return File if success, null if failure
+	 * @throws IOException
+	 * @throws SecurityException
 	 */
-	public static File createNewFile(String filePath) throws IOException{
+	public static File createNewFile(String filePath) throws IOException, SecurityException{
 		File file = null;
 		try {
-			String dirpath = filePath.substring(0, filePath.lastIndexOf(System.getProperty("file.separator")));
+			file = new File(filePath);
+			if(file.exists()){
+				return null;
+			}
+			String dirpath = file.getParent();
 			File dir = new File(dirpath);
 			if(!dir.exists()){
 				dir.mkdirs();
 			}			
-			file = new File(filePath);
 			file.createNewFile();
 		} catch (IOException e) {
 			LOG.severe("Error creating new file!");
 			e.printStackTrace();
 			throw e;
-		} 
+		}
 		return file;
 	}
 	
-	public static File createNewDirectory(String dirPath) throws IOException{
+	/**
+	 * 
+	 * @param dirPath
+	 * @return
+	 * @throws SecurityException
+	 */
+	public static File createNewDirectory(String dirPath) throws SecurityException{
 		File file = new File(dirPath);
-		file.mkdirs();
-		return file;
+		if(file.exists()){
+			return null;
+		} else{
+			file.mkdirs();
+			return file;
+		}
 	}
 }
