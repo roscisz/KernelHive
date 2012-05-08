@@ -6,15 +6,14 @@ import com.mxgraph.model.mxCell;
 
 public interface IWorkflowNode {
 
-	mxCell getGraphNode();
-	void setGraphNode(mxCell graphNode);
 	List<IWorkflowNode> getFollowingNodes();
 	List<IWorkflowNode> getPreviousNodes();
 	List<IWorkflowNode> getChildrenNodes();
 	IWorkflowNode getParentNode();
 	void setParentNode(IWorkflowNode node);
-	long getNodeId();
-	void setNodeId(long id);
+	mxCell getGraphCell();
+	String getNodeId();
+	void setNodeId(String id);
 	
 	boolean addFollowingNode(IWorkflowNode node);
 	void removeFollowingNode(IWorkflowNode node);
@@ -23,5 +22,5 @@ public interface IWorkflowNode {
 	boolean addChildrenNode(IWorkflowNode node);
 	void removeChildrenNode(IWorkflowNode node);
 	
-	boolean delete();
+	void delete();
 }

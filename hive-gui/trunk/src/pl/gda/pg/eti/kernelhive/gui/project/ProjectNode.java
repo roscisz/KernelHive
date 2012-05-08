@@ -21,9 +21,10 @@ public class ProjectNode implements IProjectNode, Serializable {
 	
 	private List<File> sourceFiles;
 	private IWorkflowNode workflowNode;
+	private IProject project;
 	
-	public ProjectNode(){
-		
+	public ProjectNode(IProject project){
+		this.project = project;
 	}
 
 	@Override
@@ -46,8 +47,13 @@ public class ProjectNode implements IProjectNode, Serializable {
 		workflowNode = node;
 	}
 	
-	
-	
-	
+	protected IProject getProject(){
+		return project;
+	}
+
+	@Override
+	public void delete(){
+		
+	}
 	
 }

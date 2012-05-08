@@ -1,33 +1,26 @@
 package pl.gda.pg.eti.kernelhive.gui.workflow;
 
-import java.io.Serializable;
 import java.util.List;
 
+import pl.gda.pg.eti.kernelhive.gui.project.IProjectNode;
+
 import com.mxgraph.model.mxCell;
+import com.mxgraph.view.mxGraph;
 
-public class WorkflowGraphNode implements IWorkflowNode, Serializable {
+public class WorkflowGraphNode implements IWorkflowNode {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3965841723695416386L;
-
-	private long nodeId;
-	private IWorkflowNode parentNode;
-	private mxCell graphNode;
-	private List<IWorkflowNode> childrenNodes;
-	private List<IWorkflowNode> previousNodes;
-	private List<IWorkflowNode> followingNodes;
+	
+	public IProjectNode projectNode;
+	public IWorkflowNode parentNode;
+	public mxGraph graph;
+	public List<IWorkflowNode> followingNodes;
+	public List<IWorkflowNode> previousNodes;
+	public List<IWorkflowNode> childrenNodes;
+	
 	
 	public WorkflowGraphNode(){
-
 	}
 	
-	@Override
-	public mxCell getGraphNode() {
-		return graphNode;
-	}
-
 	@Override
 	public List<IWorkflowNode> getFollowingNodes() {
 		return followingNodes;
@@ -49,9 +42,27 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	}
 
 	@Override
+	public void setParentNode(IWorkflowNode node) {
+		parentNode = node;
+		//TODO update graph
+	}
+
+	@Override
+	public String getNodeId() {
+		return null;
+		//TODO
+	}
+
+	@Override
+	public void setNodeId(String id) {
+		//TODO
+	}
+
+	@Override
 	public boolean addFollowingNode(IWorkflowNode node) {
 		if(!followingNodes.contains(node)){
 			return followingNodes.add(node);
+			//TODO update graph
 		} else{
 			return false;
 		}
@@ -62,12 +73,14 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 		if(followingNodes.contains(node)){
 			followingNodes.remove(node);
 		}
+		//TODO update graph
 	}
 
 	@Override
 	public boolean addPreviousNode(IWorkflowNode node) {
 		if(!previousNodes.contains(node)){
 			return previousNodes.add(node);
+			//TODO update graph
 		} else {
 			return false;
 		}
@@ -77,6 +90,7 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	public void removePreviousNode(IWorkflowNode node) {
 		if(previousNodes.contains(node)){
 			previousNodes.remove(node);
+			//TODO update graph
 		}		
 	}
 
@@ -84,6 +98,7 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	public boolean addChildrenNode(IWorkflowNode node) {
 		if(!childrenNodes.contains(node)){
 			return childrenNodes.add(node);
+			//TODO update graph
 		} else{
 			return false;
 		}
@@ -93,30 +108,20 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	public void removeChildrenNode(IWorkflowNode node) {
 		if(childrenNodes.contains(node)){
 			childrenNodes.remove(node);
+			//TODO update graph
 		}
 	}
 
 	@Override
-	public boolean delete() {
-		// TODO
-		return false;
-	}
-
-	public long getNodeId() {
-		return nodeId;
-	}
-
-	public void setNodeId(long nodeId) {
-		this.nodeId = nodeId;
+	public void delete() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void setGraphNode(mxCell graphNode) {
-		this.graphNode = graphNode;
+	public mxCell getGraphCell() {
+		return null;
+		//TODO
 	}
-
-	@Override
-	public void setParentNode(IWorkflowNode node) {
-		parentNode = node;
-	}
+	
 }

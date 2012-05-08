@@ -118,6 +118,7 @@ public class MainFrame extends JFrame {
 	
 	private MainFrameController controller;
 	private JScrollPane projectScrollPane;
+	private JMenuItem mntmWorkflowEditor;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
@@ -258,6 +259,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
+				controller.openTab(null);
 			}
 		});
 		mnFile.add(mntmImport);
@@ -501,15 +503,17 @@ public class MainFrame extends JFrame {
 	private void initToolsMenu(){
 		mnTools = new JMenu(BUNDLE.getString("MainFrame.mnTools.text"));  
 		mnTools.setMnemonic(KeyEvent.VK_T);
-		mnTools.addActionListener(new ActionListener() {
+		mainMenuBar.add(mnTools);
+		
+		mntmWorkflowEditor = new JMenuItem(BUNDLE.getString("MainFrame.mntmWorkflowEditor.text"));
+		mntmWorkflowEditor.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+			public void actionPerformed(ActionEvent arg0) {
+				controller.openWorkflowEditor();
 			}
 		});
-		mainMenuBar.add(mnTools);
+		mnTools.add(mntmWorkflowEditor);
 	}
 	
 	private void initHelpMenu(){

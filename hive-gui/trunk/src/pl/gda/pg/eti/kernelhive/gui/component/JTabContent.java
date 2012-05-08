@@ -21,6 +21,7 @@ public abstract class JTabContent extends JPanel {
 		dirty = false;
 	}
 	public abstract boolean saveContent(File file);
+	public abstract boolean loadContent(File file);
 	
 	public void setTabPanel(JTabPanel panel){
 		tabPanel = panel;

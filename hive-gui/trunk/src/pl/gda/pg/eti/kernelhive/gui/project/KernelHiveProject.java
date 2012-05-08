@@ -1,9 +1,7 @@
 package pl.gda.pg.eti.kernelhive.gui.project;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,27 +29,13 @@ public class KernelHiveProject implements Serializable, IProject {
 		config = new XMLConfiguration();
 	}
 	
-	@Deprecated
-	//brzydkie, projekt musi sobie sam tworzyc poczatkowa strukture pliku zeby apache configurations moglo go sobie w ogole otworzyc :(
-	private void initXmlConfigFile() throws IOException{
-		FileOutputStream fos = new FileOutputStream(projectFile);
-		OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-		osw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-		osw.flush();
-		osw.close();
-	}
-	
 	@Override
 	public void save() throws ConfigurationException{
 		if((projectFile==null)||(!projectFile.exists())){
 			try {
 				projectFile = FileUtils.createNewFile(projectDir+
 						System.getProperty("file.separator")+
-						projectName+
-						System.getProperty("file.separator")+
-						projectName+".xml");
-				//initXmlConfigFile();
-				
+						"project.xml");
 			} catch (IOException e) {
 				LOG.severe("KH: error creating new file");
 				e.printStackTrace();
