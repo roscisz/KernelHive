@@ -50,6 +50,7 @@ namespace KernelHive {
 	void ExecutionContext::write(std::string bufferName, size_t offset,
 			size_t size, const void* ptr)
 	{
+		// TODO Check for buffer existence, throw KernelHive exception
 		cl_int errorCode = clEnqueueWriteBuffer(clCommandQueue, buffers[bufferName],
 				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
@@ -61,6 +62,7 @@ namespace KernelHive {
 			size_t size, const void* ptr)
 	{
 		cl_event event;
+		// TODO Check for buffer existence, throw KernelHive exception
 		cl_int errorCode = clEnqueueWriteBuffer(clCommandQueue, buffers[bufferName],
 				CL_FALSE, offset, size, ptr, 0, NULL, &event);
 		if (errorCode != CL_SUCCESS) {
@@ -72,6 +74,7 @@ namespace KernelHive {
 	void ExecutionContext::read(std::string bufferName, size_t offset,
 			size_t size, void* ptr)
 	{
+		// TODO Check for buffer existence, throw KernelHive exception
 		cl_int errorCode = clEnqueueReadBuffer(clCommandQueue, buffers[bufferName],
 				CL_TRUE, offset, size, ptr, 0, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
@@ -83,6 +86,7 @@ namespace KernelHive {
 			size_t size, void* ptr)
 	{
 		cl_event event;
+		// TODO Check for buffer existence, throw KernelHive exception
 		cl_int errorCode = clEnqueueReadBuffer(clCommandQueue, buffers[bufferName],
 				CL_FALSE, offset, size, ptr, 0, NULL, &event);
 		if (errorCode != CL_SUCCESS) {
@@ -106,6 +110,20 @@ namespace KernelHive {
 	void ExecutionContext::buildProgramFromSource(std::string source) {
 		releaseProgram();
 		buildProgramFromSourceInternal(source.data(), source.length());
+	}
+
+	void ExecutionContext::prepareKernel(std::string kernelName) {
+		if (kernels.find(kernelName) != kernels.end()) {
+			clKernel = kernels[kernelName];
+		} else {
+			cl_int errorCode;
+			cl_kernel kernel = clCreateKernel(clProgram, kernelName.data(), &errorCode);
+			if (errorCode != CL_SUCCESS) {
+				throw OpenClException("Error creating a kernel", errorCode);
+			}
+			kernels[kernelName] = kernel;
+			clKernel = kernel;
+		}
 	}
 
 // ========================================================================= //
@@ -180,15 +198,19 @@ namespace KernelHive {
 		}
 	}
 
-	void ExecutionContext::releaseKernel() {
-		if (clKernel != NULL) {
-			clReleaseKernel(clKernel);
+	void ExecutionContext::releaseKernels() {
+		if (kernels.size() > 0) {
+			KernelMap::iterator iterator;
+			for (iterator = kernels.begin(); iterator != kernels.end(); iterator++) {
+				clReleaseKernel(iterator->second);
+			}
+			kernels.clear();
 			clKernel = NULL;
 		}
 	}
 
 	void ExecutionContext::releaseProgram() {
-		releaseKernel();
+		releaseKernels();
 		if (clProgram != NULL) {
 			clReleaseProgram(clProgram);
 			clProgram = NULL;

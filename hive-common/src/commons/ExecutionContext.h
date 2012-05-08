@@ -12,6 +12,9 @@ namespace KernelHive {
 	/** The type to use for the meomry buffers. */
 	typedef std::map<std::string, cl_mem> BufferMap;
 
+	/** The type to use for the kernels cache. */
+	typedef std::map<std::string, cl_kernel> KernelMap;
+
 	/**
 	 * Represents an execution context in which a kernel runs.
 	 * Must be initialized with a device to execute on, allows to
@@ -100,7 +103,7 @@ namespace KernelHive {
 		OpenClEvent enqueueRead(std::string bufferName, size_t offset, size_t size, void* ptr);
 
 		/**
-		 * Waits for provided OpenCL events to finish.
+		 * Waits for provided OpenCL events to finish, blocking.
 		 *
 		 * @param eventsCount the number of events to wait for
 		 * @param events the events to wait for
@@ -115,6 +118,13 @@ namespace KernelHive {
 		 * @param source the source code string of the program to build
 		 */
 		void buildProgramFromSource(std::string source);
+
+		/**
+		 * Prepares a kernel which should be executed next.
+		 *
+		 * @param kernelName the name of the kernel which should be prepared
+		 */
+		void prepareKernel(std::string kernelName);
 
 	private:
 		/** The OpenCL device to use for this context. */
@@ -132,7 +142,10 @@ namespace KernelHive {
 		/** The OpenCL program to use by this execution context. */
 		cl_program clProgram;
 
-		/** The OpenCL kernel to be executed in this execution context. */
+		/** A cache used to store already created kernels. */
+		KernelMap kernels;
+
+		/** The OpenCL kernel to be executed next in this execution context. */
 		cl_kernel clKernel;
 
 		/**
@@ -168,7 +181,7 @@ namespace KernelHive {
 		/**
 		 * Releases the current kernel, if any is built.
 		 */
-		void releaseKernel();
+		void releaseKernels();
 
 		/**
 		 * Releases the current program and any kernel associated with it.
