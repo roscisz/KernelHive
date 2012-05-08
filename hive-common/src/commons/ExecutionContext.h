@@ -107,6 +107,15 @@ namespace KernelHive {
 		 */
 		void waitForEvents(size_t eventsCount, OpenClEvent* events);
 
+		/**
+		 * Build a new program to use by this execution context.
+		 * Calling this function will cause any previous kernels and/or
+		 * programs to be released.
+		 *
+		 * @param source the source code string of the program to build
+		 */
+		void buildProgramFromSource(std::string source);
+
 	private:
 		/** The OpenCL device to use for this context. */
 		OpenClDevice device;
@@ -120,13 +129,52 @@ namespace KernelHive {
 		/** A map which holds all buffers used in this execution context. */
 		BufferMap buffers;
 
-		/** Initializes the OpenCL context. */
+		/** The OpenCL program to use by this execution context. */
+		cl_program clProgram;
+
+		/** The OpenCL kernel to be executed in this execution context. */
+		cl_kernel clKernel;
+
+		/**
+		 * Initializes the OpenCL context.
+		 */
 		void initOpenClContext();
 
-		/** Initializes an OpenCL command queue. */
+		/**
+		 * Initializes an OpenCL command queue.
+		 */
 		void initOpenClCommandQueue();
 
+		/**
+		 * Performs actual building of the program executable.
+		 */
+		void buildProgramFromSourceInternal(const char* source, size_t sourceLength);
+
+		/**
+		 * Releases the OpenCL context, if any is created.
+		 */
+		void releaseContext();
+
+		/**
+		 * Releases the OpenCL command queue, if any is created.
+		 */
+		void releaseCommandQueue();
+
+		/**
+		 * Releases any buffers which are left in this execution context.
+		 */
 		void releaseBuffers();
+
+		/**
+		 * Releases the current kernel, if any is built.
+		 */
+		void releaseKernel();
+
+		/**
+		 * Releases the current program and any kernel associated with it.
+		 */
+		void releaseProgram();
+
 	};
 
 } /* namespace KernelHive */

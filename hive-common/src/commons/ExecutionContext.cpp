@@ -9,20 +9,19 @@ namespace KernelHive {
 	ExecutionContext::ExecutionContext(const OpenClDevice& device)
 		: device(device)
 	{
+		clContext = NULL;
+		clCommandQueue = NULL;
+		clProgram = NULL;
+		clKernel = NULL;
 		initOpenClContext();
 		initOpenClCommandQueue();
 	}
 
 	ExecutionContext::~ExecutionContext() {
+		releaseProgram();
 		releaseBuffers();
-		if (clCommandQueue != NULL) {
-			clFlush(clCommandQueue);
-			clFinish(clCommandQueue);
-			clReleaseCommandQueue(clCommandQueue);
-		}
-		if (clContext != NULL) {
-			clReleaseContext(clContext);
-		}
+		releaseCommandQueue();
+		releaseContext();
 	}
 
 	void ExecutionContext::createBuffer(const std::string& name, size_t size, cl_mem_flags flags) {
@@ -104,6 +103,11 @@ namespace KernelHive {
 		}
 	}
 
+	void ExecutionContext::buildProgramFromSource(std::string source) {
+		releaseProgram();
+		buildProgramFromSourceInternal(source.data(), source.length());
+	}
+
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
@@ -138,6 +142,56 @@ namespace KernelHive {
 				clReleaseMemObject(iterator->second);
 			}
 			buffers.clear();
+		}
+	}
+
+	void ExecutionContext::buildProgramFromSourceInternal(const char* source,
+			size_t sourceLength)
+	{
+		cl_int errorCode;
+		clProgram = clCreateProgramWithSource(clContext, 1,
+				&source, &sourceLength, &errorCode);
+		// TODO Think about handling out of memory/host error codes...
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error creating a program from source", errorCode);
+		}
+		// TODO Think about adding the callback function...
+		cl_device_id openClDeviceId = device.getClDeviceId();
+		errorCode = clBuildProgram(clProgram, 1, &openClDeviceId,
+				NULL, NULL, NULL);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error building the program", errorCode);
+		}
+	}
+
+	void ExecutionContext::releaseContext() {
+		if (clContext != NULL) {
+			clReleaseContext(clContext);
+			clContext = NULL;
+		}
+	}
+
+	void ExecutionContext::releaseCommandQueue() {
+		if (clCommandQueue != NULL) {
+			clFlush(clCommandQueue);
+			clFinish(clCommandQueue);
+			clReleaseCommandQueue(clCommandQueue);
+			clCommandQueue = NULL;
+		}
+	}
+
+	void ExecutionContext::releaseKernel() {
+		if (clKernel != NULL) {
+			clReleaseKernel(clKernel);
+			clKernel = NULL;
+		}
+	}
+
+	void ExecutionContext::releaseProgram() {
+		releaseKernel();
+		if (clProgram != NULL) {
+			clReleaseProgram(clProgram);
+			clProgram = NULL;
 		}
 	}
 
