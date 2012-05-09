@@ -21,7 +21,7 @@ public class KernelHiveProject implements Serializable, IProject {
 	private File projectDir;
 	private File projectFile;
 	private List<IProjectNode> nodes = new ArrayList<IProjectNode>();
-	private XMLConfiguration config;
+	private transient XMLConfiguration config;
 	
 	public KernelHiveProject(String projectDir, String projectName){
 		this.projectName = projectName;

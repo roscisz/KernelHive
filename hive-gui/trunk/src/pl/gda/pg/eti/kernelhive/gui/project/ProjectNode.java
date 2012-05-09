@@ -53,7 +53,7 @@ public class ProjectNode implements IProjectNode, Serializable {
 
 	@Override
 	public void delete(){
-		
+		//TODO
 	}
 	
 }

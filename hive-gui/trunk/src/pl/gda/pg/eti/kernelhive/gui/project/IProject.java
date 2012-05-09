@@ -58,7 +58,7 @@ public interface IProject {
 	 */
 	void addProjectNode(IProjectNode node);
 	/**
-	 * removes the selected prject node
+	 * removes the selected project node
 	 * @param node project node to be removed
 	 * @param removeFromDisc boolean indicating whether to delete corresponding files from disc
 	 */

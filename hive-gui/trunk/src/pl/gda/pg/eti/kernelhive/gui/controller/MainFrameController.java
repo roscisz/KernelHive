@@ -35,7 +35,11 @@ import pl.gda.pg.eti.kernelhive.gui.file.io.FileUtils;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewProjectDialog;
+import pl.gda.pg.eti.kernelhive.gui.project.IProjectNode;
 import pl.gda.pg.eti.kernelhive.gui.project.KernelHiveProject;
+import pl.gda.pg.eti.kernelhive.gui.project.ProjectNode;
+import pl.gda.pg.eti.kernelhive.gui.workflow.IWorkflowNode;
+import pl.gda.pg.eti.kernelhive.gui.workflow.WorkflowGraphNode;
 
 public class MainFrameController {
 
@@ -99,7 +103,7 @@ public class MainFrameController {
 		fc.setFileFilter(ff);
 		if (fc.showDialog(frame.getContentPane(), "Select") == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			KernelHiveProject project = new KernelHiveProject(file.getParent(),
+			project = new KernelHiveProject(file.getParent(),
 					null);
 			project.load();
 			FileTreeModel model = new FileTreeModel(
@@ -303,6 +307,31 @@ public class MainFrameController {
 	}
 
 	public void showProjectProperties() {
+		//TEST CODE
+		//TODO remove
+		IProjectNode node = new ProjectNode(project);
+		IWorkflowNode wfNode = new WorkflowGraphNode(node, "1");
+		wfNode.setX(100);
+		wfNode.setY(100);
+		IProjectNode node2 = new ProjectNode(project);
+		IWorkflowNode wfNode2 = new WorkflowGraphNode(node2, "2");
+		wfNode2.setX(200);
+		wfNode2.setY(200);
+		IProjectNode node3 = new ProjectNode(project);
+		IWorkflowNode wfNode3 = new WorkflowGraphNode(node3, "3");
+		wfNode3.setX(200);
+		wfNode3.setY(200);
+		wfNode2.addPreviousNode(wfNode);
+		wfNode.addFollowingNode(wfNode2);
+		wfNode2.addChildrenNode(wfNode3);
+		wfNode3.setParentNode(wfNode2);
+		node.setWorkflowNode(wfNode);
+		node2.setWorkflowNode(wfNode2);
+		node3.setWorkflowNode(wfNode3);
+		project.addProjectNode(node);
+		project.addProjectNode(node2);
+		project.addProjectNode(node3);
+		//
 		WorkflowEditor editor = new WorkflowEditor(frame, "graph editor", project);
 		frame.getWorkspacePane().add(editor, 0);
 		frame.getWorkspacePane().setTabComponentAt(0,

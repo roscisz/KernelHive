@@ -2,7 +2,7 @@ package pl.gda.pg.eti.kernelhive.gui.workflow;
 
 import java.util.List;
 
-import com.mxgraph.model.mxCell;
+import pl.gda.pg.eti.kernelhive.gui.project.IProjectNode;
 
 public interface IWorkflowNode {
 
@@ -11,9 +11,10 @@ public interface IWorkflowNode {
 	List<IWorkflowNode> getChildrenNodes();
 	IWorkflowNode getParentNode();
 	void setParentNode(IWorkflowNode node);
-	mxCell getGraphCell();
 	String getNodeId();
 	void setNodeId(String id);
+	IProjectNode getProjectNode();
+	void setProjectNode(IProjectNode node);
 	
 	boolean addFollowingNode(IWorkflowNode node);
 	void removeFollowingNode(IWorkflowNode node);
@@ -21,6 +22,11 @@ public interface IWorkflowNode {
 	void removePreviousNode(IWorkflowNode node);
 	boolean addChildrenNode(IWorkflowNode node);
 	void removeChildrenNode(IWorkflowNode node);
+	
+	int getX();
+	int getY();
+	void setX(int x);
+	void setY(int y);
 	
 	void delete();
 }
