@@ -55,6 +55,14 @@ namespace KernelHive {
 		void releaseBuffer(const std::string& name);
 
 		/**
+		 * Gets the raw OpenCL buffer allocated in this execution context.
+		 *
+		 * @param name the name of the buffer to fetch
+		 * @return the buffer of provided name or NULL if none was found
+		 */
+		cl_mem getRawBuffer(const std::string& name);
+
+		/**
 		 * Performs a blocking write to a buffer previously created in this
 		 * execution context.
 		 *
@@ -125,6 +133,16 @@ namespace KernelHive {
 		 * @param kernelName the name of the kernel which should be prepared
 		 */
 		void prepareKernel(std::string kernelName);
+
+		/**
+		 * Sets the argument for the current kernel.
+		 *
+		 * @param index the index of the argument. Arguments are numbered
+		 * 		from 0 to n-1, from left to right
+		 * @param size the size of the argument being set
+		 * @param value the value of the argument
+		 */
+		void setKernelArgument(cl_uint index, size_t size, const void* value);
 
 	private:
 		/** The OpenCL device to use for this context. */

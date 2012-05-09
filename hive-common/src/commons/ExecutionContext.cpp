@@ -47,6 +47,15 @@ namespace KernelHive {
 		}
 	}
 
+	cl_mem ExecutionContext::getRawBuffer(const std::string& name) {
+		cl_mem buffer = NULL;
+		BufferMap::iterator iterator = buffers.find(name);
+		if (iterator != buffers.end()) {
+			buffer = buffers[name];
+		}
+		return buffer;
+	}
+
 	void ExecutionContext::write(std::string bufferName, size_t offset,
 			size_t size, const void* ptr)
 	{
@@ -123,6 +132,15 @@ namespace KernelHive {
 			}
 			kernels[kernelName] = kernel;
 			clKernel = kernel;
+		}
+	}
+
+	void ExecutionContext::setKernelArgument(cl_uint index, size_t size,
+			const void* value)
+	{
+		cl_int errorCode = clSetKernelArg(clKernel, index, size, value);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error setting kernel argument.", errorCode);
 		}
 	}
 
