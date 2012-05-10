@@ -144,6 +144,39 @@ namespace KernelHive {
 		 */
 		void setKernelArgument(cl_uint index, size_t size, const void* value);
 
+		/**
+		 * Executes a currently set-up kernel in this execution context. The method
+		 * blocks until the execution has finished.
+		 *
+		 * @param numDimensions the number of dimensions to use for this kernel
+		 * @param globalWorkOffset specifies the numDimensions offsets of the
+		 * 		global work item IDs in each dimension
+		 * @param globalWorkSize specifies the numDimensions sizes of the total
+		 * 		numbers of work-items which will execute in each dimension
+		 * @param localWorkSize defines the number of work-items in each
+		 * 		dimension in a single work group
+		 */
+		void executeKernel(cl_uint numDimensions, const size_t* globalWorkOffset,
+				const size_t* globalWorkSize, const size_t* localWorkSize);
+
+		/**
+		 * Executes a currently set-up kernel in this execution context. The method
+		 * returns an OpenClEvent object which can be used to wait for it to finish
+		 * or check it's status.
+		 *
+		 * @param numDimensions the number of dimensions to use for this kernel
+		 * @param globalWorkOffset specifies the numDimensions offsets of the
+		 * 		global work item IDs in each dimension
+		 * @param globalWorkSize specifies the numDimensions sizes of the total
+		 * 		numbers of work-items which will execute in each dimension
+		 * @param localWorkSize defines the number of work-items in each
+		 * 		dimension in a single work group
+		 * @return an OpenClEvent object which can be used to wait for the execution
+		 * 		to finish
+		 */
+		OpenClEvent enqueueKernelExecution(cl_uint numDimensions, const size_t* globalWorkOffset,
+				const size_t* globalWorkSize, const size_t* localWorkSize);
+
 	private:
 		/** The OpenCL device to use for this context. */
 		OpenClDevice device;

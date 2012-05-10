@@ -144,6 +144,33 @@ namespace KernelHive {
 		}
 	}
 
+	void ExecutionContext::executeKernel(cl_uint numDimensions, const size_t* globalWorkOffset,
+			const size_t* globalWorkSize, const size_t* localWorkSize)
+	{
+		cl_event event;
+		cl_int errorCode = clEnqueueNDRangeKernel(clCommandQueue, clKernel,
+				numDimensions, globalWorkOffset, globalWorkSize, localWorkSize,
+				0, NULL, &event);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error executing a kernel", errorCode);
+		}
+		clWaitForEvents(1, &event);
+	}
+
+	OpenClEvent ExecutionContext::enqueueKernelExecution(cl_uint numDimensions,
+			const size_t* globalWorkOffset, const size_t* globalWorkSize,
+			const size_t* localWorkSize)
+	{
+		cl_event event;
+		cl_int errorCode = clEnqueueNDRangeKernel(clCommandQueue, clKernel,
+				numDimensions, globalWorkOffset, globalWorkSize, localWorkSize,
+				0, NULL, &event);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error enqueuing kernel execution", errorCode);
+		}
+		return OpenClEvent(event);
+	}
+
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
