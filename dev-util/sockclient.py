@@ -1,6 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+##
+# sockclient.py read|write port [file] 
+#
+# A simple socket client. Allows to operate in either of 2 modes:
+# 	- write: will read input and wait for a socket connection on a given
+#		port to send that data
+#	- read: will attempt to read data from a given port
+#
+# If in the write mode, the client will wait for user input and send it
+# over the socket. If the file is specified, the file's content will be sent
+# instead.
+#
+
 import sys
 import socket
 
