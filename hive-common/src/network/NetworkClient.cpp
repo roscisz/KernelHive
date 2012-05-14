@@ -11,11 +11,13 @@
 
 namespace KernelHive {
 
-NetworkClient::NetworkClient(const char *host, int port) {
-	this->serverAddress = prepareServerAddress(host, port);
+NetworkClient::NetworkClient(NetworkAddress *serverAddress) {
+	this->serverAddress = prepareServerAddress(serverAddress);
 }
 
-struct sockaddr_in NetworkClient::prepareServerAddress(const char *host, int port) {
+struct sockaddr_in NetworkClient::prepareServerAddress(NetworkAddress *serverAddress) {
+	char *host = serverAddress->host;
+	int port = serverAddress->port;
 	struct hostent *server;
 	struct sockaddr_in serveraddr;
 

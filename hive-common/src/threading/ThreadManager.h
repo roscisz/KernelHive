@@ -24,8 +24,13 @@ class ThreadManager : public Singleton<ThreadManager> {
         void waitForThreads();
         void runThread(Thread* threadObject);
         
+        // Utility methods:
+        void forkAndExitParent();
+
     private:
         static void *runThread(void *arg);
+        void connectSignals();
+        //void abortHandler(int sig);
         
         std::vector<Thread *>* threadObjects;
         std::vector<pthread_t>* threadInfos;

@@ -8,6 +8,7 @@
 #ifndef WORKER_H_
 #define WORKER_H_
 
+#include "../network/NetworkAddress.h"
 #include "../network/UDPReporter.h"
 #include "../network/IReportable.h"
 
@@ -15,7 +16,7 @@ namespace KernelHive {
 
 class Worker : public IReportable {
 public:
-	Worker(char *clusterHostname, int clusterPort);
+	Worker(NetworkAddress *clusterAddress);
 	int getPercentDone();
 	virtual void work() = 0;
 	virtual ~Worker();

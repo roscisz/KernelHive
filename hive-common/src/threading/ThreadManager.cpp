@@ -1,5 +1,6 @@
 #include "ThreadManager.h"
 #include "../commons/Logger.h"
+#include <signal.h>
 
 namespace KernelHive {
 
@@ -50,6 +51,17 @@ void ThreadManager::runThread(Thread* thread) {
     threadObjects->push_back(thread);
 }
 
+/*
+void ThreadManager::abortHandler(int sig) {
+	Logger::log(INFO, "Recieved signal [%u], stopping all threads", sig);
+    //ThreadManager::GetPtr()->pleaseStopAllThreads();
+}*/
+
+void ThreadManager::connectSignals() {
+	//signal(SIGINT, ThreadManager::abortHandler);
+	//signal(SIGTERM, ThreadManager::abortHandler);
+	//signal(SIGHUP, restartHandler);
+}
 
 ThreadManager::~ThreadManager() {
     std::vector<Thread*>::iterator it;

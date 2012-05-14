@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "NetworkAddress.h"
 #include "NetworkClient.h"
 #include "TCPClientListener.h"
 
@@ -29,7 +30,7 @@ private:
 	char* readMessage();
 	void disconnectFromSocket();
 public:
-	TCPClient(const char *host, int port);
+	TCPClient(NetworkAddress *serverAddress);
 	virtual ~TCPClient();
 	void registerListener(TCPClientListener *listener);
 	void sendMessage(char *msg); // FIXME: Should be protected?

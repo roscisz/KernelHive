@@ -11,22 +11,22 @@
 #include "UnitManager.h"
 #include "commons/Logger.h"
 #include "commons/OpenClPlatform.h"
+#include "commons/WorkerProxy.h"
 
+#include "network/NetworkAddress.h"
 #include "network/UDPClient.h"
 #include "threading/ThreadManager.h"
-#include "SampleWorker.h"
+#include "commons/SampleWorker.h"
 
 namespace KernelHive {
 
 UnitManager::UnitManager() {
 
 	// Testing worker
-	SampleWorker *worker = new SampleWorker("localhost", 31339);
-	worker->work();
-	delete worker;
+	WorkerProxy *proxy = WorkerProxy::create(/* type ,*/new NetworkAddress("localhost", 31339));
 
 	try {
-		this->clusterProxy = new ClusterProxy("localhost", 31338);
+		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338));
 	}
 	catch(const char *msg) {
 		Logger::log(FATAL, "Couldn't open Cluster Proxy: %s\n", msg);

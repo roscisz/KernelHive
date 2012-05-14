@@ -15,7 +15,7 @@
 
 namespace KernelHive {
 
-TCPClient::TCPClient(const char *host, int port) : NetworkClient(host, port) {
+TCPClient::TCPClient(NetworkAddress *serverAddress) : NetworkClient(serverAddress) {
 
 }
 

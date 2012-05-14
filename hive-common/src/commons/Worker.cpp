@@ -11,9 +11,9 @@
 
 namespace KernelHive {
 
-Worker::Worker(char *clusterHostname, int clusterPort) {
+Worker::Worker(NetworkAddress *clusterAddress) {
 
-	this->reporter = new UDPReporter(clusterHostname, clusterPort, this);
+	this->reporter = new UDPReporter(clusterAddress, this);
 	this->percentDone = -1;
 
 	ThreadManager::Get()->runThread(this->reporter);

@@ -9,12 +9,13 @@
 #define UDPCLIENT_H_
 
 #include "NetworkClient.h"
+#include "NetworkAddress.h"
 
 namespace KernelHive {
 
 class UDPClient : public NetworkClient {
 public:
-	UDPClient(const char* host, int port);
+	UDPClient(NetworkAddress *serverAddress);
 	void sendMessage(char* message);
 	virtual ~UDPClient();
 };

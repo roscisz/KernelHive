@@ -8,13 +8,14 @@
 #ifndef SAMPLEWORKER_H_
 #define SAMPLEWORKER_H_
 
-#include "commons/Worker.h"
+#include "../network/NetworkAddress.h"
+#include "Worker.h"
 
 namespace KernelHive {
 
 class SampleWorker : public Worker {
 public:
-	SampleWorker(char *clusterHostname, int clusterPort);
+	SampleWorker(NetworkAddress *clusterAddress);
 	void work();
 	virtual ~SampleWorker();
 };

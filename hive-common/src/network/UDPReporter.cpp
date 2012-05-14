@@ -11,10 +11,10 @@
 
 namespace KernelHive {
 
-UDPReporter::UDPReporter(char *host, int port, IReportable *reportable) {
+UDPReporter::UDPReporter(NetworkAddress *serverAddress, IReportable *reportable) {
 
 	this->reportable = reportable;
-	this->udpClient = new UDPClient(host, port);
+	this->udpClient = new UDPClient(serverAddress);
 
 }
 

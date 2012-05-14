@@ -10,7 +10,7 @@
 
 namespace KernelHive {
 
-SampleWorker::SampleWorker(char *clusterHostname, int clusterPort) : Worker(clusterHostname, clusterPort){
+SampleWorker::SampleWorker(NetworkAddress * clusterAddress) : Worker(clusterAddress){
 	// TODO Auto-generated constructor stub
 
 }

@@ -10,6 +10,7 @@
 
 #include <netinet/in.h>
 #include <netdb.h>
+#include "NetworkAddress.h"
 
 namespace KernelHive {
 
@@ -18,10 +19,10 @@ protected:
 	struct sockaddr_in serverAddress;
 	int sockfd;
 
-	struct sockaddr_in prepareServerAddress(const char *host, int port);
+	struct sockaddr_in prepareServerAddress(NetworkAddress *serverAddress);
 	int openSocket(int type);
 public:
-	NetworkClient(const char *host, int port);
+	NetworkClient(NetworkAddress *serverAddress);
 	virtual ~NetworkClient();
 };
 

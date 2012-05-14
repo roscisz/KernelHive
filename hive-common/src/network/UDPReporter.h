@@ -10,6 +10,7 @@
 
 #define UDP_REPORT_SECONDS 4
 
+#include "../network/NetworkAddress.h"
 #include "../threading/LoopedThread.h"
 #include "IReportable.h"
 #include "UDPClient.h"
@@ -18,7 +19,7 @@ namespace KernelHive {
 
 class UDPReporter : public LoopedThread {
 public:
-	UDPReporter(char* host, int port, IReportable *reportable);
+	UDPReporter(NetworkAddress *serverAddress, IReportable *reportable);
 	virtual ~UDPReporter();
 	void executeLoopCycle();
 private:
