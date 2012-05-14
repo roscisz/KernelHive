@@ -105,6 +105,7 @@ public class MainFrameController {
 			File file = fc.getSelectedFile();
 			project = new KernelHiveProject(file.getParent(),
 					null);
+			project.setProjectFile(file);
 			project.load();
 			FileTreeModel model = new FileTreeModel(
 					project.getProjectDirectory());
@@ -309,28 +310,28 @@ public class MainFrameController {
 	public void showProjectProperties() {
 		//TEST CODE
 		//TODO remove
-		IProjectNode node = new ProjectNode(project);
-		IWorkflowNode wfNode = new WorkflowGraphNode(node, "1");
-		wfNode.setX(100);
-		wfNode.setY(100);
-		IProjectNode node2 = new ProjectNode(project);
-		IWorkflowNode wfNode2 = new WorkflowGraphNode(node2, "2");
-		wfNode2.setX(200);
-		wfNode2.setY(200);
-		IProjectNode node3 = new ProjectNode(project);
-		IWorkflowNode wfNode3 = new WorkflowGraphNode(node3, "3");
-		wfNode3.setX(200);
-		wfNode3.setY(200);
-		wfNode2.addPreviousNode(wfNode);
-		wfNode.addFollowingNode(wfNode2);
-		wfNode2.addChildrenNode(wfNode3);
-		wfNode3.setParentNode(wfNode2);
-		node.setWorkflowNode(wfNode);
-		node2.setWorkflowNode(wfNode2);
-		node3.setWorkflowNode(wfNode3);
-		project.addProjectNode(node);
-		project.addProjectNode(node2);
-		project.addProjectNode(node3);
+//		IProjectNode node = new ProjectNode(project);
+//		IWorkflowNode wfNode = new WorkflowGraphNode(node, "1");
+//		wfNode.setX(100);
+//		wfNode.setY(100);
+//		IProjectNode node2 = new ProjectNode(project);
+//		IWorkflowNode wfNode2 = new WorkflowGraphNode(node2, "2");
+//		wfNode2.setX(200);
+//		wfNode2.setY(200);
+//		IProjectNode node3 = new ProjectNode(project);
+//		IWorkflowNode wfNode3 = new WorkflowGraphNode(node3, "3");
+//		wfNode3.setX(200);
+//		wfNode3.setY(200);
+//		wfNode2.addPreviousNode(wfNode);
+//		wfNode.addFollowingNode(wfNode2);
+//		wfNode2.addChildrenNode(wfNode3);
+//		wfNode3.setParentNode(wfNode2);
+//		node.setWorkflowNode(wfNode);
+//		node2.setWorkflowNode(wfNode2);
+//		node3.setWorkflowNode(wfNode3);
+//		project.addProjectNode(node);
+//		project.addProjectNode(node2);
+//		project.addProjectNode(node3);
 		//
 		WorkflowEditor editor = new WorkflowEditor(frame, "graph editor", project);
 		frame.getWorkspacePane().add(editor, 0);

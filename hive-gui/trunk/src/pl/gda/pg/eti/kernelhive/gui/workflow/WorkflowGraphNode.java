@@ -53,6 +53,7 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	@Override
 	public void setParentNode(IWorkflowNode node) {
 		parentNode = node;
+		node.addChildrenNode(this);
 	}
 
 	@Override
@@ -68,9 +69,11 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	@Override
 	public boolean addFollowingNode(IWorkflowNode node) {
 		if(!followingNodes.contains(node)){
-			return followingNodes.add(node);
+			followingNodes.add(node);
+			node.addPreviousNode(this);
+			return true;
 		} else{
-			return false;
+			return true;
 		}
 	}
 
@@ -78,15 +81,18 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	public void removeFollowingNode(IWorkflowNode node) {
 		if(followingNodes.contains(node)){
 			followingNodes.remove(node);
+			node.removePreviousNode(this);
 		}
 	}
 
 	@Override
 	public boolean addPreviousNode(IWorkflowNode node) {
 		if(!previousNodes.contains(node)){
-			return previousNodes.add(node);
+			previousNodes.add(node);
+			node.addFollowingNode(this);
+			return true;
 		} else {
-			return false;
+			return true;
 		}
 	}
 
@@ -94,15 +100,18 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	public void removePreviousNode(IWorkflowNode node) {
 		if(previousNodes.contains(node)){
 			previousNodes.remove(node);
+			node.removeFollowingNode(this);			
 		}		
 	}
 
 	@Override
 	public boolean addChildrenNode(IWorkflowNode node) {
 		if(!childrenNodes.contains(node)){
-			return childrenNodes.add(node);
+			childrenNodes.add(node);
+			node.setParentNode(this);
+			return true;
 		} else{
-			return false;
+			return true;
 		}
 	}
 
@@ -110,6 +119,7 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	public void removeChildrenNode(IWorkflowNode node) {
 		if(childrenNodes.contains(node)){
 			childrenNodes.remove(node);
+			node.setParentNode(null);
 		}
 	}
 
@@ -148,5 +158,64 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ nodeId.hashCode();
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WorkflowGraphNode other = (WorkflowGraphNode) obj;
+		if (childrenNodes == null) {
+			if (other.childrenNodes != null)
+				return false;
+		} else if (!childrenNodes.equals(other.childrenNodes))
+			return false;
+		if (followingNodes == null) {
+			if (other.followingNodes != null)
+				return false;
+		} else if (!followingNodes.equals(other.followingNodes))
+			return false;
+		if (nodeId == null) {
+			if (other.nodeId != null)
+				return false;
+		} else if (!nodeId.equals(other.nodeId))
+			return false;
+		if (parentNode == null) {
+			if (other.parentNode != null)
+				return false;
+		} else if (!parentNode.equals(other.parentNode))
+			return false;
+		if (previousNodes == null) {
+			if (other.previousNodes != null)
+				return false;
+		} else if (!previousNodes.equals(other.previousNodes))
+			return false;
+		if (projectNode == null) {
+			if (other.projectNode != null)
+				return false;
+		} else if (!projectNode.equals(other.projectNode))
+			return false;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		return true;
+	}
+	
+	
 
 }
