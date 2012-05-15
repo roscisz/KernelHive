@@ -15,11 +15,12 @@
 namespace KernelHive {
 
 WorkerProxy::WorkerProxy(char *binaryPath, NetworkAddress *clusterAddress) {
-	char *params[3];
+	char *params[4];
 
 	params[1] = clusterAddress->host;
 	params[2] = (char *) calloc(5, sizeof(char));
 	sprintf(params[2], "%d", clusterAddress->port);
+	// params[4] = kernel+data
 
 	forkAndExec(binaryPath, params);
 }

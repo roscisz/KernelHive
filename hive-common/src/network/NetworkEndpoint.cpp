@@ -7,15 +7,15 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "NetworkClient.h"
+#include "NetworkEndpoint.h"
 
 namespace KernelHive {
 
-NetworkClient::NetworkClient(NetworkAddress *serverAddress) {
+NetworkEndpoint::NetworkEndpoint(NetworkAddress *serverAddress) {
 	this->serverAddress = prepareServerAddress(serverAddress);
 }
 
-struct sockaddr_in NetworkClient::prepareServerAddress(NetworkAddress *serverAddress) {
+struct sockaddr_in NetworkEndpoint::prepareServerAddress(NetworkAddress *serverAddress) {
 	char *host = serverAddress->host;
 	int port = serverAddress->port;
 	struct hostent *server;
@@ -33,13 +33,13 @@ struct sockaddr_in NetworkClient::prepareServerAddress(NetworkAddress *serverAdd
 	return serveraddr;
 }
 
-int NetworkClient::openSocket(int type) {
+int NetworkEndpoint::openSocket(int type) {
 	int sockfd = socket(AF_INET, type, 0);
 	if (sockfd < 0)	throw("Couldn't open socket.\n");
 	return sockfd;
 }
 
-NetworkClient::~NetworkClient() {
+NetworkEndpoint::~NetworkEndpoint() {
 	// TODO Auto-generated destructor stub
 }
 

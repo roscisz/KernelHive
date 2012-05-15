@@ -39,6 +39,16 @@ public class TCPServer implements Runnable {
 		// FIXME: Who's responsible for thread management?
 		new Thread(this).start();
 	}
+	
+	public static void sendMessage(SocketChannel socketChannel, String message) {		
+		try {
+			socketChannel.write(Decoder.encode(message));
+		} catch (CommunicationException ce) {
+			ce.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private void prepareSocket(String host, int port) throws IOException {
 		server = ServerSocketChannel.open();
@@ -109,15 +119,5 @@ public class TCPServer implements Runnable {
 		}
 		
 		return buffer;
-	}
-
-	public static void sendMessage(SocketChannel socketChannel, String message) {		
-		try {
-			socketChannel.write(Decoder.encode(message));
-		} catch (CommunicationException ce) {
-			ce.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }

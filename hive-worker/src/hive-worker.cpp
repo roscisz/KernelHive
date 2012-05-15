@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 
 	try {
 		KernelHive::SampleWorker *worker = new KernelHive::SampleWorker(address);
-		worker->work();
+		worker->work(argv);
 		delete worker;
 	}
 	catch(const char *str) {

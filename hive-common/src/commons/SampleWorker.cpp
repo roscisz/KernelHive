@@ -15,7 +15,7 @@ SampleWorker::SampleWorker(NetworkAddress * clusterAddress) : Worker(clusterAddr
 
 }
 
-void SampleWorker::work() {
+void SampleWorker::work(char *const argv[]) {
 	int i;
 	for(i = 0; i <= 25; i++) {
 		this->setPercentDone(4*i);

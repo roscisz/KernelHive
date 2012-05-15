@@ -12,7 +12,7 @@
 #include <sys/socket.h>
 
 #include "NetworkAddress.h"
-#include "NetworkClient.h"
+#include "NetworkEndpoint.h"
 #include "TCPClientListener.h"
 
 #define MAX_MESSAGE_BYTES 1024
@@ -20,7 +20,7 @@
 
 namespace KernelHive {
 
-class TCPClient : public NetworkClient {
+class TCPClient : public NetworkEndpoint {
 private:
 	TCPClientListener *listener;
 

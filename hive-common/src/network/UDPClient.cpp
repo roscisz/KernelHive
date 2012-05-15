@@ -18,7 +18,7 @@
 
 namespace KernelHive {
 
-UDPClient::UDPClient(NetworkAddress *serverAddress) : NetworkClient(serverAddress) {
+UDPClient::UDPClient(NetworkAddress *serverAddress) : NetworkEndpoint(serverAddress) {
 
 	this->sockfd = openSocket(SOCK_DGRAM);
 

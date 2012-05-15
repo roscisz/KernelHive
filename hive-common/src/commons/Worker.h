@@ -18,7 +18,7 @@ class Worker : public IReportable {
 public:
 	Worker(NetworkAddress *clusterAddress);
 	int getPercentDone();
-	virtual void work() = 0;
+	virtual void work(char *const argv[]) = 0;
 	virtual ~Worker();
 protected:
 	void setPercentDone(int percentDone);

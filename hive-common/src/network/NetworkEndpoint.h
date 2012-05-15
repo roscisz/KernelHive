@@ -14,7 +14,7 @@
 
 namespace KernelHive {
 
-class NetworkClient {
+class NetworkEndpoint {
 protected:
 	struct sockaddr_in serverAddress;
 	int sockfd;
@@ -22,8 +22,8 @@ protected:
 	struct sockaddr_in prepareServerAddress(NetworkAddress *serverAddress);
 	int openSocket(int type);
 public:
-	NetworkClient(NetworkAddress *serverAddress);
-	virtual ~NetworkClient();
+	NetworkEndpoint(NetworkAddress *serverAddress);
+	virtual ~NetworkEndpoint();
 };
 
 }

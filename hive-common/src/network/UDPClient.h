@@ -8,12 +8,12 @@
 #ifndef UDPCLIENT_H_
 #define UDPCLIENT_H_
 
-#include "NetworkClient.h"
+#include "NetworkEndpoint.h"
 #include "NetworkAddress.h"
 
 namespace KernelHive {
 
-class UDPClient : public NetworkClient {
+class UDPClient : public NetworkEndpoint {
 public:
 	UDPClient(NetworkAddress *serverAddress);
 	void sendMessage(char* message);
