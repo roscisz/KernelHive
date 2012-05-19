@@ -2,10 +2,11 @@
 file( GLOB sources "src/commons/*" "src/network/*" "src/threading/*" )
 
 # Build the library, link OpenCL to it
-add_library( Commons STATIC ${sources} )
-target_link_libraries( Commons OpenCL )
+add_library( hivecommons SHARED ${sources} )
+target_link_libraries( hivecommons OpenCL )
+target_link_libraries( hivecommons pthread )
 
 # Build the tester executable, link the built library to it
 add_executable( Tester "src/Main.cpp" )
-target_link_libraries( Tester Commons )
+target_link_libraries( Tester hivecommons )
 
