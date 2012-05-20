@@ -16,7 +16,7 @@ public:
 	 *
 	 * @param clusterAddress the cluster address
 	 */
-	DataProcessor(NetworkAddress * clusterAddress);
+	DataProcessor(NetworkAddress* clusterAddress);
 
 	/**
 	 * The processing logic should be implemented in this method.

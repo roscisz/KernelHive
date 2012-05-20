@@ -16,6 +16,8 @@ Worker::Worker(NetworkAddress *clusterAddress) {
 	this->reporter = new UDPReporter(clusterAddress, this);
 	this->percentDone = -1;
 
+	threadManager = ThreadManager::Get();
+
 	ThreadManager::Get()->runThread(this->reporter);
 }
 

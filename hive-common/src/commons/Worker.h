@@ -8,6 +8,7 @@
 #ifndef WORKER_H_
 #define WORKER_H_
 
+#include "../threading/ThreadManager.h"
 #include "../network/NetworkAddress.h"
 #include "../network/UDPReporter.h"
 #include "../network/IReportable.h"
@@ -21,6 +22,9 @@ public:
 	virtual void work(char *const argv[]) = 0;
 	virtual ~Worker();
 protected:
+	/** The thread manager - allows to run and control thread operations. */
+	ThreadManager* threadManager;
+
 	void setPercentDone(int percentDone);
 private:
 	int percentDone;

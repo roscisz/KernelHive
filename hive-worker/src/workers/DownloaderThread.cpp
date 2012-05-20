@@ -14,10 +14,13 @@ void DownloaderThread::run() {
 }
 
 void DownloaderThread::pleaseStop() {
+	pthread_mutex_lock(&stopFlagMutex);
 	shouldStop = true;
+	pthread_mutex_unlock(&stopFlagMutex);
 }
 
 DownloaderThread::DownloaderThread() {
+	pthread_mutex_init(&stopFlagMutex, NULL);
 	shouldStop = false;
 }
 

@@ -1,6 +1,8 @@
 #ifndef KERNEL_HIVE_DATA_DOWNLOADER_H
 #define KERNEL_HIVE_DATA_DOWNLOADER_H
 
+#include <pthread.h>
+
 #include "threading/Thread.h"
 
 namespace KernelHive {
@@ -36,6 +38,9 @@ public:
 private:
 	/** A variable which indicates that this thread should stop execution. */
 	bool shouldStop;
+
+	/** A lock for the stop flag. */
+	pthread_mutex_t stopFlagMutex;
 
 };
 
