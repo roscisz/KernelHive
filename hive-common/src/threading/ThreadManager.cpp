@@ -19,6 +19,11 @@ void ThreadManager::pleaseStopAllThreads() {
     std::vector<Thread *>::iterator it;
     for(it = threadObjects->begin(); it != threadObjects->end(); it++)
         (*it)->pleaseStop();
+    ThreadMap::iterator threadIter;
+    for (threadIter = threadsMap.begin(); threadIter != threadsMap.end(); threadIter++) {
+		Thread* thread = threadIter->second;
+    	thread->pleaseStop();
+	}
 }
 
 void ThreadManager::waitForThreads() {
@@ -27,6 +32,13 @@ void ThreadManager::waitForThreads() {
         if(pthread_join(*it, NULL) < 0)
         	Logger::log(FATAL, "pthread_join failed");
     }
+    ThreadInfoMap::iterator threadInfoIter;
+	for (threadInfoIter = threadInfoMap.begin(); threadInfoIter != threadInfoMap.end(); threadInfoIter++) {
+		pthread_t threadInfo = threadInfoIter->second;
+		if (pthread_join(threadInfo, NULL) < 0) {
+			Logger::log(FATAL, "pthread_join for named thread failed");
+		}
+	}
 }
 
 /*
@@ -57,6 +69,42 @@ void ThreadManager::abortHandler(int sig) {
     //ThreadManager::GetPtr()->pleaseStopAllThreads();
 }*/
 
+void ThreadManager::runThread(std::string& threadName, Thread* threadObject) {
+	pthread_t threadInfo;
+	pthread_create(&threadInfo, NULL, &ThreadManager::runThread, (void*) (threadObject));
+	threadsMap[threadName] = threadObject;
+	threadInfoMap[threadName] = threadInfo;
+	Logger::log(INFO, "Named pthread '%s' created [%u]", threadName.data(), threadInfo);
+}
+
+void ThreadManager::pleaseStopThread(std::string& threadName) {
+	ThreadMap::iterator iterator = threadsMap.find(threadName);
+	if (iterator != threadsMap.end()) {
+		Thread* thread = threadsMap[threadName];
+		thread->pleaseStop();
+	}
+}
+
+void ThreadManager::waitForThread(std::string& threadName) {
+	ThreadInfoMap::iterator iterator = threadInfoMap.find(threadName);
+	if (iterator != threadInfoMap.end()) {
+		pthread_t threadInfo = threadInfoMap[threadName];
+		if (pthread_join(threadInfo, NULL) < 0) {
+			Logger::log(FATAL, "pthread_join for named thread '%s' failed",
+					threadName.data());
+		}
+	}
+}
+
+void ThreadManager::cleanUpMaps() {
+	ThreadMap::iterator threadIter;
+	for (threadIter = threadsMap.begin(); threadIter != threadsMap.end(); threadIter++) {
+		delete threadIter->second;
+	}
+	threadsMap.clear();
+	threadInfoMap.clear();
+}
+
 void ThreadManager::connectSignals() {
 	//signal(SIGINT, ThreadManager::abortHandler);
 	//signal(SIGTERM, ThreadManager::abortHandler);
@@ -72,6 +120,8 @@ ThreadManager::~ThreadManager() {
 
     delete threadInfos;
     delete threadObjects;
+
+    cleanUpMaps();
 }
 
 }
