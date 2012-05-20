@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 
 	try {
 		KernelHive::DataProcessor *worker = new KernelHive::DataProcessor(address);
-		worker->work(argv);
+		worker->work(argv+2);
 		delete worker;
 	}
 	catch(const char *str) {

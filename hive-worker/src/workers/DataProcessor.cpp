@@ -19,7 +19,11 @@ DataProcessor::~DataProcessor() {
 }
 
 void DataProcessor::work(char *const argv[]) {
-	// TODO Implement processing logic..
+	NetworkAddress* address = new NetworkAddress(argv[1], argv[2]);
+	SynchronizedBuffer* buffer = new SynchronizedBuffer();
+	DownloaderThread* thread = new DownloaderThread(address, buffer);
+	threadManager->runThread(thread);
+	threadManager->waitForThreads();
 }
 
 // ========================================================================= //

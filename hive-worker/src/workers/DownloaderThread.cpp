@@ -2,6 +2,7 @@
 #include <unistd.h>
 
 #include "DownloaderThread.h"
+#include "commons/Logger.h"
 
 namespace KernelHive {
 
@@ -9,19 +10,28 @@ namespace KernelHive {
 // 							Public Members									 //
 // ========================================================================= //
 
+DownloaderThread::DownloaderThread(NetworkAddress* address, SynchronizedBuffer* buffer)
+	: TCPClient(address)
+{
+	registerListener(this);
+	this->buffer = buffer;
+	pthread_mutex_init(&stopFlagMutex, NULL);
+	shouldStop = false;
+}
+
 void DownloaderThread::run() {
-	// TODO Implement data downloading
+	Logger::log(INFO, "DownloaderThread listening on socket\n");
+	listenOnSocket();
+}
+
+void DownloaderThread::onMessage(char* message) {
+	Logger::log(INFO, "Received message: %s\n", message);
 }
 
 void DownloaderThread::pleaseStop() {
 	pthread_mutex_lock(&stopFlagMutex);
 	shouldStop = true;
 	pthread_mutex_unlock(&stopFlagMutex);
-}
-
-DownloaderThread::DownloaderThread() {
-	pthread_mutex_init(&stopFlagMutex, NULL);
-	shouldStop = false;
 }
 
 DownloaderThread::~DownloaderThread() {
