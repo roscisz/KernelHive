@@ -48,6 +48,13 @@ public:
 	size_t getSize();
 
 	/**
+	 * Returns the current offset in this buffer.
+	 *
+	 * @return the current offset in this buffer
+	 */
+	size_t getOffset();
+
+	/**
 	 * Appends provided data to the end of this buffer.
 	 *
 	 * @param data the data to append

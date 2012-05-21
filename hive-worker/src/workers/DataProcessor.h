@@ -2,6 +2,7 @@
 #define KERNEL_HIVE_DATA_PROCESSOR_H
 
 #include "commons/Worker.h"
+#include "threading/SynchronizedBuffer.h"
 
 namespace KernelHive {
 
@@ -30,6 +31,18 @@ public:
 	 * Deallocates resources used by this data processor.
 	 */
 	virtual ~DataProcessor();
+
+private:
+	/** The address from which the data can be downloaded. */
+	NetworkAddress* dataAddress;
+
+	/** The buffer for storing downloaded data. */
+	SynchronizedBuffer* buffer;
+
+	/**
+	 * Initialize this data processor
+	 */
+	void init(char *const argv[]);
 
 };
 

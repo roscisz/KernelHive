@@ -38,6 +38,10 @@ size_t SynchronizedBuffer::getSize() {
 	return size;
 }
 
+size_t SynchronizedBuffer::getOffset() {
+	return position;
+}
+
 byte* SynchronizedBuffer::getRawData() {
 	return data;
 }

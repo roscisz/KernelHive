@@ -51,7 +51,7 @@ private:
 	bool shouldStop;
 
 	/** A lock for the stop flag. */
-	pthread_mutex_t stopFlagMutex;
+	pthread_mutex_t stopFlagLock;
 
 	/** A pointer to the buffer in which the downloaded data should be stored. */
 	SynchronizedBuffer* buffer;

@@ -11,17 +11,22 @@ namespace KernelHive {
 // ========================================================================= //
 
 DataProcessor::DataProcessor(NetworkAddress * clusterAddress) : Worker(clusterAddress) {
-	// TODO Auto-generated constructor stub
+	dataAddress = NULL;
+	buffer = NULL;
 }
 
 DataProcessor::~DataProcessor() {
-	// TODO Auto-generated destructor stub
+	if (dataAddress != NULL) {
+		delete dataAddress;
+	}
+	if (buffer != NULL) {
+		delete buffer;
+	}
 }
 
 void DataProcessor::work(char *const argv[]) {
-	NetworkAddress* address = new NetworkAddress(argv[1], argv[2]);
-	SynchronizedBuffer* buffer = new SynchronizedBuffer();
-	DownloaderThread* thread = new DownloaderThread(address, buffer);
+	init(argv);
+	DownloaderThread* thread = new DownloaderThread(dataAddress, buffer);
 	threadManager->runThread(thread);
 	threadManager->waitForThreads();
 }
@@ -29,5 +34,11 @@ void DataProcessor::work(char *const argv[]) {
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
+
+void DataProcessor::init(char *const argv[]) {
+	// TODO Implement parameters existence check..
+	dataAddress = new NetworkAddress(argv[1], argv[2]);
+	buffer = new SynchronizedBuffer();
+}
 
 } /* namespace KernelHive */

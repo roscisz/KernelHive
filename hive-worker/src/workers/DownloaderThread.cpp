@@ -15,7 +15,7 @@ DownloaderThread::DownloaderThread(NetworkAddress* address, SynchronizedBuffer* 
 {
 	registerListener(this);
 	this->buffer = buffer;
-	pthread_mutex_init(&stopFlagMutex, NULL);
+	pthread_mutex_init(&stopFlagLock, NULL);
 	shouldStop = false;
 }
 
@@ -29,9 +29,9 @@ void DownloaderThread::onMessage(char* message) {
 }
 
 void DownloaderThread::pleaseStop() {
-	pthread_mutex_lock(&stopFlagMutex);
+	pthread_mutex_lock(&stopFlagLock);
 	shouldStop = true;
-	pthread_mutex_unlock(&stopFlagMutex);
+	pthread_mutex_unlock(&stopFlagLock);
 }
 
 DownloaderThread::~DownloaderThread() {
