@@ -70,6 +70,14 @@ namespace KernelHive {
 		platformsCount = count;
 		for (cl_uint i = 0; i < count; i++) {
 			platforms[i] = new OpenClPlatform(ids[i]);
+			OpenClDevice** devices = platforms[i]->getCpuDevices();
+			for (cl_uint j = 0; j < platforms[i]->getCpuDevicesCount(); j++) {
+				devicesMap[devices[j]->getIdentifier()].push_back(devices[j]);
+			}
+			devices = platforms[i]->getGpuDevices();
+			for (cl_uint j = 0; j < platforms[i]->getGpuDevicesCount(); j++) {
+				devicesMap[devices[j]->getIdentifier()].push_back(devices[j]);
+			}
 		}
 		delete [] ids;
 	}
@@ -79,6 +87,22 @@ namespace KernelHive {
 			delete platforms[i];
 		}
 		delete [] platforms;
+	}
+
+	OpenClDevice* OpenClHost::lookupDevice(std::string identifier) {
+		OpenClDevice* device = NULL;
+		if (devicesMap.find(identifier) != devicesMap.end()) {
+			DevicesList list = devicesMap[identifier];
+			DevicesList::iterator iter;
+			for (iter = list.begin(); iter != list.end(); iter++) {
+				if ((*iter)->getDeviceAvailability() == CL_TRUE) {
+					device = *iter;
+					break;
+				}
+			}
+
+		}
+		return device;
 	}
 
 	OpenClPlatform** OpenClHost::getPlatforms() {

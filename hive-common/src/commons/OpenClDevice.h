@@ -40,6 +40,13 @@ namespace KernelHive {
 		virtual ~OpenClDevice();
 
 		/**
+		 * Returns the identifier which can be used to lookup this device.
+		 *
+		 * @return the lookup identifier
+		 */
+		std::string getIdentifier();
+
+		/**
 		 * Returns the information about this device.
 		 *
 		 * @return information about this device in a string

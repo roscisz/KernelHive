@@ -39,6 +39,11 @@ namespace KernelHive {
 		return stream.str();
 	}
 
+	std::string OpenClDevice::getIdentifier() {
+		// TODO Implement an identifier which will actually be used..
+		return getDeviceName();
+	}
+
 	std::string OpenClDevice::getDeviceName() {
 		std::string deviceName;
 		char buffer[DEVICE_INFO_QUERY_BUFFER_SIZE];
