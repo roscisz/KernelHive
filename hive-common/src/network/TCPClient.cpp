@@ -5,7 +5,8 @@
  *      Author: roy
  */
 
-#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
@@ -27,7 +28,7 @@ void TCPClient::listenOnSocket() {
 
 	tryConnectingUntilDone();
 
-	char *message;
+	TCPMessage *message;
 	while(true) {
 		try {
 			message = readMessage();
@@ -67,15 +68,15 @@ void TCPClient::connectToSocket() {
 		throw(strerror(errno));
 }
 
-char* TCPClient::readMessage() {
-	char message[MAX_MESSAGE_BYTES];
+TCPMessage* TCPClient::readMessage() {
+	char *message = (char *) calloc(MAX_MESSAGE_BYTES, sizeof(char));
 
 	bzero(message, MAX_MESSAGE_BYTES);
 	int n = read(sockfd, message, MAX_MESSAGE_BYTES);
 	if (n < 0) throw(strerror(errno));
 	if (n == 0) throw("Server disconnected.");
 
-	return message;
+	return new TCPMessage(message, n);
 }
 
 void TCPClient::sendMessage(char *msg) {

@@ -13,6 +13,7 @@
 
 #include "NetworkAddress.h"
 #include "NetworkEndpoint.h"
+#include "TCPMessage.h"
 #include "TCPClientListener.h"
 
 #define MAX_MESSAGE_BYTES 1024
@@ -27,7 +28,7 @@ private:
 	void tryConnectingUntilDone();
 	void reconnectSocket();
 	void connectToSocket();
-	char* readMessage();
+	TCPMessage *readMessage();
 	void disconnectFromSocket();
 public:
 	TCPClient(NetworkAddress *serverAddress);
