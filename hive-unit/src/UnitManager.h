@@ -10,6 +10,7 @@
 
 #include "ClusterProxy.h"
 #include "network/TCPClientListener.h"
+#include "network/TCPMessage.h"
 
 namespace KernelHive {
 
@@ -21,7 +22,7 @@ public:
 	virtual ~UnitManager();
 
 	void listen();
-	void onMessage(char *message);
+	void onMessage(TCPMessage *message);
 	void onConnected();
 };
 

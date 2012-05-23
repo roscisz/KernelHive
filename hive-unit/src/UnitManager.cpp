@@ -23,7 +23,7 @@ namespace KernelHive {
 UnitManager::UnitManager() {
 
 	// Testing worker
-	WorkerProxy *proxy = WorkerProxy::create(/* type ,*/new NetworkAddress("localhost", 31339));
+	//WorkerProxy *proxy = WorkerProxy::create(/* type ,*/new NetworkAddress("localhost", 31339));
 
 	try {
 		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338));
@@ -41,11 +41,12 @@ UnitManager::~UnitManager() {
 }
 
 void UnitManager::listen() {
-	clusterProxy->listenOnSocket();
+	ThreadManager::Get()->runThread(clusterProxy);
+	while(true);
 }
 
-void UnitManager::onMessage(char *message) {
-	printf("Echo from server: %s", message);
+void UnitManager::onMessage(TCPMessage *message) {
+	printf("Echo from server: %s", message->data);
 
 	// TODO: When given a task to do, run a worker
 }

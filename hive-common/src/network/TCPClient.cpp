@@ -17,29 +17,23 @@
 namespace KernelHive {
 
 TCPClient::TCPClient(NetworkAddress *serverAddress) : NetworkEndpoint(serverAddress) {
-
 }
 
 void TCPClient::registerListener(TCPClientListener *listener) {
 	this->listener = listener;
 }
 
-void TCPClient::listenOnSocket() {
-
-	tryConnectingUntilDone();
-
+void TCPClient::executeLoopCycle() {
 	TCPMessage *message;
-	while(true) {
-		try {
-			message = readMessage();
-		}
-		catch(const char *msg) {
-			Logger::log(ERROR, "Couldn't read from socket: %s. Reconnecting.\n", msg);
-			reconnectSocket();
-			continue;
-		}
-		listener->onMessage(message);
+	try {
+		message = readMessage();
 	}
+	catch(const char *msg) {
+		Logger::log(ERROR, "Couldn't read from socket: %s. Reconnecting.\n", msg);
+		reconnectSocket();
+		return;
+	}
+	listener->onMessage(message);
 }
 
 void TCPClient::tryConnectingUntilDone() {

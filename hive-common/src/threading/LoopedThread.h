@@ -27,6 +27,6 @@ private:
 	pthread_mutex_t stopMutex;
 };
 
-#endif /* LOOPEDTHREAD_H_ */
-
 }
+
+#endif /* LOOPEDTHREAD_H_ */

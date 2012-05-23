@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "../threading/LoopedThread.h"
 #include "NetworkAddress.h"
 #include "NetworkEndpoint.h"
 #include "TCPMessage.h"
@@ -21,7 +22,7 @@
 
 namespace KernelHive {
 
-class TCPClient : public NetworkEndpoint {
+class TCPClient : public NetworkEndpoint, public LoopedThread {
 private:
 	TCPClientListener *listener;
 
@@ -35,7 +36,7 @@ public:
 	virtual ~TCPClient();
 	void registerListener(TCPClientListener *listener);
 	void sendMessage(char *msg); // FIXME: Should be protected?
-	void listenOnSocket();
+	virtual void executeLoopCycle();
 };
 
 #endif /* TCPCLIENT_H_ */
