@@ -15,4 +15,5 @@ target_link_libraries( SampleWorker hivecommons )
 add_executable( DataProcessor "src/dataprocessor.cpp" )
 target_link_libraries( DataProcessor hiveworker )
 target_link_libraries( DataProcessor hivecommons )
+target_link_libraries( DataProcessor pthread )
 

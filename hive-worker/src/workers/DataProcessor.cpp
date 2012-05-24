@@ -1,7 +1,8 @@
 #include <string>
 
+#include "commons/Logger.h"
 #include "threading/ThreadManager.h"
-#include "DownloaderThread.h"
+#include "DataDownloader.h"
 #include "DataProcessor.h"
 
 namespace KernelHive {
@@ -26,8 +27,8 @@ DataProcessor::~DataProcessor() {
 
 void DataProcessor::work(char *const argv[]) {
 	init(argv);
-	DownloaderThread* thread = new DownloaderThread(dataAddress, buffer);
-	threadManager->runThread(thread);
+	dataDownloader = new DataDownloader(dataAddress, buffer);
+	dataDownloader->start();
 	threadManager->waitForThreads();
 }
 
@@ -37,7 +38,7 @@ void DataProcessor::work(char *const argv[]) {
 
 void DataProcessor::init(char *const argv[]) {
 	// TODO Implement parameters existence check..
-	dataAddress = new NetworkAddress(argv[1], argv[2]);
+	dataAddress = new NetworkAddress(argv[0], argv[1]);
 	buffer = new SynchronizedBuffer();
 }
 

@@ -16,6 +16,7 @@
 
 import sys
 import socket
+import os
 
 HOST = "localhost"
 READ_BATCH = 1024
@@ -39,15 +40,19 @@ if __name__ == "__main__":
 		sock.close()
 	elif command == "write":
 		if len(sys.argv) > 3:
+			fsize = os.path.getsize(sys.argv[3])
+			print fsize
 			source = open(sys.argv[3], "r")
 		else:
-			source = sys.stdin
+			print "file not provided"
+			sys.exit(1)
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		sock.bind((host, port))
 		sock.listen(1)
 		conn, addr = sock.accept()
 		print "connection from ", addr
+		conn.sendall(str(fsize))
 		while 1:
 			try:
 				line = source.readline()
