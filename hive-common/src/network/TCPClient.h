@@ -16,26 +16,31 @@
 #include "NetworkEndpoint.h"
 #include "TCPMessage.h"
 #include "TCPClientListener.h"
+#include "TCPConnection.h"
 
-#define MAX_MESSAGE_BYTES 1024
 #define CONNECTION_RETRY_SECONDS 10
 
 namespace KernelHive {
 
-class TCPClient : public NetworkEndpoint, public LoopedThread {
+class TCPClient : public NetworkEndpoint, public TCPConnectionListener {
 private:
 	TCPClientListener *listener;
+	TCPConnection *connection;
 
 	void tryConnectingUntilDone();
 	void reconnectSocket();
 	void connectToSocket();
-	TCPMessage *readMessage();
 	void disconnectFromSocket();
 public:
 	TCPClient(NetworkAddress *serverAddress, TCPClientListener *listener);
+
+	void onDisconnected(int sockfd);
+	void onMessage(int sockfd, TCPMessage *message);
+
+	void sendMessage(char *message);
+	void start();
+
 	virtual ~TCPClient();
-	void sendMessage(char *msg); // FIXME: Should be protected?
-	virtual void executeLoopCycle();
 };
 
 #endif /* TCPCLIENT_H_ */

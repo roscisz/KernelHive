@@ -19,21 +19,22 @@ namespace KernelHive {
 
 TCPClient::TCPClient(NetworkAddress *serverAddress, TCPClientListener *listener) : NetworkEndpoint(serverAddress) {
 	this->listener = listener;
-	ThreadManager::Get()->runThread(this);
 }
 
-void TCPClient::executeLoopCycle() {
-	TCPMessage *message;
-	try {
-		message = readMessage();
-	}
-	catch(const char *msg) {
-		Logger::log(ERROR, "Couldn't read from socket: %s. Reconnecting.\n", msg);
-		reconnectSocket();
-		return;
-	}
-	if(listener != NULL)
-		listener->onMessage(message);
+void TCPClient::start() {
+	tryConnectingUntilDone();
+}
+
+void TCPClient::onDisconnected(int sockfd) {
+	reconnectSocket();
+}
+
+void TCPClient::onMessage(int sockfd, TCPMessage *message) {
+	listener->onMessage(message);
+}
+
+void TCPClient::sendMessage(char *message) {
+	connection->sendMessage(message);
 }
 
 void TCPClient::tryConnectingUntilDone() {
@@ -47,8 +48,7 @@ void TCPClient::tryConnectingUntilDone() {
 			sleep(CONNECTION_RETRY_SECONDS);
 			continue;
 		}
-		if(listener != NULL)
-			listener->onConnected();
+		listener->onConnected();
 		break;
 	}
 }
@@ -61,27 +61,13 @@ void TCPClient::reconnectSocket() {
 void TCPClient::connectToSocket() {
 	if (connect(sockfd, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0)
 		throw(strerror(errno));
-}
-
-TCPMessage* TCPClient::readMessage() {
-	char *message = (char *) calloc(MAX_MESSAGE_BYTES, sizeof(char));
-
-	bzero(message, MAX_MESSAGE_BYTES);
-	int n = read(sockfd, message, MAX_MESSAGE_BYTES);
-	if (n < 0) throw(strerror(errno));
-	if (n == 0) throw("Server disconnected.");
-
-	return new TCPMessage(message, n);
-}
-
-void TCPClient::sendMessage(char *msg) {
-	if (write(sockfd, msg, strlen(msg)) < 0)
-		Logger::log(ERROR, "Error writing to socket.\n");
-	printf("Sent TCP message %s\n");
+	connection = new TCPConnection(sockfd, this);
+	ThreadManager::Get()->runThread(this->connection);
 }
 
 void TCPClient::disconnectFromSocket() {
-	shutdown(sockfd, SHUT_RDWR);
+	// ThreadManager::Get()->stopThread(this->connection);
+	this->connection->disconnect();
 }
 
 TCPClient::~TCPClient() {
