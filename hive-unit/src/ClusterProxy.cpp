@@ -16,7 +16,7 @@
 
 namespace KernelHive {
 
-ClusterProxy::ClusterProxy(NetworkAddress *clusterAddress) : TCPClient(clusterAddress) {
+ClusterProxy::ClusterProxy(NetworkAddress *clusterAddress, TCPClientListener *listener) : TCPClient(clusterAddress, listener) {
 
 }
 

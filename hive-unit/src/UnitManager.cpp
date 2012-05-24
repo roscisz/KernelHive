@@ -26,14 +26,12 @@ UnitManager::UnitManager() {
 	//WorkerProxy *proxy = WorkerProxy::create(/* type ,*/new NetworkAddress("localhost", 31339));
 
 	try {
-		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338));
+		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338), this);
 	}
 	catch(const char *msg) {
 		Logger::log(FATAL, "Couldn't open Cluster Proxy: %s\n", msg);
 		exit(EXIT_FAILURE);
 	}
-
-	this->clusterProxy->registerListener(this);
 }
 
 UnitManager::~UnitManager() {
@@ -41,7 +39,6 @@ UnitManager::~UnitManager() {
 }
 
 void UnitManager::listen() {
-	ThreadManager::Get()->runThread(clusterProxy);
 	while(true);
 }
 

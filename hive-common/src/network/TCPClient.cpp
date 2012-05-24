@@ -13,14 +13,13 @@
 #include "TCPClient.h"
 #include "../commons/Logger.h"
 #include "../commons/OpenClPlatform.h"
+#include "../threading/ThreadManager.h"
 
 namespace KernelHive {
 
-TCPClient::TCPClient(NetworkAddress *serverAddress) : NetworkEndpoint(serverAddress) {
-}
-
-void TCPClient::registerListener(TCPClientListener *listener) {
+TCPClient::TCPClient(NetworkAddress *serverAddress, TCPClientListener *listener) : NetworkEndpoint(serverAddress) {
 	this->listener = listener;
+	ThreadManager::Get()->runThread(this);
 }
 
 void TCPClient::executeLoopCycle() {
@@ -33,7 +32,8 @@ void TCPClient::executeLoopCycle() {
 		reconnectSocket();
 		return;
 	}
-	listener->onMessage(message);
+	if(listener != NULL)
+		listener->onMessage(message);
 }
 
 void TCPClient::tryConnectingUntilDone() {
@@ -47,7 +47,8 @@ void TCPClient::tryConnectingUntilDone() {
 			sleep(CONNECTION_RETRY_SECONDS);
 			continue;
 		}
-		listener->onConnected();
+		if(listener != NULL)
+			listener->onConnected();
 		break;
 	}
 }

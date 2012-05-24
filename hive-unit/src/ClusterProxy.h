@@ -13,13 +13,14 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include "network/TCPClient.h"
+#include "network/TCPClientListener.h"
 #include "network/NetworkAddress.h"
 
 namespace KernelHive {
 
 class ClusterProxy : public TCPClient {
 public:
-	ClusterProxy(NetworkAddress *clusterAddress);
+	ClusterProxy(NetworkAddress *clusterAddress, TCPClientListener *listener);
 	virtual ~ClusterProxy();
 	void sendUpdate();
 };

@@ -32,9 +32,8 @@ private:
 	TCPMessage *readMessage();
 	void disconnectFromSocket();
 public:
-	TCPClient(NetworkAddress *serverAddress);
+	TCPClient(NetworkAddress *serverAddress, TCPClientListener *listener);
 	virtual ~TCPClient();
-	void registerListener(TCPClientListener *listener);
 	void sendMessage(char *msg); // FIXME: Should be protected?
 	virtual void executeLoopCycle();
 };
