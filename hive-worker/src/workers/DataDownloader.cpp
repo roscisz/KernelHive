@@ -20,13 +20,13 @@ DataDownloader::DataDownloader(NetworkAddress* address, SynchronizedBuffer* buff
 
 void DataDownloader::onMessage(TCPMessage* message) {
 	// TODO Remove development logging
-	Logger::log(INFO, "%s\n", message->data);
 	switch (currentState) {
 	case STATE_INITIAL:
 		if (acquireDataSize(message->data)) {
 			Logger::log(DEBUG, "Data size has been acquired: %u", totalDataSize);
 			buffer->allocate(totalDataSize);
 			currentState = STATE_SIZE_ACQUIRED;
+			sendMessage("GET");
 		}
 		break;
 
@@ -35,6 +35,7 @@ void DataDownloader::onMessage(TCPMessage* message) {
 		progressSize += message->nBytes;
 		if (!(progressSize < totalDataSize)) {
 			currentState = STATE_DATA_ACQUIRED;
+			Logger::log(DEBUG, "%s\n", buffer->getRawData());
 		}
 		break;
 
@@ -45,8 +46,8 @@ void DataDownloader::onMessage(TCPMessage* message) {
 }
 
 void DataDownloader::onConnected() {
-	// TODO Remove development logging
 	Logger::log(INFO, "Connection established\n");
+	sendMessage("SIZE");
 }
 
 DataDownloader::~DataDownloader() {
