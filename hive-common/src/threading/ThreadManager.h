@@ -16,10 +16,7 @@
 namespace KernelHive {
 
 /** A type wrapper for std::map of Thread object pointers. */
-typedef std::map<std::string, Thread*> ThreadMap;
-
-/** A type wrapper for std::map of pthread_t variables. */
-typedef std::map<std::string, pthread_t> ThreadInfoMap;
+typedef std::map<Thread*, pthread_t> ThreadMap;
 
 class ThreadManager : public Singleton<ThreadManager> {
     public:
@@ -31,29 +28,8 @@ class ThreadManager : public Singleton<ThreadManager> {
         void pleaseStopAllThreads();
         void waitForThreads();
         void runThread(Thread* threadObject);
-        
-        /**
-         * Runs the given thread in this thread manager, associating it
-         * with a provided name.
-         *
-         * @param threadName the name of the thread to run
-         * @param threadObject the thread to run
-         */
-        void runThread(std::string& threadName, Thread* threadObject);
-
-        /**
-         * Asks the thread identified by the provided name to stop.
-         *
-         * @param threadName the name of the thread to ask for finishing
-         */
-        void pleaseStopThread(std::string& threadName);
-
-        /**
-         * Waits for the thread identified by the provided name to finish.
-         *
-         * @param threadName the name of a thread to wait for
-         */
-        void waitForThread(std::string& threadNname);
+        void pleaseStopThread(Thread *threadObject);
+        void waitForThread(Thread *threadObject);
 
         // Utility methods:
         void forkAndExitParent();
@@ -64,19 +40,12 @@ class ThreadManager : public Singleton<ThreadManager> {
         //void abortHandler(int sig);
         
         /**
-         * Deallocates all resources used by the thread and thread info
-         * maps.
+         * Deallocates all resources used by the thread and thread maps.
          */
         void cleanUpMaps();
 
         /** Holds the mappings for Thread object pointers. */
-        ThreadMap threadsMap;
-
-        /** Holds the mappings for pthread_t variables of threads. */
-        ThreadInfoMap threadInfoMap;
-
-        std::vector<Thread *>* threadObjects;
-        std::vector<pthread_t>* threadInfos;
+        ThreadMap threadMap;
 };
 
 }
