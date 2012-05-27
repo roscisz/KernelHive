@@ -32,7 +32,7 @@ UnitManager::UnitManager() {
 		Logger::log(FATAL, "Couldn't open Cluster Proxy: %s\n", msg);
 		exit(EXIT_FAILURE);
 	}
-	this->clusterProxy->start();
+	ThreadManager::Get()->runThread(clusterProxy);
 }
 
 UnitManager::~UnitManager() {

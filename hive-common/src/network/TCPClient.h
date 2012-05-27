@@ -22,13 +22,12 @@
 
 namespace KernelHive {
 
-class TCPClient : public NetworkEndpoint, public TCPConnectionListener {
+class TCPClient : public NetworkEndpoint, public TCPConnectionListener, public LoopedThread {
 private:
 	TCPClientListener *listener;
 	TCPConnection *connection;
 
-	void tryConnectingUntilDone();
-	void reconnectSocket();
+	void executeLoopCycle();
 	void connectToSocket();
 	void disconnectFromSocket();
 public:
@@ -39,6 +38,8 @@ public:
 
 	void sendMessage(char *message);
 	void start();
+
+	void pleaseStop();
 
 	virtual ~TCPClient();
 };

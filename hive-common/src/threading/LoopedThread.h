@@ -20,9 +20,9 @@ public:
 	virtual ~LoopedThread();
 protected:
 	virtual void executeLoopCycle() = 0;
+	void pleaseStop();
 private:
 	void run();
-	void pleaseStop();
 	bool stopFlag;
 	pthread_mutex_t stopMutex;
 };

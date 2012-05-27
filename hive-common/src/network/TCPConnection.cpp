@@ -58,7 +58,9 @@ void TCPConnection::sendMessage(char *msg)
 
 void TCPConnection::disconnect()
 {
-	shutdown(sockfd, SHUT_RDWR);
+	if(shutdown(sockfd, SHUT_RDWR) < 0) {
+		Logger::log(FATAL, "Error disconnecting socket: %s\n", strerror(errno));
+	}
 }
 
 TCPConnection::~TCPConnection() {

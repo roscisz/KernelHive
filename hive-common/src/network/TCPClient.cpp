@@ -19,14 +19,11 @@ namespace KernelHive {
 
 TCPClient::TCPClient(NetworkAddress *serverAddress, TCPClientListener *listener) : NetworkEndpoint(serverAddress) {
 	this->listener = listener;
-}
-
-void TCPClient::start() {
-	tryConnectingUntilDone();
+	this->connection = NULL;
 }
 
 void TCPClient::onDisconnected(int sockfd) {
-	reconnectSocket();
+	disconnectFromSocket();
 }
 
 void TCPClient::onMessage(int sockfd, TCPMessage *message) {
@@ -37,25 +34,19 @@ void TCPClient::sendMessage(char *message) {
 	connection->sendMessage(message);
 }
 
-void TCPClient::tryConnectingUntilDone() {
-	while(true) {
+void TCPClient::executeLoopCycle() {
+	if(this->connection == NULL) {
 		try {
 			this->sockfd = openSocket(SOCK_STREAM);
 			connectToSocket();
+			listener->onConnected();
 		}
 		catch(const char *msg) {
-			Logger::log(ERROR, "Couldn't connect to the cluster: %s. Retrying.\n", msg);
-			sleep(CONNECTION_RETRY_SECONDS);
-			continue;
+			Logger::log(ERROR, "Couldn't connect to the cluster: %s.\n", msg);
+			disconnectFromSocket();
 		}
-		listener->onConnected();
-		break;
 	}
-}
-
-void TCPClient::reconnectSocket() {
-	disconnectFromSocket();
-	tryConnectingUntilDone();
+	sleep(CONNECTION_RETRY_SECONDS);
 }
 
 void TCPClient::connectToSocket() {
@@ -66,8 +57,16 @@ void TCPClient::connectToSocket() {
 }
 
 void TCPClient::disconnectFromSocket() {
-	// ThreadManager::Get()->stopThread(this->connection);
-	this->connection->disconnect();
+	if(this->connection != NULL) {
+		ThreadManager::Get()->pleaseStopThread(this->connection);
+		this->connection->disconnect();
+	}
+	this->connection = NULL;
+}
+
+void TCPClient::pleaseStop() {
+	LoopedThread::pleaseStop();
+	disconnectFromSocket();
 }
 
 TCPClient::~TCPClient() {

@@ -36,6 +36,8 @@ class ThreadManager : public Singleton<ThreadManager> {
 
     private:
         static void *runThread(void *arg);
+        void joinThread(pthread_t threadInfo);
+
         void connectSignals();
         //void abortHandler(int sig);
         

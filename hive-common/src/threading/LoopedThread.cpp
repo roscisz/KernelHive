@@ -12,7 +12,9 @@
 namespace KernelHive {
 
 LoopedThread::LoopedThread() {
-	pthread_mutex_init(&(this->stopMutex), NULL);
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&(this->stopMutex), &attr);
 	this->stopFlag = false;
 }
 
@@ -21,8 +23,6 @@ void LoopedThread::run() {
 		pthread_mutex_lock(&(this->stopMutex));
 		this->executeLoopCycle();
 		pthread_mutex_unlock(&(this->stopMutex));
-		// FIXME: without this sleep, the mutex can't be locked by pleaseStop...
-		sleep(1);
 	}
 }
 
