@@ -24,7 +24,7 @@ protected:
 private:
 	void run();
 	bool stopFlag;
-	pthread_mutex_t stopMutex;
+	//pthread_mutex_t stopMutex;
 };
 
 }

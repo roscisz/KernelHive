@@ -12,24 +12,24 @@
 namespace KernelHive {
 
 LoopedThread::LoopedThread() {
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&(this->stopMutex), &attr);
+	//pthread_mutexattr_t attr;
+	//pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	//pthread_mutex_init(&(this->stopMutex), &attr);
 	this->stopFlag = false;
 }
 
 void LoopedThread::run() {
 	while(!(this->stopFlag)) {
-		pthread_mutex_lock(&(this->stopMutex));
+		//pthread_mutex_lock(&(this->stopMutex));
 		this->executeLoopCycle();
-		pthread_mutex_unlock(&(this->stopMutex));
+		//pthread_mutex_unlock(&(this->stopMutex));
 	}
 }
 
 void LoopedThread::pleaseStop() {
-	pthread_mutex_lock(&(this->stopMutex));
+	//pthread_mutex_lock(&(this->stopMutex));
 	this->stopFlag = true;
-	pthread_mutex_unlock(&(this->stopMutex));
+	//pthread_mutex_unlock(&(this->stopMutex));
 }
 
 LoopedThread::~LoopedThread() {
