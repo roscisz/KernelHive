@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include "commons/Logger.h"
 #include "threading/ThreadManager.h"
@@ -28,8 +29,8 @@ DataProcessor::~DataProcessor() {
 void DataProcessor::work(char *const argv[]) {
 	init(argv);
 	dataDownloader = new DataDownloader(dataAddress, buffer);
-	dataDownloader->start();
-	threadManager->waitForThreads();
+	threadManager->runThread(dataDownloader);
+	threadManager->waitForThread(dataDownloader);
 }
 
 // ========================================================================= //

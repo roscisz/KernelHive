@@ -23,7 +23,7 @@ void DataDownloader::onMessage(TCPMessage* message) {
 	switch (currentState) {
 	case STATE_INITIAL:
 		if (acquireDataSize(message->data)) {
-			Logger::log(DEBUG, "Data size has been acquired: %u", totalDataSize);
+			Logger::log(INFO, "Data size has been acquired: %u\n", totalDataSize);
 			buffer->allocate(totalDataSize);
 			currentState = STATE_SIZE_ACQUIRED;
 			sendMessage("GET");
@@ -33,9 +33,10 @@ void DataDownloader::onMessage(TCPMessage* message) {
 	case STATE_SIZE_ACQUIRED:
 		buffer->append(message->data, message->nBytes);
 		progressSize += message->nBytes;
+		Logger::log(INFO, "%d/%d bytes available\n", progressSize, totalDataSize);
 		if (!(progressSize < totalDataSize)) {
 			currentState = STATE_DATA_ACQUIRED;
-			Logger::log(DEBUG, "%s\n", buffer->getRawData());
+			pleaseStop();
 		}
 		break;
 

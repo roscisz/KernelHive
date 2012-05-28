@@ -4,6 +4,7 @@
 import sys
 import socket
 import os
+import struct
 
 HOST = "localhost"
 READ_BATCH = 1024
@@ -34,17 +35,17 @@ if __name__ == "__main__":
 		msg = msg.strip()
 		print msg
 		if msg == 'SIZE':
-			print 'SIZE'
 			conn.sendall(str(fsize))
 		elif msg == 'GET':
-			print 'GET'
 			source = open(sys.argv[2], 'r')
 			while 1:
-				line = source.readline()
-				if not line:
+				data = source.read(READ_BATCH)
+				if not data:
 					source.close()
 					break
-				conn.sendall(line)
+				conn.sendall(data)
+		elif msg == 'OK':
+			conn.sendall('OK')
 	
 	conn.close()
 	sock.close()
