@@ -65,6 +65,21 @@ private:
 	/** A buffer used for storing the downloaded kernel. */
 	SynchronizedBuffer* kernelBuffer;
 
+	/** The kernel identifier. */
+	std::string kernelId;
+
+	/** The number of dimensions to use for kernel execution. */
+	unsigned int numberOfDimensions;
+
+	/** An array of offsets in each dimensions. */
+	size_t* dimensionOffsets;
+
+	/** Global workgroup sizes in each dimension. */
+	size_t* globalSizes;
+
+	/** Local workgroup sizes in each dimension. */
+	size_t* localSizes;
+
 	/** The execution context in which the data will be processed. */
 	ExecutionContext* context;
 
