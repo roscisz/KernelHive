@@ -2,6 +2,7 @@
 #define KERNEL_HIVE_DATA_PROCESSOR_H
 
 #include "commons/Worker.h"
+#include "commons/OpenClDevice.h"
 #include "commons/ExecutionContext.h"
 #include "threading/SynchronizedBuffer.h"
 #include "DataDownloader.h"
@@ -66,7 +67,7 @@ private:
 	SynchronizedBuffer* kernelBuffer;
 
 	/** The kernel identifier. */
-	std::string kernelId;
+	std::string deviceId;
 
 	/** The number of dimensions to use for kernel execution. */
 	unsigned int numberOfDimensions;
@@ -79,6 +80,9 @@ private:
 
 	/** Local workgroup sizes in each dimension. */
 	size_t* localSizes;
+
+	/** The OpenCL device which will be used for execution. */
+	OpenClDevice* device;
 
 	/** The execution context in which the data will be processed. */
 	ExecutionContext* context;

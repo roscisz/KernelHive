@@ -4,6 +4,7 @@
 #include "commons/Logger.h"
 #include "commons/KhUtils.h"
 #include "commons/KernelHiveException.h"
+#include "commons/OpenClHost.h"
 #include "threading/ThreadManager.h"
 #include "DataDownloader.h"
 #include "DataProcessor.h"
@@ -21,6 +22,7 @@ DataProcessor::DataProcessor(NetworkAddress * clusterAddress) : Worker(clusterAd
 	kernelAddress = NULL;
 	buffer = NULL;
 	kernelBuffer = NULL;
+	device = NULL;
 	numberOfDimensions = 0;
 	dimensionOffsets = NULL;
 	globalSizes = NULL;
@@ -74,7 +76,13 @@ void DataProcessor::init(char *const argv[]) {
 	kernelAddress = new NetworkAddress(argv[2], argv[3]);
 	kernelBuffer = new SynchronizedBuffer();
 	kernelDownloader = new DataDownloader(kernelAddress, kernelBuffer);
-	kernelId = argv[4];
+
+	deviceId = argv[4];
+	device = OpenClHost::getInstance()->lookupDevice(deviceId);
+	if (device == NULL) {
+		throw KernelHiveException("Device not found!");
+	}
+
 	numberOfDimensions = KhUtils::atoi(argv[5]);
 	if (numberOfDimensions <= 0) {
 		throw KernelHiveException("Number of dimensions must a positive integer!");
