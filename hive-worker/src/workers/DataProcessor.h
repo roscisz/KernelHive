@@ -16,6 +16,7 @@ namespace KernelHive {
  *   <li>data provider port</li>
  *   <li>kernel provider host</li>
  *   <li>kernel provider port</li>
+ *   <li>device identifier</li>
  *   <li>number of dimensions to use - n</li>
  *   <li>n numbers specifying the offset in each dimension</li>
  *   <li>n numbers specifying the global workgroup size in each dimension</li>
@@ -49,11 +50,20 @@ private:
 	/** The address from which the data can be downloaded. */
 	NetworkAddress* dataAddress;
 
+	/** The address from which the kernel can be downloaded. */
+	NetworkAddress* kernelAddress;
+
 	/** A network client used for downloading worker data. */
 	DataDownloader* dataDownloader;
 
+	/** A network client used for downloading the kernel to run. */
+	DataDownloader* kernelDownloader;
+
 	/** The buffer for storing downloaded data. */
 	SynchronizedBuffer* buffer;
+
+	/** A buffer used for storing the downloaded kernel. */
+	SynchronizedBuffer* kernelBuffer;
 
 	/** The execution context in which the data will be processed. */
 	ExecutionContext* context;
