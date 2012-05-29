@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import pl.gda.pg.eti.kernelhive.gui.file.io.FileUtils;
+import pl.gda.pg.eti.kernelhive.gui.file.FileUtils;
 
 public class FileUtilsTest {
 	
@@ -102,6 +102,15 @@ public class FileUtilsTest {
 		} catch(SecurityException e){
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testTranslateRelativeToAbsolutePath(){
+		String base = "/bin/bash";
+		String relative = "../../etc";
+		
+		String absolutePath = FileUtils.translateRelativeToAbsolutePath(base, relative);
+		Assert.assertEquals("/etc", absolutePath);
 	}
 
 }

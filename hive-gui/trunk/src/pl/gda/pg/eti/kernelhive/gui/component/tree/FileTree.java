@@ -1,6 +1,5 @@
 package pl.gda.pg.eti.kernelhive.gui.component.tree;
 
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -76,7 +75,7 @@ public class FileTree extends JTree implements ActionListener {
 		});
 	}
 	
-	public void setupDirectoryPopupMenu(){
+	private void setupDirectoryPopupMenu(){
 		dirPopup = new JPopupMenu();
 		JMenuItem mi = new JMenuItem("New File");
 		mi.addActionListener(this);
@@ -104,7 +103,7 @@ public class FileTree extends JTree implements ActionListener {
 		dirPopup.add(mi);
 	}
 	
-	public void setupFilePopupMenu(){
+	private void setupFilePopupMenu(){
 		filePopup = new JPopupMenu();
 		JMenuItem mi = new JMenuItem("Open");
 		mi.addActionListener(this);
@@ -128,7 +127,7 @@ public class FileTree extends JTree implements ActionListener {
 		filePopup.add(mi);
 	}
 	
-	public void setupBlankPopupMenu(){
+	private void setupBlankPopupMenu(){
 		blankPopup = new JPopupMenu();
 		JMenuItem mi = new JMenuItem("New File");
 		mi.addActionListener(this);

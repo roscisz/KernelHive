@@ -56,7 +56,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		}
 	}
 	
-	private RSyntaxTextArea textarea = new RSyntaxTextArea();
+	private RSyntaxTextArea textarea;
 	private String name;
 	
 	public SourceCodeEditor(MainFrame frame, String name){
@@ -64,6 +64,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		this.name = name;
 		setName(name);
 		setLayout(new BorderLayout());
+		textarea = new RSyntaxTextArea();
 		textarea.setCodeFoldingEnabled(true);
 		textarea.setAnimateBracketMatching(true);
 		textarea.setAutoIndentEnabled(true);
@@ -178,6 +179,34 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 			getTabPanel().getLabel().setText("*"+name);
 		}
 	}
-	
-	
+
+	@Override
+	public void redoAction() {
+		textarea.redoLastAction();		
+	}
+
+	@Override
+	public void undoAction() {
+		textarea.undoLastAction();
+	}
+
+	@Override
+	public void cut() {
+		textarea.cut();		
+	}
+
+	@Override
+	public void copy() {
+		textarea.copy();
+	}
+
+	@Override
+	public void paste() {
+		textarea.paste();
+	}
+
+	@Override
+	public void selectAll() {
+		textarea.selectAll();		
+	}	
 }

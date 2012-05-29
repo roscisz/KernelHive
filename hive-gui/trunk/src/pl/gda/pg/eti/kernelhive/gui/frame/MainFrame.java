@@ -259,7 +259,6 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
-				controller.openTab(null);
 			}
 		});
 		mnFile.add(mntmImport);
@@ -303,7 +302,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				controller.undoAction();
 				
 			}
 		});
@@ -316,7 +315,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				controller.redoAction();
 				
 			}
 		});
@@ -332,7 +331,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				controller.cut();
 				
 			}
 		});
@@ -345,8 +344,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.copy();
 			}
 		});
 		mnEdit.add(mntmCopy);
@@ -358,8 +356,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.paste();
 			}
 		});
 		mnEdit.add(mntmPaste);
@@ -380,8 +377,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.selectAll();
 			}
 		});
 		mnEdit.add(mntmSelectAll);

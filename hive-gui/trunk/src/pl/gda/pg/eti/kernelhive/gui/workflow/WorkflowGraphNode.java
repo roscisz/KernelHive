@@ -215,7 +215,9 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
+	@Override
+	public String toString() {
+		return nodeId;
+	}
 }
