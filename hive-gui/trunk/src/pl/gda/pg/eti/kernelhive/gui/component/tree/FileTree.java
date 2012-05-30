@@ -101,6 +101,10 @@ public class FileTree extends JTree implements ActionListener {
 		mi.addActionListener(this);
 		mi.setActionCommand("delete");
 		dirPopup.add(mi);
+		mi = new JMenuItem("Refresh");
+		mi.addActionListener(this);
+		mi.setActionCommand("refresh");
+		dirPopup.add(mi);
 	}
 	
 	private void setupFilePopupMenu(){
@@ -125,6 +129,10 @@ public class FileTree extends JTree implements ActionListener {
 		mi.addActionListener(this);
 		mi.setActionCommand("delete");
 		filePopup.add(mi);
+		mi = new JMenuItem("Refresh");
+		mi.addActionListener(this);
+		mi.setActionCommand("refresh");
+		filePopup.add(mi);
 	}
 	
 	private void setupBlankPopupMenu(){
@@ -140,6 +148,10 @@ public class FileTree extends JTree implements ActionListener {
 		mi = new JMenuItem("Paste");
 		mi.addActionListener(this);
 		mi.setActionCommand("paste");
+		blankPopup.add(mi);
+		mi = new JMenuItem("Refresh");
+		mi.addActionListener(this);
+		mi.setActionCommand("refresh");
 		blankPopup.add(mi);
 	}
 	
@@ -166,7 +178,10 @@ public class FileTree extends JTree implements ActionListener {
 			
 		} else if(ae.getActionCommand().equalsIgnoreCase("delete")){
 			
-		} else{
+		} else if(ae.getActionCommand().equalsIgnoreCase("refresh")){
+			this.setModel(this.getModel());
+			this.updateUI();
+		} else {
 			
 		}
 	}

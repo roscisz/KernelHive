@@ -27,6 +27,4 @@ public interface IWorkflowNode {
 	int getY();
 	void setX(int x);
 	void setY(int y);
-	
-	void delete();
 }

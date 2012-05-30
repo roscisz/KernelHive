@@ -27,9 +27,4 @@ public interface IProjectNode {
 	 * @param node workflow node
 	 */
 	void setWorkflowNode(IWorkflowNode node);
-	
-	/**
-	 * deletes node
-	 */
-	void delete();
 }

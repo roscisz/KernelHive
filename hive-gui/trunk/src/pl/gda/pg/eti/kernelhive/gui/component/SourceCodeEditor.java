@@ -131,7 +131,9 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 				sb.append(strLine);
 				sb.append("\n");
 			}
-			sb.deleteCharAt(sb.length()-1);
+			if(sb.length()!=0){
+				sb.deleteCharAt(sb.length()-1);
+			}
 			setText(sb.toString());
 			dis.close();
 			return true;

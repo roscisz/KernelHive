@@ -2,6 +2,7 @@ package pl.gda.pg.eti.kernelhive.gui.project;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.gui.workflow.IWorkflowNode;
@@ -21,10 +22,9 @@ public class ProjectNode implements IProjectNode, Serializable {
 	
 	private List<File> sourceFiles;
 	private IWorkflowNode workflowNode;
-	private IProject project;
 	
-	public ProjectNode(IProject project){
-		this.project = project;
+	public ProjectNode(){
+		sourceFiles = new ArrayList<File>();
 	}
 
 	@Override
@@ -47,20 +47,10 @@ public class ProjectNode implements IProjectNode, Serializable {
 		workflowNode = node;
 	}
 	
-	protected IProject getProject(){
-		return project;
-	}
-
-	@Override
-	public void delete(){
-		//TODO
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((project == null) ? 0 : project.hashCode());
 		result = prime * result
 				+ ((sourceFiles == null) ? 0 : sourceFiles.hashCode());
 		result = prime * result
@@ -77,11 +67,6 @@ public class ProjectNode implements IProjectNode, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProjectNode other = (ProjectNode) obj;
-		if (project == null) {
-			if (other.project != null)
-				return false;
-		} else if (!project.equals(other.project))
-			return false;
 		if (sourceFiles == null) {
 			if (other.sourceFiles != null)
 				return false;

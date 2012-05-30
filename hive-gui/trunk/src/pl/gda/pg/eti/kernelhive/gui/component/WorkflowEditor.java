@@ -12,7 +12,10 @@ import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Logger;
 
+import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -26,11 +29,22 @@ import pl.gda.pg.eti.kernelhive.gui.project.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.gui.workflow.IWorkflowNode;
 import pl.gda.pg.eti.kernelhive.gui.workflow.WorkflowGraphNode;
 
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxEdgeLabelLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.layout.mxOrganicLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.layout.mxPartitionLayout;
+import com.mxgraph.layout.mxStackLayout;
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.util.mxMorphing;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
 import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
@@ -38,28 +52,57 @@ import com.mxgraph.view.mxGraph;
 
 public class WorkflowEditor extends JTabContent {
 
+	public static enum WorkflowGraphLayout{
+		VERTICAL_HIERARCHICAL("verticalHierarchical"),
+		HORIZONTAL_HIERARCHICAL("horizontalHierarchical"),
+		VERTICAL_TREE("verticalTree"),
+		HORIZONTAL_TREE("horizontalTree"),
+		PARALLEL_EDGES("parallelEdges"),
+		PLACE_EDGE_LABELS("placeEdgeLabels"),
+		ORGANIC_LAYOUT("organicLayout"),
+		VERTICAL_PARTITION("verticalPartition"),
+		HORIZONTAL_PARTITION("horizontalPartition"),
+		VERTICAL_STACK("verticalStack"),
+		HORIZONTAL_STACK("horizontalStack"),
+		CIRCLE_LAYOUT("circleLayout");
+		
+		private final String ident;
+		
+		WorkflowGraphLayout(String ident){
+			this.ident = ident;
+		}
+		
+		public String getIdent(){
+			return ident;
+		}		
+	}
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1609157384680024544L;
+	private static final Logger LOG = Logger.getLogger(WorkflowEditor.class.getName());
 
 	private mxGraphComponent graphComponent;
 	private String name;
 	private IProject project;
-	private JPopupMenu popup;
+	private JPopupMenu nodePopup;
+	private JPopupMenu workspacePopup;
 	private mxUndoManager undoManager;
 	private mxIEventListener undoHandler;
 	private mxIEventListener changeHandler;
 	private mxIEventListener connectHandler;
+	private int x, y;
 
-	public WorkflowEditor(MainFrame frame, String name,
+	public WorkflowEditor(MainFrame frame, final String name,
 			IProject project) {
 		super(frame);
 		this.name = name;
 		this.project = project;
 		setName(this.name);
 		setLayout(new BorderLayout());
-		setupPopupMenu();
+		setupNodePopupMenu();
+		setupWorkspacePopup();
 
 		undoManager = new mxUndoManager();
 		undoHandler = new mxIEventListener() {
@@ -75,6 +118,9 @@ public class WorkflowEditor extends JTabContent {
 			@Override
 			public void invoke(Object sender, mxEventObject evt) {
 				setDirty(true);
+				if(getTabPanel()!=null){
+					getTabPanel().getLabel().setText("*"+name);
+				}
 			}
 		};
 		connectHandler = new mxIEventListener() {
@@ -97,7 +143,7 @@ public class WorkflowEditor extends JTabContent {
 				.addListener(mxEvent.UNDO, undoHandler);
 		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, connectHandler);
 		graphComponent.getGraph().setAllowLoops(false);
-		graphComponent.add(popup);
+		graphComponent.add(nodePopup);
 		add(graphComponent);
 
 		mxIEventListener undoHandler = new mxIEventListener() {
@@ -169,18 +215,24 @@ public class WorkflowEditor extends JTabContent {
 	}
 
 	// TODO i18n
-	private void setupPopupMenu() {
-		popup = new JPopupMenu();
+	private void setupNodePopupMenu() {
+		nodePopup = new JPopupMenu();
 		JMenuItem mi = new JMenuItem("Properties");
 		mi.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-
+			public void actionPerformed(ActionEvent ae) {
+				JMenuItem i = (JMenuItem) ae.getSource();
+				JPopupMenu m = (JPopupMenu) i.getParent();
+				mxCell cell = (mxCell) graphComponent.getCellAt(x, y);
+				IWorkflowNode wfNode = (IWorkflowNode) cell.getValue();
+				List<File> srcFiles = wfNode.getProjectNode().getSourceFiles();
+				for(File f : srcFiles){
+					getFrame().getController().openTab(f);//TODO open properties instead of source files
+				}
 			}
 		});
-		popup.add(mi);
+		nodePopup.add(mi);
 		mi = new JMenuItem("Delete");
 		mi.addActionListener(new ActionListener() {
 
@@ -191,16 +243,134 @@ public class WorkflowEditor extends JTabContent {
 				removeNode(graphComponent.getGraph(), cell);
 			}
 		});
-		popup.add(mi);
+		nodePopup.add(mi);
+	}
+	
+	//TODO i18n
+	private void setupWorkspacePopup(){
+		workspacePopup = new JPopupMenu();
+		JMenu layoutMenu = new JMenu("Layout");
+		JMenuItem verticalHierarchical = new JMenuItem("Vertical Hierarchical");
+		verticalHierarchical.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				setGraphLayout(WorkflowGraphLayout.VERTICAL_HIERARCHICAL, true);
+			}
+		});
+		layoutMenu.add(verticalHierarchical);
+		JMenuItem horizontalHierarchical = new JMenuItem("Horizontal Hierarchical");
+		horizontalHierarchical.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.HORIZONTAL_HIERARCHICAL, true);
+			}
+		});
+		layoutMenu.add(horizontalHierarchical);
+		JMenuItem verticalTree = new JMenuItem("Vertical Tree");
+		verticalTree.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.VERTICAL_TREE, true);
+			}
+		});
+		layoutMenu.add(verticalTree);
+		JMenuItem horizontalTree = new JMenuItem("Horizontal Tree");
+		horizontalTree.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.HORIZONTAL_TREE, true);
+			}
+		});
+		layoutMenu.add(horizontalTree);
+		JMenuItem parallelEdges = new JMenuItem("Parallel Edges");
+		parallelEdges.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.PARALLEL_EDGES, true);
+			}
+		});
+		layoutMenu.add(parallelEdges);
+		JMenuItem placeEdgeLabels = new JMenuItem("Place Edge Labels");
+		placeEdgeLabels.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.PLACE_EDGE_LABELS, true);
+			}
+		});
+		layoutMenu.add(placeEdgeLabels);
+		JMenuItem organicLayout = new JMenuItem("Organic Layout");
+		organicLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.ORGANIC_LAYOUT, true);
+			}
+		});
+		JMenuItem verticalPartition = new JMenuItem("Vertical Partition");
+		verticalPartition.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.VERTICAL_PARTITION, true);
+			}
+		});
+		layoutMenu.add(verticalPartition);
+		JMenuItem horizontalPartition = new JMenuItem("Horizontal Partition");
+		horizontalPartition.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.HORIZONTAL_PARTITION, true);
+			}
+		});
+		layoutMenu.add(horizontalPartition);
+		JMenuItem verticalStack = new JMenuItem("Vertical Stack");
+		verticalStack.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.VERTICAL_STACK, true);
+			}
+		});
+		layoutMenu.add(verticalStack);
+		JMenuItem horizontalStack = new JMenuItem("Horizontal Stack");
+		horizontalStack.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.HORIZONTAL_STACK, true);
+			}
+		});
+		layoutMenu.add(horizontalStack);
+		JMenuItem circleLayout = new JMenuItem("Circle Layout");
+		circleLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setGraphLayout(WorkflowGraphLayout.CIRCLE_LAYOUT, true);
+			}
+		});
+		layoutMenu.add(circleLayout);
+		workspacePopup.add(layoutMenu);
 	}
 
 	@Override
 	public boolean saveContent(File file) {
 		try {
 			project.save();
+			setDirty(false);
+			if(getTabPanel()!=null){
+				getTabPanel().getLabel().setText(name);
+			}
 			return true;
 		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
+			LOG.warning("KH: could not save graph to file: "+project.getProjectFile().getAbsolutePath());
 			e.printStackTrace();
 		}
 		return false;
@@ -208,7 +378,6 @@ public class WorkflowEditor extends JTabContent {
 
 	@Override
 	public boolean loadContent(File file) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -266,13 +435,20 @@ public class WorkflowEditor extends JTabContent {
 					mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(),
 							e.getY());
 					if (cell != null && cell.isVertex()) {
-						popup.show(graphComponent, e.getX(), e.getY());
+						nodePopup.show(graphComponent, e.getX(), e.getY());
+					} else{
+						workspacePopup.show(graphComponent, e.getX(), e.getY());
 					}
+					x = e.getX();
+					y = e.getY();
 
 				} else if (e.getButton() == MouseEvent.BUTTON2) {//XXX test
 																	// code
-					IProjectNode pNode = new ProjectNode(project);
+					IProjectNode pNode = new ProjectNode();
 					IWorkflowNode wNode = new WorkflowGraphNode(pNode, NodeIdGenerator.generateId());
+					wNode.setX(e.getX());
+					wNode.setY(e.getY());
+					project.addProjectNode(pNode);
 					graphComponent.getGraph().getModel().beginUpdate();
 					try {
 						addNode(graphComponent.getGraph(), graphComponent
@@ -348,5 +524,128 @@ public class WorkflowEditor extends JTabContent {
 	@Override
 	public void selectAll() {
 		graphComponent.getGraph().selectAll();
+	}
+	
+	private void setGraphLayout(WorkflowGraphLayout layout, boolean animate){
+		final mxIGraphLayout newLayout = createLayout(layout, animate);
+		
+		if(newLayout != null){
+			final mxGraph graph = graphComponent.getGraph();
+			Object cell = graph.getSelectionCell();
+			
+			if(cell == null || graph.getModel().getChildCount(cell)==0){
+				cell = graph.getDefaultParent();
+			}
+			
+			graph.getModel().beginUpdate();
+			try{
+				newLayout.execute(cell);
+			} finally{
+				mxMorphing morph = new mxMorphing(graphComponent, 20, 1.2, 20);
+				morph.addListener(mxEvent.DONE, new mxIEventListener() {
+					
+					@Override
+					public void invoke(Object sender, mxEventObject evt) {
+						graph.getModel().endUpdate();
+					}
+				});
+				morph.startAnimation();
+			}
+		}
+	}
+	
+	private mxIGraphLayout createLayout(WorkflowGraphLayout layout, boolean animate){
+		mxIGraphLayout newLayout = null;
+		
+		if(layout!=null){
+			mxGraph graph = graphComponent.getGraph();
+			
+			if(layout.getIdent().equalsIgnoreCase("verticalHierarchical")){
+				newLayout = new mxHierarchicalLayout(graph);
+			} else if(layout.getIdent().equalsIgnoreCase("horizontalHierarchical")){
+				newLayout = new mxHierarchicalLayout(graph, JLabel.WEST);
+			}else if (layout.getIdent().equalsIgnoreCase("verticalTree"))
+			{
+				newLayout = new mxCompactTreeLayout(graph, false);
+			}
+			else if (layout.getIdent().equalsIgnoreCase("horizontalTree"))
+			{
+				newLayout = new mxCompactTreeLayout(graph, true);
+			}
+			else if (layout.getIdent().equalsIgnoreCase("parallelEdges"))
+			{
+				newLayout = new mxParallelEdgeLayout(graph);
+			}
+			else if (layout.getIdent().equalsIgnoreCase("placeEdgeLabels"))
+			{
+				newLayout = new mxEdgeLabelLayout(graph);
+			}
+			else if (layout.getIdent().equalsIgnoreCase("organicLayout"))
+			{
+				newLayout = new mxOrganicLayout(graph);
+			}
+			if (layout.getIdent().equalsIgnoreCase("verticalPartition"))
+			{
+				newLayout = new mxPartitionLayout(graph, false)
+				{
+					/**
+					 * Overrides the empty implementation to return the size of the
+					 * graph control.
+					 */
+					public mxRectangle getContainerSize()
+					{
+						return graphComponent.getLayoutAreaSize();
+					}
+				};
+			}
+			else if (layout.getIdent().equalsIgnoreCase("horizontalPartition"))
+			{
+				newLayout = new mxPartitionLayout(graph, true)
+				{
+					/**
+					 * Overrides the empty implementation to return the size of the
+					 * graph control.
+					 */
+					public mxRectangle getContainerSize()
+					{
+						return graphComponent.getLayoutAreaSize();
+					}
+				};
+			}
+			else if (layout.getIdent().equalsIgnoreCase("verticalStack"))
+			{
+				newLayout = new mxStackLayout(graph, false)
+				{
+					/**
+					 * Overrides the empty implementation to return the size of the
+					 * graph control.
+					 */
+					public mxRectangle getContainerSize()
+					{
+						return graphComponent.getLayoutAreaSize();
+					}
+				};
+			}
+			else if (layout.getIdent().equalsIgnoreCase("horizontalStack"))
+			{
+				newLayout = new mxStackLayout(graph, true)
+				{
+					/**
+					 * Overrides the empty implementation to return the size of the
+					 * graph control.
+					 */
+					public mxRectangle getContainerSize()
+					{
+						return graphComponent.getLayoutAreaSize();
+					}
+				};
+			}
+			else if (layout.getIdent().equalsIgnoreCase("circleLayout"))
+			{
+				newLayout = new mxCircleLayout(graph);
+			}
+		}
+
+		return newLayout;
 	}
 }

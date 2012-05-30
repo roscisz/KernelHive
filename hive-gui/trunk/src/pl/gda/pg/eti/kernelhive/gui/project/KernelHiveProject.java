@@ -60,7 +60,6 @@ public class KernelHiveProject implements Serializable, IProject,
 	public void addProjectNode(IProjectNode node) {
 		if (!nodes.contains(node)) {
 			nodes.add(node);
-			// addProjectNodeToConfig(node);
 		}
 	}
 
@@ -200,7 +199,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			if (yAttrList.size() > 0)
 				y = Integer.parseInt((String) yAttrList.get(0).getValue());
 
-			IProjectNode projectNode = new ProjectNode(this);
+			IProjectNode projectNode = new ProjectNode();
 			projectNode.setWorkflowNode(new WorkflowGraphNode(projectNode, id));
 			projectNode.getWorkflowNode().setX(x);
 			projectNode.getWorkflowNode().setY(y);
@@ -208,7 +207,8 @@ public class KernelHiveProject implements Serializable, IProject,
 			List<ConfigurationNode> sourceFilesList = node
 					.getChildren(NODE_SOURCE_FILES);
 			if (sourceFilesList.size() > 0) {
-				sourceFilesList = node.getChildren(SOURCE_FILE);
+				ConfigurationNode sourcesNode = sourceFilesList.get(0);
+				sourceFilesList = sourcesNode.getChildren(SOURCE_FILE);
 				List<File> filesList = new ArrayList<File>();
 				for (ConfigurationNode src : sourceFilesList) {
 					List<ConfigurationNode> srcAttrs = src
@@ -367,7 +367,6 @@ public class KernelHiveProject implements Serializable, IProject,
 	public void removeProjectNode(IProjectNode node, boolean removeFromDisc) {
 		if (nodes.contains(node)) {
 			nodes.remove(node);
-			// removeProjectNodeFromConfig(node);
 			if (removeFromDisc) {
 				List<File> srcFiles = node.getSourceFiles();
 				for (File f : srcFiles) {

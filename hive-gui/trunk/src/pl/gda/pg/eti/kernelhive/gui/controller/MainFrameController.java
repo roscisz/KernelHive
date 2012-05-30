@@ -67,7 +67,6 @@ public class MainFrameController {
 				frame.setProjectTree(tree);
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
-
 			} catch (ConfigurationException e) {
 				LOG.warning("KH: cannot create new project");
 				JOptionPane
@@ -304,6 +303,7 @@ public class MainFrameController {
 				project);
 		frame.getWorkspacePane().add(editor, 0);
 		JTabPanel tabControl = new JTabPanel(editor, frame.getWorkspacePane());
+		openedTabs.put(editor, project.getProjectFile());
 		frame.getWorkspacePane().setTabComponentAt(0, tabControl);
 	}
 	

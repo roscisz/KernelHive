@@ -22,12 +22,47 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 	private List<IWorkflowNode> childrenNodes;
 	
 	
-	public WorkflowGraphNode(IProjectNode projectNode, String id){
-		this.projectNode = projectNode;
+	public WorkflowGraphNode(){
+		followingNodes = new ArrayList<IWorkflowNode>();
+		previousNodes = new ArrayList<IWorkflowNode>();
+		childrenNodes = new ArrayList<IWorkflowNode>(); 
+	}
+	
+	public WorkflowGraphNode(String id){
 		followingNodes = new ArrayList<IWorkflowNode>();
 		previousNodes = new ArrayList<IWorkflowNode>();
 		childrenNodes = new ArrayList<IWorkflowNode>();
 		nodeId = id;
+	}
+	
+	public WorkflowGraphNode(IProjectNode projectNode, String id){
+		this.projectNode = projectNode;
+		this.projectNode.setWorkflowNode(this);
+		followingNodes = new ArrayList<IWorkflowNode>();
+		previousNodes = new ArrayList<IWorkflowNode>();
+		childrenNodes = new ArrayList<IWorkflowNode>();
+		nodeId = id;
+	}
+	
+	public WorkflowGraphNode(IProjectNode projectNode, String id, List<IWorkflowNode> followingNodes, List<IWorkflowNode> childrenNodes, List<IWorkflowNode> previosNodes){
+		this.projectNode = projectNode;
+		this.projectNode.setWorkflowNode(this);
+		nodeId = id;
+		if(followingNodes!=null){
+			this.followingNodes=followingNodes;
+		} else {
+			this.followingNodes= new ArrayList<IWorkflowNode>();
+		}
+		if(childrenNodes!=null){
+			this.childrenNodes = childrenNodes;
+		} else{
+			this.childrenNodes = new ArrayList<IWorkflowNode>();
+		}
+		if(previosNodes!=null){
+			this.previousNodes = previosNodes;
+		} else{
+			this.previousNodes = new ArrayList<IWorkflowNode>();
+		}
 	}	
 	
 	@Override
@@ -121,12 +156,6 @@ public class WorkflowGraphNode implements IWorkflowNode, Serializable {
 			childrenNodes.remove(node);
 			node.setParentNode(null);
 		}
-	}
-
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
