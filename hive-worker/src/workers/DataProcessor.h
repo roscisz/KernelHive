@@ -48,6 +48,8 @@ public:
 	virtual ~DataProcessor();
 
 private:
+	static const char* KERNEL_NAME;
+
 	/** The address from which the data can be downloaded. */
 	NetworkAddress* dataAddress;
 
@@ -62,6 +64,9 @@ private:
 
 	/** The buffer for storing downloaded data. */
 	SynchronizedBuffer* buffer;
+
+	/** A buffer for storing the result of calculations. */
+	SynchronizedBuffer* resultBuffer;
 
 	/** A buffer used for storing the downloaded kernel. */
 	SynchronizedBuffer* kernelBuffer;
@@ -86,6 +91,12 @@ private:
 
 	/** The execution context in which the data will be processed. */
 	ExecutionContext* context;
+
+	/** The name of the input buffer of the processor. */
+	std::string inBuffer;
+
+	/** The name of the output buffer of the processor. */
+	std::string outBuffer;
 
 	/**
 	 * Initialize this data processor

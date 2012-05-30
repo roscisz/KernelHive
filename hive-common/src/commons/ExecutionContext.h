@@ -128,11 +128,28 @@ namespace KernelHive {
 		void buildProgramFromSource(std::string source);
 
 		/**
+		 * Build a new program to use by this execution context.
+		 * Calling this function will cause any previous kernels and/or
+		 * programs to be released.
+		 *
+		 * @param source the source code string of the program to build
+		 * @param sourceLength the length of the source to build
+		 */
+		void buildProgramFromSource(const char* source, size_t sourceLength);
+
+		/**
 		 * Prepares a kernel which should be executed next.
 		 *
 		 * @param kernelName the name of the kernel which should be prepared
 		 */
 		void prepareKernel(std::string kernelName);
+
+		/**
+		 * Prepares a kernel which should be executed next.
+		 *
+		 * @param kernelName the name of the kernel which should be prepared
+		 */
+		void prepareKernel(const char* kernelName);
 
 		/**
 		 * Sets the argument for the current kernel.

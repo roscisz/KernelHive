@@ -121,6 +121,16 @@ namespace KernelHive {
 		buildProgramFromSourceInternal(source.data(), source.length());
 	}
 
+	void ExecutionContext::buildProgramFromSource(const char* source, size_t sourceLength) {
+		releaseProgram();
+		buildProgramFromSourceInternal(source, sourceLength);
+	}
+
+	void ExecutionContext::prepareKernel(const char* kernelName) {
+		std::string name = kernelName;
+		prepareKernel(name);
+	}
+
 	void ExecutionContext::prepareKernel(std::string kernelName) {
 		if (kernels.find(kernelName) != kernels.end()) {
 			clKernel = kernels[kernelName];

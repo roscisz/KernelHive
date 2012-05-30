@@ -5,6 +5,7 @@
 #include "commons/KhUtils.h"
 #include "commons/KernelHiveException.h"
 #include "commons/OpenClHost.h"
+#include "commons/OpenClEvent.h"
 #include "threading/ThreadManager.h"
 #include "DataDownloader.h"
 #include "DataProcessor.h"
@@ -22,11 +23,14 @@ DataProcessor::DataProcessor(NetworkAddress * clusterAddress) : Worker(clusterAd
 	kernelAddress = NULL;
 	buffer = NULL;
 	kernelBuffer = NULL;
+	resultBuffer = NULL;
 	device = NULL;
 	numberOfDimensions = 0;
 	dimensionOffsets = NULL;
 	globalSizes = NULL;
 	localSizes = NULL;
+	inBuffer = "input";
+	outBuffer = "output";
 }
 
 DataProcessor::~DataProcessor() {
@@ -43,6 +47,9 @@ DataProcessor::~DataProcessor() {
 	{
 		delete kernelBuffer;
 	}
+	if (resultBuffer != NULL) {
+		delete resultBuffer;
+	}
 	if (dimensionOffsets != NULL) {
 		delete [] dimensionOffsets;
 	}
@@ -57,16 +64,46 @@ DataProcessor::~DataProcessor() {
 void DataProcessor::work(char *const argv[]) {
 	init(argv);
 
-	threadManager->runThread(dataDownloader);
-	threadManager->runThread(kernelDownloader);
+	threadManager->runThread(dataDownloader); // Run data downloading
+	threadManager->runThread(kernelDownloader); // Run kernel downloading
 
+	// Wait for the data to be ready
 	threadManager->waitForThread(dataDownloader);
 	threadManager->waitForThread(kernelDownloader);
+
+	size_t size = buffer->getSize();
+
+	resultBuffer->allocate(size); // Allocate local result buffer
+
+	// Allocate input and output buffers on the device
+	context->createBuffer(inBuffer, size*sizeof(byte), CL_MEM_READ_ONLY);
+	context->createBuffer(outBuffer, size*sizeof(byte), CL_MEM_WRITE_ONLY);
+
+	// Begin copying data to the device
+	OpenClEvent dataCopy = context->enqueueWrite(inBuffer, 0,
+			size*sizeof(byte), (void*)buffer->getRawData());
+
+	// Compile and prepare the kernel for execution
+	context->buildProgramFromSource(kernelBuffer->getRawData(),
+			kernelBuffer->getSize());
+	context->prepareKernel(KERNEL_NAME);
+
+	// Wait for data copy to finish
+	context->waitForEvents(1, &dataCopy);
+
+	// Set kernel agrguments
+	cl_mem clBuffer = context->getRawBuffer(inBuffer);
+	context->setKernelArgument(0, sizeof(cl_mem), (void*)&clBuffer);
+	context->setKernelArgument(1, sizeof(unsigned int), (void*)&size);
+	clBuffer = context->getRawBuffer(outBuffer);
+	context->setKernelArgument(2, sizeof(cl_mem), (void*)&clBuffer);
 }
 
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
+
+const char* DataProcessor::KERNEL_NAME = "processData";
 
 void DataProcessor::init(char *const argv[]) {
 	// TODO Implement parameters existence check..
@@ -75,6 +112,7 @@ void DataProcessor::init(char *const argv[]) {
 	dataDownloader = new DataDownloader(dataAddress, buffer);
 	kernelAddress = new NetworkAddress(argv[2], argv[3]);
 	kernelBuffer = new SynchronizedBuffer();
+	resultBuffer = new SynchronizedBuffer();
 	kernelDownloader = new DataDownloader(kernelAddress, kernelBuffer);
 
 	deviceId = argv[4];
@@ -82,6 +120,8 @@ void DataProcessor::init(char *const argv[]) {
 	if (device == NULL) {
 		throw KernelHiveException("Device not found!");
 	}
+
+	context = new ExecutionContext(*device);
 
 	numberOfDimensions = KhUtils::atoi(argv[5]);
 	if (numberOfDimensions <= 0) {

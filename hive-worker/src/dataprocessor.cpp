@@ -1,5 +1,7 @@
 #include <cstdio>
+#include <iostream>
 
+#include "commons/OpenClException.h"
 #include "network/NetworkAddress.h"
 #include "workers/DataProcessor.h"
 
@@ -22,6 +24,9 @@ int main(int argc, char** argv) {
 	}
 	catch(const char *str) {
 		printf("Error: %s\n", str);
+	}
+	catch (KernelHive::OpenClException& e) {
+		std::cout << e.getMessage() << "(" << e.getOpenClErrorCode() << ")" << std::endl;
 	}
 }
 
