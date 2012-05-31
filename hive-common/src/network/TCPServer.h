@@ -28,8 +28,13 @@ public:
 
 	void executeLoopCycle();
 
+	void sendMessage(int sockfd, char *message);
+
 private:
 	void bindSocket();
+	void disconnectFromSocket(int sockfd);
+	void disconnectFromSocket(TCPConnection *connection);
+
 	TCPServerListener *listener;
 	ConnectionMap connectionMap;
 };

@@ -16,7 +16,7 @@ class TCPServerListener {
 public:
 	TCPServerListener();
 	virtual ~TCPServerListener();
-	virtual void onMessage(TCPMessage *message, int sockfd) {};
+	virtual void onMessage(int sockfd, TCPMessage *message) {};
 };
 
 }

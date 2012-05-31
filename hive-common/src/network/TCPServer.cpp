@@ -18,6 +18,7 @@ namespace KernelHive {
 TCPServer::TCPServer(NetworkAddress *serverAddress, TCPServerListener *listener) : NetworkEndpoint(serverAddress) {
 	this->listener = listener;
 
+	this->sockfd = openSocket(SOCK_STREAM);
 	bindSocket();
 	listen(this->sockfd, 10); //TODO: backlog size definition
 
@@ -44,15 +45,33 @@ void TCPServer::executeLoopCycle() {
 }
 
 void TCPServer::onMessage(int sockfd, TCPMessage *message) {
-
-	Logger::log(FATAL, "%s", message->data);
-
+	this->listener->onMessage(sockfd, message);
 }
 
 void TCPServer::onDisconnected(int sockfd) {
-
+	disconnectFromSocket(sockfd);
 }
 
+void TCPServer::disconnectFromSocket(int sockfd) {
+	ConnectionMap::iterator iterator = connectionMap.find(sockfd);
+	if (iterator != connectionMap.end()) {
+		disconnectFromSocket(connectionMap[sockfd]);
+		connectionMap.erase(sockfd);
+	}
+	Logger::log(INFO, "Client disconnected, %d left.", connectionMap.size());
+}
+
+void TCPServer::disconnectFromSocket(TCPConnection *connection) {
+	ThreadManager::Get()->pleaseStopThread(connection);
+	connection->disconnect();
+}
+
+void TCPServer::sendMessage(int sockfd, char *message) {
+	ConnectionMap::iterator iterator = connectionMap.find(sockfd);
+	if(iterator != connectionMap.end()) {
+		connectionMap[sockfd]->sendMessage(message);
+	}
+}
 
 TCPServer::~TCPServer() {
 

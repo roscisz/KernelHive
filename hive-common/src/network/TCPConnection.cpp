@@ -28,7 +28,7 @@ void TCPConnection::executeLoopCycle() {
 		message = readMessage();
 	}
 	catch(const char *msg) {
-		Logger::log(ERROR, "Couldn't read from socket: %s. Reconnecting.\n", msg);
+		Logger::log(ERROR, "Couldn't read from socket: %s.\n", msg);
 		listener->onDisconnected(this->sockfd);
 		return;
 	}
