@@ -118,9 +118,8 @@ public class KernelHiveProject implements Serializable, IProject,
 			Node sourcesNode = new Node(NODE_SOURCE_FILES);
 			for (File f : node.getSourceFiles()) {
 				Node sourceNode = new Node(SOURCE_FILE);
-				Node srcAttr = new Node(SOURCE_FILE_SRC_ATTRIBUTE, "."
-						+ System.getProperty("file.separator")
-						+ (new File(FileUtils.translateAbsoluteToRelativePath(
+				Node srcAttr = new Node(SOURCE_FILE_SRC_ATTRIBUTE, (new File(
+						FileUtils.translateAbsoluteToRelativePath(
 								projectFile.getAbsolutePath(),
 								f.getAbsolutePath()))));
 				srcAttr.setAttribute(true);

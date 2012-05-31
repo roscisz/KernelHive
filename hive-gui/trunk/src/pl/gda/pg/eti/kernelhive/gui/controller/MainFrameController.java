@@ -26,6 +26,7 @@ import pl.gda.pg.eti.kernelhive.gui.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewProjectDialog;
+import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.KernelHiveProject;
 
 public class MainFrameController {
@@ -36,7 +37,7 @@ public class MainFrameController {
 			.getLanguageResourceBundle();
 
 	private MainFrame frame;
-	private KernelHiveProject project;
+	private IProject project;
 	private HashMap<JTabContent, File> openedTabs;
 	private int newFileCounter;
 

@@ -39,6 +39,7 @@ import com.mxgraph.layout.mxPartitionLayout;
 import com.mxgraph.layout.mxStackLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxMorphing;
 import com.mxgraph.util.mxEvent;
@@ -127,8 +128,13 @@ public class WorkflowEditor extends JTabContent {
 			
 			@Override
 			public void invoke(Object sender, mxEventObject evt) {
-				mxCell edge = (mxCell) evt.getProperty("cell");
-				//TODO join two nodes
+				mxCell cell = (mxCell) evt.getProperty("cell");
+				if(cell.isEdge()){
+					mxICell source = cell.getSource();
+					mxICell terminal = cell.getTarget();
+					IWorkflowNode wfSource = (IWorkflowNode) source.getValue();
+					wfSource.addFollowingNode((IWorkflowNode) terminal.getValue());
+				}
 			}
 		};
 
