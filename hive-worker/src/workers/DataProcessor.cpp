@@ -97,6 +97,13 @@ void DataProcessor::work(char *const argv[]) {
 	context->setKernelArgument(1, sizeof(unsigned int), (void*)&size);
 	clBuffer = context->getRawBuffer(outBuffer);
 	context->setKernelArgument(2, sizeof(cl_mem), (void*)&clBuffer);
+
+	// Execute the kernel
+	context->executeKernel(numberOfDimensions, dimensionOffsets,
+			globalSizes, localSizes);
+
+	// Copy the result:
+	context->read(outBuffer, 0, size*sizeof(byte), (void*)resultBuffer->getRawData());
 }
 
 // ========================================================================= //

@@ -33,7 +33,7 @@ void ThreadManager::runThread(Thread* threadObject) {
     pthread_t threadInfo;
     pthread_create(&threadInfo, NULL, &ThreadManager::runThread, (void*) (threadObject));
     threadMap[threadObject] = threadInfo;
-    Logger::log(INFO, "Pthread created [%u]", threadInfo);
+    Logger::log(INFO, "Pthread created [%u]\n", threadInfo);
 }
 
 void ThreadManager::pleaseStopThread(Thread *threadObject) {
@@ -51,7 +51,7 @@ void ThreadManager::waitForThread(Thread *threadObject) {
 
 void ThreadManager::joinThread(pthread_t threadInfo) {
 	if (pthread_join(threadInfo, NULL) < 0) {
-		Logger::log(FATAL, "pthread_join for thread '%u' failed",
+		Logger::log(FATAL, "pthread_join for thread '%u' failed\n",
 				threadInfo);
 	}
 }
