@@ -21,6 +21,7 @@ public:
 	TCPConnection(int sockfd, TCPConnectionListener *listener);
 	void executeLoopCycle();
 	void sendMessage(char *msg); // FIXME: Should be protected?
+	void sendMessage(char *msg, int length);
 	void disconnect();
 	virtual ~TCPConnection();
 private:

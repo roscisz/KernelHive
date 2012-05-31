@@ -37,6 +37,7 @@ public:
 	void onMessage(int sockfd, TCPMessage *message);
 
 	void sendMessage(char *message);
+	void sendMessage(TCPMessage *message);
 
 	void pleaseStop();
 

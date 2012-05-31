@@ -34,6 +34,10 @@ void TCPClient::sendMessage(char *message) {
 	connection->sendMessage(message);
 }
 
+void TCPClient::sendMessage(TCPMessage *message) {
+	connection->sendMessage(message->data, message->nBytes);
+}
+
 void TCPClient::executeLoopCycle() {
 	if(this->connection == NULL) {
 		try {

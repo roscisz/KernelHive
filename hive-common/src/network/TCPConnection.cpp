@@ -51,7 +51,11 @@ TCPMessage* TCPConnection::readMessage() {
 
 void TCPConnection::sendMessage(char *msg)
 {
-	if(write(sockfd, msg, strlen(msg)) < 0)
+	sendMessage(msg, strlen(msg));
+}
+
+void TCPConnection::sendMessage(char *msg, int size) {
+	if(write(sockfd, msg, size) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
 	printf("Sent TCP message %s\n");
 }
