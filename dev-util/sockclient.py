@@ -25,28 +25,34 @@ if __name__ == "__main__":
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	sock.bind((host, port))
 	sock.listen(1)
-	conn, addr = sock.accept()
-	print "connection from ", addr
-	
+
 	while 1:
-		msg = conn.recv(1024)
-		if not msg:
-			break
-		msg = msg.strip()
-		print msg
-		if msg == 'SIZE':
-			conn.sendall(str(fsize))
-		elif msg == 'GET':
-			source = open(sys.argv[2], 'r')
-			while 1:
-				data = source.read(READ_BATCH)
-				if not data:
-					source.close()
-					break
-				conn.sendall(data)
-		elif msg == 'OK':
-			conn.sendall('OK')
-	
-	conn.close()
+		conn, addr = sock.accept()
+		print "connection from ", addr
+		while 1:
+			msg = conn.recv(1024)
+			if not msg:
+				break
+			msg = msg.strip()
+			print 'Received message: ', msg
+			if msg == 'SIZE':
+				conn.sendall(str(fsize))
+			elif msg == 'GET':
+				source = open(sys.argv[2], 'r')
+				while 1:
+					data = source.read(READ_BATCH)
+					if not data:
+						source.close()
+						break
+					conn.sendall(data)
+			elif msg == 'OK':
+				conn.sendall('OK')
+			elif msg == 'PUT':
+				conn.sendall('OK')
+			else:
+				pass	
+		conn.close()
+		print 'Connection closed'
+
 	sock.close()
 

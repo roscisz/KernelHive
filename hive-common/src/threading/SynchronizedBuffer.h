@@ -55,6 +55,30 @@ public:
 	size_t getOffset();
 
 	/**
+	 * Set the position in the buffer.
+	 *
+	 * @param offset the position to set
+	 */
+	void seek(size_t offset);
+
+	/**
+	 * Reads an amount of data from this buffer into the provided target
+	 * buffer. The data is read from the buffers current offset. The offset
+	 * will be incremented.
+	 *
+	 * @param target the placeholder to which the data should be copied
+	 * @param amount the number of bytes to copy
+	 */
+	void read(byte* target, size_t amount);
+
+	/**
+	 * Tells whether the buffer's pointer reached the end or not.
+	 *
+	 * @return true if the pointer reached the end, false otherwise
+	 */
+	bool isAtEnd();
+
+	/**
 	 * Appends provided data to the end of this buffer.
 	 *
 	 * @param data the data to append

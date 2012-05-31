@@ -27,11 +27,30 @@ void SynchronizedBuffer::allocate(size_t size) {
 
 void SynchronizedBuffer::append(byte* data, size_t amount) {
 	pthread_mutex_lock(&bufferLock);
-	for (unsigned int i = 0; i < amount; i++) {
+	for (unsigned int i = 0; i < amount && position < size; i++) {
 		this->data[position] = data[i];
 		position++;
 	}
 	pthread_mutex_unlock(&bufferLock);
+}
+
+void SynchronizedBuffer::read(byte* target, size_t amount) {
+	pthread_mutex_lock(&bufferLock);
+	for (unsigned int i = 0; i < amount && position < size; i++) {
+		target[i] = data[position];
+		position++;
+	}
+	pthread_mutex_unlock(&bufferLock);
+}
+
+void SynchronizedBuffer::seek(size_t offset) {
+	pthread_mutex_lock(&bufferLock);
+	position = offset;
+	pthread_mutex_unlock(&bufferLock);
+}
+
+bool SynchronizedBuffer::isAtEnd() {
+	return !(position < size);
 }
 
 size_t SynchronizedBuffer::getSize() {

@@ -43,6 +43,7 @@ public:
 	virtual ~TCPClient();
 };
 
+}
+
 #endif /* TCPCLIENT_H_ */
 
-}

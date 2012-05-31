@@ -8,6 +8,7 @@
 #include "commons/OpenClEvent.h"
 #include "threading/ThreadManager.h"
 #include "DataDownloader.h"
+#include "DataUploader.h"
 #include "DataProcessor.h"
 
 namespace KernelHive {
@@ -104,6 +105,12 @@ void DataProcessor::work(char *const argv[]) {
 
 	// Copy the result:
 	context->read(outBuffer, 0, size*sizeof(byte), (void*)resultBuffer->getRawData());
+
+	// Upload data to repository
+	DataUploader* uploader = new DataUploader(dataAddress, resultBuffer);
+	threadManager->runThread(uploader);
+	threadManager->waitForThread(uploader);
+	delete uploader;
 }
 
 // ========================================================================= //
