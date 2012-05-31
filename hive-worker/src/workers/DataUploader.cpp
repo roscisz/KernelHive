@@ -3,6 +3,7 @@
 #include "DataUploader.h"
 #include "network/TCPClient.h"
 #include "network/TCPClientListener.h"
+#include "network/TCPMessage.h"
 #include "commons/Logger.h"
 
 namespace KernelHive {
@@ -26,7 +27,8 @@ void DataUploader::onMessage(TCPMessage* message) {
 		buffer->seek(0);
 		while (!buffer->isAtEnd()) {
 			buffer->read(uploadBuffer, UPLOAD_BATCH);
-			sendMessage(uploadBuffer);
+			TCPMessage message(uploadBuffer, UPLOAD_BATCH);
+			sendMessage(&message);
 		}
 		pleaseStop();
 	} else {

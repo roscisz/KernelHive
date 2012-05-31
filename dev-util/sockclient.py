@@ -50,7 +50,9 @@ if __name__ == "__main__":
 			elif msg == 'PUT':
 				conn.sendall('OK')
 			else:
-				pass	
+				with open('output', 'ab') as out:
+					out.write(msg)
+
 		conn.close()
 		print 'Connection closed'
 
