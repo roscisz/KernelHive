@@ -48,7 +48,14 @@ public:
 	virtual ~DataProcessor();
 
 private:
-	static const char* KERNEL_NAME;
+	/** The name of the Kernel to use by the DataProcessor worker. */
+	static const char* KERNEL;
+
+	/** The execution context name of the input data buffer. */
+	static const char* INPUT_BUFFER;
+
+	/** The execution context name of the output data buffer. */
+	static const char* OUTPUT_BUFFER;
 
 	/** The address from which the data can be downloaded. */
 	NetworkAddress* dataAddress;
@@ -91,12 +98,6 @@ private:
 
 	/** The execution context in which the data will be processed. */
 	ExecutionContext* context;
-
-	/** The name of the input buffer of the processor. */
-	std::string inBuffer;
-
-	/** The name of the output buffer of the processor. */
-	std::string outBuffer;
 
 	/**
 	 * Initialize this data processor

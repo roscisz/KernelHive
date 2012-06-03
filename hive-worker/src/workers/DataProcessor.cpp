@@ -14,6 +14,16 @@
 namespace KernelHive {
 
 // ========================================================================= //
+// 							Constants Init									 //
+// ========================================================================= //
+
+const char* DataProcessor::KERNEL = "processData";
+
+const char* DataProcessor::INPUT_BUFFER = "inputBuffer";
+
+const char* DataProcessor::OUTPUT_BUFFER = "outputBuffer";
+
+// ========================================================================= //
 // 							Public Members									 //
 // ========================================================================= //
 
@@ -30,8 +40,6 @@ DataProcessor::DataProcessor(NetworkAddress * clusterAddress) : Worker(clusterAd
 	dimensionOffsets = NULL;
 	globalSizes = NULL;
 	localSizes = NULL;
-	inBuffer = "input";
-	outBuffer = "output";
 }
 
 DataProcessor::~DataProcessor() {
@@ -77,34 +85,32 @@ void DataProcessor::work(char *const argv[]) {
 	resultBuffer->allocate(size); // Allocate local result buffer
 
 	// Allocate input and output buffers on the device
-	context->createBuffer(inBuffer, size*sizeof(byte), CL_MEM_READ_ONLY);
-	context->createBuffer(outBuffer, size*sizeof(byte), CL_MEM_WRITE_ONLY);
+	context->createBuffer(INPUT_BUFFER, size*sizeof(byte), CL_MEM_READ_ONLY);
+	context->createBuffer(OUTPUT_BUFFER, size*sizeof(byte), CL_MEM_WRITE_ONLY);
 
 	// Begin copying data to the device
-	OpenClEvent dataCopy = context->enqueueWrite(inBuffer, 0,
+	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
 			size*sizeof(byte), (void*)buffer->getRawData());
 
 	// Compile and prepare the kernel for execution
 	context->buildProgramFromSource(kernelBuffer->getRawData(),
 			kernelBuffer->getSize());
-	context->prepareKernel(KERNEL_NAME);
+	context->prepareKernel(KERNEL);
 
 	// Wait for data copy to finish
 	context->waitForEvents(1, &dataCopy);
 
 	// Set kernel agrguments
-	cl_mem clBuffer = context->getRawBuffer(inBuffer);
-	context->setKernelArgument(0, sizeof(cl_mem), (void*)&clBuffer);
-	context->setKernelArgument(1, sizeof(unsigned int), (void*)&size);
-	clBuffer = context->getRawBuffer(outBuffer);
-	context->setKernelArgument(2, sizeof(cl_mem), (void*)&clBuffer);
+	context->setBufferArg(0, INPUT_BUFFER);
+	context->setValueArg(1, sizeof(unsigned int), (void*)&size);
+	context->setBufferArg(2, OUTPUT_BUFFER);
 
 	// Execute the kernel
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
 			globalSizes, localSizes);
 
 	// Copy the result:
-	context->read(outBuffer, 0, size*sizeof(byte), (void*)resultBuffer->getRawData());
+	context->read(OUTPUT_BUFFER, 0, size*sizeof(byte), (void*)resultBuffer->getRawData());
 
 	// Upload data to repository
 	DataUploader* uploader = new DataUploader(dataAddress, resultBuffer);
@@ -116,8 +122,6 @@ void DataProcessor::work(char *const argv[]) {
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
-
-const char* DataProcessor::KERNEL_NAME = "processData";
 
 void DataProcessor::init(char *const argv[]) {
 	// TODO Implement parameters existence check..

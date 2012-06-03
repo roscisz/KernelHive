@@ -1,4 +1,5 @@
 #include "ExecutionContext.h"
+#include "KernelHiveException.h"
 
 namespace KernelHive {
 
@@ -52,6 +53,8 @@ namespace KernelHive {
 		BufferMap::iterator iterator = buffers.find(name);
 		if (iterator != buffers.end()) {
 			buffer = buffers[name];
+		} else {
+			throw KernelHiveException("Buffer not found!");
 		}
 		return buffer;
 	}
@@ -145,10 +148,18 @@ namespace KernelHive {
 		}
 	}
 
-	void ExecutionContext::setKernelArgument(cl_uint index, size_t size,
+	void ExecutionContext::setValueArg(cl_uint index, size_t size,
 			const void* value)
 	{
 		cl_int errorCode = clSetKernelArg(clKernel, index, size, value);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error setting kernel argument.", errorCode);
+		}
+	}
+
+	void ExecutionContext::setBufferArg(cl_uint index, const char* bufferName) {
+		cl_mem buffer = getRawBuffer(bufferName);
+		cl_int errorCode = clSetKernelArg(clKernel, index, sizeof(cl_mem), (void*)&buffer);
 		if (errorCode != CL_SUCCESS) {
 			throw OpenClException("Error setting kernel argument.", errorCode);
 		}

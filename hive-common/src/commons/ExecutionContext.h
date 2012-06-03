@@ -159,7 +159,15 @@ namespace KernelHive {
 		 * @param size the size of the argument being set
 		 * @param value the value of the argument
 		 */
-		void setKernelArgument(cl_uint index, size_t size, const void* value);
+		void setValueArg(cl_uint index, size_t size, const void* value);
+
+		/**
+		 * Sets an OpenCL buffer allocated in this context as a kernel argument.
+		 *
+		 * @param index the kernel argument index to use
+		 * @param bufferName the name of the buffer to use
+		 */
+		void setBufferArg(cl_uint index, const char* bufferName);
 
 		/**
 		 * Executes a currently set-up kernel in this execution context. The method
