@@ -121,15 +121,18 @@ const char* DataProcessor::KERNEL_NAME = "processData";
 
 void DataProcessor::init(char *const argv[]) {
 	// TODO Implement parameters existence check..
-	dataAddress = new NetworkAddress(argv[0], argv[1]);
+
+	dataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	buffer = new SynchronizedBuffer();
 	dataDownloader = new DataDownloader(dataAddress, buffer);
-	kernelAddress = new NetworkAddress(argv[2], argv[3]);
+
+	kernelAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	kernelBuffer = new SynchronizedBuffer();
-	resultBuffer = new SynchronizedBuffer();
 	kernelDownloader = new DataDownloader(kernelAddress, kernelBuffer);
 
-	deviceId = argv[4];
+	resultBuffer = new SynchronizedBuffer();
+
+	deviceId = nextParam(argv);
 	device = OpenClHost::getInstance()->lookupDevice(deviceId);
 	if (device == NULL) {
 		throw KernelHiveException("Device not found!");
@@ -137,17 +140,22 @@ void DataProcessor::init(char *const argv[]) {
 
 	context = new ExecutionContext(*device);
 
-	numberOfDimensions = KhUtils::atoi(argv[5]);
+	numberOfDimensions = KhUtils::atoi(nextParam(argv));
 	if (numberOfDimensions <= 0) {
 		throw KernelHiveException("Number of dimensions must a positive integer!");
 	}
 	dimensionOffsets = new size_t[numberOfDimensions];
 	globalSizes = new size_t[numberOfDimensions];
 	localSizes = new size_t[numberOfDimensions];
-	// TODO Implement size amounts parsing...
-	dimensionOffsets[0] = KhUtils::atoi(argv[6]);
-	globalSizes[0] = KhUtils::atoi(argv[7]);
-	localSizes[0] = KhUtils::atoi(argv[8]);
+	for (int i = 0; i < numberOfDimensions; i++) {
+		dimensionOffsets[i] = KhUtils::atoi(nextParam(argv));
+	}
+	for (int i = 0; i < numberOfDimensions; i++) {
+		globalSizes[i] = KhUtils::atoi(nextParam(argv));
+	}
+	for (int i = 0; i < numberOfDimensions; i++) {
+		localSizes[i] = KhUtils::atoi(nextParam(argv));
+	}
 }
 
 } /* namespace KernelHive */
