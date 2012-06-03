@@ -5,6 +5,7 @@ import sys
 import socket
 import os
 import struct
+import re
 
 HOST = "localhost"
 READ_BATCH = 1024
@@ -35,9 +36,9 @@ if __name__ == "__main__":
 				break
 			msg = msg.strip()
 			print 'Received message: ', msg
-			if msg == 'SIZE':
+			if re.match(r'1 \d+', msg):
 				conn.sendall(str(fsize))
-			elif msg == 'GET':
+			elif re.match(r'2 \d+', msg):
 				source = open(sys.argv[2], 'r')
 				while 1:
 					data = source.read(READ_BATCH)

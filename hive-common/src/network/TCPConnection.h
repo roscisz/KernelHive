@@ -20,8 +20,8 @@ class TCPConnection : public LoopedThread {
 public:
 	TCPConnection(int sockfd, TCPConnectionListener *listener);
 	void executeLoopCycle();
-	void sendMessage(char *msg); // FIXME: Should be protected?
-	void sendMessage(char *msg, int length);
+	void sendMessage(const char *msg); // FIXME: Should be protected?
+	void sendMessage(const char *msg, int length);
 	void disconnect();
 	virtual ~TCPConnection();
 private:

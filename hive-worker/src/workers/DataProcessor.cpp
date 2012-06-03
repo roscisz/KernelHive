@@ -128,11 +128,11 @@ void DataProcessor::init(char *const argv[]) {
 
 	dataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	buffer = new SynchronizedBuffer();
-	dataDownloader = new DataDownloader(dataAddress, buffer);
+	dataDownloader = new DataDownloader(dataAddress, nextParam(argv), buffer);
 
 	kernelAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	kernelBuffer = new SynchronizedBuffer();
-	kernelDownloader = new DataDownloader(kernelAddress, kernelBuffer);
+	kernelDownloader = new DataDownloader(kernelAddress, nextParam(argv), kernelBuffer);
 
 	resultBuffer = new SynchronizedBuffer();
 

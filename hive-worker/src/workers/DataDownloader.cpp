@@ -1,21 +1,35 @@
 #include <iostream>
 #include <unistd.h>
 #include <cstdlib>
+#include <sstream>
+#include <string>
 
 #include "DataDownloader.h"
 #include "commons/Logger.h"
+#include "commons/KhUtils.h"
+#include "commons/KernelHiveException.h"
 
 namespace KernelHive {
+
+// ========================================================================= //
+// 							Constants Init									 //
+// ========================================================================= //
+
+const char* DataDownloader::GET_SIZE = "1";
+
+const char* DataDownloader::GET_DATA = "2";
 
 // ========================================================================= //
 // 							Public Members									 //
 // ========================================================================= //
 
-DataDownloader::DataDownloader(NetworkAddress* address, SynchronizedBuffer* buffer)
+DataDownloader::DataDownloader(NetworkAddress* address, char* dataId, SynchronizedBuffer* buffer)
 	: TCPClient(address, this)
 {
+	this->dataId = dataId;
 	this->buffer = buffer;
 	currentState = STATE_INITIAL;
+	prepareQueries();
 }
 
 void DataDownloader::onMessage(TCPMessage* message) {
@@ -26,7 +40,9 @@ void DataDownloader::onMessage(TCPMessage* message) {
 			Logger::log(INFO, "Data size has been acquired: %u\n", totalDataSize);
 			buffer->allocate(totalDataSize);
 			currentState = STATE_SIZE_ACQUIRED;
-			sendMessage("GET");
+			sendMessage(dataQuery.c_str());
+		} else {
+			sendMessage(sizeQuery.c_str());
 		}
 		break;
 
@@ -42,13 +58,14 @@ void DataDownloader::onMessage(TCPMessage* message) {
 
 	case STATE_DATA_ACQUIRED:
 		Logger::log(DEBUG, "All data has been acquired..");
+		pleaseStop();
 		break;
 	}
 }
 
 void DataDownloader::onConnected() {
 	Logger::log(INFO, "Connection established\n");
-	sendMessage("SIZE");
+	sendMessage(sizeQuery.c_str());
 }
 
 DataDownloader::~DataDownloader() {
@@ -60,13 +77,24 @@ DataDownloader::~DataDownloader() {
 // ========================================================================= //
 
 bool DataDownloader::acquireDataSize(const char* sizeString) {
-	int size = atoi(sizeString);
-	if (size > 0) {
-		totalDataSize = (size_t) size;
-		return true;
-	} else {
-		return false;
+	bool outcome = false;
+	try {
+		totalDataSize = KhUtils::atoi(sizeString);
+		outcome =  true;
+	} catch (KernelHiveException& e) {
+		Logger::log(ERROR, e.getMessage().data());
 	}
+	return outcome;
+}
+
+void DataDownloader::prepareQueries() {
+	std::stringstream ss;
+	ss << GET_SIZE << ' ' << dataId;
+	sizeQuery = ss.str();
+	ss.str("");
+	ss.clear();
+	ss << GET_DATA << ' ' << dataId;
+	dataQuery = ss.str();
 }
 
 } /* namespace KernelHive */

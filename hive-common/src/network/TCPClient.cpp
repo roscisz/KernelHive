@@ -30,7 +30,7 @@ void TCPClient::onMessage(int sockfd, TCPMessage *message) {
 	listener->onMessage(message);
 }
 
-void TCPClient::sendMessage(char *message) {
+void TCPClient::sendMessage(const char *message) {
 	connection->sendMessage(message);
 }
 

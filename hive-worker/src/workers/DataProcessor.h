@@ -15,8 +15,10 @@ namespace KernelHive {
  * <ul>
  *   <li>data provider host</li>
  *   <li>data provider port</li>
+ *   <li>data identifier</li>
  *   <li>kernel provider host</li>
  *   <li>kernel provider port</li>
+ *   <li>kernel code identifier</li>
  *   <li>device identifier</li>
  *   <li>number of dimensions to use - n</li>
  *   <li>n numbers specifying the offset in each dimension</li>
