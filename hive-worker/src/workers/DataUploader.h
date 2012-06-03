@@ -1,6 +1,8 @@
 #ifndef KERNEL_HIVE_DATA_UPLOADER_H
 #define KERNEL_HIVE_DATA_UPLOADER_H
 
+#include <string>
+
 #include "network/TCPClient.h"
 #include "network/TCPClientListener.h"
 #include "threading/SynchronizedBuffer.h"
@@ -11,9 +13,6 @@ class DataUploader
 	: public TCPClient, public TCPClientListener {
 
 public:
-	/** The size to use for the upload buffer. */
-	static const size_t UPLOAD_BATCH = 1024;
-
 	/**
 	 * Initializes this data uploader.
 	 *
@@ -40,15 +39,22 @@ public:
 	void onConnected();
 
 private:
-	static const char* ACK_MESSAGE;
+	/** The size to use for the upload buffer. */
+	static const size_t UPLOAD_BATCH = 1024;
+
+	/** The command which allows to publish data in the repository. */
+	static const char* PUBLISH_DATA;
 
 	/** A pointer to the buffer with data to be uploaded. */
 	SynchronizedBuffer* buffer;
 
+	/** The command which tells the repository that data will be uploaded to it. */
+	std::string dataPublish;
+
 	/**
-	 * Checks if the message is an ack from the server.
+	 * Pre-compiles the commands which will be sent to the data repository.
 	 */
-	bool checkAck(const char* message);
+	void prepareCommands();
 
 };
 

@@ -46,10 +46,13 @@ if __name__ == "__main__":
 						source.close()
 						break
 					conn.sendall(data)
-			elif msg == 'OK':
-				conn.sendall('OK')
-			elif msg == 'PUT':
-				conn.sendall('OK')
+			#elif msg == 'OK':
+			#	conn.sendall('OK')
+			elif re.match(r'0 (.*)', msg):
+				#conn.sendall('OK')
+				matcher = re.match(r'0 (.*)', msg)
+				with open('output', 'ab') as out:
+					out.write(matcher.group(1))
 			else:
 				with open('output', 'ab') as out:
 					out.write(msg)

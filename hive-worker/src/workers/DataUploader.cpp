@@ -1,4 +1,5 @@
 #include <cstring>
+#include <sstream>
 
 #include "DataUploader.h"
 #include "network/TCPClient.h"
@@ -7,6 +8,12 @@
 #include "commons/Logger.h"
 
 namespace KernelHive {
+
+// ========================================================================= //
+// 							Constants Init									 //
+// ========================================================================= //
+
+const char* DataUploader::PUBLISH_DATA = "0";
 
 // ========================================================================= //
 // 							Public Members									 //
@@ -21,38 +28,30 @@ DataUploader::~DataUploader() {
 }
 
 void DataUploader::onMessage(TCPMessage* message) {
-	// TODO Remove development logging
-	if (checkAck(message->data)) {
-		byte uploadBuffer[UPLOAD_BATCH];
-		buffer->seek(0);
-		while (!buffer->isAtEnd()) {
-			buffer->read(uploadBuffer, UPLOAD_BATCH);
-			TCPMessage message(uploadBuffer, UPLOAD_BATCH);
-			sendMessage(&message);
-		}
-		pleaseStop();
-	} else {
-		sendMessage("PUT");
-	}
+	// TODO Handle incomming messages
 }
 
 void DataUploader::onConnected() {
 	Logger::log(INFO, "Uploader connection established\n");
-	sendMessage("PUT");
+	sendMessage(dataPublish.c_str());
+	byte uploadBuffer[UPLOAD_BATCH];
+	buffer->seek(0);
+	while (!buffer->isAtEnd()) {
+		buffer->read(uploadBuffer, UPLOAD_BATCH);
+		TCPMessage message(uploadBuffer, UPLOAD_BATCH);
+		sendMessage(&message);
+	}
+	pleaseStop();
 }
 
 // ========================================================================= //
-// 							Public Members									 //
+// 							Private Members									 //
 // ========================================================================= //
 
-const char* DataUploader::ACK_MESSAGE = "OK";
-
-bool DataUploader::checkAck(const char* message) {
-	if (strcmp(ACK_MESSAGE, message) == 0) {
-		return true;
-	} else {
-		return false;
-	}
+void DataUploader::prepareCommands() {
+	std::stringstream ss;
+	ss << PUBLISH_DATA << ' ';
+	dataPublish = ss.str();
 }
 
 } /* namespace KernelHive */
