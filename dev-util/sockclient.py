@@ -6,9 +6,12 @@ import socket
 import os
 import struct
 import re
+import random
 
 HOST = "localhost"
 READ_BATCH = 1024
+
+INT_MAX = 2147483647
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -35,7 +38,8 @@ if __name__ == "__main__":
 			if not msg:
 				break
 			msg = msg.strip()
-			print 'Received message: ', msg
+			#print 'Received message: ', msg
+			#print len(msg)
 			if re.match(r'1 \d+', msg):
 				conn.sendall(str(fsize))
 			elif re.match(r'2 \d+', msg):
@@ -46,14 +50,15 @@ if __name__ == "__main__":
 						source.close()
 						break
 					conn.sendall(data)
-			#elif msg == 'OK':
-			#	conn.sendall('OK')
-			elif re.match(r'0 (.*)', msg):
-				#conn.sendall('OK')
-				matcher = re.match(r'0 (.*)', msg)
+			elif re.match(r'0 (\d+) (.*)', msg):
+				matcher = re.match(r'0 (\d+) (.*)', msg)
+				conn.sendall(str(random.randint(0, INT_MAX)))
+				print len(matcher.group(2))
 				with open('output', 'ab') as out:
-					out.write(matcher.group(1))
+					#out.write(matcher.group(2))
+					out.write(msg)
 			else:
+				print len(msg)
 				with open('output', 'ab') as out:
 					out.write(msg)
 

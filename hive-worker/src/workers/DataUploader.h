@@ -38,18 +38,32 @@ public:
 	 */
 	void onConnected();
 
+	std::string* getDataIdentifier();
+
 private:
+	/** The initial state. */
+	static const int STATE_INITIAL = 0;
+
+	/** The identifier of uploaded data has been acquired. */
+	static const int STATE_IDENTIFIER_ACQUIRED = 1;
+
 	/** The size to use for the upload buffer. */
 	static const size_t UPLOAD_BATCH = 1024;
 
 	/** The command which allows to publish data in the repository. */
 	static const char* PUBLISH_DATA;
 
+	/** The current state of this data uploader. */
+	int currentState;
+
 	/** A pointer to the buffer with data to be uploaded. */
 	SynchronizedBuffer* buffer;
 
 	/** The command which tells the repository that data will be uploaded to it. */
 	std::string dataPublish;
+
+	/** The identifier of uploaded data - returned by the repository after uploading. */
+	std::string dataIdentifier;
 
 	/**
 	 * Pre-compiles the commands which will be sent to the data repository.
