@@ -15,6 +15,7 @@
 
 #include "network/NetworkAddress.h"
 #include "network/UDPClient.h"
+#include "network/DataPublisher.h"
 #include "threading/ThreadManager.h"
 #include "commons/SampleWorker.h"
 
@@ -23,7 +24,8 @@ namespace KernelHive {
 UnitManager::UnitManager() {
 
 	// Testing worker
-	//WorkerProxy *proxy = WorkerProxy::create(/* type ,*/new NetworkAddress("localhost", 31339));
+	WorkerProxy *proxy = WorkerProxy::create(/* type ,*/
+			"localhost 31338 localhost 31340 123 localhost 9012 456 Nazwa 1 0 4096 64");
 
 	try {
 		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338), this);
@@ -33,6 +35,11 @@ UnitManager::UnitManager() {
 		exit(EXIT_FAILURE);
 	}
 	ThreadManager::Get()->runThread(clusterProxy);
+
+	DataPublisher *dataPublisher = new DataPublisher(new NetworkAddress("localhost", 31350));
+	dataPublisher->publish("raz");
+	dataPublisher->publish("dwa");
+	dataPublisher->publish("trzy");
 }
 
 UnitManager::~UnitManager() {

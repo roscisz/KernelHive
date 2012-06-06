@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <syslog.h>
 #include <exception>
+#include "commons/KhUtils.h"
 
 #include "UnitManager.h"
 #include "commons/Logger.h"
