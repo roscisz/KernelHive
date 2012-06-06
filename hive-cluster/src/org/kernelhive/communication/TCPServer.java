@@ -25,16 +25,16 @@ public class TCPServer implements Runnable {
 	private ServerSocketChannel server;
 	private Selector selector;
 	
-	public TCPServer(String host, int port, TCPServerListener listener) throws CommunicationException {
+	public TCPServer(NetworkAddress address, TCPServerListener listener) throws CommunicationException {
 		this.listener = listener;
 		
 		try {
-			prepareSocket(host, port);
+			prepareSocket(address.host, address.port);
 		} catch (IOException e) {
 			throw new CommunicationException(e);
 		}		
 		
-		System.out.println("TCP server starts listening on " + host + ":" + port + ".");
+		System.out.println("TCP server starts listening on " + address.host + ":" + address.port + ".");
 		
 		// FIXME: Who's responsible for thread management?
 		new Thread(this).start();

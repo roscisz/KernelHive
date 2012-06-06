@@ -8,6 +8,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.kernelhive.communication.CommunicationException;
+import org.kernelhive.communication.DataPublisher;
+import org.kernelhive.communication.NetworkAddress;
 import org.kernelhive.communication.TCPServerListener;
 import org.kernelhive.communication.TCPServer;
 import org.kernelhive.communication.UDPServer;
@@ -20,7 +22,9 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		
 	public ClusterManager() {
 		try {
-			TCPServer unitServer = new TCPServer("localhost", 31338, this);
+			TCPServer unitServer = new TCPServer(new NetworkAddress("localhost", 31338), this);
+			DataPublisher dp = new DataPublisher(new NetworkAddress("localhost", 31340));
+			dp.publish(123, "PRZYKLADOWE DANE");
 			UDPServer runnerServer = new UDPServer(31339, this);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
