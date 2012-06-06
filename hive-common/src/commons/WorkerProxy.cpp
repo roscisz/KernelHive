@@ -10,19 +10,30 @@
 #include <string.h>
 #include <errno.h>
 #include <cstdlib>
+#include <vector>
+#include <string>
+#include <sstream>
 #include "WorkerProxy.h"
 
 namespace KernelHive {
 
-WorkerProxy::WorkerProxy(char *binaryPath, NetworkAddress *clusterAddress) {
-	char *params[4];
+WorkerProxy::WorkerProxy(char *binaryPath, char *params) {
+	std::vector<char *> args;
+	std::istringstream iss(params);
 
-	params[1] = clusterAddress->host;
-	params[2] = (char *) calloc(5, sizeof(char));
-	sprintf(params[2], "%d", clusterAddress->port);
-	// params[4] = kernel+data
+	std::string token;
+	while(iss >> token) {
+	  char *arg = new char[token.size() + 1];
+	  copy(token.begin(), token.end(), arg);
+	  arg[token.size()] = '\0';
+	  args.push_back(arg);
+	}
+	args.push_back(0);
 
-	forkAndExec(binaryPath, params);
+	forkAndExec(binaryPath, &args[0]);
+
+	for(size_t i = 0; i < args.size(); i++)
+	  delete[] args[i];
 }
 
 void WorkerProxy::forkAndExec(char *binaryPath, char *const argv[]) {
@@ -32,9 +43,9 @@ void WorkerProxy::forkAndExec(char *binaryPath, char *const argv[]) {
 		printf("Execv error: %s", strerror(errno));
 }
 
-WorkerProxy *WorkerProxy::create(NetworkAddress *clusterAddress) {
-
-	return new WorkerProxy("../hive-worker/Debug/hive-worker", clusterAddress);
+WorkerProxy *WorkerProxy::create(char *params) {
+	// TODO: worker factory
+	return new WorkerProxy("../build/hive-worker/DataProcessor", params);
 }
 
 WorkerProxy::~WorkerProxy() {
