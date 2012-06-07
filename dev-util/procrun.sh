@@ -16,7 +16,7 @@ DATA_ID="123"
 KERNEL_ID="456"
 
 # The device to use for execution:
-DEVICE_ID="\"GeForce 9400M G\""
+DEVICE_ID="GeForce9400MG"
 
 # Kernel parameters:
 NUM_DIMENSIONS="1"

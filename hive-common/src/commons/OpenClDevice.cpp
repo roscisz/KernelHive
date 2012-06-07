@@ -1,6 +1,8 @@
 #include <CL/cl.h>
 #include <string>
 #include <sstream>
+#include <algorithm>
+#include <cctype>
 
 #include "OpenClDevice.h"
 
@@ -13,11 +15,13 @@ namespace KernelHive {
 	OpenClDevice::OpenClDevice(cl_platform_id clPlatformId, cl_device_id clDeviceId) {
 		this->clPlatformId = clPlatformId;
 		this->clDeviceId = clDeviceId;
+		constructIdentifier();
 	}
 
 	OpenClDevice::OpenClDevice(const OpenClDevice& device) {
 		this->clPlatformId = device.clPlatformId;
 		this->clDeviceId = device.clDeviceId;
+		this->identifier = device.identifier;
 	}
 
 	OpenClDevice::~OpenClDevice() {
@@ -41,7 +45,7 @@ namespace KernelHive {
 
 	std::string OpenClDevice::getIdentifier() {
 		// TODO Implement an identifier which will actually be used..
-		return getDeviceName();
+		return identifier;
 	}
 
 	std::string OpenClDevice::getDeviceName() {
@@ -131,5 +135,11 @@ namespace KernelHive {
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
+
+	void OpenClDevice::constructIdentifier() {
+		identifier = getDeviceName();
+		identifier.erase(std::remove_if(identifier.begin(), identifier.end(), isspace),
+				identifier.end());
+	}
 
 } /* namespace KernelHive */

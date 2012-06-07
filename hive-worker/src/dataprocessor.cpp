@@ -12,15 +12,15 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	printf("Hello worker: %s %s\n", argv[1], argv[2]);
+	printf("Hello worker: %s %s\n", argv[0], argv[1]);
 
-	NetworkAddress *address = new NetworkAddress(argv[1], argv[2]);
+	NetworkAddress *address = new NetworkAddress(argv[0], argv[1]);
 
 	printf("%s %d\n", address->host, address->port);
 
 	try {
 		KernelHive::DataProcessor *worker = new KernelHive::DataProcessor(address);
-		worker->work(argv + 3);
+		worker->work(argv + 2);
 		delete worker;
 	}
 	catch(const char *str) {

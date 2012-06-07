@@ -132,6 +132,14 @@ namespace KernelHive {
 		/** The OpenCL ID of this device. */
 		cl_device_id clDeviceId;
 
+		/** The KernelHive identifier of the device. */
+		std::string identifier;
+
+		/**
+		 * Constructs the KernelHive identifier for this device.
+		 */
+		void constructIdentifier();
+
 	};
 
 } /* namespace KernelHive */
