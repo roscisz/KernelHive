@@ -66,7 +66,7 @@ void TCPServer::disconnectFromSocket(TCPConnection *connection) {
 	connection->disconnect();
 }
 
-void TCPServer::sendMessage(int sockfd, char *message) {
+void TCPServer::sendMessage(int sockfd, const char *message) {
 	ConnectionMap::iterator iterator = connectionMap.find(sockfd);
 	if(iterator != connectionMap.end()) {
 		connectionMap[sockfd]->sendMessage(message);

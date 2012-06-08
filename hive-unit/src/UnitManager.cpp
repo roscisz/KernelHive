@@ -37,9 +37,7 @@ UnitManager::UnitManager() {
 	ThreadManager::Get()->runThread(clusterProxy);
 
 	DataPublisher *dataPublisher = new DataPublisher(new NetworkAddress("localhost", 31350));
-	dataPublisher->publish("raz");
-	dataPublisher->publish("dwa");
-	dataPublisher->publish("trzy");
+	dataPublisher->publish(123, "DANE PRZYKLADOWE C++");
 }
 
 UnitManager::~UnitManager() {

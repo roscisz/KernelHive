@@ -28,7 +28,7 @@ public:
 
 	void executeLoopCycle();
 
-	void sendMessage(int sockfd, char *message);
+	void sendMessage(int sockfd, const char *message);
 
 private:
 	void bindSocket();

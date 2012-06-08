@@ -39,6 +39,8 @@ namespace KernelHive {
 			 */
 			static int atoi(const char* string);
 
+			static const char *itoa(int number);
+
 		};
 
 } /* namespace KernelHive */

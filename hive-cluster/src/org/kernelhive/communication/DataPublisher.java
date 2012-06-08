@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 public class DataPublisher implements TCPServerListener {
 	private static String commandSeparator = " ";
-	private static String successMessage = "OK";
 	
 	private TCPServer server;
 	private Integer prevId = 0;
@@ -62,7 +61,7 @@ public class DataPublisher implements TCPServerListener {
 			answer = "No such command: " + ex.getLocalizedMessage();
 		}
 		catch(NullPointerException npe) {
-			answer = "No such ID.";
+			answer = "No such ID";
 		}
 		
 		TCPServer.sendMessage(channel, answer);
@@ -85,9 +84,8 @@ public class DataPublisher implements TCPServerListener {
 	}
 
 	private String putData(String params) {
-		Integer id = generateId();
 		String[] paramsArray = params.split(commandSeparator, 2);
-		data.put(id, paramsArray[1]);
+		Integer id = publish(paramsArray[1]);
 		return id.toString();
 	}
 	
@@ -108,7 +106,7 @@ public class DataPublisher implements TCPServerListener {
 	private String deleteData(String params) {
 		Integer index = Integer.parseInt(params);
 		data.remove(index);
-		return successMessage;
+		return "OK";
 	}
 
 }

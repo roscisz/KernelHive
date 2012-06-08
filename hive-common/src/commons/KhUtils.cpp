@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 
+#include <cstdio>
 #include "KhUtils.h"
 #include "KernelHiveException.h"
 
@@ -36,6 +37,12 @@ namespace KernelHive {
 		}
 
 		return value;
+	}
+
+	const char *KhUtils::itoa(int number) {
+		std::string ret;
+		sprintf((char *)ret.c_str(), "%d", number);
+		return ret.c_str();
 	}
 
 // ========================================================================= //

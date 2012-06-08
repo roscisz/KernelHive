@@ -24,7 +24,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		try {
 			TCPServer unitServer = new TCPServer(new NetworkAddress("localhost", 31338), this);
 			DataPublisher dp = new DataPublisher(new NetworkAddress("localhost", 31340));
-			dp.publish(123, "PRZYKLADOWE DANE");
+			dp.publish(123, "DANE PRZYKLADOWE JAVA");
 			UDPServer runnerServer = new UDPServer(31339, this);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
