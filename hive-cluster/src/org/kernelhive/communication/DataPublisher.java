@@ -45,6 +45,7 @@ public class DataPublisher implements TCPServerListener {
 
 	@Override
 	public void onTCPMessage(SocketChannel channel, String message) {
+		System.out.println("Publisher got message: " + message);
 		message = message.split("\r")[0];
 		message = message.split("\n")[0];
 		String[] command = message.split(commandSeparator, 2);
@@ -64,7 +65,7 @@ public class DataPublisher implements TCPServerListener {
 			answer = "No such ID.";
 		}
 		
-		TCPServer.sendMessage(channel, answer + "\n");
+		TCPServer.sendMessage(channel, answer);
 	}
 	
 	@Override
