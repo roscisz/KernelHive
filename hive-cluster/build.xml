@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project hive-cluster">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/home/roy/mgr/KernelHive/KernelHive/src/hive-cluster/hive-cluster.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="org.kernelhive.cluster.HiveCluster"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/home/roy/mgr/KernelHive/KernelHive/src/hive-cluster/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/commons-daemon-1.0.10.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/lib/eclipse/dropins/jdt/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/lib/eclipse/dropins/jdt/plugins/org.hamcrest.core_1.1.0.jar"/>
+        </jar>
+    </target>
+</project>

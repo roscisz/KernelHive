@@ -1,0 +1,2 @@
+#!/bin/sh
+jsvc -home /usr/lib/jvm/java-6-openjdk-i386/ -outfile hive-cluster.out -errfile hive-cluster.err -cp hive-cluster.jar org.kernelhive.cluster.HiveCluster
