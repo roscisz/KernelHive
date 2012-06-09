@@ -1,2 +1,37 @@
 #!/bin/sh
-jsvc -home /usr/lib/jvm/java-6-openjdk-i386/ -outfile hive-cluster.out -errfile hive-cluster.err -cp hive-cluster.jar org.kernelhive.cluster.HiveCluster
+
+NAME=hive-cluster
+DESC="KernelHive cluster subsystem"
+DAEMON=/usr/bin/jsvc
+DAEMON_JAR=hive-cluster.jar
+PIDFILE=/var/run/$NAME.pid
+LOGFILE=hive-cluster.log
+BOOTSTRAP_CLASS=org.kernelhive.cluster.HiveCluster
+
+JAVA_HOME=/usr/lib/jvm/java-6-openjdk-i386/
+
+set -e
+
+case "$1" in
+    start)
+        echo -n "Starting $DESC: "
+	if "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "$DAEMON_JAR" "$BOOTSTRAP_CLASS"; then
+        	echo "$NAME."
+	else
+                echo "(already running)."
+                exit 1
+        fi
+
+        ;;
+    stop)
+        echo -n "Stopping $DESC: "
+	"$DAEMON" -stop -pidfile "$PIDFILE" -cp "$DAEMON_JAR" "$BOOTSTRAP_CLASS"
+        echo "$NAME."
+        ;;
+    *)
+        echo "Usage: $0 { start | stop }" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

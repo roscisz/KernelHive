@@ -19,12 +19,16 @@ import org.kernelhive.communication.UnitProxy;
 public class ClusterManager implements TCPServerListener, UDPServerListener {
 	
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
+	
+	// OBSOLETE
+	private static String processDataKernel = "__kernel void processData(__global const int* input, unsigned int dataSize, __global int* output) { int i = get_global_id(0); output[i] = input[i]; }";
 		
 	public ClusterManager() {
 		try {
 			TCPServer unitServer = new TCPServer(new NetworkAddress("localhost", 31338), this);
 			DataPublisher dp = new DataPublisher(new NetworkAddress("localhost", 31340));
 			dp.publish(123, "DANE PRZYKLADOWE JAVA");
+			dp.publish(456, processDataKernel);
 			UDPServer runnerServer = new UDPServer(31339, this);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
