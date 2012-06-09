@@ -31,6 +31,7 @@ namespace KernelHive {
 	std::string OpenClDevice::getDeviceInfo() {
 		std::stringstream stream;
 
+		stream << getIdentifier() << DEVICE_INFO_SEPARATOR;
 		stream << getDeviceName() << DEVICE_INFO_SEPARATOR;
 		stream << getDeviceVendor() << DEVICE_INFO_SEPARATOR;
 		stream << getDeviceAvailability() << DEVICE_INFO_SEPARATOR;
