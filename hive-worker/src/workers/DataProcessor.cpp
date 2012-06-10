@@ -77,8 +77,10 @@ void DataProcessor::work(char *const argv[]) {
 	threadManager->runThread(kernelDownloader); // Run kernel downloading
 
 	// Wait for the data to be ready
-	threadManager->waitForThread(dataDownloader);
 	threadManager->waitForThread(kernelDownloader);
+	setPercentDone(20);
+	threadManager->waitForThread(dataDownloader);
+	setPercentDone(40);
 
 	size_t size = buffer->getSize();
 
@@ -99,6 +101,7 @@ void DataProcessor::work(char *const argv[]) {
 
 	// Wait for data copy to finish
 	context->waitForEvents(1, &dataCopy);
+	setPercentDone(60);
 
 	// Set kernel agrguments
 	context->setBufferArg(0, INPUT_BUFFER);
@@ -108,14 +111,17 @@ void DataProcessor::work(char *const argv[]) {
 	// Execute the kernel
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
 			globalSizes, localSizes);
+	setPercentDone(80);
 
 	// Copy the result:
 	context->read(OUTPUT_BUFFER, 0, size*sizeof(byte), (void*)resultBuffer->getRawData());
+	setPercentDone(90);
 
 	// Upload data to repository
 	DataUploader* uploader = new DataUploader(dataAddress, resultBuffer);
 	threadManager->runThread(uploader);
 	threadManager->waitForThread(uploader);
+	setPercentDone(100);
 	delete uploader;
 }
 
@@ -160,6 +166,8 @@ void DataProcessor::init(char *const argv[]) {
 	for (int i = 0; i < numberOfDimensions; i++) {
 		localSizes[i] = KhUtils::atoi(nextParam(argv));
 	}
+
+	setPercentDone(0);
 }
 
 } /* namespace KernelHive */
