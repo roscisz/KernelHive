@@ -28,6 +28,7 @@ DataDownloader::DataDownloader(NetworkAddress* address, char* dataId, Synchroniz
 {
 	this->dataId = dataId;
 	this->buffer = buffer;
+	progressSize = 0;
 	currentState = STATE_INITIAL;
 	prepareQueries();
 }
