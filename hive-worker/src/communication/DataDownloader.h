@@ -21,7 +21,7 @@ public:
 	/**
 	 * Instantiates this downloader thread.
 	 */
-	DataDownloader(NetworkAddress* address, char* dataId, SynchronizedBuffer* buffer);
+	DataDownloader(NetworkAddress* address, const char* dataId, SynchronizedBuffer* buffer);
 
 	/**
 	 * Deallocates resources used by this downloader thread.
@@ -66,7 +66,7 @@ private:
 	size_t progressSize;
 
 	/** The identifier which can be used to query the data repository. */
-	char* dataId;
+	const char* dataId;
 
 	/** The query which can be sent to data repository in order to acquire data size. */
 	std::string sizeQuery;

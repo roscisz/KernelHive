@@ -23,7 +23,7 @@ const char* DataDownloader::GET_DATA = "2";
 // 							Public Members									 //
 // ========================================================================= //
 
-DataDownloader::DataDownloader(NetworkAddress* address, char* dataId, SynchronizedBuffer* buffer)
+DataDownloader::DataDownloader(NetworkAddress* address, const char* dataId, SynchronizedBuffer* buffer)
 	: TCPClient(address, this)
 {
 	this->dataId = dataId;

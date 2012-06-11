@@ -2,12 +2,8 @@
 #include <iostream>
 
 #include "commons/Logger.h"
-#include "commons/KhUtils.h"
-#include "commons/KernelHiveException.h"
-#include "commons/OpenClHost.h"
 #include "commons/OpenClEvent.h"
 #include "threading/ThreadManager.h"
-#include "../communication/DataDownloader.h"
 #include "../communication/DataUploader.h"
 #include "DataProcessor.h"
 
@@ -27,52 +23,34 @@ const char* DataProcessor::OUTPUT_BUFFER = "outputBuffer";
 // 							Public Members									 //
 // ========================================================================= //
 
-DataProcessor::DataProcessor(NetworkAddress * clusterAddress) : Worker(clusterAddress) {
+DataProcessor::DataProcessor(NetworkAddress * clusterAddress) : BasicWorker(clusterAddress) {
 	dataDownloader = NULL;
 	kernelDownloader = NULL;
-	dataAddress = NULL;
-	kernelAddress = NULL;
 	buffer = NULL;
 	kernelBuffer = NULL;
 	resultBuffer = NULL;
-	device = NULL;
-	numberOfDimensions = 0;
-	dimensionOffsets = NULL;
-	globalSizes = NULL;
-	localSizes = NULL;
 }
 
 DataProcessor::~DataProcessor() {
-	if (dataAddress != NULL) {
-		delete dataAddress;
-	}
-	if (kernelAddress != NULL) {
-			delete kernelAddress;
-		}
-	if (buffer != NULL) {
-		delete buffer;
-	}
-	if (kernelBuffer != NULL)
-	{
-		delete kernelBuffer;
-	}
-	if (resultBuffer != NULL) {
-		delete resultBuffer;
-	}
-	if (dimensionOffsets != NULL) {
-		delete [] dimensionOffsets;
-	}
-	if (globalSizes != NULL) {
-		delete [] globalSizes;
-	}
-	if (localSizes != NULL) {
-		delete [] localSizes;
-	}
+	DataProcessor::cleanupResources();
 }
 
-void DataProcessor::work(char *const argv[]) {
-	init(argv);
+// ========================================================================= //
+// 							Protected Members							     //
+// ========================================================================= //
 
+void DataProcessor::initSpecific(char *const argv[]) {
+	dataId = nextParam(argv);
+
+	buffer = new SynchronizedBuffer();
+	resultBuffer = new SynchronizedBuffer();
+
+	dataDownloader = new DataDownloader(dataAddress, dataId.c_str(), buffer);
+	kernelDownloader = new DataDownloader(kernelAddress, kernelDataId.c_str(), kernelBuffer);
+
+}
+
+void DataProcessor::workSpecific() {
 	threadManager->runThread(dataDownloader); // Run data downloading
 	threadManager->runThread(kernelDownloader); // Run kernel downloading
 
@@ -126,48 +104,20 @@ void DataProcessor::work(char *const argv[]) {
 }
 
 // ========================================================================= //
-// 							Private Members									 //
+// 							Protected Members							     //
 // ========================================================================= //
 
-void DataProcessor::init(char *const argv[]) {
-	// TODO Implement parameters existence check..
-
-	dataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	buffer = new SynchronizedBuffer();
-	dataDownloader = new DataDownloader(dataAddress, nextParam(argv), buffer);
-
-	kernelAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	kernelBuffer = new SynchronizedBuffer();
-	kernelDownloader = new DataDownloader(kernelAddress, nextParam(argv), kernelBuffer);
-
-	resultBuffer = new SynchronizedBuffer();
-
-	deviceId = nextParam(argv);
-	device = OpenClHost::getInstance()->lookupDevice(deviceId);
-	if (device == NULL) {
-		throw KernelHiveException("Device not found!");
+void DataProcessor::cleanupResources() {
+	if (buffer != NULL) {
+		delete buffer;
 	}
-
-	context = new ExecutionContext(*device);
-
-	numberOfDimensions = KhUtils::atoi(nextParam(argv));
-	if (numberOfDimensions <= 0) {
-		throw KernelHiveException("Number of dimensions must a positive integer!");
+	if (kernelBuffer != NULL)
+	{
+		delete kernelBuffer;
 	}
-	dimensionOffsets = new size_t[numberOfDimensions];
-	globalSizes = new size_t[numberOfDimensions];
-	localSizes = new size_t[numberOfDimensions];
-	for (int i = 0; i < numberOfDimensions; i++) {
-		dimensionOffsets[i] = KhUtils::atoi(nextParam(argv));
+	if (resultBuffer != NULL) {
+		delete resultBuffer;
 	}
-	for (int i = 0; i < numberOfDimensions; i++) {
-		globalSizes[i] = KhUtils::atoi(nextParam(argv));
-	}
-	for (int i = 0; i < numberOfDimensions; i++) {
-		localSizes[i] = KhUtils::atoi(nextParam(argv));
-	}
-
-	setPercentDone(0);
 }
 
 } /* namespace KernelHive */

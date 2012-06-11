@@ -1,9 +1,7 @@
 #ifndef KERNEL_HIVE_DATA_PROCESSOR_H
 #define KERNEL_HIVE_DATA_PROCESSOR_H
 
-#include "commons/Worker.h"
-#include "commons/OpenClDevice.h"
-#include "commons/ExecutionContext.h"
+#include "BasicWorker.h"
 #include "threading/SynchronizedBuffer.h"
 #include "../communication/DataDownloader.h"
 
@@ -13,20 +11,10 @@ namespace KernelHive {
  * A worker which implements the dataProcessor kernel logic.
  * Parameters currently expected as input:
  * <ul>
- *   <li>data provider host</li>
- *   <li>data provider port</li>
  *   <li>data identifier</li>
- *   <li>kernel provider host</li>
- *   <li>kernel provider port</li>
- *   <li>kernel code identifier</li>
- *   <li>device identifier</li>
- *   <li>number of dimensions to use - n</li>
- *   <li>n numbers specifying the offset in each dimension</li>
- *   <li>n numbers specifying the global workgroup size in each dimension</li>
- *   <li>n numners specifying the local workgroup size in each dimension</li>
  * </ul>
  */
-class DataProcessor : public Worker {
+class DataProcessor : public BasicWorker {
 
 public:
 	/**
@@ -37,17 +25,23 @@ public:
 	DataProcessor(NetworkAddress* clusterAddress);
 
 	/**
-	 * The processing logic should be implemented in this method.
-	 *
-	 * @param argv the parameters passed to the worker by the KernelHive
-	 * 		system
-	 */
-	void work(char *const argv[]);
-
-	/**
 	 * Deallocates resources used by this data processor.
 	 */
 	virtual ~DataProcessor();
+
+protected:
+	/**
+	 * The processing logic should be implemented in this method.
+	 */
+	void workSpecific();
+
+	/**
+	 * Performs DataProcessor specific initialization.
+	 *
+	 * @param argv the parameters passed to this worker, parameter offset
+	 * 		is shifted to DataProcessor specific parameters
+	 */
+	void initSpecific(char *const argv[]);
 
 private:
 	/** The name of the Kernel to use by the DataProcessor worker. */
@@ -59,11 +53,8 @@ private:
 	/** The execution context name of the output data buffer. */
 	static const char* OUTPUT_BUFFER;
 
-	/** The address from which the data can be downloaded. */
-	NetworkAddress* dataAddress;
-
-	/** The address from which the kernel can be downloaded. */
-	NetworkAddress* kernelAddress;
+	/** The identifier which can be used to download data for this worker. */
+	std::string dataId;
 
 	/** A network client used for downloading worker data. */
 	DataDownloader* dataDownloader;
@@ -77,34 +68,11 @@ private:
 	/** A buffer for storing the result of calculations. */
 	SynchronizedBuffer* resultBuffer;
 
-	/** A buffer used for storing the downloaded kernel. */
-	SynchronizedBuffer* kernelBuffer;
-
-	/** The kernel identifier. */
-	std::string deviceId;
-
-	/** The number of dimensions to use for kernel execution. */
-	unsigned int numberOfDimensions;
-
-	/** An array of offsets in each dimensions. */
-	size_t* dimensionOffsets;
-
-	/** Global workgroup sizes in each dimension. */
-	size_t* globalSizes;
-
-	/** Local workgroup sizes in each dimension. */
-	size_t* localSizes;
-
-	/** The OpenCL device which will be used for execution. */
-	OpenClDevice* device;
-
-	/** The execution context in which the data will be processed. */
-	ExecutionContext* context;
-
+protected:
 	/**
-	 * Initialize this data processor
+	 * Cleans up any resources allocated by this DataProcessor.
 	 */
-	void init(char *const argv[]);
+	void cleanupResources();
 
 };
 
