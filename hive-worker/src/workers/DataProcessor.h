@@ -5,7 +5,7 @@
 #include "commons/OpenClDevice.h"
 #include "commons/ExecutionContext.h"
 #include "threading/SynchronizedBuffer.h"
-#include "DataDownloader.h"
+#include "../communication/DataDownloader.h"
 
 namespace KernelHive {
 

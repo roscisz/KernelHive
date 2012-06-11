@@ -1,4 +1,4 @@
-file( GLOB sources "src/workers/*" )
+file( GLOB sources "src/workers/*" "src/communication/*" )
 
 # Add include files directories
 include_directories( "${PROJECT_SOURCE_DIR}/hive-common/src" )

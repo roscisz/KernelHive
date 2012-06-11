@@ -7,8 +7,8 @@
 #include "commons/OpenClHost.h"
 #include "commons/OpenClEvent.h"
 #include "threading/ThreadManager.h"
-#include "DataDownloader.h"
-#include "DataUploader.h"
+#include "../communication/DataDownloader.h"
+#include "../communication/DataUploader.h"
 #include "DataProcessor.h"
 
 namespace KernelHive {
