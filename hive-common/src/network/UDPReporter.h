@@ -19,10 +19,11 @@ namespace KernelHive {
 
 class UDPReporter : public LoopedThread {
 public:
-	UDPReporter(NetworkAddress *serverAddress, IReportable *reportable);
+	UDPReporter(int jobID, NetworkAddress *serverAddress, IReportable *reportable);
 	virtual ~UDPReporter();
 	void executeLoopCycle();
 private:
+	int jobID;
 	UDPClient *udpClient;
 	IReportable *reportable;
 	void sendReport(int percentDone);

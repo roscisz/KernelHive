@@ -33,7 +33,7 @@ public:
 	 *
 	 * @param clusterAddress the address of the KernelHive cluster.
 	 */
-	BasicWorker(NetworkAddress* clusterAddress);
+	BasicWorker(char **argv);
 
 	/**
 	 * The destructor.

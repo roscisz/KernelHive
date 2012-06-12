@@ -6,14 +6,18 @@
  */
 
 #include <cstdio>
+#include "../commons/KhUtils.h"
 #include "../threading/ThreadManager.h"
 #include "Worker.h"
 
 namespace KernelHive {
 
-Worker::Worker(NetworkAddress *clusterAddress) {
+Worker::Worker(char **argv) {
+	jobID = KhUtils::atoi(argv[1]);
 
-	this->reporter = new UDPReporter(clusterAddress, this);
+	NetworkAddress *clusterAddress = new NetworkAddress(argv[2], argv[3]);
+	this->reporter = new UDPReporter(jobID, clusterAddress, this);
+
 	this->percentDone = -1;
 	this->paramOffset = 0;
 

@@ -9,15 +9,9 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	printf("Hello worker: %s %s\n", argv[1], argv[2]);
-
-	NetworkAddress *address = new NetworkAddress(argv[1], argv[2]);
-
-	printf("%s %d\n", address->host, address->port);
-
 	try {
-		KernelHive::SampleWorker *worker = new KernelHive::SampleWorker(address);
-		worker->work(argv);
+		KernelHive::SampleWorker *worker = new KernelHive::SampleWorker(argv);
+		worker->work(argv + WORKER_STD_ARGS);
 		delete worker;
 	}
 	catch(const char *str) {

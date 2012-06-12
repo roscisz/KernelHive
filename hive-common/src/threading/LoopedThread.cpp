@@ -12,9 +12,7 @@
 namespace KernelHive {
 
 LoopedThread::LoopedThread() {
-	//pthread_mutexattr_t attr;
-	//pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	//pthread_mutex_init(&(this->stopMutex), &attr);
+	pthread_mutex_init(&(this->stopMutex), NULL);
 	this->stopFlag = false;
 }
 

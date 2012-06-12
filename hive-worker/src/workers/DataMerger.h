@@ -14,7 +14,7 @@ public:
 	 *
 	 * @param clusterAddress the address of the KernelHive cluster
 	 */
-	DataMerger(NetworkAddress *clusterAddress);
+	DataMerger(char **argv);
 
 	/**
 	 * The destructor.

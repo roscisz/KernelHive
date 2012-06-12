@@ -2,7 +2,7 @@
 
 namespace KernelHive {
 
-DataMerger::DataMerger(NetworkAddress *clusterAddress) : BasicWorker(clusterAddress) {
+DataMerger::DataMerger(char **argv) : BasicWorker(argv) {
 	// TODO Auto-generated constructor stub
 }
 

@@ -23,7 +23,7 @@ const char* DataProcessor::OUTPUT_BUFFER = "outputBuffer";
 // 							Public Members									 //
 // ========================================================================= //
 
-DataProcessor::DataProcessor(NetworkAddress * clusterAddress) : BasicWorker(clusterAddress) {
+DataProcessor::DataProcessor(char **argv) : BasicWorker(argv) {
 	dataDownloader = NULL;
 	kernelDownloader = NULL;
 	buffer = NULL;

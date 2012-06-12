@@ -22,7 +22,7 @@ public:
 	 *
 	 * @param clusterAddress the cluster address
 	 */
-	DataProcessor(NetworkAddress* clusterAddress);
+	DataProcessor(char **argv);
 
 	/**
 	 * Deallocates resources used by this data processor.

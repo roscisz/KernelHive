@@ -11,8 +11,8 @@
 
 namespace KernelHive {
 
-UDPReporter::UDPReporter(NetworkAddress *serverAddress, IReportable *reportable) {
-
+UDPReporter::UDPReporter(int jobID, NetworkAddress *serverAddress, IReportable *reportable) {
+	this->jobID = jobID;
 	this->reportable = reportable;
 	this->udpClient = new UDPClient(serverAddress);
 

@@ -10,7 +10,7 @@ namespace KernelHive {
 // 							Public Members									 //
 // ========================================================================= //
 
-BasicWorker::BasicWorker(NetworkAddress* clusterAddress) : Worker(clusterAddress) {
+BasicWorker::BasicWorker(char **argv) : Worker(argv) {
 	dataAddress = NULL;
 	kernelAddress = NULL;
 	device = NULL;

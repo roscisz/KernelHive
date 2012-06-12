@@ -8,6 +8,8 @@
 #ifndef WORKER_H_
 #define WORKER_H_
 
+#define WORKER_STD_ARGS		4
+
 #include "../threading/ThreadManager.h"
 #include "../network/NetworkAddress.h"
 #include "../network/UDPReporter.h"
@@ -17,7 +19,7 @@ namespace KernelHive {
 
 class Worker : public IReportable {
 public:
-	Worker(NetworkAddress *clusterAddress);
+	Worker(char **argv);
 	int getPercentDone();
 	virtual void work(char *const argv[]) = 0;
 	virtual ~Worker();
@@ -40,6 +42,7 @@ protected:
 	void setPercentDone(int percentDone);
 private:
 	int percentDone;
+	int jobID;
 	UDPReporter *reporter;
 };
 

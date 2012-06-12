@@ -25,7 +25,7 @@ UnitManager::UnitManager() {
 
 	// Testing worker
 	WorkerProxy *proxy = WorkerProxy::create(/* type ,*/
-			"localhost 31338 localhost 31340 123 localhost 9012 456 Nazwa 1 0 4096 64");
+			"bin 1 localhost 31338 localhost 31340 localhost 31340 ION 1 0 4096 64 456 123");
 
 	try {
 		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338), this);

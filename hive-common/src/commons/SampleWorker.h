@@ -15,7 +15,7 @@ namespace KernelHive {
 
 class SampleWorker : public Worker {
 public:
-	SampleWorker(NetworkAddress *clusterAddress);
+	SampleWorker(char **argv);
 	void work(char *const argv[]);
 	virtual ~SampleWorker();
 };
