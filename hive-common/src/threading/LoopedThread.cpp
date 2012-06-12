@@ -19,17 +19,19 @@ LoopedThread::LoopedThread() {
 }
 
 void LoopedThread::run() {
-	while(!(this->stopFlag)) {
-		//pthread_mutex_lock(&(this->stopMutex));
+	while(true) {
+		pthread_mutex_lock(&(this->stopMutex));
+		if(this->stopFlag) break;
+		pthread_mutex_unlock(&(this->stopMutex));
 		this->executeLoopCycle();
-		//pthread_mutex_unlock(&(this->stopMutex));
+
 	}
 }
 
 void LoopedThread::pleaseStop() {
-	//pthread_mutex_lock(&(this->stopMutex));
+	pthread_mutex_lock(&(this->stopMutex));
 	this->stopFlag = true;
-	//pthread_mutex_unlock(&(this->stopMutex));
+	pthread_mutex_unlock(&(this->stopMutex));
 }
 
 LoopedThread::~LoopedThread() {
