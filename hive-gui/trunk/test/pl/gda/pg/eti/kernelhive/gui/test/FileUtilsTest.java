@@ -112,5 +112,10 @@ public class FileUtilsTest {
 		String absolutePath = FileUtils.translateRelativeToAbsolutePath(base, relative);
 		Assert.assertEquals("/etc", absolutePath);
 	}
+	
+	@Test
+	public void testTranslateAbsoluteToRelativePath(){
+		//TODO test!
+	}
 
 }

@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.component;
+package pl.gda.pg.eti.kernelhive.gui.component.source;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
@@ -22,6 +22,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 public class SourceCodeEditor extends JTabContent implements DocumentListener {

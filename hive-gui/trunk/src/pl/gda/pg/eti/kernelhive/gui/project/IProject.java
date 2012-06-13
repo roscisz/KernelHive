@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import pl.gda.pg.eti.kernelhive.gui.project.node.IProjectNode;
+
 public interface IProject {
 
 	File getProjectFile();

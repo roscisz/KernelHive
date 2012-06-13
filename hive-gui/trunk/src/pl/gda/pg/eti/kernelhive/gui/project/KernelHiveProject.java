@@ -15,9 +15,16 @@ import org.apache.commons.configuration.event.ConfigurationListener;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.gui.file.FileUtils;
-import pl.gda.pg.eti.kernelhive.gui.workflow.IWorkflowNode;
-import pl.gda.pg.eti.kernelhive.gui.workflow.WorkflowGraphNode;
+import pl.gda.pg.eti.kernelhive.gui.project.node.IProjectNode;
+import pl.gda.pg.eti.kernelhive.gui.project.node.impl.GenericProjectNode;
+import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.gui.source.SourceFile;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class KernelHiveProject implements Serializable, IProject,
 		ConfigurationListener {
 
@@ -68,20 +75,16 @@ public class KernelHiveProject implements Serializable, IProject,
 		try {
 			// create project node
 			Node configNode = new Node(NODE);
-			Node idAttr = new Node(NODE_ID_ATTRIBUTE, node.getWorkflowNode()
-					.getNodeId());
+			Node idAttr = new Node(NODE_ID_ATTRIBUTE, node.getNodeId());
 			idAttr.setAttribute(true);
 			Node hashAttr = new Node(NODE_HASH_ATTRIBUTE, node.hashCode());
 			hashAttr.setAttribute(true);
-			Node parentAttr = new Node(NODE_PARENT_ID_ATTRIBUTE, node
-					.getWorkflowNode().getParentNode() != null ? node
-					.getWorkflowNode().getParentNode().getNodeId() : "");
+			Node parentAttr = new Node(NODE_PARENT_ID_ATTRIBUTE, node.getParentNode() != null ? node
+					.getParentNode().getNodeId() : "");
 			parentAttr.setAttribute(true);
-			Node xAttr = new Node(NODE_X_ATTRIBUTE, node.getWorkflowNode()
-					.getX());
+			Node xAttr = new Node(NODE_X_ATTRIBUTE, node.getX());
 			xAttr.setAttribute(true);
-			Node yAttr = new Node(NODE_Y_ATTRIBUTE, node.getWorkflowNode()
-					.getY());
+			Node yAttr = new Node(NODE_Y_ATTRIBUTE, node.getY());
 			yAttr.setAttribute(true);
 			configNode.addAttribute(idAttr);
 			configNode.addAttribute(parentAttr);
@@ -90,8 +93,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			configNode.addAttribute(yAttr);
 			// create "send-to" subnode
 			Node sendToNode = new Node(SEND_TO_NODE);
-			for (IWorkflowNode wfNode : node.getWorkflowNode()
-					.getFollowingNodes()) {
+			for (IProjectNode wfNode : node.getFollowingNodes()) {
 				Node followingNode = new Node(FOLLOWING_NODE);
 				Node followingIdAttr = new Node(FOLLOWING_NODE_ID_ATTRIBUTE,
 						wfNode.getNodeId());
@@ -102,8 +104,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			configNode.addChild(sendToNode);
 			// create "first-children-nodes" subnode
 			Node childrenNode = new Node(FIRST_CHILDREN_NODE);
-			for (IWorkflowNode wfNode : node.getWorkflowNode()
-					.getChildrenNodes()) {
+			for (IProjectNode wfNode : node.getChildrenNodes()) {
 				if (wfNode.getPreviousNodes().size() == 0) {
 					Node childNode = new Node(CHILD_NODE);
 					Node childIdAttr = new Node(CHILD_NODE_ID_ATTRIBUTE,
@@ -116,12 +117,12 @@ public class KernelHiveProject implements Serializable, IProject,
 			configNode.addChild(childrenNode);
 			// create "node-source" subnode
 			Node sourcesNode = new Node(NODE_SOURCE_FILES);
-			for (File f : node.getSourceFiles()) {
+			for (ISourceFile f : node.getSourceFiles()) {
 				Node sourceNode = new Node(SOURCE_FILE);
 				Node srcAttr = new Node(SOURCE_FILE_SRC_ATTRIBUTE, (new File(
 						FileUtils.translateAbsoluteToRelativePath(
 								projectFile.getAbsolutePath(),
-								f.getAbsolutePath()))));
+								f.getFile().getAbsolutePath()))));
 				srcAttr.setAttribute(true);
 				sourceNode.addAttribute(srcAttr);
 				sourcesNode.addChild(sourceNode);
@@ -198,17 +199,15 @@ public class KernelHiveProject implements Serializable, IProject,
 			if (yAttrList.size() > 0)
 				y = Integer.parseInt((String) yAttrList.get(0).getValue());
 
-			IProjectNode projectNode = new ProjectNode();
-			projectNode.setWorkflowNode(new WorkflowGraphNode(projectNode, id));
-			projectNode.getWorkflowNode().setX(x);
-			projectNode.getWorkflowNode().setY(y);
+			IProjectNode projectNode = new GenericProjectNode(id);
+			projectNode.setX(x);
+			projectNode.setY(y);
 
 			List<ConfigurationNode> sourceFilesList = node
 					.getChildren(NODE_SOURCE_FILES);
 			if (sourceFilesList.size() > 0) {
 				ConfigurationNode sourcesNode = sourceFilesList.get(0);
 				sourceFilesList = sourcesNode.getChildren(SOURCE_FILE);
-				List<File> filesList = new ArrayList<File>();
 				for (ConfigurationNode src : sourceFilesList) {
 					List<ConfigurationNode> srcAttrs = src
 							.getAttributes(SOURCE_FILE_SRC_ATTRIBUTE);
@@ -227,7 +226,7 @@ public class KernelHiveProject implements Serializable, IProject,
 						}
 						File file = new File(absolutePath);
 						if (file.exists()) {
-							filesList.add(new File(absolutePath));
+							projectNode.addSourceFile(new SourceFile(new File(absolutePath)));
 						} else {
 							throw new ConfigurationException(
 									"KH: could not found source file with a filepath: "
@@ -235,7 +234,6 @@ public class KernelHiveProject implements Serializable, IProject,
 						}
 					}
 				}
-				projectNode.setSourceFiles(filesList);
 			}
 			nodes.add(projectNode);
 		}
@@ -263,7 +261,7 @@ public class KernelHiveProject implements Serializable, IProject,
 
 			if (id != null) {
 				for (IProjectNode pn : nodes) {
-					if (pn.getWorkflowNode().getNodeId().equalsIgnoreCase(id)) {
+					if (pn.getNodeId().equalsIgnoreCase(id)) {
 						projectNode = pn;
 						break;
 					}
@@ -272,15 +270,15 @@ public class KernelHiveProject implements Serializable, IProject,
 			if (parentId != null) {
 				IProjectNode parentNode = null;
 				for (IProjectNode pn : nodes) {
-					if (pn.getWorkflowNode().getNodeId()
+					if (pn.getNodeId()
 							.equalsIgnoreCase(parentId)) {
 						parentNode = pn;
 						break;
 					}
 				}
 				if (projectNode != null && parentNode != null) {
-					projectNode.getWorkflowNode().setParentNode(
-							parentNode.getWorkflowNode());
+					projectNode.setParentNode(
+							parentNode);
 				} else {
 					throw new ConfigurationException(
 							"KH: nodes with following ids could not be initialized: "
@@ -301,15 +299,15 @@ public class KernelHiveProject implements Serializable, IProject,
 									.getValue();
 							IProjectNode followingProjectNode = null;
 							for (IProjectNode pn : nodes) {
-								if (pn.getWorkflowNode().getNodeId()
+								if (pn.getNodeId()
 										.equalsIgnoreCase(followingId)) {
 									followingProjectNode = pn;
 									break;
 								}
 							}
 							if (followingProjectNode != null) {
-								projectNode.getWorkflowNode().addFollowingNode(
-										followingProjectNode.getWorkflowNode());
+								projectNode.addFollowingNode(
+										followingProjectNode);
 							}
 						}
 					}
@@ -367,9 +365,9 @@ public class KernelHiveProject implements Serializable, IProject,
 		if (nodes.contains(node)) {
 			nodes.remove(node);
 			if (removeFromDisc) {
-				List<File> srcFiles = node.getSourceFiles();
-				for (File f : srcFiles) {
-					f.delete();
+				List<ISourceFile> srcFiles = node.getSourceFiles();
+				for (ISourceFile f : srcFiles) {
+					f.getFile().delete();
 				}
 			}
 		}
@@ -382,7 +380,7 @@ public class KernelHiveProject implements Serializable, IProject,
 					.getAttributes(NODE_ID_ATTRIBUTE);
 			if (attrList.size() > 0) {
 				String id = (String) attrList.get(0).getValue();
-				if (id.equalsIgnoreCase(node.getWorkflowNode().getNodeId())) {
+				if (id.equalsIgnoreCase(node.getNodeId())) {
 					config.getRoot().removeChild(configNode);
 					break;
 				}

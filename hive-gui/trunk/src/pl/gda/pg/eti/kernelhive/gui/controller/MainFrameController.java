@@ -16,11 +16,11 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
-import pl.gda.pg.eti.kernelhive.gui.component.SourceCodeEditor;
-import pl.gda.pg.eti.kernelhive.gui.component.WorkflowEditor;
+import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileCellRenderer;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTree;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTreeModel;
+import pl.gda.pg.eti.kernelhive.gui.component.workflow.WorkflowEditor;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
