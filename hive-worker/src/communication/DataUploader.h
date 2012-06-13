@@ -53,6 +53,9 @@ private:
 	/** The command which allows to publish data in the repository. */
 	static const char* PUBLISH_DATA;
 
+	/** A command which allows to append data to existing storage. */
+	static const char* APPEND_DATA;
+
 	/** The current state of this data uploader. */
 	int currentState;
 
@@ -69,6 +72,20 @@ private:
 	 * Pre-compiles the commands which will be sent to the data repository.
 	 */
 	void prepareCommands();
+
+	/**
+	 * Formats a data append command for sending.
+	 *
+	 * @param dataId the data identifier
+	 * @param packageSize the size of the package to send
+	 * @return the formatted prefix of the data append command
+	 */
+	std::string formatDataAppend(std::string dataId, size_t packageSize);
+
+	/**
+	 * Performs uploading of data.
+	 */
+	void uploadData();
 
 };
 

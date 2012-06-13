@@ -9,9 +9,11 @@ import re
 import random
 
 HOST = "localhost"
-READ_BATCH = 1024
+READ_BATCH = 20480
 INT_MAX = 2147483647
 OUTPUT_FILE = 'output'
+
+DATA_ID = '666'
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -34,7 +36,7 @@ if __name__ == "__main__":
 		conn, addr = sock.accept()
 		print "connection from ", addr
 		while 1:
-			msg = conn.recv(1024)
+			msg = conn.recv(READ_BATCH)
 			if not msg:
 				break
 			msg = msg.strip()
@@ -50,10 +52,12 @@ if __name__ == "__main__":
 						break
 					conn.sendall(data)
 			elif re.match(r'0 (\d+)', msg):
-				matcher = re.match(r'0 (\d+) (.*)', msg, re.DOTALL)
-				conn.sendall(str(random.randint(0, INT_MAX)))
+				conn.sendall(DATA_ID)
+			elif re.match(r'4 (\d+) (\d+)', msg):k
+				matcher = re.match(r'4 (\d+) (\d+) (.*)', msg, re.DOTALL)
+				print 'Received a package of size ', matcher.group(2)
 				with open(OUTPUT_FILE, 'ab') as out:
-					out.write(matcher.group(2))
+					out.write(matcher.group(3))
 			else:
 				with open(OUTPUT_FILE, 'ab') as out:
 					out.write(msg)
