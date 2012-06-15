@@ -6,6 +6,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraphx-1.10"/>
 	<classpathentry kind="lib" path="res/jlfgr-1_0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-configuration-1.8/commons-configuration-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jgraphx-1.10/jgraphx.jar"/>
+	<classpathentry kind="lib" path="lib/rsyntaxtextarea_2.0.2/rsyntaxtextarea.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/rsyntaxtextarea-2.0.2"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-configuration-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-lang-2.6"/>
