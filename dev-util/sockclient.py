@@ -53,7 +53,7 @@ if __name__ == "__main__":
 					conn.sendall(data)
 			elif re.match(r'0 (\d+)', msg):
 				conn.sendall(DATA_ID)
-			elif re.match(r'4 (\d+) (\d+)', msg):k
+			elif re.match(r'4 (\d+) (\d+)', msg):
 				matcher = re.match(r'4 (\d+) (\d+) (.*)', msg, re.DOTALL)
 				print 'Received a package of size ', matcher.group(2)
 				with open(OUTPUT_FILE, 'ab') as out:
