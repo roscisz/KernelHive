@@ -10,4 +10,5 @@ project( KernelHive )
 # Process cmake files in subdirectories
 add_subdirectory ( hive-common )
 add_subdirectory ( hive-worker )
+add_subdirectory ( hive-unit )
 
