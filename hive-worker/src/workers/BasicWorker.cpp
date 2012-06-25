@@ -30,6 +30,42 @@ void BasicWorker::work(char *const argv[]) {
 }
 
 // ========================================================================= //
+// 							Protected Members								 //
+// ========================================================================= //
+
+void BasicWorker::runAllDownloads() {
+	for (DownloaderMap::iterator it = downloaders.begin(); it != downloaders.end(); it++ ) {
+		if (it->second != NULL) {
+			threadManager->runThread(it->second);
+		}
+	}
+}
+
+void BasicWorker::waitForAllDownloads() {
+	for (DownloaderMap::iterator it = downloaders.begin(); it != downloaders.end(); it++ ) {
+		if (it->second != NULL) {
+			threadManager->waitForThread(it->second);
+		}
+	}
+}
+
+void BasicWorker::runAllUploads() {
+	for (UploaderMap::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
+		if (it->second != NULL) {
+			threadManager->runThread(it->second);
+		}
+	}
+}
+
+void BasicWorker::waitForAllUploads() {
+	for (UploaderMap::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
+		if (it->second != NULL) {
+			threadManager->waitForThread(it->second);
+		}
+	}
+}
+
+// ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
 
@@ -63,7 +99,8 @@ void BasicWorker::init(char *const argv[]) {
 	}
 
 	kernelDataId = nextParam(argv);
-	kernelBuffer = new SynchronizedBuffer();
+	kernelDataIdInt = KhUtils::atoi(kernelDataId.c_str());
+	buffers[kernelDataIdInt] = new SynchronizedBuffer();
 
 	setPercentDone(0);
 
@@ -85,6 +122,11 @@ void BasicWorker::deallocateResources() {
 	}
 	if (localSizes != NULL) {
 		delete [] localSizes;
+	}
+	for (DataBufferMap::iterator it = buffers.begin(); it != buffers.end(); it++ ) {
+		if (it->second != NULL) {
+			delete it->second;
+		}
 	}
 }
 

@@ -56,14 +56,8 @@ private:
 	/** The identifier which can be used to download data for this worker. */
 	std::string dataId;
 
-	/** A network client used for downloading worker data. */
-	DataDownloader* dataDownloader;
-
-	/** A network client used for downloading the kernel to run. */
-	DataDownloader* kernelDownloader;
-
-	/** The buffer for storing downloaded data. */
-	SynchronizedBuffer* buffer;
+	/** The data identifier in the integer number form. */
+	int dataIdInt;
 
 	/** A buffer for storing the result of calculations. */
 	SynchronizedBuffer* resultBuffer;

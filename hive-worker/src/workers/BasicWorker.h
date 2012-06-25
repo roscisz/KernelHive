@@ -1,12 +1,20 @@
 #ifndef KERNEL_HIVE_BASIC_WORKER_H
 #define KERNEL_HIVE_BASIC_WORKER_H
 
+#include <map>
+
 #include "commons/Worker.h"
 #include "commons/OpenClDevice.h"
 #include "commons/ExecutionContext.h"
 #include "threading/SynchronizedBuffer.h"
+#include "../communication/DataDownloader.h"
+#include "../communication/DataUploader.h"
 
 namespace KernelHive {
+
+typedef std::map<int, DataDownloader *> DownloaderMap;
+typedef std::map<int, DataUploader *> UploaderMap;
+typedef std::map<int, SynchronizedBuffer *> DataBufferMap;
 
 /**
  * A a base class for basic worker types.
@@ -55,8 +63,14 @@ protected:
 	/** The address from which the kernel can be downloaded. */
 	NetworkAddress* kernelAddress;
 
-	/** A buffer used for storing the downloaded kernel. */
-	SynchronizedBuffer* kernelBuffer;
+	/** Map for storing data downloaders of this worker. */
+	DownloaderMap downloaders;
+
+	/** A map for storing data uploaders of this worker. */
+	UploaderMap uploaders;
+
+	/** A map for storing buffers of this worker. */
+	DataBufferMap buffers;
 
 	/** The kernel identifier. */
 	std::string deviceId;
@@ -82,6 +96,9 @@ protected:
 	/** The identifier which can be used to download the kernel. */
 	std::string kernelDataId;
 
+	/** Kernel data identifier as an integer number. */
+	int kernelDataIdInt;
+
 	/**
 	 * Performs initialization specific to a worker subclassing this.
 	 *
@@ -94,6 +111,27 @@ protected:
 	 * it's processing logic.
 	 */
 	virtual void workSpecific() = 0;
+
+	/**
+	 * Runs or downloader threads stored in the map.
+	 */
+	void runAllDownloads();
+
+	/**
+	 * Waits until all downloads finish.
+	 */
+	void waitForAllDownloads();
+
+	/**
+	 * Runs all uploader threads stored in the map.
+	 */
+	void runAllUploads();
+
+	/**
+	 * Waits until all uploads finish.
+	 */
+	void waitForAllUploads();
+
 
 private:
 	/**

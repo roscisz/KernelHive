@@ -6,6 +6,7 @@
 #include "threading/ThreadManager.h"
 #include "../communication/DataUploader.h"
 #include "DataProcessor.h"
+#include "commons/KhUtils.h"
 
 namespace KernelHive {
 
@@ -24,10 +25,6 @@ const char* DataProcessor::OUTPUT_BUFFER = "outputBuffer";
 // ========================================================================= //
 
 DataProcessor::DataProcessor(char **argv) : BasicWorker(argv) {
-	dataDownloader = NULL;
-	kernelDownloader = NULL;
-	buffer = NULL;
-	kernelBuffer = NULL;
 	resultBuffer = NULL;
 }
 
@@ -41,26 +38,26 @@ DataProcessor::~DataProcessor() {
 
 void DataProcessor::initSpecific(char *const argv[]) {
 	dataId = nextParam(argv);
+	dataIdInt = KhUtils::atoi(dataId.c_str());
 
-	buffer = new SynchronizedBuffer();
+	buffers[dataIdInt] = new SynchronizedBuffer();
 	resultBuffer = new SynchronizedBuffer();
 
-	dataDownloader = new DataDownloader(dataAddress, dataId.c_str(), buffer);
-	kernelDownloader = new DataDownloader(kernelAddress, kernelDataId.c_str(), kernelBuffer);
+	downloaders[dataIdInt] = new DataDownloader(dataAddress,
+			dataId.c_str(), buffers[dataIdInt]);
+	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
+			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 
 }
 
 void DataProcessor::workSpecific() {
-	threadManager->runThread(dataDownloader); // Run data downloading
-	threadManager->runThread(kernelDownloader); // Run kernel downloading
+	runAllDownloads(); // Download data and the kernel
 
 	// Wait for the data to be ready
-	threadManager->waitForThread(kernelDownloader);
-	setPercentDone(20);
-	threadManager->waitForThread(dataDownloader);
+	waitForAllDownloads();
 	setPercentDone(40);
 
-	size_t size = buffer->getSize();
+	size_t size = buffers[dataIdInt]->getSize();
 
 	resultBuffer->allocate(size); // Allocate local result buffer
 
@@ -70,11 +67,11 @@ void DataProcessor::workSpecific() {
 
 	// Begin copying data to the device
 	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
-			size*sizeof(byte), (void*)buffer->getRawData());
+			size*sizeof(byte), (void*)buffers[dataIdInt]->getRawData());
 
 	// Compile and prepare the kernel for execution
-	context->buildProgramFromSource(kernelBuffer->getRawData(),
-			kernelBuffer->getSize());
+	context->buildProgramFromSource(buffers[kernelDataIdInt]->getRawData(),
+			buffers[kernelDataIdInt]->getSize());
 	context->prepareKernel(KERNEL);
 
 	// Wait for data copy to finish
@@ -108,13 +105,6 @@ void DataProcessor::workSpecific() {
 // ========================================================================= //
 
 void DataProcessor::cleanupResources() {
-	if (buffer != NULL) {
-		delete buffer;
-	}
-	if (kernelBuffer != NULL)
-	{
-		delete kernelBuffer;
-	}
 	if (resultBuffer != NULL) {
 		delete resultBuffer;
 	}
