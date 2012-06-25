@@ -15,7 +15,7 @@ import org.apache.commons.configuration.event.ConfigurationListener;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.gui.file.FileUtils;
-import pl.gda.pg.eti.kernelhive.gui.project.node.IProjectNode;
+import pl.gda.pg.eti.kernelhive.gui.graph.IGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.project.node.impl.GenericProjectNode;
 import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.gui.source.SourceFile;
@@ -53,7 +53,7 @@ public class KernelHiveProject implements Serializable, IProject,
 	private String projectName;
 	private File projectDir;
 	private File projectFile;
-	private List<IProjectNode> nodes = new ArrayList<IProjectNode>();
+	private List<IGraphNode> nodes = new ArrayList<IGraphNode>();
 	private transient XMLConfiguration config;
 
 	public KernelHiveProject(String projectDir, String projectName) {
@@ -64,13 +64,13 @@ public class KernelHiveProject implements Serializable, IProject,
 	}
 
 	@Override
-	public void addProjectNode(IProjectNode node) {
+	public void addProjectNode(IGraphNode node) {
 		if (!nodes.contains(node)) {
 			nodes.add(node);
 		}
 	}
 
-	private void addProjectNodeToConfig(IProjectNode node)
+	private void addProjectNodeToConfig(IGraphNode node)
 			throws ConfigurationException {
 		try {
 			// create project node
@@ -93,7 +93,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			configNode.addAttribute(yAttr);
 			// create "send-to" subnode
 			Node sendToNode = new Node(SEND_TO_NODE);
-			for (IProjectNode wfNode : node.getFollowingNodes()) {
+			for (IGraphNode wfNode : node.getFollowingNodes()) {
 				Node followingNode = new Node(FOLLOWING_NODE);
 				Node followingIdAttr = new Node(FOLLOWING_NODE_ID_ATTRIBUTE,
 						wfNode.getNodeId());
@@ -104,7 +104,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			configNode.addChild(sendToNode);
 			// create "first-children-nodes" subnode
 			Node childrenNode = new Node(FIRST_CHILDREN_NODE);
-			for (IProjectNode wfNode : node.getChildrenNodes()) {
+			for (IGraphNode wfNode : node.getChildrenNodes()) {
 				if (wfNode.getPreviousNodes().size() == 0) {
 					Node childNode = new Node(CHILD_NODE);
 					Node childIdAttr = new Node(CHILD_NODE_ID_ATTRIBUTE,
@@ -160,7 +160,7 @@ public class KernelHiveProject implements Serializable, IProject,
 	}
 
 	@Override
-	public List<IProjectNode> getProjectNodes() {
+	public List<IGraphNode> getProjectNodes() {
 		return nodes;
 	}
 
@@ -178,9 +178,9 @@ public class KernelHiveProject implements Serializable, IProject,
 		}
 	}
 
-	private List<IProjectNode> initNodesCreation()
+	private List<IGraphNode> initNodesCreation()
 			throws ConfigurationException {
-		List<IProjectNode> nodes = new ArrayList<IProjectNode>();
+		List<IGraphNode> nodes = new ArrayList<IGraphNode>();
 		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
 			String id = null;
 			int x = -1, y = -1;
@@ -199,7 +199,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			if (yAttrList.size() > 0)
 				y = Integer.parseInt((String) yAttrList.get(0).getValue());
 
-			IProjectNode projectNode = new GenericProjectNode(id);
+			IGraphNode projectNode = new GenericGraphNode(id);
 			projectNode.setX(x);
 			projectNode.setY(y);
 
@@ -240,14 +240,14 @@ public class KernelHiveProject implements Serializable, IProject,
 		return nodes;
 	}
 
-	private void initNodesLinking(List<IProjectNode> nodes)
+	private void initNodesLinking(List<IGraphNode> nodes)
 			throws ConfigurationException {
 		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
 			List<ConfigurationNode> idAttrList = node
 					.getAttributes(NODE_ID_ATTRIBUTE);
 			List<ConfigurationNode> parentIdAttrList = node
 					.getAttributes(NODE_PARENT_ID_ATTRIBUTE);
-			IProjectNode projectNode = null;
+			IGraphNode projectNode = null;
 			String id = null, parentId = null;
 			if (idAttrList.size() > 0) {
 				id = (String) idAttrList.get(0).getValue();
@@ -260,7 +260,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			}
 
 			if (id != null) {
-				for (IProjectNode pn : nodes) {
+				for (IGraphNode pn : nodes) {
 					if (pn.getNodeId().equalsIgnoreCase(id)) {
 						projectNode = pn;
 						break;
@@ -268,8 +268,8 @@ public class KernelHiveProject implements Serializable, IProject,
 				}
 			}
 			if (parentId != null) {
-				IProjectNode parentNode = null;
-				for (IProjectNode pn : nodes) {
+				IGraphNode parentNode = null;
+				for (IGraphNode pn : nodes) {
 					if (pn.getNodeId()
 							.equalsIgnoreCase(parentId)) {
 						parentNode = pn;
@@ -297,8 +297,8 @@ public class KernelHiveProject implements Serializable, IProject,
 						if (idList.size() > 0) {
 							String followingId = (String) idList.get(0)
 									.getValue();
-							IProjectNode followingProjectNode = null;
-							for (IProjectNode pn : nodes) {
+							IGraphNode followingProjectNode = null;
+							for (IGraphNode pn : nodes) {
 								if (pn.getNodeId()
 										.equalsIgnoreCase(followingId)) {
 									followingProjectNode = pn;
@@ -350,7 +350,7 @@ public class KernelHiveProject implements Serializable, IProject,
 
 	private void loadFromConfig() throws ConfigurationException {
 		// initial creation of project nodes
-		List<IProjectNode> nodes = initNodesCreation();
+		List<IGraphNode> nodes = initNodesCreation();
 		// linking project nodes with one another
 		initNodesLinking(nodes);
 
@@ -361,7 +361,7 @@ public class KernelHiveProject implements Serializable, IProject,
 	}
 
 	@Override
-	public void removeProjectNode(IProjectNode node, boolean removeFromDisc) {
+	public void removeProjectNode(IGraphNode node, boolean removeFromDisc) {
 		if (nodes.contains(node)) {
 			nodes.remove(node);
 			if (removeFromDisc) {
@@ -374,7 +374,7 @@ public class KernelHiveProject implements Serializable, IProject,
 	}
 
 	@Deprecated
-	private void removeProjectNodeFromConfig(IProjectNode node) {
+	private void removeProjectNodeFromConfig(IGraphNode node) {
 		for (ConfigurationNode configNode : config.getRoot().getChildren(NODE)) {
 			List<ConfigurationNode> attrList = configNode
 					.getAttributes(NODE_ID_ATTRIBUTE);
@@ -413,7 +413,7 @@ public class KernelHiveProject implements Serializable, IProject,
 		XMLConfiguration tempConfig = (XMLConfiguration) config.clone();
 		try {
 			config.clear();
-			for (IProjectNode node : nodes) {
+			for (IGraphNode node : nodes) {
 				addProjectNodeToConfig(node);
 			}
 			setProjectNameInConfig(projectName);
@@ -454,7 +454,7 @@ public class KernelHiveProject implements Serializable, IProject,
 	}
 
 	@Override
-	public void setProjectNodes(List<IProjectNode> nodes) {
+	public void setProjectNodes(List<IGraphNode> nodes) {
 		this.nodes = nodes;
 	}
 

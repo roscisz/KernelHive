@@ -5,7 +5,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ResourcePathValidatorTest.class, FileUtilsTest.class})
+@SuiteClasses({ResourcePathValidatorTest.class, 
+	FileUtilsTest.class, 
+	GraphValidatorTest.class})
 public class AllTests {
 	
 	public AllTests(){	}

@@ -1,10 +1,10 @@
-package pl.gda.pg.eti.kernelhive.gui.project.node.impl;
+package pl.gda.pg.eti.kernelhive.gui.graph.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.gda.pg.eti.kernelhive.gui.project.node.IProjectNode;
+import pl.gda.pg.eti.kernelhive.gui.graph.IGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
 
 
@@ -13,51 +13,51 @@ import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
  * @author marcel
  *
  */
-public class GenericProjectNode implements IProjectNode, Serializable {
+public class GenericGraphNode implements IGraphNode, Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7431190941339020419L;
-	protected IProjectNode parentNode;
+	protected IGraphNode parentNode;
 	protected String nodeId;
 	protected int x, y;
-	protected List<IProjectNode> followingNodes;
-	protected List<IProjectNode> previousNodes;
-	protected List<IProjectNode> childrenNodes;
+	protected List<IGraphNode> followingNodes;
+	protected List<IGraphNode> previousNodes;
+	protected List<IGraphNode> childrenNodes;
 	protected List<ISourceFile> sourceFiles;
 	
-	public GenericProjectNode(){
-		followingNodes = new ArrayList<IProjectNode>();
-		previousNodes = new ArrayList<IProjectNode>();
-		childrenNodes = new ArrayList<IProjectNode>();
+	public GenericGraphNode(){
+		followingNodes = new ArrayList<IGraphNode>();
+		previousNodes = new ArrayList<IGraphNode>();
+		childrenNodes = new ArrayList<IGraphNode>();
 		sourceFiles = new ArrayList<ISourceFile>();
 	}
 	
-	public GenericProjectNode(String id){
-		followingNodes = new ArrayList<IProjectNode>();
-		previousNodes = new ArrayList<IProjectNode>();
-		childrenNodes = new ArrayList<IProjectNode>();
+	public GenericGraphNode(String id){
+		followingNodes = new ArrayList<IGraphNode>();
+		previousNodes = new ArrayList<IGraphNode>();
+		childrenNodes = new ArrayList<IGraphNode>();
 		sourceFiles = new ArrayList<ISourceFile>();
 		nodeId = id;
 	}
 	
-	public GenericProjectNode(String id, List<IProjectNode> followingNodes, List<IProjectNode> childrenNodes, List<IProjectNode> previousNodes, List<ISourceFile> sourceFiles){
+	public GenericGraphNode(String id, List<IGraphNode> followingNodes, List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes, List<ISourceFile> sourceFiles){
 		nodeId = id;
 		if(followingNodes!=null){
 			this.followingNodes=followingNodes;
 		} else {
-			this.followingNodes= new ArrayList<IProjectNode>();
+			this.followingNodes= new ArrayList<IGraphNode>();
 		}
 		if(childrenNodes!=null){
 			this.childrenNodes = childrenNodes;
 		} else{
-			this.childrenNodes = new ArrayList<IProjectNode>();
+			this.childrenNodes = new ArrayList<IGraphNode>();
 		}
 		if(previousNodes!=null){
 			this.previousNodes = previousNodes;
 		} else{
-			this.previousNodes = new ArrayList<IProjectNode>();
+			this.previousNodes = new ArrayList<IGraphNode>();
 		}
 		if(sourceFiles!=null){
 			this.sourceFiles = sourceFiles;
@@ -67,27 +67,27 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 	
 	@Override
-	public List<IProjectNode> getFollowingNodes() {
+	public List<IGraphNode> getFollowingNodes() {
 		return followingNodes;
 	}
 
 	@Override
-	public List<IProjectNode> getPreviousNodes() {
+	public List<IGraphNode> getPreviousNodes() {
 		return previousNodes;
 	}
 
 	@Override
-	public List<IProjectNode> getChildrenNodes() {
+	public List<IGraphNode> getChildrenNodes() {
 		return childrenNodes;
 	}
 
 	@Override
-	public IProjectNode getParentNode() {
+	public IGraphNode getParentNode() {
 		return parentNode;
 	}
 
 	@Override
-	public void setParentNode(IProjectNode node) {
+	public void setParentNode(IGraphNode node) {
 		if(parentNode!=null){
 			parentNode.removeChildNode(this);
 		}
@@ -126,8 +126,8 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 
 	@Override
-	public boolean addFollowingNode(IProjectNode node) {
-		if(!followingNodes.contains(node)){
+	public boolean addFollowingNode(IGraphNode node) {
+		if(!followingNodes.contains(node)&&addFollowingNode(node)){
 			 followingNodes.add(node);
 			 boolean result = node.addPreviousNode(this);
 			if(result==false){
@@ -141,7 +141,7 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 
 	@Override
-	public boolean removeFollowingNode(IProjectNode node) {
+	public boolean removeFollowingNode(IGraphNode node) {
 		if(followingNodes.contains(node)){
 			boolean result = followingNodes.remove(node);
 			result &= node.removePreviousNode(this);
@@ -152,8 +152,8 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 
 	@Override
-	public boolean addPreviousNode(IProjectNode node) {
-		if(!previousNodes.contains(node)){
+	public boolean addPreviousNode(IGraphNode node) {
+		if(!previousNodes.contains(node)&&addPreviousNode(node)){
 			previousNodes.add(node);
 			node.addFollowingNode(this);
 			return true;
@@ -163,7 +163,7 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 
 	@Override
-	public boolean removePreviousNode(IProjectNode node) {
+	public boolean removePreviousNode(IGraphNode node) {
 		if(previousNodes.contains(node)){
 			boolean result = previousNodes.remove(node);
 			result &= node.removeFollowingNode(this);
@@ -174,8 +174,8 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 
 	@Override
-	public boolean addChildNode(IProjectNode node) {
-		if(!childrenNodes.contains(node)){
+	public boolean addChildNode(IGraphNode node) {
+		if(!childrenNodes.contains(node)&&canAddChildNode(node)){
 			childrenNodes.add(node);
 			node.setParentNode(this);
 			return true;
@@ -185,7 +185,7 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 
 	@Override
-	public boolean removeChildNode(IProjectNode node) {
+	public boolean removeChildNode(IGraphNode node) {
 		if(childrenNodes.contains(node)){
 			boolean result = childrenNodes.remove(node);
 			node.setParentNode(null);
@@ -215,17 +215,17 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	}
 
 	@Override
-	public boolean canAddFollowingNode(IProjectNode node) {
+	public boolean canAddFollowingNode(IGraphNode node) {
 		return true;
 	}
 
 	@Override
-	public boolean canAddPreviousNode(IProjectNode node) {
+	public boolean canAddPreviousNode(IGraphNode node) {
 		return true;
 	}
 
 	@Override
-	public boolean canAddChildNode(IProjectNode node) {
+	public boolean canAddChildNode(IGraphNode node) {
 		return true;
 	}
 
@@ -256,7 +256,7 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GenericProjectNode other = (GenericProjectNode) obj;
+		GenericGraphNode other = (GenericGraphNode) obj;
 		if (childrenNodes == null) {
 			if (other.childrenNodes != null)
 				return false;
@@ -297,5 +297,11 @@ public class GenericProjectNode implements IProjectNode, Serializable {
 	@Override
 	public String toString() {
 		return "GenericProjectNode [nodeId=" + nodeId + "]";
+	}
+
+	@Override
+	public boolean validate() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 }
