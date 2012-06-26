@@ -26,10 +26,12 @@ class TCPClient : public NetworkEndpoint, public TCPConnectionListener, public L
 private:
 	TCPClientListener *listener;
 	TCPConnection *connection;
+	int noDelayFlag;
 
 	void executeLoopCycle();
 	void connectToSocket();
 	void disconnectFromSocket();
+	void setNoDelay();
 public:
 	TCPClient(NetworkAddress *serverAddress, TCPClientListener *listener);
 

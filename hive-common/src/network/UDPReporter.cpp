@@ -26,8 +26,15 @@ void UDPReporter::executeLoopCycle() {
 void UDPReporter::sendReport(int percentDone) {
 	// FIXME: message size
 	char message[60];
-	sprintf(message, "Reporting %d%% done.", percentDone);
+	sprintf(message, "%d %d\n", jobID, percentDone);
 	udpClient->sendMessage(message);
+}
+
+void UDPReporter::reportOver(char *status) {
+	// FIXME:
+	char *msg = new char[100];
+	sprintf(msg, "%d OVER %s\n", jobID, status);
+	udpClient->sendMessage(msg);
 }
 
 UDPReporter::~UDPReporter() {

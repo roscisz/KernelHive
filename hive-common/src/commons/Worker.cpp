@@ -38,6 +38,10 @@ char* Worker::nextParam(char *const argv[]) {
 	return argv[paramOffset++];
 }
 
+void Worker::reportOver(char *status) {
+	this->reporter->reportOver(status);
+}
+
 Worker::~Worker() {
 	ThreadManager::Get()->pleaseStopAllThreads();
 }

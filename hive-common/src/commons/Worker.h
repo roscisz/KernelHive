@@ -40,10 +40,12 @@ protected:
 	char* nextParam(char *const argv[]);
 
 	void setPercentDone(int percentDone);
+
+	void reportOver(char *status);
 private:
+	UDPReporter *reporter;
 	int percentDone;
 	int jobID;
-	UDPReporter *reporter;
 };
 
 }

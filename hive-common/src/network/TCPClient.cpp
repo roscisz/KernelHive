@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <netinet/tcp.h>
+#include <errno.h>
 #include "TCPClient.h"
 #include "../commons/Logger.h"
 #include "../commons/OpenClPlatform.h"
@@ -42,6 +44,7 @@ void TCPClient::executeLoopCycle() {
 	if(this->connection == NULL) {
 		try {
 			this->sockfd = openSocket(SOCK_STREAM);
+			//this->setNoDelay();
 			connectToSocket();
 			listener->onConnected();
 		}
@@ -71,6 +74,12 @@ void TCPClient::disconnectFromSocket() {
 void TCPClient::pleaseStop() {
 	LoopedThread::pleaseStop();
 	disconnectFromSocket();
+}
+
+void TCPClient::setNoDelay() {
+	this->noDelayFlag = 1;
+	int ret = setsockopt(this->sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)noDelayFlag, sizeof(int));
+	if(ret < 0) throw(strerror(errno));
 }
 
 TCPClient::~TCPClient() {
