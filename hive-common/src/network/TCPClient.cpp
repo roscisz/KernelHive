@@ -44,7 +44,7 @@ void TCPClient::executeLoopCycle() {
 	if(this->connection == NULL) {
 		try {
 			this->sockfd = openSocket(SOCK_STREAM);
-			//this->setNoDelay();
+			this->setNoDelay();
 			connectToSocket();
 			listener->onConnected();
 		}
@@ -78,7 +78,7 @@ void TCPClient::pleaseStop() {
 
 void TCPClient::setNoDelay() {
 	this->noDelayFlag = 1;
-	int ret = setsockopt(this->sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)noDelayFlag, sizeof(int));
+	int ret = setsockopt(this->sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)&noDelayFlag, sizeof(int));
 	if(ret < 0) throw(strerror(errno));
 }
 
