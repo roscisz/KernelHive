@@ -24,8 +24,8 @@ namespace KernelHive {
 UnitManager::UnitManager() {
 
 	// Testing worker
-	WorkerProxy *proxy = WorkerProxy::create(/* type ,*/
-			"bin 1 localhost 31338 localhost 31340 localhost 31340 ION 1 0 4096 64 456 123");
+	/*WorkerProxy *proxy = WorkerProxy::create(/* type ,*
+			"bin 1 localhost 31338 localhost 31340 localhost 31340 ION 1 0 4096 64 456 123"); */
 
 	try {
 		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338), this);
@@ -49,9 +49,9 @@ void UnitManager::listen() {
 }
 
 void UnitManager::onMessage(TCPMessage *message) {
-	printf("Echo from server: %s", message->data);
-
-	// TODO: When given a task to do, run a worker
+	printf("O HAI");
+	printf("Got command: %s", message->data);
+	WorkerProxy *proxy = WorkerProxy::create(/* type ,*/message->data);
 }
 
 void UnitManager::onConnected() {
