@@ -22,8 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import org.junit.experimental.categories.Categories.ExcludeCategory;
-
 public class JTabPanel extends JPanel {
 
 	private static final long serialVersionUID = 8529416373302749016L;
@@ -34,15 +32,16 @@ public class JTabPanel extends JPanel {
 	private final JTabContent content;
 	private final JLabel label;
 	
-	public JTabPanel(JTabContent tabPanel, JTabbedPane tabbedPane){
+	public JTabPanel(JTabContent tabPanel){
 		super(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		this.content = tabPanel;
 		this.content.setTabPanel(this);
-		if(tabbedPane==null){
-			LOG.severe("Tabbed Pane is null!");
+		if(this.content.getParent()!=null && this.content.getParent() instanceof JTabbedPane){
+			this.pane = (JTabbedPane) this.content.getParent();
+		} else{
+			LOG.severe("KH: Tabbed Pane is not a parent or parent is null!");
 			throw new NullPointerException("Tabbed Pane is null!");
 		}
-		this.pane = tabbedPane;
 		setOpaque(false);
 		label = new JLabel(){
 			private static final long serialVersionUID = -5214456099552542411L;
@@ -145,7 +144,7 @@ public class JTabPanel extends JPanel {
 		return label;
 	}
 	
-	public JTabContent getPanel(){
+	public JTabContent getTabContent(){
 		return content;
 	}
 	

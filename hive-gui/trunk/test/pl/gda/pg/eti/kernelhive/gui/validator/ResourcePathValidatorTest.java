@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.test;
+package pl.gda.pg.eti.kernelhive.gui.validator;
 
 import static org.junit.Assert.*;
 

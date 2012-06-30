@@ -1,6 +1,5 @@
 package pl.gda.pg.eti.kernelhive.gui.controller;
 
-import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +16,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
 import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor;
+import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor.SyntaxStyle;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileCellRenderer;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTree;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTreeModel;
@@ -121,7 +121,7 @@ public class MainFrameController {
 	public void closeTab(JTabPanel tab) {
 		JTabContent content;
 		if (tab != null) {
-			content = tab.getPanel();
+			content = tab.getTabContent();
 		} else {
 			int index = frame.getWorkspacePane().getSelectedIndex();
 			if (index != -1) {
@@ -174,12 +174,12 @@ public class MainFrameController {
 			SourceCodeEditor sourcePanel = new SourceCodeEditor(frame,
 					f.getName());
 			sourcePanel.loadContent(f);
-			sourcePanel.setSyntaxStyle(SourceCodeEditor.resolveSyntaxStyle(f
+			sourcePanel.setSyntaxStyle(SyntaxStyle.resolveSyntaxStyle(f
 					.getName().substring(f.getName().indexOf(".") + 1,
 							f.getName().length())));
 			frame.getWorkspacePane().add(sourcePanel, 0);
 			frame.getWorkspacePane().setTabComponentAt(0,
-					new JTabPanel(sourcePanel, frame.getWorkspacePane()));
+					new JTabPanel(sourcePanel));
 			openedTabs.put(sourcePanel, f);
 		} else {
 			SourceCodeEditor sourcePanel = new SourceCodeEditor(frame, "new"
@@ -187,7 +187,7 @@ public class MainFrameController {
 			newFileCounter++;
 			frame.getWorkspacePane().add(sourcePanel, 0);
 			frame.getWorkspacePane().setTabComponentAt(0,
-					new JTabPanel(sourcePanel, frame.getWorkspacePane()));
+					new JTabPanel(sourcePanel));
 			openedTabs.put(sourcePanel, null);
 		}
 	}
@@ -195,7 +195,7 @@ public class MainFrameController {
 	public void saveTab(JTabPanel tab) {
 		JTabContent content;
 		if (tab != null) {
-			content = tab.getPanel();
+			content = tab.getTabContent();
 		} else {
 			int index = frame.getWorkspacePane().getSelectedIndex();
 			content = (JTabContent) frame.getWorkspacePane().getComponentAt(
@@ -231,7 +231,7 @@ public class MainFrameController {
 	public void saveTabAs(JTabPanel tab) {
 		JTabContent content;
 		if (tab != null) {
-			content = tab.getPanel();
+			content = tab.getTabContent();
 		} else {
 			int index = frame.getWorkspacePane().getSelectedIndex();
 			content = (JTabContent) frame.getWorkspacePane().getComponentAt(
@@ -303,7 +303,7 @@ public class MainFrameController {
 				BUNDLE.getString("MainFrameController.openWorkflowEditor.workflowEditor.text"),
 				project);
 		frame.getWorkspacePane().add(editor, 0);
-		JTabPanel tabControl = new JTabPanel(editor, frame.getWorkspacePane());
+		JTabPanel tabControl = new JTabPanel(editor);
 		openedTabs.put(editor, project.getProjectFile());
 		frame.getWorkspacePane().setTabComponentAt(0, tabControl);
 	}

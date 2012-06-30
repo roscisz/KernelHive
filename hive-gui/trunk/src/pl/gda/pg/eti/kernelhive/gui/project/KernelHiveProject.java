@@ -16,7 +16,7 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.gui.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.gui.graph.IGraphNode;
-import pl.gda.pg.eti.kernelhive.gui.project.node.impl.GenericProjectNode;
+import pl.gda.pg.eti.kernelhive.gui.graph.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.gui.source.SourceFile;
 
@@ -80,8 +80,9 @@ public class KernelHiveProject implements Serializable, IProject,
 			Node hashAttr = new Node(NODE_HASH_ATTRIBUTE, node.hashCode());
 			hashAttr.setAttribute(true);
 			Node parentAttr = new Node(NODE_PARENT_ID_ATTRIBUTE, node.getParentNode() != null ? node
-					.getParentNode().getNodeId() : "");
+						.getParentNode().getNodeId() : "");
 			parentAttr.setAttribute(true);
+			
 			Node xAttr = new Node(NODE_X_ATTRIBUTE, node.getX());
 			xAttr.setAttribute(true);
 			Node yAttr = new Node(NODE_Y_ATTRIBUTE, node.getY());
@@ -102,6 +103,7 @@ public class KernelHiveProject implements Serializable, IProject,
 				sendToNode.addChild(followingNode);
 			}
 			configNode.addChild(sendToNode);
+			
 			// create "first-children-nodes" subnode
 			Node childrenNode = new Node(FIRST_CHILDREN_NODE);
 			for (IGraphNode wfNode : node.getChildrenNodes()) {
@@ -199,7 +201,7 @@ public class KernelHiveProject implements Serializable, IProject,
 			if (yAttrList.size() > 0)
 				y = Integer.parseInt((String) yAttrList.get(0).getValue());
 
-			IGraphNode projectNode = new GenericGraphNode(id);
+			IGraphNode projectNode = new GenericGraphNode(id);//TODO 
 			projectNode.setX(x);
 			projectNode.setY(y);
 

@@ -55,14 +55,34 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		public String getFileType(){
 			return this.filetype;
 		}
+		
+		public static SyntaxStyle getSyntaxStyle(String mimeType){
+			SyntaxStyle[] styles = SyntaxStyle.values();
+			for(SyntaxStyle s : styles){
+				if(s.getStyle()==mimeType){
+					return s;
+				}
+			}
+			return null;
+		}
+		
+		public static SyntaxStyle resolveSyntaxStyle(String filetype){
+			SyntaxStyle[] styles = SyntaxStyle.values();
+			for(SyntaxStyle s : styles){
+				if(s.getFileType().equalsIgnoreCase(filetype)){
+					return s;
+				}
+			}
+			return SyntaxStyle.NONE;
+		}
 	}
 	
 	private RSyntaxTextArea textarea;
-	private String name;
+	private String fileName;
 	
 	public SourceCodeEditor(MainFrame frame, String name){
 		super(frame);
-		this.name = name;
+		this.fileName = name;
 		setName(name);
 		setLayout(new BorderLayout());
 		textarea = new RSyntaxTextArea();
@@ -86,13 +106,22 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		textarea.setText(text);
 	}
 	
-	public String getName(){
-		return name;
+	public String getFileName(){
+		return fileName;
+	}
+	
+	public void setFileName(String name){
+		this.fileName = name;
 	}
 	
 	public void setSyntaxStyle(SyntaxStyle style){
 		textarea.setSyntaxEditingStyle(style.getStyle());
 		textarea.repaint();
+	}
+	
+	public SyntaxStyle getSyntaxStyle(){
+		String style = textarea.getSyntaxEditingStyle();
+		return SyntaxStyle.getSyntaxStyle(style);
 	}
 	
 	@Override
@@ -103,8 +132,16 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 			osw.write(getText());
 			osw.flush();
 			osw.close();
-			name = file.getName();
-			getTabPanel().getLabel().setText(name);
+			fileName = file.getName();
+			
+			try{
+				getTabPanel().getLabel().setText(fileName);
+			} catch(NullPointerException e){
+				LOG.warning("KH: no TabPanel object associated!");
+				e.printStackTrace();
+				return false;
+			}
+			
 			setDirty(false);
 			return true;
 		} catch (FileNotFoundException e) {
@@ -145,25 +182,11 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		return false;
 	}
 	
-	public static SyntaxStyle resolveSyntaxStyle(String filetype){
-		if(filetype.equalsIgnoreCase(SyntaxStyle.C.getFileType())){
-			return SyntaxStyle.C;
-		} else if(filetype.equalsIgnoreCase(SyntaxStyle.CPLUSPLUS.getFileType())){
-			return SyntaxStyle.CPLUSPLUS;
-		} else if(filetype.equalsIgnoreCase(SyntaxStyle.XML.getFileType())){
-			return SyntaxStyle.XML;
-		} else if(filetype.equalsIgnoreCase(SyntaxStyle.PROPERTIES.getFileType())){
-			return SyntaxStyle.PROPERTIES;
-		} else{
-			return SyntaxStyle.NONE;
-		}
-	}
-
 	@Override
 	public void changedUpdate(DocumentEvent arg0) {
 		if(getTabPanel()!=null){
 			setDirty(true);
-			getTabPanel().getLabel().setText("*"+name);
+			getTabPanel().getLabel().setText("*"+fileName);
 		}
 	}
 
@@ -171,7 +194,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	public void insertUpdate(DocumentEvent arg0) {
 		if(getTabPanel()!=null){
 			setDirty(true);
-			getTabPanel().getLabel().setText("*"+name);
+			getTabPanel().getLabel().setText("*"+fileName);
 		}
 	}
 
@@ -179,7 +202,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	public void removeUpdate(DocumentEvent arg0) {
 		if(getTabPanel()!=null){
 			setDirty(true);
-			getTabPanel().getLabel().setText("*"+name);
+			getTabPanel().getLabel().setText("*"+fileName);
 		}
 	}
 

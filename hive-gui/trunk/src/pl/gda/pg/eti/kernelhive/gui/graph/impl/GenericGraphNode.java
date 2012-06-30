@@ -7,14 +7,13 @@ import java.util.List;
 import pl.gda.pg.eti.kernelhive.gui.graph.IGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
 
-
 /**
  * 
  * @author marcel
- *
+ * 
  */
 public class GenericGraphNode implements IGraphNode, Serializable {
-	
+
 	/**
 	 * 
 	 */
@@ -26,46 +25,48 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	protected List<IGraphNode> previousNodes;
 	protected List<IGraphNode> childrenNodes;
 	protected List<ISourceFile> sourceFiles;
-	
-	public GenericGraphNode(){
+
+	public GenericGraphNode() {
 		followingNodes = new ArrayList<IGraphNode>();
 		previousNodes = new ArrayList<IGraphNode>();
 		childrenNodes = new ArrayList<IGraphNode>();
 		sourceFiles = new ArrayList<ISourceFile>();
 	}
-	
-	public GenericGraphNode(String id){
+
+	public GenericGraphNode(String id) {
 		followingNodes = new ArrayList<IGraphNode>();
 		previousNodes = new ArrayList<IGraphNode>();
 		childrenNodes = new ArrayList<IGraphNode>();
 		sourceFiles = new ArrayList<ISourceFile>();
 		nodeId = id;
 	}
-	
-	public GenericGraphNode(String id, List<IGraphNode> followingNodes, List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes, List<ISourceFile> sourceFiles){
+
+	public GenericGraphNode(String id, List<IGraphNode> followingNodes,
+			List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes,
+			List<ISourceFile> sourceFiles) {
 		nodeId = id;
-		if(followingNodes!=null){
-			this.followingNodes=followingNodes;
+		if (followingNodes != null) {
+			this.followingNodes = followingNodes;
 		} else {
-			this.followingNodes= new ArrayList<IGraphNode>();
+			this.followingNodes = new ArrayList<IGraphNode>();
 		}
-		if(childrenNodes!=null){
+		if (childrenNodes != null) {
 			this.childrenNodes = childrenNodes;
-		} else{
+		} else {
 			this.childrenNodes = new ArrayList<IGraphNode>();
 		}
-		if(previousNodes!=null){
+		if (previousNodes != null) {
 			this.previousNodes = previousNodes;
-		} else{
+		} else {
 			this.previousNodes = new ArrayList<IGraphNode>();
 		}
-		if(sourceFiles!=null){
+		if (sourceFiles != null) {
 			this.sourceFiles = sourceFiles;
-		} else{
+		} else {
 			this.sourceFiles = new ArrayList<ISourceFile>();
 		}
 	}
-	
+
 	@Override
 	public List<IGraphNode> getFollowingNodes() {
 		return followingNodes;
@@ -88,11 +89,13 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public void setParentNode(IGraphNode node) {
-		if(parentNode!=null){
-			parentNode.removeChildNode(this);
+		if (parentNode != null) {
+			parentNode.getChildrenNodes().remove(this);
 		}
 		parentNode = node;
-		node.addChildNode(this);
+		if (parentNode != null) {
+			parentNode.getChildrenNodes().add(this);
+		}
 	}
 
 	@Override
@@ -127,33 +130,33 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public boolean addFollowingNode(IGraphNode node) {
-		if(!followingNodes.contains(node)&&addFollowingNode(node)){
-			 followingNodes.add(node);
-			 boolean result = node.addPreviousNode(this);
-			if(result==false){
+		if (!followingNodes.contains(node) && canAddFollowingNode(node)) {
+			followingNodes.add(node);
+			boolean result = node.addPreviousNode(this);
+			if (result == false) {
 				followingNodes.remove(node);
 				node.removePreviousNode(node);
 			}
 			return result;
-		} else{
+		} else {
 			return true;
 		}
 	}
 
 	@Override
 	public boolean removeFollowingNode(IGraphNode node) {
-		if(followingNodes.contains(node)){
+		if (followingNodes.contains(node)) {
 			boolean result = followingNodes.remove(node);
 			result &= node.removePreviousNode(this);
 			return result;
-		} else{
+		} else {
 			return true;
 		}
 	}
 
 	@Override
 	public boolean addPreviousNode(IGraphNode node) {
-		if(!previousNodes.contains(node)&&addPreviousNode(node)){
+		if (!previousNodes.contains(node) && canAddPreviousNode(node)) {
 			previousNodes.add(node);
 			node.addFollowingNode(this);
 			return true;
@@ -164,33 +167,33 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public boolean removePreviousNode(IGraphNode node) {
-		if(previousNodes.contains(node)){
+		if (previousNodes.contains(node)) {
 			boolean result = previousNodes.remove(node);
 			result &= node.removeFollowingNode(this);
 			return result;
-		} else{
+		} else {
 			return true;
 		}
 	}
 
 	@Override
 	public boolean addChildNode(IGraphNode node) {
-		if(!childrenNodes.contains(node)&&canAddChildNode(node)){
+		if (!childrenNodes.contains(node) && canAddChildNode(node)) {
 			childrenNodes.add(node);
 			node.setParentNode(this);
 			return true;
-		} else{
+		} else {
 			return true;
 		}
 	}
 
 	@Override
 	public boolean removeChildNode(IGraphNode node) {
-		if(childrenNodes.contains(node)){
+		if (childrenNodes.contains(node)) {
 			boolean result = childrenNodes.remove(node);
 			node.setParentNode(null);
 			return result;
-		} else{
+		} else {
 			return true;
 		}
 	}
@@ -202,9 +205,9 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public boolean removeSourceFile(ISourceFile file) {
-		if(canRemoveSourceFile(file)){
+		if (canRemoveSourceFile(file)) {
 			return sourceFiles.remove(file);
-		} else{
+		} else {
 			return false;
 		}
 	}
@@ -257,16 +260,6 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		GenericGraphNode other = (GenericGraphNode) obj;
-		if (childrenNodes == null) {
-			if (other.childrenNodes != null)
-				return false;
-		} else if (!childrenNodes.equals(other.childrenNodes))
-			return false;
-		if (followingNodes == null) {
-			if (other.followingNodes != null)
-				return false;
-		} else if (!followingNodes.equals(other.followingNodes))
-			return false;
 		if (nodeId == null) {
 			if (other.nodeId != null)
 				return false;
@@ -276,11 +269,6 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 			if (other.parentNode != null)
 				return false;
 		} else if (!parentNode.equals(other.parentNode))
-			return false;
-		if (previousNodes == null) {
-			if (other.previousNodes != null)
-				return false;
-		} else if (!previousNodes.equals(other.previousNodes))
 			return false;
 		if (sourceFiles == null) {
 			if (other.sourceFiles != null)

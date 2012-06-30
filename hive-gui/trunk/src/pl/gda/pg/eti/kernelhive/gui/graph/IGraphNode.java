@@ -8,8 +8,7 @@ import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
 
 public interface IGraphNode {
 	
-	IGraphNode getParentNode();
-	void setParentNode(IGraphNode node);
+
 	
 	String getNodeId();
 	void setNodeId(String id);
@@ -29,6 +28,9 @@ public interface IGraphNode {
 	boolean addPreviousNode(IGraphNode node);
 	boolean removePreviousNode(IGraphNode node);
 	
+	IGraphNode getParentNode();
+	void setParentNode(IGraphNode node);
+	
 	List<IGraphNode> getChildrenNodes();
 	boolean addChildNode(IGraphNode node);
 	boolean removeChildNode(IGraphNode node);
@@ -38,6 +40,8 @@ public interface IGraphNode {
 	boolean addSourceFile(ISourceFile file);
 	boolean removeSourceFile(ISourceFile file);
 	boolean canRemoveSourceFile(ISourceFile file);
+	
+
 		
 	boolean validate();
 }

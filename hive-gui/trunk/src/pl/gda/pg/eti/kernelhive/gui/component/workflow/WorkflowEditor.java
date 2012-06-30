@@ -24,8 +24,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.graph.IGraphNode;
+import pl.gda.pg.eti.kernelhive.gui.graph.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
-import pl.gda.pg.eti.kernelhive.gui.project.node.impl.GenericProjectNode;
 import pl.gda.pg.eti.kernelhive.gui.project.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
 
@@ -224,7 +224,7 @@ public class WorkflowEditor extends JTabContent {
 			graph.getModel().beginUpdate();
 			try {
 				mxCell v = mapping.get(node);
-				if (node.getParentNode() != null) {
+				if(node.getParentNode() != null){
 					v.setParent(mapping.get(node.getParentNode()));
 				}
 			} finally {
@@ -281,13 +281,13 @@ public class WorkflowEditor extends JTabContent {
 				for(IGraphNode childNode : node.getChildrenNodes()){
 					node.removeChildNode(childNode);
 				}
+				node.setParentNode(null);
 				for(IGraphNode followingNode : node.getFollowingNodes()){
 					node.removeFollowingNode(followingNode);
 				}
 				for(IGraphNode previousNode : node.getPreviousNodes()){
 					node.removePreviousNode(previousNode);
-				}
-				node.setParentNode(null);
+				}				
 			}
 		});
 		nodePopup.add(mi);

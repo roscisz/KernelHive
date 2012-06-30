@@ -3,7 +3,6 @@ package pl.gda.pg.eti.kernelhive.gui;
 import java.awt.EventQueue;
 import java.util.logging.Logger;
 
-import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 /**
@@ -22,7 +21,6 @@ public class KernelHiveMain {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AppConfiguration config = AppConfiguration.getInstance();
 					MainFrame frame = new MainFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
