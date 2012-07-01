@@ -53,9 +53,10 @@ public class MainFrameController {
 		npd.setVisible(true);
 		if (npd.getStatus() == NewProjectDialog.APPROVE_OPTION) {
 			try {
-				project = new KernelHiveProject(npd.getProjectDirectory()
+				File projectDir = new File(npd.getProjectDirectory()
 						+ System.getProperty("file.separator")
-						+ npd.getProjectName(), npd.getProjectName());
+						+ npd.getProjectName());
+				project = new KernelHiveProject(projectDir, npd.getProjectName());
 				project.initProject();
 				frame.setTitle(npd.getProjectName() + " - "
 						+ BUNDLE.getString("MainFrame.this.title"));
@@ -90,7 +91,7 @@ public class MainFrameController {
 		fc.setFileFilter(ff);
 		if (fc.showDialog(frame.getContentPane(), "Select") == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			project = new KernelHiveProject(file.getParent(), null);
+			project = new KernelHiveProject(file.getParentFile(), null);
 			project.setProjectFile(file);
 			project.load();
 			FileTreeModel model = new FileTreeModel(

@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,7 +60,7 @@ public class FileUtilsTest {
 	public void testCreateNewFileFileNotExists() {
 		try {
 			testFile = FileUtils.createNewFile(filePathValid);
-			Assert.assertNotNull(testFile);
+			assertNotNull(testFile);
 			
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -74,7 +73,7 @@ public class FileUtilsTest {
 	public void testCreateNewFileFileExists(){
 		try {
 			testFile = FileUtils.createNewFile(filePathInvalid);
-			Assert.assertNull(testFile);
+			assertNull(testFile);
 			
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -87,7 +86,7 @@ public class FileUtilsTest {
 	public void testCreateNewDirectoryDirectoryNotExists() {
 		try{
 			testFile = FileUtils.createNewDirectory(dirPathValid);
-			Assert.assertNotNull(testFile);
+			assertNotNull(testFile);
 		} catch(SecurityException e){
 			e.printStackTrace();
 		}
@@ -98,7 +97,7 @@ public class FileUtilsTest {
 	public void testCreateNewDirectoryDirectoryExists() {
 		try{
 			testFile = FileUtils.createNewDirectory(dirPathInvalid);
-			Assert.assertNull(testFile);
+			assertNull(testFile);
 		} catch(SecurityException e){
 			e.printStackTrace();
 		}
@@ -110,7 +109,7 @@ public class FileUtilsTest {
 		String relative = "../../etc";
 		
 		String absolutePath = FileUtils.translateRelativeToAbsolutePath(base, relative);
-		Assert.assertEquals("/etc", absolutePath);
+		assertEquals("/etc", absolutePath);
 	}
 	
 	@Test

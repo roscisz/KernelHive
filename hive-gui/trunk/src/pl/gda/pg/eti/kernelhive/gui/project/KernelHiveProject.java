@@ -56,9 +56,9 @@ public class KernelHiveProject implements Serializable, IProject,
 	private List<IGraphNode> nodes = new ArrayList<IGraphNode>();
 	private transient XMLConfiguration config;
 
-	public KernelHiveProject(String projectDir, String projectName) {
+	public KernelHiveProject(File projectDir, String projectName) {
 		this.projectName = projectName;
-		this.projectDir = new File(projectDir);
+		this.projectDir = projectDir;
 		config = new XMLConfiguration();
 		config.addConfigurationListener(this);
 	}
@@ -429,6 +429,7 @@ public class KernelHiveProject implements Serializable, IProject,
 
 	@Override
 	public void setProjectDirectory(File dir) {
+		//FIXME not working
 		boolean result = this.projectDir.renameTo(dir);
 	}
 
