@@ -3,8 +3,6 @@ package pl.gda.pg.eti.kernelhive.gui.file;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 

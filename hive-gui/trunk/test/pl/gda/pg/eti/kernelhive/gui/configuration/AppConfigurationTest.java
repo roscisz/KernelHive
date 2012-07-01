@@ -7,8 +7,6 @@ import org.junit.Test;
 
 public class AppConfigurationTest {
 	
-	private AppConfiguration config;
-
 	@Before
 	public void setUp() throws Exception {
 	}

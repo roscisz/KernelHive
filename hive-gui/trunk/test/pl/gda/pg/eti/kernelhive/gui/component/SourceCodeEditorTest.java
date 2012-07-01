@@ -15,6 +15,7 @@ public class SourceCodeEditorTest {
 	
 	SourceCodeEditor editor;
 
+	@SuppressWarnings("unused")
 	@Before
 	public void setUp() throws Exception {
 		MainFrame frame = new MainFrame();
