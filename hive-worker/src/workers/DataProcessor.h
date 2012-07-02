@@ -31,6 +31,13 @@ public:
 
 protected:
 	/**
+	 * Gets the name of the kernel to use for calculations.
+	 *
+	 * @return the kernel name
+	 */
+	const char* getKernelName();
+
+	/**
 	 * The processing logic should be implemented in this method.
 	 */
 	void workSpecific();
@@ -46,12 +53,6 @@ protected:
 private:
 	/** The name of the Kernel to use by the DataProcessor worker. */
 	static const char* KERNEL;
-
-	/** The execution context name of the input data buffer. */
-	static const char* INPUT_BUFFER;
-
-	/** The execution context name of the output data buffer. */
-	static const char* OUTPUT_BUFFER;
 
 	/** The identifier which can be used to download data for this worker. */
 	std::string dataId;

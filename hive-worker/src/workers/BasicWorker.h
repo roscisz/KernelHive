@@ -57,6 +57,12 @@ public:
 	void work(char *const argv[]);
 
 protected:
+	/** The execution context name of the input data buffer. */
+	static const char* INPUT_BUFFER;
+
+	/** The execution context name of the output data buffer. */
+	static const char* OUTPUT_BUFFER;
+
 	/** The address from which the data can be downloaded. */
 	NetworkAddress* dataAddress;
 
@@ -111,6 +117,13 @@ protected:
 	 * it's processing logic.
 	 */
 	virtual void workSpecific() = 0;
+
+	/**
+	 * Returns the name of the kernel to use for calculations.
+	 *
+	 * @return the name of the kernel to use.
+	 */
+	virtual const char* getKernelName() = 0;
 
 	/**
 	 * Runs or downloader threads stored in the map.

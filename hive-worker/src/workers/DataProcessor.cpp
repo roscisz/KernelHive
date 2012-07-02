@@ -16,10 +16,6 @@ namespace KernelHive {
 
 const char* DataProcessor::KERNEL = "processData";
 
-const char* DataProcessor::INPUT_BUFFER = "inputBuffer";
-
-const char* DataProcessor::OUTPUT_BUFFER = "outputBuffer";
-
 // ========================================================================= //
 // 							Public Members									 //
 // ========================================================================= //
@@ -35,6 +31,10 @@ DataProcessor::~DataProcessor() {
 // ========================================================================= //
 // 							Protected Members							     //
 // ========================================================================= //
+
+const char* DataProcessor::getKernelName() {
+	return KERNEL;
+}
 
 void DataProcessor::initSpecific(char *const argv[]) {
 	dataId = nextParam(argv);
@@ -72,7 +72,7 @@ void DataProcessor::workSpecific() {
 	// Compile and prepare the kernel for execution
 	context->buildProgramFromSource(buffers[kernelDataIdInt]->getRawData(),
 			buffers[kernelDataIdInt]->getSize());
-	context->prepareKernel(KERNEL);
+	context->prepareKernel(getKernelName());
 
 	// Wait for data copy to finish
 	context->waitForEvents(1, &dataCopy);
