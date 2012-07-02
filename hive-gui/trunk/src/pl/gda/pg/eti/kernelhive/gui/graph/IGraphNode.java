@@ -41,7 +41,5 @@ public interface IGraphNode {
 	boolean removeSourceFile(ISourceFile file);
 	boolean canRemoveSourceFile(ISourceFile file);
 	
-
-		
 	boolean validate();
 }

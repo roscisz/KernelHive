@@ -9,7 +9,11 @@
 	<classpathentry kind="lib" path="lib/commons-configuration-1.8/commons-configuration-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/jgraphx-1.10/jgraphx.jar"/>
+	<classpathentry kind="lib" path="lib/jgraphx-1.10/jgraphx.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/marcel/Projects/libs/jgraphx-1.10/docs/api/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/rsyntaxtextarea_2.0.2/rsyntaxtextarea.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/rsyntaxtextarea-2.0.2"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-configuration-1.8"/>
