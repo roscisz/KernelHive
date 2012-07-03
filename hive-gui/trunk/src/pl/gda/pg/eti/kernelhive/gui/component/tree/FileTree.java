@@ -104,6 +104,10 @@ public class FileTree extends JTree implements ActionListener {
 		mi.addActionListener(this);
 		mi.setActionCommand("paste");
 		dirPopup.add(mi);
+		mi = new JMenuItem("Rename");
+		mi.addActionListener(this);
+		mi.setActionCommand("rename");
+		dirPopup.add(mi);
 		mi = new JMenuItem("Delete");
 		mi.addActionListener(this);
 		mi.setActionCommand("delete");
@@ -131,6 +135,10 @@ public class FileTree extends JTree implements ActionListener {
 		mi = new JMenuItem("Paste");
 		mi.addActionListener(this);
 		mi.setActionCommand("paste");
+		filePopup.add(mi);
+		mi = new JMenuItem("Rename");
+		mi.addActionListener(this);
+		mi.setActionCommand("rename");
 		filePopup.add(mi);
 		mi = new JMenuItem("Delete");
 		mi.addActionListener(this);
@@ -165,6 +173,7 @@ public class FileTree extends JTree implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {// TODO
 
+		LOG.info("KH: ActionEvent fired!");
 		TreePath tp = getSelectionPath();
 		File file = null;
 		if (tp != null) {

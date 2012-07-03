@@ -56,7 +56,8 @@ public class MainFrameController {
 				File projectDir = new File(npd.getProjectDirectory()
 						+ System.getProperty("file.separator")
 						+ npd.getProjectName());
-				project = new KernelHiveProject(projectDir, npd.getProjectName());
+				project = new KernelHiveProject(projectDir,
+						npd.getProjectName());
 				project.initProject();
 				frame.setTitle(npd.getProjectName() + " - "
 						+ BUNDLE.getString("MainFrame.this.title"));
@@ -299,43 +300,58 @@ public class MainFrameController {
 	}
 
 	public void openWorkflowEditor() {
-		WorkflowEditor editor = new WorkflowEditor(
-				frame,
-				BUNDLE.getString("MainFrameController.openWorkflowEditor.workflowEditor.text"),
-				project);
-		frame.getWorkspacePane().add(editor, 0);
-		JTabPanel tabControl = new JTabPanel(editor);
-		openedTabs.put(editor, project.getProjectFile());
-		frame.getWorkspacePane().setTabComponentAt(0, tabControl);
+		if (project != null) {
+			WorkflowEditor editor = new WorkflowEditor(
+					frame,
+					BUNDLE.getString("MainFrameController.openWorkflowEditor.workflowEditor.text"),
+					project);
+			frame.getWorkspacePane().add(editor, 0);
+			JTabPanel tabControl = new JTabPanel(editor);
+			openedTabs.put(editor, project.getProjectFile());
+			frame.getWorkspacePane().setTabComponentAt(0, tabControl);
+		} else {
+			JOptionPane
+					.showMessageDialog(
+							frame,
+							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.text"),
+							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.title"),
+							JOptionPane.ERROR_MESSAGE);
+		}
 	}
-	
-	public void undoAction(){
-		JTabContent tabContent = (JTabContent)frame.getWorkspacePane().getSelectedComponent();
+
+	public void undoAction() {
+		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+				.getSelectedComponent();
 		tabContent.undoAction();
 	}
-	
-	public void redoAction(){
-		JTabContent tabContent = (JTabContent)frame.getWorkspacePane().getSelectedComponent();
+
+	public void redoAction() {
+		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+				.getSelectedComponent();
 		tabContent.redoAction();
 	}
-	
-	public void cut(){
-		JTabContent tabContent = (JTabContent)frame.getWorkspacePane().getSelectedComponent();
+
+	public void cut() {
+		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+				.getSelectedComponent();
 		tabContent.cut();
 	}
-	
-	public void copy(){
-		JTabContent tabContent = (JTabContent)frame.getWorkspacePane().getSelectedComponent();
+
+	public void copy() {
+		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+				.getSelectedComponent();
 		tabContent.copy();
 	}
-	
-	public void paste(){
-		JTabContent tabContent = (JTabContent)frame.getWorkspacePane().getSelectedComponent();
+
+	public void paste() {
+		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+				.getSelectedComponent();
 		tabContent.paste();
 	}
-	
-	public void selectAll(){
-		JTabContent tabContent = (JTabContent)frame.getWorkspacePane().getSelectedComponent();
+
+	public void selectAll() {
+		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+				.getSelectedComponent();
 		tabContent.selectAll();
 	}
 }

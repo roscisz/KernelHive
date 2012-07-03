@@ -26,14 +26,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGraphModel;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
-import com.mxgraph.view.mxGraph;
-
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.controller.MainFrameController;
 
@@ -258,7 +250,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
+				//TODO Auto-generated method stub
 			}
 		});
 		mnFile.add(mntmImport);
@@ -315,8 +307,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.redoAction();
-				
+				controller.redoAction();				
 			}
 		});
 		mnEdit.add(mntmRedo);
@@ -331,8 +322,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.cut();
-				
+				controller.cut();				
 			}
 		});
 		mnEdit.add(mntmCut);
@@ -619,6 +609,7 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		LOG.info("KH: constructor fired!");
 		controller = new MainFrameController(this);
 		initUI();
 	}

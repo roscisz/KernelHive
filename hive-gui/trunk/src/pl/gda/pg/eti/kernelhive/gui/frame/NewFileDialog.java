@@ -2,7 +2,6 @@ package pl.gda.pg.eti.kernelhive.gui.frame;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -46,6 +45,7 @@ public class NewFileDialog extends JDialog {
 	private int retval;
 	
 	public NewFileDialog() {
+		LOG.info("KH: constructor fired!");
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());

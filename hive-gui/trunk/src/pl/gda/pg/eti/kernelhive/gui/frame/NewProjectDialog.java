@@ -22,7 +22,6 @@ import pl.gda.pg.eti.kernelhive.gui.validator.ResourcePathValidator;
 import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult;
 import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult.ValidationResultType;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -47,6 +46,7 @@ public class NewProjectDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public NewProjectDialog() {
+		LOG.info("KH: constructor fired!");
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
