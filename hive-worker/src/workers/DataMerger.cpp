@@ -16,6 +16,7 @@ const char* DataMerger::KERNEL = "mergeData";
 
 DataMerger::DataMerger(char **argv) : BasicWorker(argv) {
 	datasCount = 0;
+	totalDataSize = 0;
 	dataIds = NULL;
 	dataIdsInt = NULL;
 	resultBuffer = NULL;
@@ -34,7 +35,61 @@ const char* DataMerger::getKernelName() {
 }
 
 void DataMerger::workSpecific() {
+	runAllDownloads(); // Download data and the kernel
 
+	// Wait for the data to be ready
+	waitForAllDownloads();
+	setPercentDone(40);
+
+	for (int i = 0; i < datasCount; i++) {
+		totalDataSize += buffers[i]->getSize();
+	}
+
+	resultBuffer->allocate(totalDataSize); // Allocate local result buffer
+
+	// Allocate input and output buffers on the device
+	context->createBuffer(INPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_READ_ONLY);
+	context->createBuffer(OUTPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_WRITE_ONLY);
+
+	// Begin copying data to the device
+	size_t copyOffset = 0;
+	OpenClEvent** copyEvents = new OpenClEvent*[datasCount];
+	for (int i = 0; i < datasCount; i++) {
+		OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, copyOffset,
+				buffers[i]->getSize()*sizeof(byte), (void*)buffers[i]->getRawData());
+		copyEvents[i] = &dataCopy;
+		copyOffset += buffers[i]->getSize();
+	}
+
+	// Compile and prepare the kernel for execution
+	context->buildProgramFromSource(buffers[kernelDataIdInt]->getRawData(),
+			buffers[kernelDataIdInt]->getSize());
+	context->prepareKernel(getKernelName());
+
+	// Wait for copy to finish.
+	context->waitForEvents(datasCount, copyEvents);
+	setPercentDone(60);
+
+	// Set kernel agrguments
+	context->setBufferArg(0, INPUT_BUFFER);
+	context->setValueArg(1, sizeof(unsigned int), (void*)&totalDataSize);
+	context->setBufferArg(2, OUTPUT_BUFFER);
+
+	// Execute the kernel
+	context->executeKernel(numberOfDimensions, dimensionOffsets,
+			globalSizes, localSizes);
+	setPercentDone(80);
+
+	// Copy the result:
+	context->read(OUTPUT_BUFFER, 0, totalDataSize*sizeof(byte), (void*)resultBuffer->getRawData());
+	setPercentDone(90);
+
+	// Upload data to repository
+	DataUploader* uploader = new DataUploader(dataAddress, resultBuffer);
+	threadManager->runThread(uploader);
+	threadManager->waitForThread(uploader);
+	setPercentDone(100);
+	delete uploader;
 }
 
 void DataMerger::initSpecific(char *const argv[]) {

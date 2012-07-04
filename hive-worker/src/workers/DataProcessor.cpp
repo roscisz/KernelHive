@@ -75,7 +75,8 @@ void DataProcessor::workSpecific() {
 	context->prepareKernel(getKernelName());
 
 	// Wait for data copy to finish
-	context->waitForEvents(1, &dataCopy);
+	OpenClEvent* tmp = &dataCopy;
+	context->waitForEvents(1, &tmp);
 	setPercentDone(60);
 
 	// Set kernel agrguments

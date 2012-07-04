@@ -66,6 +66,9 @@ private:
 	/** The data identifier in the integer number form. */
 	int* dataIdsInt;
 
+	/** The total size of data received from all sources. */
+	size_t totalDataSize;
+
 	/** A buffer for storing the result of calculations. */
 	SynchronizedBuffer* resultBuffer;
 

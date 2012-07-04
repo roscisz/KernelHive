@@ -17,3 +17,8 @@ target_link_libraries( DataProcessor hiveworker )
 target_link_libraries( DataProcessor hivecommons )
 target_link_libraries( DataProcessor pthread )
 
+add_executable( DataMerger "src/datamerger.cpp" )
+target_link_libraries( DataMerger hiveworker )
+target_link_libraries( DataMerger hivecommons )
+target_link_libraries( DataMerger pthread )
+

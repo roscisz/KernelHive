@@ -116,7 +116,7 @@ namespace KernelHive {
 		 * @param eventsCount the number of events to wait for
 		 * @param events the events to wait for
 		 */
-		void waitForEvents(size_t eventsCount, OpenClEvent* events);
+		void waitForEvents(size_t eventsCount, OpenClEvent** events);
 
 		/**
 		 * Build a new program to use by this execution context.
