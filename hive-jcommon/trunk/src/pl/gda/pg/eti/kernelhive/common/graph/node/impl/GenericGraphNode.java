@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
@@ -21,6 +22,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	protected IGraphNode parentNode;
 	protected String nodeId;
 	protected int x, y;
+	protected GraphNodeType type = GraphNodeType.GENERIC;
 	protected List<IGraphNode> followingNodes;
 	protected List<IGraphNode> previousNodes;
 	protected List<IGraphNode> childrenNodes;
@@ -291,5 +293,11 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	public boolean validate() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public GraphNodeType getType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
