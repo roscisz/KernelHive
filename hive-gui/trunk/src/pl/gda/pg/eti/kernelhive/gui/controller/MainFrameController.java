@@ -22,7 +22,7 @@ import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTree;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTreeModel;
 import pl.gda.pg.eti.kernelhive.gui.component.workflow.WorkflowEditor;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
-import pl.gda.pg.eti.kernelhive.gui.file.FileUtils;
+import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewProjectDialog;

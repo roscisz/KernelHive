@@ -20,9 +20,9 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
-import pl.gda.pg.eti.kernelhive.gui.validator.ResourcePathValidator;
-import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult;
-import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult.ValidationResultType;
+import pl.gda.pg.eti.kernelhive.common.validation.ResourcePathValidator;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 public class NewFileDialog extends JDialog {
 

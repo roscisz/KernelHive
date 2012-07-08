@@ -23,11 +23,11 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
-import pl.gda.pg.eti.kernelhive.gui.graph.IGraphNode;
-import pl.gda.pg.eti.kernelhive.gui.graph.impl.GenericGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.util.NodeIdGenerator;
-import pl.gda.pg.eti.kernelhive.gui.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;

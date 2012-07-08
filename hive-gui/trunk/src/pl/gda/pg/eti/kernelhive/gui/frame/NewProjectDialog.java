@@ -18,9 +18,9 @@ import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
-import pl.gda.pg.eti.kernelhive.gui.validator.ResourcePathValidator;
-import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult;
-import pl.gda.pg.eti.kernelhive.gui.validator.ValidationResult.ValidationResultType;
+import pl.gda.pg.eti.kernelhive.common.validation.ResourcePathValidator;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
