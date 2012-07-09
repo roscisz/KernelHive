@@ -7,7 +7,7 @@ include_directories( "${PROJECT_SOURCE_DIR}/hive-common/src" )
 add_library( hiveworker SHARED ${sources} )
 target_link_libraries( hiveworker hivecommons )
 
-# Build the executables, link the built commons library to it
+# Build the executables, link the built commons library to them
 add_executable( SampleWorker "src/hive-worker.cpp" )
 target_link_libraries( SampleWorker hiveworker )
 target_link_libraries( SampleWorker hivecommons )
@@ -21,4 +21,9 @@ add_executable( DataMerger "src/datamerger.cpp" )
 target_link_libraries( DataMerger hiveworker )
 target_link_libraries( DataMerger hivecommons )
 target_link_libraries( DataMerger pthread )
+
+add_executable( DataPartitioner "src/datapartitioner.cpp" )
+target_link_libraries( DataPartitioner hiveworker )
+target_link_libraries( DataPartitioner hivecommons )
+target_link_libraries( DataPartitioner pthread )
 
