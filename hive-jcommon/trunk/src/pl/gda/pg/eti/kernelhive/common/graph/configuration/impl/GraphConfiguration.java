@@ -12,6 +12,7 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGraphConfiguration;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
@@ -25,8 +26,10 @@ public class GraphConfiguration implements IGraphConfiguration {
 	private static final String NODE_ID_ATTRIBUTE = "id";
 	private static final String NODE_HASH_ATTRIBUTE = "hash";
 	private static final String NODE_PARENT_ID_ATTRIBUTE = "parent-id";
+	private static final String NODE_NAME_ATTRIBUTE = "name";
 	private static final String NODE_X_ATTRIBUTE = "x";
 	private static final String NODE_Y_ATTRIBUTE = "y";
+	private static final String NODE_TYPE_ATTRIBUTE = "type";
 	private static final String SEND_TO_NODE = "kh:send-to";
 	private static final String FOLLOWING_NODE = "kh:following-node";
 	private static final String FOLLOWING_NODE_ID_ATTRIBUTE = "id";
@@ -37,17 +40,17 @@ public class GraphConfiguration implements IGraphConfiguration {
 	private static final String CHILD_NODE = "kh:child-node";
 	private static final String CHILD_NODE_ID_ATTRIBUTE = "id";
 
-	private static final Logger LOG = Logger
-			.getLogger(GraphConfiguration.class.getName());
+	private static final Logger LOG = Logger.getLogger(GraphConfiguration.class
+			.getName());
 
 	private File configFile;
 	private XMLConfiguration config;
-	
-	public GraphConfiguration(){
+
+	public GraphConfiguration() {
 		config = new XMLConfiguration();
 		config.setRootElementName(ROOT_NODE);
 	}
-	
+
 	public GraphConfiguration(File configFile) {
 		this.configFile = configFile;
 		config = new XMLConfiguration();
@@ -124,8 +127,9 @@ public class GraphConfiguration implements IGraphConfiguration {
 			throw e;
 		}
 	}
-	
-	private void saveGraphNode(IGraphNode node, File file) throws ConfigurationException{
+
+	private void saveGraphNode(IGraphNode node, File file)
+			throws ConfigurationException {
 		try {
 			// create project node
 			Node configNode = new Node(NODE);
@@ -133,19 +137,26 @@ public class GraphConfiguration implements IGraphConfiguration {
 			idAttr.setAttribute(true);
 			Node hashAttr = new Node(NODE_HASH_ATTRIBUTE, node.hashCode());
 			hashAttr.setAttribute(true);
-			Node parentAttr = new Node(NODE_PARENT_ID_ATTRIBUTE, node.getParentNode() != null ? node
-						.getParentNode().getNodeId() : "");
+			Node parentAttr = new Node(NODE_PARENT_ID_ATTRIBUTE,
+					node.getParentNode() != null ? node.getParentNode()
+							.getNodeId() : "");
 			parentAttr.setAttribute(true);
-			
 			Node xAttr = new Node(NODE_X_ATTRIBUTE, node.getX());
 			xAttr.setAttribute(true);
 			Node yAttr = new Node(NODE_Y_ATTRIBUTE, node.getY());
 			yAttr.setAttribute(true);
+			Node nameAttr = new Node(NODE_NAME_ATTRIBUTE, node.getName());
+			nameAttr.setAttribute(true);
+			Node typeAttr = new Node(NODE_TYPE_ATTRIBUTE, node.getType()
+					.toString());
+			typeAttr.setAttribute(true);
 			configNode.addAttribute(idAttr);
 			configNode.addAttribute(parentAttr);
 			configNode.addAttribute(hashAttr);
 			configNode.addAttribute(xAttr);
 			configNode.addAttribute(yAttr);
+			configNode.addAttribute(nameAttr);
+			configNode.addAttribute(typeAttr);
 			// create "send-to" subnode
 			Node sendToNode = new Node(SEND_TO_NODE);
 			for (IGraphNode wfNode : node.getFollowingNodes()) {
@@ -157,7 +168,7 @@ public class GraphConfiguration implements IGraphConfiguration {
 				sendToNode.addChild(followingNode);
 			}
 			configNode.addChild(sendToNode);
-			
+
 			// create "first-children-nodes" subnode
 			Node childrenNode = new Node(FIRST_CHILDREN_NODE);
 			for (IGraphNode wfNode : node.getChildrenNodes()) {
@@ -176,9 +187,9 @@ public class GraphConfiguration implements IGraphConfiguration {
 			for (ISourceFile f : node.getSourceFiles()) {
 				Node sourceNode = new Node(SOURCE_FILE);
 				Node srcAttr = new Node(SOURCE_FILE_SRC_ATTRIBUTE, (new File(
-						FileUtils.translateAbsoluteToRelativePath(
-								file.getAbsolutePath(),
-								f.getFile().getAbsolutePath()))));
+						FileUtils.translateAbsoluteToRelativePath(file
+								.getAbsolutePath(), f.getFile()
+								.getAbsolutePath()))));
 				srcAttr.setAttribute(true);
 				sourceNode.addAttribute(srcAttr);
 				sourcesNode.addChild(sourceNode);
@@ -197,12 +208,13 @@ public class GraphConfiguration implements IGraphConfiguration {
 		linkGraphNodes(nodes);
 		return nodes;
 	}
-	
-	private List<IGraphNode> loadGraphNodes() throws ConfigurationException{
+
+	private List<IGraphNode> loadGraphNodes() throws ConfigurationException {
 		List<IGraphNode> nodes = new ArrayList<IGraphNode>();
 		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
-			String id = null;
+			String id = null, name = null;
 			int x = -1, y = -1;
+			GraphNodeType type = null;
 
 			List<ConfigurationNode> idAttrList = node
 					.getAttributes(NODE_ID_ATTRIBUTE);
@@ -210,6 +222,10 @@ public class GraphConfiguration implements IGraphConfiguration {
 					.getAttributes(NODE_X_ATTRIBUTE);
 			List<ConfigurationNode> yAttrList = node
 					.getAttributes(NODE_Y_ATTRIBUTE);
+			List<ConfigurationNode> nameAttrList = node
+					.getAttributes(NODE_NAME_ATTRIBUTE);
+			List<ConfigurationNode> typeAttrList = node
+					.getAttributes(NODE_TYPE_ATTRIBUTE);
 
 			if (idAttrList.size() > 0)
 				id = (String) idAttrList.get(0).getValue();
@@ -217,10 +233,20 @@ public class GraphConfiguration implements IGraphConfiguration {
 				x = Integer.parseInt((String) xAttrList.get(0).getValue());
 			if (yAttrList.size() > 0)
 				y = Integer.parseInt((String) yAttrList.get(0).getValue());
+			if (nameAttrList.size() > 0)
+				name = (String) nameAttrList.get(0).getValue();
+			if (typeAttrList.size() > 0)
+				type = GraphNodeType.getType((String) typeAttrList.get(0)
+						.getValue());
 
-			IGraphNode projectNode = new GenericGraphNode(id);//TODO 
-			projectNode.setX(x);
-			projectNode.setY(y);
+			IGraphNode graphNode;
+			if (type == GraphNodeType.GENERIC) {
+				graphNode = new GenericGraphNode(id, name);// TODO
+			} else {
+				throw new ConfigurationException("KH: not generic! TEST DEBUG");
+			}
+			graphNode.setX(x);
+			graphNode.setY(y);
 
 			List<ConfigurationNode> sourceFilesList = node
 					.getChildren(NODE_SOURCE_FILES);
@@ -245,7 +271,8 @@ public class GraphConfiguration implements IGraphConfiguration {
 						}
 						File file = new File(absolutePath);
 						if (file.exists()) {
-							projectNode.addSourceFile(new SourceFile(new File(absolutePath)));
+							graphNode.addSourceFile(new SourceFile(new File(
+									absolutePath)));
 						} else {
 							throw new ConfigurationException(
 									"KH: could not found source file with a filepath: "
@@ -254,18 +281,19 @@ public class GraphConfiguration implements IGraphConfiguration {
 					}
 				}
 			}
-			nodes.add(projectNode);
+			nodes.add(graphNode);
 		}
 		return nodes;
 	}
-	
-	private void linkGraphNodes(List<IGraphNode> nodes) throws ConfigurationException{
+
+	private void linkGraphNodes(List<IGraphNode> nodes)
+			throws ConfigurationException {
 		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
 			List<ConfigurationNode> idAttrList = node
 					.getAttributes(NODE_ID_ATTRIBUTE);
 			List<ConfigurationNode> parentIdAttrList = node
 					.getAttributes(NODE_PARENT_ID_ATTRIBUTE);
-			IGraphNode projectNode = null;
+			IGraphNode graphNode = null;
 			String id = null, parentId = null;
 			if (idAttrList.size() > 0) {
 				id = (String) idAttrList.get(0).getValue();
@@ -280,7 +308,7 @@ public class GraphConfiguration implements IGraphConfiguration {
 			if (id != null) {
 				for (IGraphNode pn : nodes) {
 					if (pn.getNodeId().equalsIgnoreCase(id)) {
-						projectNode = pn;
+						graphNode = pn;
 						break;
 					}
 				}
@@ -288,15 +316,13 @@ public class GraphConfiguration implements IGraphConfiguration {
 			if (parentId != null) {
 				IGraphNode parentNode = null;
 				for (IGraphNode pn : nodes) {
-					if (pn.getNodeId()
-							.equalsIgnoreCase(parentId)) {
+					if (pn.getNodeId().equalsIgnoreCase(parentId)) {
 						parentNode = pn;
 						break;
 					}
 				}
-				if (projectNode != null && parentNode != null) {
-					projectNode.setParentNode(
-							parentNode);
+				if (graphNode != null && parentNode != null) {
+					graphNode.setParentNode(parentNode);
 				} else {
 					throw new ConfigurationException(
 							"KH: nodes with following ids could not be initialized: "
@@ -324,8 +350,8 @@ public class GraphConfiguration implements IGraphConfiguration {
 								}
 							}
 							if (followingProjectNode != null) {
-								projectNode.addFollowingNode(
-										followingProjectNode);
+								graphNode
+										.addFollowingNode(followingProjectNode);
 							}
 						}
 					}

@@ -21,6 +21,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	private static final long serialVersionUID = 7431190941339020419L;
 	protected IGraphNode parentNode;
 	protected String nodeId;
+	protected String name;
 	protected int x, y;
 	protected GraphNodeType type = GraphNodeType.GENERIC;
 	protected List<IGraphNode> followingNodes;
@@ -42,11 +43,21 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		sourceFiles = new ArrayList<ISourceFile>();
 		nodeId = id;
 	}
+	
+	public GenericGraphNode(String id, String name){
+		followingNodes = new ArrayList<IGraphNode>();
+		previousNodes = new ArrayList<IGraphNode>();
+		childrenNodes = new ArrayList<IGraphNode>();
+		sourceFiles = new ArrayList<ISourceFile>();
+		nodeId = id;
+		this.name = name;
+	}
 
-	public GenericGraphNode(String id, List<IGraphNode> followingNodes,
+	public GenericGraphNode(String id, String name, List<IGraphNode> followingNodes,
 			List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes,
 			List<ISourceFile> sourceFiles) {
 		nodeId = id;
+		this.name = name;
 		if (followingNodes != null) {
 			this.followingNodes = followingNodes;
 		} else {
@@ -243,13 +254,13 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((nodeId == null) ? 0 : nodeId.hashCode());
 		result = prime * result
 				+ ((parentNode == null) ? 0 : parentNode.hashCode());
 		result = prime * result
 				+ ((sourceFiles == null) ? 0 : sourceFiles.hashCode());
-		result = prime * result + x;
-		result = prime * result + y;
-		result = prime * result + nodeId.hashCode();
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -262,6 +273,11 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		GenericGraphNode other = (GenericGraphNode) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
 		if (nodeId == null) {
 			if (other.nodeId != null)
 				return false;
@@ -277,16 +293,14 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 				return false;
 		} else if (!sourceFiles.equals(other.sourceFiles))
 			return false;
-		if (x != other.x)
-			return false;
-		if (y != other.y)
+		if (type != other.type)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "GenericProjectNode [nodeId=" + nodeId + "]";
+		return name+" ("+type.toString()+")";
 	}
 
 	@Override
@@ -297,7 +311,16 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public GraphNodeType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
 	}
 }

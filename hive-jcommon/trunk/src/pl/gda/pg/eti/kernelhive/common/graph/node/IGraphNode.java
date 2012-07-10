@@ -11,6 +11,9 @@ public interface IGraphNode {
 	String getNodeId();
 	void setNodeId(String id);
 	
+	String getName();
+	void setName(String name);
+	
 	GraphNodeType getType();
 
 	int getX();
