@@ -1,14 +1,12 @@
-package org.kernelhive.communication;
+package pl.gda.pg.eti.kernelhive.cluster;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
+
 public class UnitProxy {
-	private static String commandSeparator = " ";
 	private static String deviceSeparator = ";";
 	
 	private SocketChannel socketChannel;
@@ -18,18 +16,7 @@ public class UnitProxy {
 		this.socketChannel = socketChannel;
 	}
 
-	public void processMessage(String message) {
-		String[] command = message.split(commandSeparator, 2);
-		
-		if(command[0].equals("UPDATE")) 
-			update(command[1]);
-		else
-			// TODO: error handling
-			System.out.println("No such command.");
-				
-	}
-
-	private void update(String devicesString) {
+	public void update(String devicesString) {
 		String[] devicesArray = devicesString.split(deviceSeparator);
 	
 		int devicesCount = Integer.parseInt(devicesArray[0]);
@@ -43,5 +30,18 @@ public class UnitProxy {
 	public String toString() {
 		return "UnitProxy [socketChannel=" + socketChannel + ", devices="
 				+ devices + "]";
-	}		
+	}
+
+	public List<Device> getDevices() {
+		return devices;
+	}
+	
+	public void runJob(HiveJob job) {
+		sendMessage(job.toString());		
+	}
+	
+	private void sendMessage(String message) {
+		TCPServer.sendMessage(socketChannel, message);
+	}
+
 }

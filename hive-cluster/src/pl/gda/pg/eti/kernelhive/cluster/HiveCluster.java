@@ -1,4 +1,4 @@
-package org.kernelhive.cluster;
+package pl.gda.pg.eti.kernelhive.cluster;
 
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;

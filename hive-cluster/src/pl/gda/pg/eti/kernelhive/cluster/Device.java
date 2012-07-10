@@ -1,4 +1,4 @@
-package org.kernelhive.communication;
+package pl.gda.pg.eti.kernelhive.cluster;
 
 public class Device {
 	private static String parameterSeparator = ":";
