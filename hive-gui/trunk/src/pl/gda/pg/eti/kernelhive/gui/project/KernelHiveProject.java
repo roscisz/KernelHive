@@ -40,6 +40,7 @@ public class KernelHiveProject implements Serializable, IProject {
 
 	@Override
 	public void addProjectNode(IGraphNode node) {
+		//TODO change - incoming node's source files are to be moved to new files
 		if (!nodes.contains(node)) {
 			nodes.add(node);
 		}
