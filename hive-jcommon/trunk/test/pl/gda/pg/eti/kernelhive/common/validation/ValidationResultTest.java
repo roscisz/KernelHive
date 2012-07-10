@@ -1,10 +1,5 @@
 package pl.gda.pg.eti.kernelhive.common.validation;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 public class ValidationResultTest {

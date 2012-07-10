@@ -1,13 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.validation;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 

@@ -1,17 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.file;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.IOException;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 
 public class FileUtilsTest {
 	
