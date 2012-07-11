@@ -37,6 +37,10 @@ void BasicWorker::work(char *const argv[]) {
 	workSpecific();
 }
 
+UploaderList* BasicWorker::getUploaders() {
+	return &uploaders;
+}
+
 // ========================================================================= //
 // 							Protected Members								 //
 // ========================================================================= //
@@ -58,17 +62,17 @@ void BasicWorker::waitForAllDownloads() {
 }
 
 void BasicWorker::runAllUploads() {
-	for (UploaderMap::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
-		if (it->second != NULL) {
-			threadManager->runThread(it->second);
+	for (UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
+		if (*it != NULL) {
+			threadManager->runThread(*it);
 		}
 	}
 }
 
 void BasicWorker::waitForAllUploads() {
-	for (UploaderMap::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
-		if (it->second != NULL) {
-			threadManager->waitForThread(it->second);
+	for (UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
+		if (*it != NULL) {
+			threadManager->waitForThread(*it);
 		}
 	}
 }
@@ -131,9 +135,19 @@ void BasicWorker::deallocateResources() {
 	if (localSizes != NULL) {
 		delete [] localSizes;
 	}
+	for (DownloaderMap::iterator it = downloaders.begin(); it != downloaders.end(); it++ ) {
+		if (it->second != NULL) {
+			delete it->second;
+		}
+	}
 	for (DataBufferMap::iterator it = buffers.begin(); it != buffers.end(); it++ ) {
 		if (it->second != NULL) {
 			delete it->second;
+		}
+	}
+	for (UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
+		if (*it != NULL) {
+			delete *it;
 		}
 	}
 }

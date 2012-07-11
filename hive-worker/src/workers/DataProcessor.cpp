@@ -94,11 +94,10 @@ void DataProcessor::workSpecific() {
 	setPercentDone(90);
 
 	// Upload data to repository
-	DataUploader* uploader = new DataUploader(dataAddress, resultBuffer);
-	threadManager->runThread(uploader);
-	threadManager->waitForThread(uploader);
+	uploaders.push_back(new DataUploader(dataAddress, resultBuffer));
+	runAllUploads();
+	waitForAllUploads();
 	setPercentDone(100);
-	delete uploader;
 }
 
 // ========================================================================= //

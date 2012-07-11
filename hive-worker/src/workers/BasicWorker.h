@@ -2,6 +2,7 @@
 #define KERNEL_HIVE_BASIC_WORKER_H
 
 #include <map>
+#include <vector>
 
 #include "commons/Worker.h"
 #include "commons/OpenClDevice.h"
@@ -13,7 +14,7 @@
 namespace KernelHive {
 
 typedef std::map<int, DataDownloader *> DownloaderMap;
-typedef std::map<int, DataUploader *> UploaderMap;
+typedef std::vector<DataUploader *> UploaderList;
 typedef std::map<int, SynchronizedBuffer *> DataBufferMap;
 
 /**
@@ -56,6 +57,15 @@ public:
 	 */
 	void work(char *const argv[]);
 
+	/**
+	 * Returns a pointer to the vector of DataUploaders
+	 * used by this worker.
+	 *
+	 * @return the pointer to vector of uploaders used by this
+	 * 		worker
+	 */
+	UploaderList* getUploaders();
+
 protected:
 	/** The execution context name of the input data buffer. */
 	static const char* INPUT_BUFFER;
@@ -73,7 +83,7 @@ protected:
 	DownloaderMap downloaders;
 
 	/** A map for storing data uploaders of this worker. */
-	UploaderMap uploaders;
+	UploaderList uploaders;
 
 	/** A map for storing buffers of this worker. */
 	DataBufferMap buffers;
