@@ -10,6 +10,7 @@ namespace KernelHive {
  * A worker which implements the dataPartitioner kernel logic.
  * Parameters currently expected as input:
  * <ul>
+ *   <li>data identifier</li>
  *   <li>n - number of parts to split to</li>
  * </ul>
  */
@@ -42,14 +43,26 @@ protected:
 	void initSpecific(char *const argv[]);
 
 private:
+	/** The name of the kernel to use for calcaulations. */
+	static const char* KERNEL;
+
 	/** The number of parts to split input data to. */
 	int partsCount;
 
 	/** The total size of data received from all sources. */
 	size_t totalDataSize;
 
+	/** The identifier which can be used to download data for this worker. */
+	std::string dataId;
+
+	/** The data identifier in the integer number form. */
+	int dataIdInt;
+
 	/** Buffers array for storing data parts. */
-	SynchronizedBuffer** resultBuffer;
+	SynchronizedBuffer** resultBuffers;
+
+	/** Cleanup resources used by this Partitioner worker. */
+	void cleanupResources();
 
 };
 
