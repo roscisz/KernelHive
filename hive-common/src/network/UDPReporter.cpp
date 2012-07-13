@@ -30,13 +30,6 @@ void UDPReporter::sendReport(int percentDone) {
 	udpClient->sendMessage(message);
 }
 
-void UDPReporter::reportOver(char *status) {
-	// FIXME:
-	char *msg = new char[100];
-	sprintf(msg, "%d OVER %s\n", jobID, status);
-	udpClient->sendMessage(msg);
-}
-
 UDPReporter::~UDPReporter() {
 
 }

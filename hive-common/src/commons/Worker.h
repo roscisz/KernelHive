@@ -8,7 +8,7 @@
 #ifndef WORKER_H_
 #define WORKER_H_
 
-#define WORKER_STD_ARGS		4
+#define WORKER_STD_ARGS		6
 
 #include "../threading/ThreadManager.h"
 #include "../network/NetworkAddress.h"
@@ -41,8 +41,9 @@ protected:
 
 	void setPercentDone(int percentDone);
 
-	void reportOver(char *status);
+	void reportOver(const char* uploadIDs);
 private:
+	NetworkAddress *clusterTCPAddress;
 	UDPReporter *reporter;
 	int percentDone;
 	int jobID;

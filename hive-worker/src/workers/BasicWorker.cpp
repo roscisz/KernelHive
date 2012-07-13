@@ -77,6 +77,19 @@ void BasicWorker::waitForAllUploads() {
 	}
 }
 
+const char* BasicWorker::getAllUploadIDStrings() {
+	std::string ret;
+
+	for(UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++) {
+		if(*it != NULL) {
+			//ret.append((*it)->getDataURL());
+			ret.append(" ");
+		}
+	}
+
+	return ret.c_str();
+}
+
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //

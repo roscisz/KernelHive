@@ -40,6 +40,8 @@ public:
 
 	std::string* getDataIdentifier();
 
+	const char* getDataURL();
+
 private:
 	/** The initial state. */
 	static const int STATE_INITIAL = 0;
@@ -58,6 +60,9 @@ private:
 
 	/** The current state of this data uploader. */
 	int currentState;
+
+	/** Data server address */
+	NetworkAddress* address;
 
 	/** A pointer to the buffer with data to be uploaded. */
 	SynchronizedBuffer* buffer;

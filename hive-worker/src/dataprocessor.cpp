@@ -12,8 +12,6 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	printf("Hello worker: %s %s\n", argv[1], argv[2]);
-
 	try {
 		KernelHive::DataProcessor *worker = new KernelHive::DataProcessor(argv);
 		worker->work(argv + WORKER_STD_ARGS);

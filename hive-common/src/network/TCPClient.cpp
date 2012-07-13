@@ -29,7 +29,8 @@ void TCPClient::onDisconnected(int sockfd) {
 }
 
 void TCPClient::onMessage(int sockfd, TCPMessage *message) {
-	listener->onMessage(message);
+	if(listener != NULL)
+		listener->onMessage(message);
 }
 
 void TCPClient::sendMessage(const char *message) {
@@ -46,7 +47,8 @@ void TCPClient::executeLoopCycle() {
 			this->sockfd = openSocket(SOCK_STREAM);
 			this->setNoDelay();
 			connectToSocket();
-			listener->onConnected();
+			if(listener != NULL)
+				listener->onConnected();
 		}
 		catch(const char *msg) {
 			Logger::log(ERROR, "Couldn't connect to the cluster: %s.\n", msg);

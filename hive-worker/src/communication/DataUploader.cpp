@@ -6,6 +6,7 @@
 #include "network/TCPClientListener.h"
 #include "network/TCPMessage.h"
 #include "commons/Logger.h"
+#include "commons/KhUtils.h"
 
 namespace KernelHive {
 
@@ -23,6 +24,7 @@ const char* DataUploader::APPEND_DATA = "4";
 
 DataUploader::DataUploader(NetworkAddress* address, SynchronizedBuffer* buffer)
 	: TCPClient(address, this) {
+	this->address = address;
 	this->buffer = buffer;
 	this->currentState = STATE_INITIAL;
 	prepareCommands();
@@ -64,6 +66,18 @@ void DataUploader::onConnected() {
 
 std::string* DataUploader::getDataIdentifier() {
 	return &dataIdentifier;
+}
+
+const char* DataUploader::getDataURL() {
+	std::string ret;
+
+	ret.append(address->host);
+	ret.append(" ");
+	ret.append(KhUtils::itoa(address->port));
+	ret.append(" ");
+	ret.append(dataIdentifier.c_str());
+
+	return ret.c_str();
 }
 
 // ========================================================================= //

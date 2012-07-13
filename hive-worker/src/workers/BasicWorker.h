@@ -155,6 +155,11 @@ protected:
 	 */
 	void waitForAllUploads();
 
+	/**
+	 * Returns concatenated list of uploaded data ID's
+	 */
+	const char* getAllUploadIDStrings();
+
 
 private:
 	/**

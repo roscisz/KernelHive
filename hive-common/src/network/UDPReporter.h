@@ -22,7 +22,6 @@ public:
 	UDPReporter(int jobID, NetworkAddress *serverAddress, IReportable *reportable);
 	virtual ~UDPReporter();
 	void executeLoopCycle();
-	void reportOver(char *status);
 private:
 	int jobID;
 	UDPClient *udpClient;
