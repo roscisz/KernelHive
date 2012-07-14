@@ -2,6 +2,11 @@ package pl.gda.pg.eti.kernelhive.common.validation;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class ValidationResult implements Serializable {
 
 	/**

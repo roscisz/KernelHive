@@ -21,7 +21,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7431190941339020419L;
-	private static final int REQUIRED_SOURCE_FILES_COUNT = 1;
+	private static final int REQUIRED_SOURCE_FILES_COUNT = 0;
 	protected IGraphNode parentNode;
 	protected String nodeId;
 	protected String name;
@@ -317,7 +317,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 				results.add(new ValidationResult("The file: "+f.getFile().getAbsolutePath()+" is not a file", ValidationResultType.INVALID));
 			}
 		}
-		if(sourceFiles.size()!=REQUIRED_SOURCE_FILES_COUNT){
+		if(sourceFiles.size()<REQUIRED_SOURCE_FILES_COUNT){
 			results.add(new ValidationResult("The graph node ("+nodeId+") is missing one of its required source files", ValidationResultType.INVALID));
 		}
 		
