@@ -24,61 +24,62 @@ import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 public class SourceCodeEditor extends JTabContent implements DocumentListener {
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5474455832346699476L;
-	private static Logger LOG = Logger.getLogger(SourceCodeEditor.class.getName());
-	
-	public static enum SyntaxStyle{
-		CPLUSPLUS(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cpp"),
-		C(SyntaxConstants.SYNTAX_STYLE_C, "c"),
-		XML(SyntaxConstants.SYNTAX_STYLE_XML, "xml"),
-		PROPERTIES(SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE, "properties"),
-		NONE(SyntaxConstants.SYNTAX_STYLE_NONE, "");
-		
+	private static Logger LOG = Logger.getLogger(SourceCodeEditor.class
+			.getName());
+
+	public static enum SyntaxStyle {
+		CPLUSPLUS(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cpp"), C(
+				SyntaxConstants.SYNTAX_STYLE_C, "c"), XML(
+				SyntaxConstants.SYNTAX_STYLE_XML, "xml"), PROPERTIES(
+				SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE, "properties"), NONE(
+				SyntaxConstants.SYNTAX_STYLE_NONE, "");
+
 		private final String style;
 		private final String filetype;
-		
-		SyntaxStyle(String style, String filetype){
+
+		SyntaxStyle(String style, String filetype) {
 			this.style = style;
 			this.filetype = filetype;
 		}
-		
-		public String getStyle(){
+
+		public String getStyle() {
 			return this.style;
 		}
-		
-		public String getFileType(){
+
+		public String getFileType() {
 			return this.filetype;
 		}
-		
-		public static SyntaxStyle getSyntaxStyle(String mimeType){
+
+		public static SyntaxStyle getSyntaxStyle(String mimeType) {
 			SyntaxStyle[] styles = SyntaxStyle.values();
-			for(SyntaxStyle s : styles){
-				if(s.getStyle()==mimeType){
+			for (SyntaxStyle s : styles) {
+				if (s.getStyle() == mimeType) {
 					return s;
 				}
 			}
 			return null;
 		}
-		
-		public static SyntaxStyle resolveSyntaxStyle(String filetype){
+
+		public static SyntaxStyle resolveSyntaxStyle(String filetype) {
 			SyntaxStyle[] styles = SyntaxStyle.values();
-			for(SyntaxStyle s : styles){
-				if(s.getFileType().equalsIgnoreCase(filetype)){
+			for (SyntaxStyle s : styles) {
+				if (s.getFileType().equalsIgnoreCase(filetype)) {
 					return s;
 				}
 			}
 			return SyntaxStyle.NONE;
 		}
 	}
-	
+
 	private RSyntaxTextArea textarea;
 	private String fileName;
-	
-	public SourceCodeEditor(MainFrame frame, String name){
+
+	public SourceCodeEditor(MainFrame frame, String name) {
 		super(frame);
 		this.fileName = name;
 		setName(name);
@@ -90,66 +91,66 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		textarea.setBracketMatchingEnabled(true);
 		textarea.setAntiAliasingEnabled(true);
 		textarea.getDocument().addDocumentListener(this);
-		
+
 		RTextScrollPane scrollpane = new RTextScrollPane(textarea);
 		scrollpane.setFoldIndicatorEnabled(true);
 		add(scrollpane);
 	}
-	
-	public String getText(){
+
+	public String getText() {
 		return textarea.getText();
 	}
-	
-	public void setText(String text){
+
+	public void setText(String text) {
 		textarea.setText(text);
 	}
-	
-	public String getFileName(){
+
+	public String getFileName() {
 		return fileName;
 	}
-	
-	public void setFileName(String name){
+
+	public void setFileName(String name) {
 		this.fileName = name;
 	}
-	
-	public void setSyntaxStyle(SyntaxStyle style){
+
+	public void setSyntaxStyle(SyntaxStyle style) {
 		textarea.setSyntaxEditingStyle(style.getStyle());
 		textarea.repaint();
 	}
-	
-	public SyntaxStyle getSyntaxStyle(){
+
+	public SyntaxStyle getSyntaxStyle() {
 		String style = textarea.getSyntaxEditingStyle();
 		return SyntaxStyle.getSyntaxStyle(style);
 	}
-	
+
 	@Override
 	public boolean saveContent(File file) {
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8"); 
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
 			osw.write(getText());
 			osw.flush();
 			osw.close();
 			fileName = file.getName();
-			
-			try{
+
+			try {
 				getTabPanel().getLabel().setText(fileName);
-			} catch(NullPointerException e){
+			} catch (NullPointerException e) {
 				LOG.warning("KH: no TabPanel object associated!");
 				e.printStackTrace();
 				return false;
 			}
-			
+
 			setDirty(false);
 			return true;
 		} catch (FileNotFoundException e) {
-			LOG.warning("KH: file not found: "+file.getPath());
+			LOG.warning("KH: file not found: " + file.getPath());
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			LOG.warning("KH: unsupported encoding");
 			e.printStackTrace();
 		} catch (IOException e) {
-			LOG.warning("KH: could not save to file: "+file.getPath());
+			LOG.warning("KH: could not save to file: " + file.getPath());
 			e.printStackTrace();
 		}
 		return false;
@@ -157,56 +158,56 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	@Override
 	public boolean loadContent(File file) {
-		try{
+		try {
 			FileInputStream fis = new FileInputStream(file);
 			DataInputStream dis = new DataInputStream(fis);
 			BufferedReader br = new BufferedReader(new InputStreamReader(dis));
 			StringBuilder sb = new StringBuilder();
 			String strLine;
-			while((strLine = br.readLine()) !=null){
+			while ((strLine = br.readLine()) != null) {
 				sb.append(strLine);
 				sb.append("\n");
 			}
-			if(sb.length()!=0){
-				sb.deleteCharAt(sb.length()-1);
+			if (sb.length() != 0) {
+				sb.deleteCharAt(sb.length() - 1);
 			}
 			setText(sb.toString());
 			dis.close();
 			return true;
-		} catch(IOException e){
-			LOG.warning("KH: could not load specified file: "+file.getPath());
+		} catch (IOException e) {
+			LOG.warning("KH: could not load specified file: " + file.getPath());
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void changedUpdate(DocumentEvent arg0) {
-		if(getTabPanel()!=null){
+		if (getTabPanel() != null) {
 			setDirty(true);
-			getTabPanel().getLabel().setText("*"+fileName);
+			getTabPanel().getLabel().setText("*" + fileName);
 		}
 	}
 
 	@Override
 	public void insertUpdate(DocumentEvent arg0) {
-		if(getTabPanel()!=null){
+		if (getTabPanel() != null) {
 			setDirty(true);
-			getTabPanel().getLabel().setText("*"+fileName);
+			getTabPanel().getLabel().setText("*" + fileName);
 		}
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent arg0) {
-		if(getTabPanel()!=null){
+		if (getTabPanel() != null) {
 			setDirty(true);
-			getTabPanel().getLabel().setText("*"+fileName);
+			getTabPanel().getLabel().setText("*" + fileName);
 		}
 	}
 
 	@Override
 	public void redoAction() {
-		textarea.redoLastAction();		
+		textarea.redoLastAction();
 	}
 
 	@Override
@@ -216,7 +217,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	@Override
 	public void cut() {
-		textarea.cut();		
+		textarea.cut();
 	}
 
 	@Override
@@ -231,6 +232,11 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	@Override
 	public void selectAll() {
-		textarea.selectAll();		
-	}	
+		textarea.selectAll();
+	}
+
+	@Override
+	public void refresh() {
+
+	}
 }

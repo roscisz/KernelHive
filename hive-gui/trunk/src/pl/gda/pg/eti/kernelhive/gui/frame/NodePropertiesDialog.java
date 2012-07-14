@@ -1,14 +1,23 @@
 package pl.gda.pg.eti.kernelhive.gui.frame;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JDialog;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
-import javax.swing.JScrollBar;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
+
+import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
 public class NodePropertiesDialog extends JDialog {
 
@@ -16,43 +25,53 @@ public class NodePropertiesDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = -7313937306855473619L;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JLabel lblSourceFiles;
-
 	
-	public NodePropertiesDialog(){
+	private JTextField textFieldName;
+	private JTextField textFieldType;
+	private JTextField textFieldId;
+	private JLabel lblSourceFiles;
+	private JList<ISourceFile> list;
+	private MainFrame frame;
+	private IGraphNode node;
+	
+	public NodePropertiesDialog(MainFrame frame, IGraphNode node){
+		super(frame);
+		this.frame = frame;
+		this.node = node;
+		this.setBounds(this.getParent().getWidth()/2, this.getParent().getHeight()/2, 450, 300);
 		getContentPane().setLayout(null);
 		
 		JLabel lblName = new JLabel("Name");
 		lblName.setBounds(12, 41, 46, 15);
 		getContentPane().add(lblName);
 		
-		textField = new JTextField();
-		textField.setBounds(76, 39, 114, 19);
-		getContentPane().add(textField);
-		textField.setColumns(10);
+		textFieldName = new JTextField();
+		textFieldName.setBounds(76, 39, 232, 19);
+		getContentPane().add(textFieldName);
+		textFieldName.setColumns(10);
+		textFieldName.setText(node.getName());
 		
 		JLabel lblType = new JLabel("Type");
 		lblType.setBounds(12, 68, 46, 15);
 		getContentPane().add(lblType);
 		
-		textField_1 = new JTextField();
-		textField_1.setEditable(false);
-		textField_1.setBounds(76, 66, 114, 19);
-		getContentPane().add(textField_1);
-		textField_1.setColumns(10);
+		textFieldType = new JTextField();
+		textFieldType.setEditable(false);
+		textFieldType.setBounds(76, 66, 232, 19);
+		getContentPane().add(textFieldType);
+		textFieldType.setColumns(10);
+		textFieldType.setText(node.getType().toString());
 		
 		JLabel lblId = new JLabel("ID");
 		lblId.setBounds(12, 12, 46, 15);
 		getContentPane().add(lblId);
 		
-		textField_2 = new JTextField();
-		textField_2.setEditable(false);
-		textField_2.setBounds(76, 10, 114, 19);
-		getContentPane().add(textField_2);
-		textField_2.setColumns(10);
+		textFieldId = new JTextField();
+		textFieldId.setEditable(false);
+		textFieldId.setBounds(76, 10, 232, 19);
+		getContentPane().add(textFieldId);
+		textFieldId.setColumns(10);
+		textFieldId.setText(node.getNodeId());
 		
 		lblSourceFiles = new JLabel("Source Files");
 		lblSourceFiles.setBounds(12, 107, 92, 15);
@@ -60,11 +79,112 @@ public class NodePropertiesDialog extends JDialog {
 		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(355, 230, 81, 25);
+		btnCancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		});
 		getContentPane().add(btnCancel);
 		
 		JButton btnSave = new JButton("Save");
 		btnSave.setBounds(262, 230, 81, 25);
+		btnSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				save();
+				close();
+			}
+		});
 		getContentPane().add(btnSave);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(115, 107, 193, 96);
+		getContentPane().add(scrollPane);
+		
+		list = new JList<ISourceFile>();
+		scrollPane.setViewportView(list);
+		
+		JButton btnAdd = new JButton("Add");
+		btnAdd.setBounds(319, 102, 92, 25);
+		getContentPane().add(btnAdd);
+		
+		JButton btnRemove = new JButton("Remove");
+		btnRemove.setBounds(320, 139, 91, 25);
+		getContentPane().add(btnRemove);
+		
+		fillSourceFilesList(node.getSourceFiles());
+		
+	}
+	
+	private void save(){
+		node.setName(textFieldName.getText());
+	}
+	
+	private void close(){
+		this.setVisible(false);
+		this.dispose();
+	}
+	
+	private void fillSourceFilesList(List<ISourceFile> sourceFiles){
+		ListModel<ISourceFile> model = new SourceFilesListModel(sourceFiles);
+		list.setModel(model);
+		list.addMouseListener(new MouseAdapter() {
+			
+			public void mouseClicked(MouseEvent e){
+				if(e.getClickCount()==2){
+					e.consume();
+					ISourceFile file = list.getSelectedValue();
+					frame.getController().openTab(file.getFile());
+				}
+			}
+			
+		});
+	}
+	
+	
+	private class SourceFilesListModel implements ListModel<ISourceFile>{
+
+		List<ISourceFile> list;
+		List<ListDataListener> listDataListeners;
+		
+		public SourceFilesListModel(List<ISourceFile> list){
+			this.list = list;
+			listDataListeners = new ArrayList<ListDataListener>();
+		}
+		
+		@Override
+		public int getSize() {
+			if(list!=null){
+				return list.size();
+			} else{
+				return -1;
+			}
+		}
+
+		@Override
+		public ISourceFile getElementAt(int index) {
+			if(list!=null){
+				return list.get(index);
+			} else{
+				return null;
+			}
+		}
+
+		@Override
+		public void addListDataListener(ListDataListener l) {
+			if(!listDataListeners.contains(l)){
+				listDataListeners.add(l);
+			}
+		}
+
+		@Override
+		public void removeListDataListener(ListDataListener l) {
+			if(listDataListeners.contains(l)){
+				listDataListeners.remove(l);
+			}
+		}
 	}
 }

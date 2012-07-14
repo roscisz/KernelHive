@@ -28,6 +28,7 @@ public abstract class JTabContent extends JPanel {
 	public abstract void copy();
 	public abstract void paste();
 	public abstract void selectAll();
+	public abstract void refresh();
 	
 	public void setTabPanel(JTabPanel panel){
 		tabPanel = panel;

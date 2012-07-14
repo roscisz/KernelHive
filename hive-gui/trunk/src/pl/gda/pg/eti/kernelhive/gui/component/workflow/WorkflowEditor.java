@@ -9,6 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -24,12 +26,12 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
+import pl.gda.pg.eti.kernelhive.gui.frame.NodePropertiesDialog;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.gui.project.util.NodeNameGenerator;
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
@@ -95,7 +97,6 @@ public class WorkflowEditor extends JTabContent {
 	private mxIEventListener undoHandler;
 	private mxIEventListener changeHandler;
 	private mxIEventListener connectHandler;
-	private mxIEventListener moveHandler;
 	private mxRubberband rubberband;
 
 	public WorkflowEditor(MainFrame frame, final String name, IProject project) {
@@ -147,22 +148,19 @@ public class WorkflowEditor extends JTabContent {
 					} else if (childChange.getPrevious() != null) {// destroy
 						Iterator<IGraphNode> iter = node.getChildrenNodes().iterator();
 						while(iter.hasNext()){
-							IGraphNode n = iter.next();
+							iter.next();
 							iter.remove();
-							//node.removeChildNode(iter.next());
 						}
 						node.setParentNode(null);
 						iter = node.getFollowingNodes().iterator();
 						while(iter.hasNext()){
-							IGraphNode n = iter.next();
+							iter.next();
 							iter.remove();
-							//node.removeFollowingNode(iter.next());
 						}
 						iter = node.getPreviousNodes().iterator();
 						while(iter.hasNext()){
-							IGraphNode n = iter.next();
+							iter.next();
 							iter.remove();
-							//node.removePreviousNode(iter.next());
 						}
 						
 						project.removeProjectNode(node, false);
@@ -239,17 +237,21 @@ public class WorkflowEditor extends JTabContent {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				JMenuItem i = (JMenuItem) ae.getSource();
-				JPopupMenu m = (JPopupMenu) i.getParent();
 				mxCell cell = (mxCell) graphComponent.getGraph()
 						.getSelectionCell();
 				if (cell != null) {
 					IGraphNode node = (IGraphNode) cell.getValue();
-					List<ISourceFile> srcFiles = node.getSourceFiles();
-					for (ISourceFile f : srcFiles) {
-						// TODO open properties instead of source files
-						getFrame().getController().openTab(f.getFile());
-					}
+					NodePropertiesDialog npd = new NodePropertiesDialog(getFrame(), node);
+					npd.setVisible(true);
+					npd.addWindowListener(new WindowAdapter() {
+						public void windowClosed(WindowEvent e){
+							refresh();
+						}
+						
+						public void windowClosing(WindowEvent e){
+							refresh();
+						}
+					});
 				}
 			}
 		});
@@ -416,22 +418,19 @@ public class WorkflowEditor extends JTabContent {
 			IGraphNode node = (IGraphNode) cell.getValue();
 			Iterator<IGraphNode> iter = node.getChildrenNodes().iterator();
 			while(iter.hasNext()){
-				IGraphNode n = iter.next();
+				iter.next();
 				iter.remove();
-				//node.removeChildNode(iter.next());
 			}
 			node.setParentNode(null);
 			iter = node.getFollowingNodes().iterator();
 			while(iter.hasNext()){
-				IGraphNode n = iter.next();
+				iter.next();
 				iter.remove();
-				//node.removeFollowingNode(iter.next());
 			}
 			iter = node.getPreviousNodes().iterator();
 			while(iter.hasNext()){
-				IGraphNode n = iter.next();
+				iter.next();
 				iter.remove();
-				//node.removePreviousNode(iter.next());
 			}
 			project.removeProjectNode(node, false);
 		} else {// edge
@@ -652,6 +651,16 @@ public class WorkflowEditor extends JTabContent {
 	@Override
 	public void selectAll() {
 		graphComponent.getGraph().selectAll();
+	}
+	
+	@Override
+	public void refresh(){
+		graphComponent.getGraph().getModel().beginUpdate();
+		try{
+			graphComponent.getGraph().refresh();
+		} finally{
+			graphComponent.getGraph().getModel().endUpdate();
+		}
 	}
 
 	private void setGraphLayout(WorkflowGraphLayout layout, boolean animate) {
