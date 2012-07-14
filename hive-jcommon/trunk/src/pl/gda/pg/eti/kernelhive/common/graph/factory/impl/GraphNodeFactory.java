@@ -12,7 +12,7 @@ public class GraphNodeFactory implements IGraphNodeFactory {
 		switch(type){
 			case GENERIC:
 				IGraphNode node = new GenericGraphNode();
-				
+				return node;
 			case PARTITIONER:
 				break;
 			case MERGER:

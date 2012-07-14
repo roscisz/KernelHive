@@ -15,6 +15,7 @@ public enum GraphNodeType {
 		this.type = str;
 	}
 	
+	@Override
 	public String toString(){
 		return type;
 	}

@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.common.graph.node;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 
 
 
@@ -44,5 +45,5 @@ public interface IGraphNode {
 	boolean removeSourceFile(ISourceFile file);
 	boolean canRemoveSourceFile(ISourceFile file);
 	
-	boolean validate();
+	List<ValidationResult> validate();
 }

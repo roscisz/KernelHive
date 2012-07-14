@@ -7,6 +7,8 @@ import java.util.List;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 /**
  * 
@@ -19,6 +21,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7431190941339020419L;
+	private static final int REQUIRED_SOURCE_FILES_COUNT = 1;
 	protected IGraphNode parentNode;
 	protected String nodeId;
 	protected String name;
@@ -304,9 +307,25 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean validate() {
-		// TODO Auto-generated method stub
-		return true;
+	public List<ValidationResult> validate() {
+		List<ValidationResult> results = new ArrayList<ValidationResult>();
+		for(ISourceFile f : sourceFiles){
+			if(!f.getFile().exists()){
+				results.add(new ValidationResult("The file: "+f.getFile().getAbsolutePath()+" does not exist", ValidationResultType.INVALID));
+			}
+			if(!f.getFile().isFile()){
+				results.add(new ValidationResult("The file: "+f.getFile().getAbsolutePath()+" is not a file", ValidationResultType.INVALID));
+			}
+		}
+		if(sourceFiles.size()!=REQUIRED_SOURCE_FILES_COUNT){
+			results.add(new ValidationResult("The graph node ("+nodeId+") is missing one of its required source files", ValidationResultType.INVALID));
+		}
+		
+		if(results.size()==0){//everything ok
+			results.add(new ValidationResult("OK", ValidationResultType.VALID));
+		}
+		
+		return results;
 	}
 
 	@Override
