@@ -30,8 +30,8 @@ import pl.gda.pg.eti.kernelhive.gui.frame.NodePropertiesDialog;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
-import pl.gda.pg.eti.kernelhive.gui.project.util.NodeIdGenerator;
-import pl.gda.pg.eti.kernelhive.gui.project.util.NodeNameGenerator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;

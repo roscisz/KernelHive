@@ -63,4 +63,10 @@ public class JTabContentStub extends JTabContent {
 
 	}
 
+	@Override
+	public void refresh() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
