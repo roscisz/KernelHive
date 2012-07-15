@@ -1,1 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<kh:repository>
+	<kh:entry type="generic">
+		<kh:kernel name="kernel.cl" src="/kernels/generic/kernel.cl"/>
+	</kh:entry>
+	<kh:entry type="processor">
+		<kh:kernel name="kernel.cl" src="/kernels/processor/kernel.cl"/>
+	</kh:entry>
+</kh:repository>
