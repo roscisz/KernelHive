@@ -53,13 +53,13 @@ public interface IProject {
 	/**
 	 * loads project configuration from default xml file
 	 */
-	void load();
+	void load() throws ConfigurationException;
 	
 	/**
 	 * loads project from given xml file
 	 * @param file File to load
 	 */
-	void load(File file);
+	void load(File file) throws ConfigurationException;
 	/**
 	 * 
 	 * @return list of project nodes

@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -107,10 +108,12 @@ public class MainFrame extends JFrame {
 	private JButton btnStop;
 	private JMenuItem mntmPreferences;
 	private JTree projectTree;
+	private JList repositoryList;
 	
 	private MainFrameController controller;
 	private JScrollPane projectScrollPane;
 	private JMenuItem mntmWorkflowEditor;
+	private JScrollPane repositoryScrollPane;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
@@ -602,7 +605,11 @@ public class MainFrame extends JFrame {
 		projectPanel.add(projectScrollPane, BorderLayout.CENTER);
 		
 		repositoryPanel = new JPanel();
-		sidePane.addTab("Repository", null, repositoryPanel, null);		
+		sidePane.addTab("Repository", null, repositoryPanel, null);	
+		repositoryPanel.setLayout(new BorderLayout(0, 0));
+		
+		repositoryScrollPane = new JScrollPane();
+		repositoryPanel.add(repositoryScrollPane, BorderLayout.CENTER);
 	}
 	
 	/**
@@ -1041,6 +1048,31 @@ public class MainFrame extends JFrame {
 	public void setController(MainFrameController controller) {
 		this.controller = controller;
 	}
+
+	public JList getRepositoryList() {
+		return repositoryList;
+	}
+
+	public void setRepositoryList(JList repositoryList) {
+		this.repositoryList = repositoryList;
+	}
+
+	public JMenuItem getMntmWorkflowEditor() {
+		return mntmWorkflowEditor;
+	}
+
+	public void setMntmWorkflowEditor(JMenuItem mntmWorkflowEditor) {
+		this.mntmWorkflowEditor = mntmWorkflowEditor;
+	}
+
+	public JScrollPane getRepositoryScrollPane() {
+		return repositoryScrollPane;
+	}
+
+	public void setRepositoryScrollPane(JScrollPane repositoryScrollPane) {
+		this.repositoryScrollPane = repositoryScrollPane;
+	}
+	
 	
 	
 }

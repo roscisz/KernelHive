@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.gui.configuration;
 
+import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -51,5 +52,18 @@ public class AppConfiguration {
 			}
 		}
 		return null;
+	}
+	
+	public URL getKernelRepositoryURL(){
+		String prop = this.config.getString("kernel.repository.file.path");
+		if(prop!=null){
+			return AppConfiguration.class.getResource(prop);
+		} else{
+			return null;
+		}
+	}
+	
+	public String getProperty(String key){
+		return this.config.getString(key);
 	}
 }

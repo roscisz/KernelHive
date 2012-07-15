@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.ListModel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -15,6 +17,8 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
+import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.RepositoryViewer;
+import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.RepositoryViewerModel;
 import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor;
 import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor.SyntaxStyle;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileCellRenderer;
@@ -23,6 +27,9 @@ import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTreeModel;
 import pl.gda.pg.eti.kernelhive.gui.component.workflow.WorkflowEditor;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
+import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
+import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.common.kernel.repository.impl.KernelRepository;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.frame.NewProjectDialog;
@@ -70,6 +77,12 @@ public class MainFrameController {
 				frame.setProjectTree(tree);
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
+				
+				IKernelRepository repository = new KernelRepository(AppConfiguration.getInstance().getKernelRepositoryURL());
+				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel<KernelRepositoryEntry>(repository.getEntries());
+				frame.setRepositoryList(new RepositoryViewer<KernelRepositoryEntry>(repoModel));
+				frame.getRepositoryScrollPane().setViewportView(frame.getRepositoryList());
+				
 			} catch (ConfigurationException e) {
 				LOG.warning("KH: cannot create new project");
 				JOptionPane
@@ -91,18 +104,28 @@ public class MainFrameController {
 		FileFilter ff = new FileNameExtensionFilter("xml", "xml");
 		fc.setFileFilter(ff);
 		if (fc.showDialog(frame.getContentPane(), "Select") == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			project = new KernelHiveProject(file.getParentFile(), null);
-			project.setProjectFile(file);
-			project.load();
-			FileTreeModel model = new FileTreeModel(
-					project.getProjectDirectory());
-			FileTree tree = new FileTree(frame, model);
-			tree.setCellRenderer(new FileCellRenderer(tree.getCellRenderer()));
-			frame.setProjectTree(tree);
-			frame.getProjectScrollPane()
-					.setViewportView(frame.getProjectTree());
-			openWorkflowEditor();
+			try{
+				File file = fc.getSelectedFile();
+				project = new KernelHiveProject(file.getParentFile(), null);
+				project.setProjectFile(file);
+				project.load();
+				FileTreeModel model = new FileTreeModel(
+						project.getProjectDirectory());
+				FileTree tree = new FileTree(frame, model);
+				tree.setCellRenderer(new FileCellRenderer(tree.getCellRenderer()));
+				frame.setProjectTree(tree);
+				frame.getProjectScrollPane()
+						.setViewportView(frame.getProjectTree());
+				
+				IKernelRepository repository = new KernelRepository(AppConfiguration.getInstance().getKernelRepositoryURL());
+				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel<KernelRepositoryEntry>(repository.getEntries());
+				frame.setRepositoryList(new RepositoryViewer<KernelRepositoryEntry>(repoModel));
+				frame.getRepositoryScrollPane().setViewportView(frame.getRepositoryList());
+				
+				openWorkflowEditor();
+			} catch(ConfigurationException e){
+				//TODO
+			}
 		}
 	}
 
@@ -265,11 +288,18 @@ public class MainFrameController {
 	}
 
 	public void saveAll() {
-
+		//TODO
 	}
 
 	public void refresh() {
-
+		//refresh tree
+		this.frame.getProjectTree().setModel(this.frame.getProjectTree().getModel());
+		this.frame.getProjectTree().updateUI();
+		//refresh tabs
+		Set<JTabContent> tabs = this.openedTabs.keySet();
+		for(JTabContent tab : tabs){
+			tab.refresh();
+		}
 	}
 
 	public void exit() {

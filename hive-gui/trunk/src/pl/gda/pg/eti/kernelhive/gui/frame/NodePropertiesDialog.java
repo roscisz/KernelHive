@@ -129,7 +129,7 @@ public class NodePropertiesDialog extends JDialog {
 	}
 	
 	private void fillSourceFilesList(List<ISourceFile> sourceFiles){
-		ListModel<ISourceFile> model = new SourceFilesListModel(sourceFiles);
+		ListModel<ISourceFile> model = new SourceFilesListModel<ISourceFile>(sourceFiles);
 		list.setModel(model);
 		list.addMouseListener(new MouseAdapter() {
 			
@@ -145,12 +145,12 @@ public class NodePropertiesDialog extends JDialog {
 	}
 	
 	
-	private class SourceFilesListModel implements ListModel<ISourceFile>{
+	private class SourceFilesListModel<E> implements ListModel<E>{
 
-		List<ISourceFile> list;
+		List<E> list;
 		List<ListDataListener> listDataListeners;
 		
-		public SourceFilesListModel(List<ISourceFile> list){
+		public SourceFilesListModel(List<E> list){
 			this.list = list;
 			listDataListeners = new ArrayList<ListDataListener>();
 		}
@@ -165,7 +165,7 @@ public class NodePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public ISourceFile getElementAt(int index) {
+		public E getElementAt(int index) {
 			if(list!=null){
 				return list.get(index);
 			} else{

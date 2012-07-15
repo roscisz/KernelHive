@@ -73,19 +73,14 @@ public class KernelHiveProject implements Serializable, IProject {
 	}
 
 	@Override
-	public void load() {
+	public void load() throws ConfigurationException {
 		load(projectFile);
 	}
 
 	@Override
-	public void load(File file) {
-		try {
-			config.setConfigurationFile(file);
-			nodes = config.loadGraph();
-			// config.validate();//TODO write schema
-		} catch (ConfigurationException e) {
-			//TODO resolve exception
-		}
+	public void load(File file) throws ConfigurationException {
+		config.setConfigurationFile(file);
+		nodes = config.loadGraph();
 	}
 
 	@Override
