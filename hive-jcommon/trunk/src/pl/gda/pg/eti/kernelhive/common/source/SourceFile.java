@@ -12,21 +12,18 @@ import java.util.Map;
  */
 public class SourceFile implements ISourceFile, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 192995314148788181L;
 	protected File file;
-	protected Map<String, Object> properties;
+	protected Map<String, String> properties;
 	
 	public SourceFile(File file){
 		this.file = file;
-		properties = new HashMap<String, Object>();
+		properties = new HashMap<String, String>();
 	}
 	
-	public SourceFile(File file, Map<String, Object> properties){
+	public SourceFile(File file, Map<String, String> map){
 		this.file = file;
-		this.properties = properties;
+		this.properties = map;
 	}
 	
 	@Override
@@ -35,12 +32,12 @@ public class SourceFile implements ISourceFile, Serializable {
 	}
 
 	@Override
-	public Object getProperty(String key) {
+	public String getProperty(String key) {
 		return properties.get(key);
 	}
 
 	@Override
-	public void setProperty(String key, Object value) {
+	public void setProperty(String key, String value) {
 		properties.put(key, value);
 	}
 	
@@ -48,5 +45,4 @@ public class SourceFile implements ISourceFile, Serializable {
 	public String toString(){
 		return this.file.getAbsolutePath();
 	}
-
 }

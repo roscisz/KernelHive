@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kh:repository>
 	<kh:entry type="generic" description="Generic Graph Node">
-		<kh:kernel name="kernel.cl" src="/kernels/generic/kernel.cl"/>
+		<kh:kernel name="kernel.cl" src="/kernels/generic/kernel.cl">
+			<kh:property key="required" value="true"/>
+		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="processor" description="Processor Graph Node">
-		<kh:kernel name="kernel.cl" src="/kernels/processor/kernel.cl"/>
+		<kh:kernel name="kernel.cl" src="/kernels/processor/kernel.cl">
+			<kh:property key="required" value="true"/>
+		</kh:kernel>
 	</kh:entry>
 </kh:repository>

@@ -12,6 +12,7 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
+import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelPathEntry;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 
 /**
@@ -28,6 +29,9 @@ public class KernelRepository implements IKernelRepository {
 	private static String KERNEL_NODE = "kh:kernel";
 	private static String KERNEL_NODE_NAME_ATTRIBUTE = "name";
 	private static String KERNEL_NODE_SRC_ATTRIBUTE = "src";
+	private static String KERNEL_PROPERTY_NODE = "kh:property";
+	private static String KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE = "key";
+	private static String KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
 	
 	private XMLConfiguration config;
 	private URL resource;
@@ -90,9 +94,14 @@ public class KernelRepository implements IKernelRepository {
 			desc = (String) descAttrList.get(0).getValue();
 		}
 		
-		List<ConfigurationNode> kernelsList = node.getChildren(KERNEL_NODE);
-		Map<String, URL> kernelsMap = new HashMap<String, URL>(kernelsList.size());
+		List<KernelPathEntry> kernelPathEntries = getKernelPathEntries(node);
 		
+		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc, kernelPathEntries);
+	}
+	
+	private List<KernelPathEntry> getKernelPathEntries(ConfigurationNode node) throws ConfigurationException{
+		List<ConfigurationNode> kernelsList = node.getChildren(KERNEL_NODE);
+		List<KernelPathEntry> list = new ArrayList<KernelPathEntry>(kernelsList.size());
 		for(ConfigurationNode kNode : kernelsList){
 			String name;
 			URL src;
@@ -105,6 +114,7 @@ public class KernelRepository implements IKernelRepository {
 			} else{
 				throw new ConfigurationException("KH: no required 'name' attribute in <kh:kernel> node");
 			}
+			
 			if(srcAttrList.size()>0){
 				src = KernelRepository.class.getResource((String) srcAttrList.get(0).getValue());
 				if(src==null){
@@ -113,10 +123,38 @@ public class KernelRepository implements IKernelRepository {
 			} else{
 				throw new ConfigurationException("KH: no required 'src' attribute in <kh:kernel> node");
 			}
-			kernelsMap.put(name, src);
+			
+			Map<String, String> properties = getKernelProperties(kNode);
+			
+			list.add(new KernelPathEntry(name, src, properties));
 		}
+		return list;
+	}
+	
+	private Map<String, String> getKernelProperties(ConfigurationNode node) throws ConfigurationException{
+		List<ConfigurationNode> propertiesNodeList = node.getChildren(KERNEL_PROPERTY_NODE);
+		Map<String, String> properties = new HashMap<String, String>(propertiesNodeList.size());
 		
-		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc, kernelsMap);
-		
+		for(ConfigurationNode pNode : propertiesNodeList){
+			String key, value;
+			
+			List<ConfigurationNode> keyAttrList = pNode.getAttributes(KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE);
+			List<ConfigurationNode> valueAttrList = pNode.getAttributes(KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE);
+			
+			if(keyAttrList.size()>0){
+				key = (String) keyAttrList.get(0).getValue();
+			} else{
+				throw new ConfigurationException("KH: no required 'key' attribute in <kh:property> node");
+			}
+			
+			if(valueAttrList.size()>0){
+				value = (String) valueAttrList.get(0).getValue();
+			} else{
+				throw new ConfigurationException("KH: no required 'value' attribute in <kh:property> node");
+			}
+			
+			properties.put(key, value);
+		}
+		return properties;
 	}
 }

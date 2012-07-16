@@ -10,6 +10,6 @@ import java.io.File;
 public interface ISourceFile {
 
 	public File getFile();
-	public Object getProperty(String key);
-	public void setProperty(String key, Object value);
+	public String getProperty(String key);
+	public void setProperty(String key, String value);
 }

@@ -3,8 +3,8 @@ package pl.gda.pg.eti.kernelhive.common.kernel.repository;
 import static org.junit.Assert.*;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,16 +15,16 @@ public class KernelRepositoryEntryTest {
 
 	private KernelRepositoryEntry entry;
 	private GraphNodeType type;
-	private Map<String, URL> resourceMap;
+	private List<KernelPathEntry> list;
 	private String desc;
 	
 	@Before
 	public void setUp() throws Exception {
-		resourceMap = new HashMap<String, URL>();
-		resourceMap.put("test", new URL("http://test.com"));
+		list = new ArrayList<KernelPathEntry>();
+		list.add(new KernelPathEntry("test", new URL("http://test.com"), null));
 		type = GraphNodeType.GENERIC;
 		desc = "test";
-		entry = new KernelRepositoryEntry(type, desc, resourceMap);
+		entry = new KernelRepositoryEntry(type, desc, list);
 	}
 
 	@Test
@@ -34,12 +34,12 @@ public class KernelRepositoryEntryTest {
 
 	@Test
 	public void testGetKernelPaths() {
-		assertEquals(resourceMap, entry.getKernelPaths());
+		assertEquals(list, entry.getKernelPaths());
 	}
 
 	@Test
 	public void testGetKernelPathForName() {
-		assertEquals(resourceMap.get("test"), entry.getKernelPathForName("test"));
+		assertEquals(list.get(0).getPath(), entry.getKernelPathForName("test"));
 	}
 	
 	@Test
