@@ -11,13 +11,21 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
+import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
+import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
+import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.common.source.SourceFile;
 
+/**
+ * {@link GraphConfiguration} object is responsible for 
+ * persisting project graph to the underlying file layer (XML)
+ * @author mschally
+ *
+ */
 public class GraphConfiguration implements IGraphConfiguration {
 
 	private static final String ROOT_NODE = "kh:project";
@@ -240,10 +248,12 @@ public class GraphConfiguration implements IGraphConfiguration {
 						.getValue());
 
 			IGraphNode graphNode;
-			if (type == GraphNodeType.GENERIC) {
-				graphNode = new GenericGraphNode(id, name);// TODO
-			} else {
-				throw new ConfigurationException("KH: not generic! TEST DEBUG");
+			IGraphNodeBuilder gnBuilder = new GraphNodeBuilder();
+			try {
+				graphNode = gnBuilder.setType(type).setId(id).setName(name).build();
+			} catch (GraphNodeBuilderException e) {
+				e.printStackTrace();
+				throw new ConfigurationException(e);
 			}
 			graphNode.setX(x);
 			graphNode.setY(y);
