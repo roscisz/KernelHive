@@ -24,6 +24,7 @@ public class KernelRepository implements IKernelRepository {
 	private static String ROOT_NODE = "kh:repository";
 	private static String ENTRY_NODE = "kh:entry";
 	private static String ENTRY_NODE_TYPE_ATTRIBUTE = "type";
+	private static String ENTRY_NODE_DESCRIPTION_ATTRIBUTE = "description";
 	private static String KERNEL_NODE = "kh:kernel";
 	private static String KERNEL_NODE_NAME_ATTRIBUTE = "name";
 	private static String KERNEL_NODE_SRC_ATTRIBUTE = "src";
@@ -75,38 +76,47 @@ public class KernelRepository implements IKernelRepository {
 	
 	private KernelRepositoryEntry getEntryFromConfigurationNode(ConfigurationNode node) throws ConfigurationException{
 		List<ConfigurationNode> typeAttrList = node.getAttributes(ENTRY_NODE_TYPE_ATTRIBUTE);
+		List<ConfigurationNode> descAttrList = node.getAttributes(ENTRY_NODE_DESCRIPTION_ATTRIBUTE);
+		String typeStr;
+		String desc = null;
 		
 		if(typeAttrList.size()>0){
-			String val = (String) typeAttrList.get(0).getValue();
-			List<ConfigurationNode> kernelsList = node.getChildren(KERNEL_NODE);
-			Map<String, URL> kernelsMap = new HashMap<String, URL>(kernelsList.size());
-			
-			for(ConfigurationNode kNode : kernelsList){
-				String name;
-				URL src;
-				
-				List<ConfigurationNode> nameAttrList = kNode.getAttributes(KERNEL_NODE_NAME_ATTRIBUTE);
-				List<ConfigurationNode> srcAttrList = kNode.getAttributes(KERNEL_NODE_SRC_ATTRIBUTE);
-				
-				if(nameAttrList.size()>0){
-					name = (String) nameAttrList.get(0).getValue();
-				} else{
-					throw new ConfigurationException("KH: no required 'name' attribute in <kh:kernel> node");
-				}
-				if(srcAttrList.size()>0){
-					src = KernelRepository.class.getResource((String) srcAttrList.get(0).getValue());
-					if(src==null){
-						throw new ConfigurationException("KH: the resource path: '"+srcAttrList.get(0).getValue()+"' cound not be found");
-					}
-				} else{
-					throw new ConfigurationException("KH: no required 'src' attribute in <kh:kernel> node");
-				}
-				kernelsMap.put(name, src);
-			}
-			
-			return new KernelRepositoryEntry(GraphNodeType.getType(val), kernelsMap);
+			typeStr = (String) typeAttrList.get(0).getValue();
 		} else{
 			throw new ConfigurationException("KH: no required 'type' attribute in <kh:entry> node");
 		}
+		
+		if(descAttrList.size()>0){
+			desc = (String) descAttrList.get(0).getValue();
+		}
+		
+		List<ConfigurationNode> kernelsList = node.getChildren(KERNEL_NODE);
+		Map<String, URL> kernelsMap = new HashMap<String, URL>(kernelsList.size());
+		
+		for(ConfigurationNode kNode : kernelsList){
+			String name;
+			URL src;
+			
+			List<ConfigurationNode> nameAttrList = kNode.getAttributes(KERNEL_NODE_NAME_ATTRIBUTE);
+			List<ConfigurationNode> srcAttrList = kNode.getAttributes(KERNEL_NODE_SRC_ATTRIBUTE);
+			
+			if(nameAttrList.size()>0){
+				name = (String) nameAttrList.get(0).getValue();
+			} else{
+				throw new ConfigurationException("KH: no required 'name' attribute in <kh:kernel> node");
+			}
+			if(srcAttrList.size()>0){
+				src = KernelRepository.class.getResource((String) srcAttrList.get(0).getValue());
+				if(src==null){
+					throw new ConfigurationException("KH: the resource path: '"+srcAttrList.get(0).getValue()+"' cound not be found");
+				}
+			} else{
+				throw new ConfigurationException("KH: no required 'src' attribute in <kh:kernel> node");
+			}
+			kernelsMap.put(name, src);
+		}
+		
+		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc, kernelsMap);
+		
 	}
 }

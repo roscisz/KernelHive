@@ -16,13 +16,15 @@ public class KernelRepositoryEntryTest {
 	private KernelRepositoryEntry entry;
 	private GraphNodeType type;
 	private Map<String, URL> resourceMap;
+	private String desc;
 	
 	@Before
 	public void setUp() throws Exception {
 		resourceMap = new HashMap<String, URL>();
 		resourceMap.put("test", new URL("http://test.com"));
 		type = GraphNodeType.GENERIC;
-		entry = new KernelRepositoryEntry(type, resourceMap);
+		desc = "test";
+		entry = new KernelRepositoryEntry(type, desc, resourceMap);
 	}
 
 	@Test
@@ -38,6 +40,11 @@ public class KernelRepositoryEntryTest {
 	@Test
 	public void testGetKernelPathForName() {
 		assertEquals(resourceMap.get("test"), entry.getKernelPathForName("test"));
+	}
+	
+	@Test
+	public void testGetDescription(){
+		assertEquals(desc, entry.getDescription());
 	}
 
 }
