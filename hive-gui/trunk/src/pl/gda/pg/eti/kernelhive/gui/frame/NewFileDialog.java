@@ -24,11 +24,14 @@ import pl.gda.pg.eti.kernelhive.common.validation.ResourcePathValidator;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
+//TODO i18n
 public class NewFileDialog extends JDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6014149952911009233L;
 	public static final int APPROVE_OPTION = 0;
 	public static final int CANCEL_OPTION = 1;
@@ -146,14 +149,26 @@ public class NewFileDialog extends JDialog {
 		}
 	}
 	
+	/**
+	 * get the status of this dialog operation
+	 * @return {@link JDialog} status int
+	 */
 	public int getStatus(){
 		return retval;
 	}
 	
+	/**
+	 * get the choosen file name
+	 * @return {@link String}
+	 */
 	public String getFileName(){
 		return this.tfFileName.getText();
 	}
 	
+	/**
+	 * get the choosen file directory
+	 * @return {@link String}
+	 */
 	public String getFileDirectory(){
 		return this.tfFileDir.getText();
 	}

@@ -6,6 +6,11 @@ import java.io.File;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class FileCellRenderer implements TreeCellRenderer {
 
 	protected TreeCellRenderer renderer;

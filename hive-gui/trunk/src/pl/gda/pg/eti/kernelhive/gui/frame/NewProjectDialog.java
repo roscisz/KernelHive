@@ -25,6 +25,11 @@ import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationRes
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class NewProjectDialog extends JDialog {
 	
 	public static final int APPROVE_OPTION = 0;
@@ -146,15 +151,26 @@ public class NewProjectDialog extends JDialog {
 			}
 		}
 	}
-	
+	/**
+	 * get the status of this dialog operation
+	 * @return {@link JDialog} status int
+	 */
 	public int getStatus(){
 		return retval;
 	}
 	
+	/**
+	 * get the choosen project name
+	 * @return {@link String}
+	 */
 	public String getProjectName(){
 		return this.tfProjectName.getText();
 	}
 	
+	/**
+	 * get the choosen project directory
+	 * @return {@link String}
+	 */
 	public String getProjectDirectory(){
 		return this.tfProjectDir.getText();
 	}

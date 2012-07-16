@@ -19,7 +19,7 @@ import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 //TODO i18n
 /**
  * 
- * @author marcel
+ * @author mschally
  * 
  */
 public class FileTree extends JTree implements ActionListener {

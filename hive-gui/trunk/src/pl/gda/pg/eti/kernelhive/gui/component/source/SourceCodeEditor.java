@@ -23,11 +23,13 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5474455832346699476L;
 	private static Logger LOG = Logger.getLogger(SourceCodeEditor.class
 			.getName());
@@ -97,27 +99,51 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		add(scrollpane);
 	}
 
+	/**
+	 * gets text
+	 * @return text
+	 */
 	public String getText() {
 		return textarea.getText();
 	}
 
+	/**
+	 * sets text
+	 * @param text String
+	 */
 	public void setText(String text) {
 		textarea.setText(text);
 	}
 
+	/**
+	 * gets file name
+	 * @return file name
+	 */
 	public String getFileName() {
 		return fileName;
 	}
 
+	/**
+	 * sets file name
+	 * @param name String
+	 */
 	public void setFileName(String name) {
 		this.fileName = name;
 	}
 
+	/**
+	 * sets syntax style
+	 * @param style {@link SyntaxStyle}
+	 */
 	public void setSyntaxStyle(SyntaxStyle style) {
 		textarea.setSyntaxEditingStyle(style.getStyle());
 		textarea.repaint();
 	}
 
+	/**
+	 * gets syntax style
+	 * @return {@link SyntaxStyle}
+	 */
 	public SyntaxStyle getSyntaxStyle() {
 		String style = textarea.getSyntaxEditingStyle();
 		return SyntaxStyle.getSyntaxStyle(style);
@@ -237,6 +263,8 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	@Override
 	public void refresh() {
-
+		if(getFile()!=null){
+			loadContent(getFile());
+		}
 	}
 }

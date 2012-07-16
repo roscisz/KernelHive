@@ -10,7 +10,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
  * Configuration class (Singleton pattern)
- * @author marcel
+ * @author mschally
  *
  */
 public class AppConfiguration {
@@ -20,6 +20,10 @@ public class AppConfiguration {
 
 	private PropertiesConfiguration config;
 
+	/**
+	 * gets instance
+	 * @return {@link AppConfiguration} instance
+	 */
 	public static AppConfiguration getInstance(){
 		if (_appconfig == null) {
 			try{
@@ -38,10 +42,18 @@ public class AppConfiguration {
 	
 	protected AppConfiguration() {	}
 
+	/**
+	 * reload the configuration file
+	 * @throws ConfigurationException
+	 */
 	public void reloadConfiguration() throws ConfigurationException {
 		this.config = new PropertiesConfiguration("config.properties");
 	}
 
+	/**
+	 * get the language resource bundle 
+	 * @return {@link ResourceBundle}
+	 */
 	public ResourceBundle getLanguageResourceBundle() {
 		String prop = this.config.getString("language.bundle");
 		if (prop != null) {
@@ -54,6 +66,10 @@ public class AppConfiguration {
 		return null;
 	}
 	
+	/**
+	 * get the {@link URL} to the Kernel Repository
+	 * @return {@link URL}
+	 */
 	public URL getKernelRepositoryURL(){
 		String prop = this.config.getString("kernel.repository.file.path");
 		if(prop!=null){
@@ -63,6 +79,11 @@ public class AppConfiguration {
 		}
 	}
 	
+	/**
+	 * get the property using the given key
+	 * @param key {@link String}
+	 * @return {@link String}
+	 */
 	public String getProperty(String key){
 		return this.config.getString(key);
 	}

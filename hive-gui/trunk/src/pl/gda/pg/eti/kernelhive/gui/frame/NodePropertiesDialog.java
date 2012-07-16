@@ -19,11 +19,13 @@ import javax.swing.event.ListDataListener;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
+/**
+ * graph node properties dialog
+ * @author marcel
+ *
+ */
 public class NodePropertiesDialog extends JDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7313937306855473619L;
 	
 	private JTextField textFieldName;
@@ -109,10 +111,12 @@ public class NodePropertiesDialog extends JDialog {
 		
 		JButton btnAdd = new JButton("Add");
 		btnAdd.setBounds(319, 102, 92, 25);
+		btnAdd.setEnabled(false);
 		getContentPane().add(btnAdd);
 		
 		JButton btnRemove = new JButton("Remove");
 		btnRemove.setBounds(320, 139, 91, 25);
+		btnRemove.setEnabled(false);
 		getContentPane().add(btnRemove);
 		
 		fillSourceFilesList(node.getSourceFiles());

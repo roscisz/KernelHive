@@ -22,14 +22,18 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class JTabPanel extends JPanel {
 
 	private static final long serialVersionUID = 8529416373302749016L;
-
 	private static final Logger LOG = Logger.getLogger(JTabPanel.class.getName());
 	
 	private final JTabbedPane pane;
-	private final JTabContent content;
+	private JTabContent content;
 	private final JLabel label;
 	
 	public JTabPanel(JTabContent tabPanel){
@@ -140,14 +144,31 @@ public class JTabPanel extends JPanel {
 		
 	}
 
+	/**
+	 * gets the label of this tab panel
+	 * @return JLabel
+	 */
 	public JLabel getLabel(){
 		return label;
 	}
-	
+	/**
+	 * gets the tab content corresponding with this tab panel;
+	 * @return JTabConent
+	 */
 	public JTabContent getTabContent(){
 		return content;
 	}
-	
+	/**
+	 * sets the tab content
+	 * @param content JTabContent
+	 */
+	public void setTabContent(JTabContent content){
+		this.content = content;
+	}
+	/**
+	 * gets the tab pane parent of this component
+	 * @return
+	 */
 	public JTabbedPane getPane(){
 		return pane;
 	}

@@ -6,46 +6,111 @@ import javax.swing.JPanel;
 
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public abstract class JTabContent extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4471004674246615418L;
-	private JTabPanel tabPanel;
-	private MainFrame frame;
-	private boolean dirty;
+	protected JTabPanel tabPanel;
+	protected MainFrame frame;
+	protected boolean dirty;
+	protected File file;
 	
 	public JTabContent(MainFrame frame){
 		this.frame = frame;
 		dirty = false;
 	}
+	/**
+	 * Saves the contents to specified File
+	 * @param file File
+	 * @return true on success, false on failure
+	 */
 	public abstract boolean saveContent(File file);
+	/**
+	 * Loads the content from specified file
+	 * @param file File
+	 * @return true on success, false on failure
+	 */
 	public abstract boolean loadContent(File file);
+	/**
+	 * redo the last action
+	 */
 	public abstract void redoAction();
+	/**
+	 * undo the last action
+	 */
 	public abstract void undoAction();
+	/**
+	 * cut the selected content
+	 */
 	public abstract void cut();
+	/**
+	 * copy the selected content
+	 */
 	public abstract void copy();
+	/**
+	 * paste the copied/cut content
+	 */
 	public abstract void paste();
+	/**
+	 * select all content
+	 */
 	public abstract void selectAll();
+	/**
+	 * refresh the content
+	 */
 	public abstract void refresh();
-	
+	/**
+	 * sets the corresponding JTabPanel
+	 * @param panel JTabPanel
+	 */
 	public void setTabPanel(JTabPanel panel){
 		tabPanel = panel;
+		tabPanel.setTabContent(this);
 	}
+	/**
+	 * gets the corresponding JTabPanel
+	 * @return
+	 */
 	public JTabPanel getTabPanel(){
 		return tabPanel;
 	}
-	
+	/**
+	 * gets the MainFrame object
+	 * @return MainFrame object
+	 */
 	protected MainFrame getFrame(){
 		return frame;
 	}
-	
+	/**
+	 * checks if the content is dirty (unsaved)
+	 * @return true if the content is dirty, otherwise false
+	 */
 	public boolean isDirty(){
 		return dirty;
 	}
-	
+	/**
+	 * sets the content state (if it's dirty)
+	 * @param dirty boolean
+	 */
 	protected void setDirty(boolean dirty){
 		this.dirty = dirty;
+	}
+	/**
+	 * gets file
+	 * @return File
+	 */
+	public File getFile() {
+		return file;
+	}
+	/**
+	 * sets file
+	 * @param file File
+	 */
+	public void setFile(File file) {
+		this.file = file;
 	}
 }

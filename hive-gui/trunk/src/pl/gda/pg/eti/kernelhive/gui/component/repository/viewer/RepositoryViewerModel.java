@@ -6,14 +6,16 @@ import java.util.List;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 
+import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 
-public class RepositoryViewerModel<E> implements ListModel<E> {
 
-	private List<E> list;
+public class RepositoryViewerModel implements ListModel<KernelRepositoryEntry> {
+
+	private List<KernelRepositoryEntry> list;
 	private List<ListDataListener> listenersList;
 	
 	
-	public RepositoryViewerModel(List<E> dataList) {
+	public RepositoryViewerModel(List<KernelRepositoryEntry> dataList) {
 		this.list = dataList;
 		listenersList = new ArrayList<ListDataListener>();
 	}
@@ -24,7 +26,7 @@ public class RepositoryViewerModel<E> implements ListModel<E> {
 	}
 
 	@Override
-	public E getElementAt(int index) {
+	public KernelRepositoryEntry getElementAt(int index) {
 		return list.get(index);
 	}
 

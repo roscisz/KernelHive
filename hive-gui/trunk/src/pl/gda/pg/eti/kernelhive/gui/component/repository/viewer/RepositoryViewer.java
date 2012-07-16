@@ -1,32 +1,47 @@
 package pl.gda.pg.eti.kernelhive.gui.component.repository.viewer;
 
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragSource;
 import java.util.Vector;
 
 import javax.swing.JList;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 
+import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 
-public class RepositoryViewer<E> extends JList<E> {
+public class RepositoryViewer extends JList<KernelRepositoryEntry> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5736151002744175310L;
-	
-	public RepositoryViewer(){
+
+	public RepositoryViewer() {
 		super();
+		initRepositoryViewer();
 	}
-	
-	public RepositoryViewer(E[] array){
+
+	public RepositoryViewer(KernelRepositoryEntry[] array) {
 		super(array);
+		initRepositoryViewer();
 	}
-	
-	public RepositoryViewer(ListModel<E> model){
+
+	public RepositoryViewer(ListModel<KernelRepositoryEntry> model) {
 		super(model);
+		initRepositoryViewer();
+	}
+
+	public RepositoryViewer(Vector<KernelRepositoryEntry> vector) {
+		super(vector);
+		initRepositoryViewer();
 	}
 	
-	public RepositoryViewer(Vector<? extends E> vector){
-		super(vector);
+	private void initRepositoryViewer(){
+		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		DragSource ds = new DragSource();
+		ds.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY,
+				new RepositoryViewerDragGestureListener());
 	}
 
 }

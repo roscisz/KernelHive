@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.project;
+package pl.gda.pg.eti.kernelhive.gui.project.impl;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,8 @@ import java.io.File;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
+
+import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 
 public class KernelHiveProjectTest {
 

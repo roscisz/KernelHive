@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.project;
+package pl.gda.pg.eti.kernelhive.gui.project.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.GraphConfigurati
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 
 /**
  * 
@@ -40,7 +41,6 @@ public class KernelHiveProject implements Serializable, IProject {
 
 	@Override
 	public void addProjectNode(IGraphNode node) {
-		//TODO change - incoming node's source files are to be moved to new files
 		if (!nodes.contains(node)) {
 			nodes.add(node);
 		}

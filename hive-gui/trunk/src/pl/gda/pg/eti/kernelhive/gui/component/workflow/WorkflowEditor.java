@@ -88,16 +88,17 @@ public class WorkflowEditor extends JTabContent {
 	private static final Logger LOG = Logger.getLogger(WorkflowEditor.class
 			.getName());
 
-	private mxGraphComponent graphComponent;
-	private String name;
-	private IProject project;
-	private JPopupMenu nodePopup;
-	private JPopupMenu workspacePopup;
-	private mxUndoManager undoManager;
-	private mxIEventListener undoHandler;
-	private mxIEventListener changeHandler;
-	private mxIEventListener connectHandler;
-	private mxRubberband rubberband;
+	protected mxGraphComponent graphComponent;
+	protected String name;
+	protected IProject project;
+	protected JPopupMenu nodePopup;
+	protected JPopupMenu workspacePopup;
+	protected mxUndoManager undoManager;
+	protected mxIEventListener undoHandler;
+	protected mxIEventListener changeHandler;
+	protected mxIEventListener connectHandler;
+	protected mxRubberband rubberband;
+	protected WorkflowEditorDropTargetListener dropTargetListener;
 
 	public WorkflowEditor(MainFrame frame, final String name, IProject project) {
 		super(frame);
@@ -628,6 +629,8 @@ public class WorkflowEditor extends JTabContent {
 			}
 		};
 		graphComponent.addKeyListener(keyTracker);
+		
+		dropTargetListener = new WorkflowEditorDropTargetListener(this);
 	}
 
 	@Override
@@ -655,12 +658,17 @@ public class WorkflowEditor extends JTabContent {
 	
 	@Override
 	public void refresh(){
+		graphComponent.setGraph(loadProject(project));
 		graphComponent.getGraph().getModel().beginUpdate();
 		try{
 			graphComponent.getGraph().refresh();
 		} finally{
 			graphComponent.getGraph().getModel().endUpdate();
 		}
+	}
+	
+	protected MainFrame getFrame(){
+		return frame;
 	}
 
 	private void setGraphLayout(WorkflowGraphLayout layout, boolean animate) {
