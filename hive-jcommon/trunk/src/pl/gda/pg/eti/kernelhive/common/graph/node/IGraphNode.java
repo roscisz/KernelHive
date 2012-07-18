@@ -1,6 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.graph.node;
 
 import java.util.List;
+import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
@@ -44,6 +45,9 @@ public interface IGraphNode {
 	boolean addSourceFile(ISourceFile file);
 	boolean removeSourceFile(ISourceFile file);
 	boolean canRemoveSourceFile(ISourceFile file);
+	
+	Map<String, Object> getProperties();
+	void setProperties(Map<String, Object> properties);
 	
 	List<ValidationResult> validate();
 }

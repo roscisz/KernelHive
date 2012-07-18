@@ -2,7 +2,10 @@ package pl.gda.pg.eti.kernelhive.common.graph.configuration.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -44,6 +47,11 @@ public class GraphConfiguration implements IGraphConfiguration {
 	private static final String NODE_SOURCE_FILES = "kh:node-source-files";
 	private static final String SOURCE_FILE = "kh:source-file";
 	private static final String SOURCE_FILE_SRC_ATTRIBUTE = "src";
+	private static final String SOURCE_FILE_ID_ATTRIBUTE = "id";
+	private static final String PROPERTIES_NODE = "kh:properties";
+	private static final String PROPERTY_NODE = "kh:property";
+	private static final String PROPERTY_NODE_KEY_ATTRIBUTE = "key";
+	private static final String PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
 	private static final String FIRST_CHILDREN_NODE = "kh:first-children-nodes";
 	private static final String CHILD_NODE = "kh:child-node";
 	private static final String CHILD_NODE_ID_ATTRIBUTE = "id";
@@ -127,7 +135,7 @@ public class GraphConfiguration implements IGraphConfiguration {
 		try {
 			config.setFile(file);
 			config.load();
-			// config.validate();//TODO write schema
+			// config.validate();//TODO attach schema
 			return loadGraphFromXML();
 		} catch (ConfigurationException e) {
 			LOG.severe("KH: could not load graph from file: " + file.getPath()
@@ -190,7 +198,22 @@ public class GraphConfiguration implements IGraphConfiguration {
 				}
 			}
 			configNode.addChild(childrenNode);
+			//create "properties" subnode
+			Node propertiesNode = new Node(PROPERTIES_NODE);
+			Set<String> keySet = node.getProperties().keySet();
+			for(String key : keySet){
+				Node propertyNode = new Node(PROPERTY_NODE);
+				Node keyAttr = new Node(PROPERTY_NODE_KEY_ATTRIBUTE, key);
+				keyAttr.setAttribute(true);
+				Node valueAttr = new Node(PROPERTY_NODE_VALUE_ATTRIBUTE, node.getProperties().get(key));
+				valueAttr.setAttribute(true);
+				propertyNode.addAttribute(keyAttr);
+				propertyNode.addAttribute(valueAttr);
+				propertiesNode.addChild(propertyNode);
+			}
+			configNode.addChild(propertiesNode);			
 			// create "node-source" subnode
+			//TODO source file properties are not persisted
 			Node sourcesNode = new Node(NODE_SOURCE_FILES);
 			for (ISourceFile f : node.getSourceFiles()) {
 				Node sourceNode = new Node(SOURCE_FILE);
@@ -198,7 +221,10 @@ public class GraphConfiguration implements IGraphConfiguration {
 						FileUtils.translateAbsoluteToRelativePath(file
 								.getAbsolutePath(), f.getFile()
 								.getAbsolutePath()))));
+				Node srcIdAttr = new Node(SOURCE_FILE_ID_ATTRIBUTE, f.getId());
+				srcIdAttr.setAttribute(true);
 				srcAttr.setAttribute(true);
+				sourceNode.addAttribute(srcIdAttr);
 				sourceNode.addAttribute(srcAttr);
 				sourcesNode.addChild(sourceNode);
 			}
@@ -216,84 +242,146 @@ public class GraphConfiguration implements IGraphConfiguration {
 		linkGraphNodes(nodes);
 		return nodes;
 	}
-
+	
 	private List<IGraphNode> loadGraphNodes() throws ConfigurationException {
 		List<IGraphNode> nodes = new ArrayList<IGraphNode>();
 		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
-			String id = null, name = null;
-			int x = -1, y = -1;
-			GraphNodeType type = null;
-
-			List<ConfigurationNode> idAttrList = node
-					.getAttributes(NODE_ID_ATTRIBUTE);
-			List<ConfigurationNode> xAttrList = node
-					.getAttributes(NODE_X_ATTRIBUTE);
-			List<ConfigurationNode> yAttrList = node
-					.getAttributes(NODE_Y_ATTRIBUTE);
-			List<ConfigurationNode> nameAttrList = node
-					.getAttributes(NODE_NAME_ATTRIBUTE);
-			List<ConfigurationNode> typeAttrList = node
-					.getAttributes(NODE_TYPE_ATTRIBUTE);
-
-			if (idAttrList.size() > 0)
-				id = (String) idAttrList.get(0).getValue();
-			if (xAttrList.size() > 0)
-				x = Integer.parseInt((String) xAttrList.get(0).getValue());
-			if (yAttrList.size() > 0)
-				y = Integer.parseInt((String) yAttrList.get(0).getValue());
-			if (nameAttrList.size() > 0)
-				name = (String) nameAttrList.get(0).getValue();
-			if (typeAttrList.size() > 0)
-				type = GraphNodeType.getType((String) typeAttrList.get(0)
-						.getValue());
-
-			IGraphNode graphNode;
-			IGraphNodeBuilder gnBuilder = new GraphNodeBuilder();
-			try {
-				graphNode = gnBuilder.setType(type).setId(id).setName(name).build();
-			} catch (GraphNodeBuilderException e) {
-				e.printStackTrace();
-				throw new ConfigurationException(e);
+			IGraphNode graphNode = loadGraphNode(node);
+			List<ISourceFile> sourceFiles = loadSourceFiles(node);
+			for(ISourceFile s : sourceFiles){
+				graphNode.addSourceFile(s);
 			}
-			graphNode.setX(x);
-			graphNode.setY(y);
-
-			List<ConfigurationNode> sourceFilesList = node
-					.getChildren(NODE_SOURCE_FILES);
-			if (sourceFilesList.size() > 0) {
-				ConfigurationNode sourcesNode = sourceFilesList.get(0);
-				sourceFilesList = sourcesNode.getChildren(SOURCE_FILE);
-				for (ConfigurationNode src : sourceFilesList) {
-					List<ConfigurationNode> srcAttrs = src
-							.getAttributes(SOURCE_FILE_SRC_ATTRIBUTE);
-					if (srcAttrs.size() > 0) {
-						ConfigurationNode srcAttr = srcAttrs.get(0);
-						String absolutePath = FileUtils
-								.translateRelativeToAbsolutePath(
-										config.getBasePath(),
-										(String) srcAttr.getValue());
-						if (absolutePath == null) {
-							throw new ConfigurationException(
-									"KH: could not foud source file with a stored filepath: "
-											+ srcAttr.getValue()
-											+ ", basepath of the config file: "
-											+ config.getBasePath());
-						}
-						File file = new File(absolutePath);
-						if (file.exists()) {
-							graphNode.addSourceFile(new SourceFile(new File(
-									absolutePath)));
-						} else {
-							throw new ConfigurationException(
-									"KH: could not found source file with a filepath: "
-											+ absolutePath);
-						}
-					}
-				}
-			}
+			Map<String, Object> nodeProperties = loadGraphNodeProperties(node);
+			graphNode.setProperties(nodeProperties);
 			nodes.add(graphNode);
 		}
 		return nodes;
+	}
+	
+	private Map<String, Object> loadGraphNodeProperties(ConfigurationNode node) throws ConfigurationException{
+		Map<String, Object> props = new HashMap<String, Object>();
+		
+		List<ConfigurationNode> propertiesList = node.getChildren(PROPERTIES_NODE);
+		if(propertiesList.size()>0){
+			ConfigurationNode propsNode = propertiesList.get(0);
+			propertiesList = propsNode.getChildren(PROPERTY_NODE);
+			for(ConfigurationNode prop : propertiesList){
+				String key;
+				Object value;
+				
+				List<ConfigurationNode> keyAttrList = prop.getAttributes(PROPERTY_NODE_KEY_ATTRIBUTE);
+				List<ConfigurationNode> valueAttrList = prop.getAttributes(PROPERTY_NODE_VALUE_ATTRIBUTE);
+				
+				if(keyAttrList.size()>0){
+					key = (String) keyAttrList.get(0).getValue();
+				} else{
+					throw new ConfigurationException("KH: no required 'key' attribute in "+PROPERTY_NODE+" node");
+				}
+				
+				if(valueAttrList.size()>0){
+					value = valueAttrList.get(0).getValue();
+				} else{
+					throw new ConfigurationException("KH: no required 'value' attribute in "+PROPERTY_NODE+" node");
+				}
+				
+				props.put(key, value);
+			}
+		}
+		return props;
+	}
+	
+	private IGraphNode loadGraphNode(ConfigurationNode node) throws ConfigurationException{
+		String id = null, name = null;
+		int x = -1, y = -1;
+		GraphNodeType type = null;
+
+		List<ConfigurationNode> idAttrList = node
+				.getAttributes(NODE_ID_ATTRIBUTE);
+		List<ConfigurationNode> xAttrList = node
+				.getAttributes(NODE_X_ATTRIBUTE);
+		List<ConfigurationNode> yAttrList = node
+				.getAttributes(NODE_Y_ATTRIBUTE);
+		List<ConfigurationNode> nameAttrList = node
+				.getAttributes(NODE_NAME_ATTRIBUTE);
+		List<ConfigurationNode> typeAttrList = node
+				.getAttributes(NODE_TYPE_ATTRIBUTE);
+
+		if (idAttrList.size() > 0)
+			id = (String) idAttrList.get(0).getValue();
+		if (xAttrList.size() > 0)
+			x = Integer.parseInt((String) xAttrList.get(0).getValue());
+		if (yAttrList.size() > 0)
+			y = Integer.parseInt((String) yAttrList.get(0).getValue());
+		if (nameAttrList.size() > 0)
+			name = (String) nameAttrList.get(0).getValue();
+		if (typeAttrList.size() > 0)
+			type = GraphNodeType.getType((String) typeAttrList.get(0)
+					.getValue());
+
+		IGraphNode graphNode;
+		IGraphNodeBuilder gnBuilder = new GraphNodeBuilder();
+		try {
+			graphNode = gnBuilder.setType(type).setId(id).setName(name).build();
+		} catch (GraphNodeBuilderException e) {
+			e.printStackTrace();
+			throw new ConfigurationException(e);
+		}
+		graphNode.setX(x);
+		graphNode.setY(y);
+		
+		return graphNode;
+	}
+	
+	private List<ISourceFile> loadSourceFiles(ConfigurationNode node) throws ConfigurationException{
+		List<ISourceFile> sourceFiles = new ArrayList<ISourceFile>();
+		
+		List<ConfigurationNode> sourceFilesList = node
+				.getChildren(NODE_SOURCE_FILES);
+		if (sourceFilesList.size() > 0) {
+			ConfigurationNode sourcesNode = sourceFilesList.get(0);
+			sourceFilesList = sourcesNode.getChildren(SOURCE_FILE);
+			for (ConfigurationNode src : sourceFilesList) {
+				sourceFiles.add(loadSourceFile(src));
+			}
+		} 
+		return sourceFiles;
+	}
+	
+	private ISourceFile loadSourceFile(ConfigurationNode src) throws ConfigurationException{
+		File file;
+		String srcId;
+		
+		List<ConfigurationNode> idSourceAttrs = src.getAttributes(SOURCE_FILE_ID_ATTRIBUTE);
+		if(idSourceAttrs.size()>0){
+			srcId = (String) idSourceAttrs.get(0).getValue();
+		} else{
+			throw new ConfigurationException("KH: no required attribute 'id' found in "+SOURCE_FILE+" node");
+		}
+		
+		List<ConfigurationNode> srcAttrs = src
+				.getAttributes(SOURCE_FILE_SRC_ATTRIBUTE);
+		if (srcAttrs.size() > 0) {
+			String absolutePath = FileUtils
+					.translateRelativeToAbsolutePath(
+							config.getBasePath(),
+							(String) srcAttrs.get(0).getValue());
+			if (absolutePath == null) {
+				throw new ConfigurationException(
+						"KH: could not found source file with a stored filepath: "
+								+ srcAttrs.get(0).getValue()
+								+ ", basepath of the config file: "
+								+ config.getBasePath());
+			}
+			file = new File(absolutePath);
+			if (!file.exists()) {
+				throw new ConfigurationException(
+						"KH: could not found source file with a filepath: "
+								+ absolutePath);
+			}
+		} else{
+			throw new ConfigurationException("KH: no required attribute 'src' in "+SOURCE_FILE+" node");
+		}
+		return new SourceFile(file, srcId, new HashMap<String, Object>());
 	}
 
 	private void linkGraphNodes(List<IGraphNode> nodes)

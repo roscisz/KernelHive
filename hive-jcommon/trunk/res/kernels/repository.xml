@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kh:repository>
 	<kh:entry type="generic" description="Generic Graph Node">
-		<kh:kernel name="kernel.cl" src="/kernels/generic/kernel.cl">
+		<kh:kernel id="8268e8fe-6870-460c-b609-46c3a643a97d" 
+				name="kernel.cl" 
+				src="/kernels/generic/kernel.cl">
 			<kh:property key="required" value="true"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="processor" description="Processor Graph Node">
-		<kh:kernel name="kernel.cl" src="/kernels/processor/kernel.cl">
+		<kh:kernel id="bc0514aa-1716-46b1-8d5f-5a33dbf9f677"
+		 		name="kernel.cl" 
+		 		src="/kernels/processor/kernel.cl">
 			<kh:property key="required" value="true"/>
 		</kh:kernel>
 	</kh:entry>

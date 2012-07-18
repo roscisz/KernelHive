@@ -1,6 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.graph.builder.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
@@ -21,6 +22,7 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 	String id = null;
 	String name = null;
 	List<ISourceFile> sourceFiles = null;
+	Map<String, Object> properties = null;
 		
 	public GraphNodeBuilder(){	}
 
@@ -45,6 +47,12 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 	@Override
 	public IGraphNodeBuilder setSourceFiles(List<ISourceFile> sourceFiles) {
 		this.sourceFiles = sourceFiles;
+		return this;
+	}
+	
+	@Override
+	public IGraphNodeBuilder setProperties(Map<String, Object> properties) {
+		this.properties = properties;
 		return this;
 	}
 
@@ -84,7 +92,10 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 			for(ISourceFile s : sourceFiles){
 				node.addSourceFile(s);
 			}
-		}		
+		}
+		if(properties!=null){
+			node.setProperties(properties);
+		}
 		return node;
 	}
 }

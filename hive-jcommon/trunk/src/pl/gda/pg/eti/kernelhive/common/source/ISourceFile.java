@@ -9,7 +9,26 @@ import java.io.File;
  */
 public interface ISourceFile {
 
+	/**
+	 * 
+	 * @return
+	 */
 	public File getFile();
-	public String getProperty(String key);
-	public void setProperty(String key, String value);
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public Object getProperty(String key);
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void setProperty(String key, Object value);
+	/**
+	 * 
+	 * @return
+	 */
+	public String getId();
 }

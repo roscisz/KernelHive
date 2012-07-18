@@ -95,7 +95,7 @@ public class GenericGraphNodeTest {
 
 	@Test
 	public void testAddAndRemoveAndGetSourceFiles() {
-		SourceFile sf = new SourceFile(new File("test"));
+		SourceFile sf = new SourceFile(new File("test"), "test");
 		List<ISourceFile> list = new ArrayList<ISourceFile>();
 		assertEquals(list, node.getSourceFiles());
 		list.add(sf);

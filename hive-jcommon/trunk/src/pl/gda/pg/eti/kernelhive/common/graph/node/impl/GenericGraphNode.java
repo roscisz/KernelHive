@@ -2,7 +2,9 @@ package pl.gda.pg.eti.kernelhive.common.graph.node.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
@@ -12,15 +14,13 @@ import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationRes
 
 /**
  * 
- * @author marcel
+ * @author mschally
  * 
  */
 public class GenericGraphNode implements IGraphNode, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7431190941339020419L;
+	@Deprecated
 	private static final int REQUIRED_SOURCE_FILES_COUNT = 0;
 	protected IGraphNode parentNode;
 	protected String nodeId;
@@ -31,12 +31,14 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	protected List<IGraphNode> previousNodes;
 	protected List<IGraphNode> childrenNodes;
 	protected List<ISourceFile> sourceFiles;
+	protected Map<String, Object> properties;
 
 	public GenericGraphNode() {
 		followingNodes = new ArrayList<IGraphNode>();
 		previousNodes = new ArrayList<IGraphNode>();
 		childrenNodes = new ArrayList<IGraphNode>();
 		sourceFiles = new ArrayList<ISourceFile>();
+		properties = new HashMap<String, Object>();
 	}
 
 	public GenericGraphNode(String id) {
@@ -45,6 +47,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		childrenNodes = new ArrayList<IGraphNode>();
 		sourceFiles = new ArrayList<ISourceFile>();
 		nodeId = id;
+		properties = new HashMap<String, Object>();
 	}
 	
 	public GenericGraphNode(String id, String name){
@@ -54,11 +57,12 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		sourceFiles = new ArrayList<ISourceFile>();
 		nodeId = id;
 		this.name = name;
+		properties = new HashMap<String, Object>();
 	}
 
 	public GenericGraphNode(String id, String name, List<IGraphNode> followingNodes,
 			List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes,
-			List<ISourceFile> sourceFiles) {
+			List<ISourceFile> sourceFiles, Map<String, Object> properties) {
 		nodeId = id;
 		this.name = name;
 		if (followingNodes != null) {
@@ -80,6 +84,11 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 			this.sourceFiles = sourceFiles;
 		} else {
 			this.sourceFiles = new ArrayList<ISourceFile>();
+		}
+		if(properties!=null){
+			this.properties = properties;
+		} else{
+			this.properties = new HashMap<String, Object>();
 		}
 	}
 
@@ -308,6 +317,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public List<ValidationResult> validate() {
+		//FIXME
 		List<ValidationResult> results = new ArrayList<ValidationResult>();
 		for(ISourceFile f : sourceFiles){
 			if(!f.getFile().exists()){
@@ -341,5 +351,15 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
+
+	@Override
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
 	}
 }

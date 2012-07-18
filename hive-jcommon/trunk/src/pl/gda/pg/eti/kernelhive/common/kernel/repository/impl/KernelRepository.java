@@ -29,6 +29,7 @@ public class KernelRepository implements IKernelRepository {
 	private static String KERNEL_NODE = "kh:kernel";
 	private static String KERNEL_NODE_NAME_ATTRIBUTE = "name";
 	private static String KERNEL_NODE_SRC_ATTRIBUTE = "src";
+	private static String KERNEL_NODE_ID_ATTRIBUTE = "id";
 	private static String KERNEL_PROPERTY_NODE = "kh:property";
 	private static String KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE = "key";
 	private static String KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
@@ -71,7 +72,7 @@ public class KernelRepository implements IKernelRepository {
 					return getEntryFromConfigurationNode(node);
 				}
 			} else{
-				throw new ConfigurationException("KH: no required 'type' attribute in <kh:entry> node");
+				throw new ConfigurationException("KH: no required '"+ENTRY_NODE_TYPE_ATTRIBUTE+"' attribute in "+ENTRY_NODE+" node");
 			}
 		}
 		
@@ -87,7 +88,7 @@ public class KernelRepository implements IKernelRepository {
 		if(typeAttrList.size()>0){
 			typeStr = (String) typeAttrList.get(0).getValue();
 		} else{
-			throw new ConfigurationException("KH: no required 'type' attribute in <kh:entry> node");
+			throw new ConfigurationException("KH: no required '"+ENTRY_NODE_TYPE_ATTRIBUTE+"' attribute in "+ENTRY_NODE+" node");
 		}
 		
 		if(descAttrList.size()>0){
@@ -105,14 +106,16 @@ public class KernelRepository implements IKernelRepository {
 		for(ConfigurationNode kNode : kernelsList){
 			String name;
 			URL src;
+			String id;
 			
+			List<ConfigurationNode> idAttrList = kNode.getAttributes(KERNEL_NODE_ID_ATTRIBUTE);
 			List<ConfigurationNode> nameAttrList = kNode.getAttributes(KERNEL_NODE_NAME_ATTRIBUTE);
 			List<ConfigurationNode> srcAttrList = kNode.getAttributes(KERNEL_NODE_SRC_ATTRIBUTE);
 			
 			if(nameAttrList.size()>0){
 				name = (String) nameAttrList.get(0).getValue();
 			} else{
-				throw new ConfigurationException("KH: no required 'name' attribute in <kh:kernel> node");
+				throw new ConfigurationException("KH: no required '"+KERNEL_NODE_NAME_ATTRIBUTE+"' attribute in "+KERNEL_NODE+" node");
 			}
 			
 			if(srcAttrList.size()>0){
@@ -121,22 +124,29 @@ public class KernelRepository implements IKernelRepository {
 					throw new ConfigurationException("KH: the resource path: '"+srcAttrList.get(0).getValue()+"' cound not be found");
 				}
 			} else{
-				throw new ConfigurationException("KH: no required 'src' attribute in <kh:kernel> node");
+				throw new ConfigurationException("KH: no required '"+KERNEL_NODE_SRC_ATTRIBUTE+"' attribute in "+KERNEL_NODE+" node");
 			}
 			
-			Map<String, String> properties = getKernelProperties(kNode);
+			if(idAttrList.size()>0){
+				id = (String) idAttrList.get(0).getValue();
+			} else{
+				throw new ConfigurationException("KH: no required '"+KERNEL_NODE_ID_ATTRIBUTE+"' attribute in "+KERNEL_NODE+" node");
+			}
 			
-			list.add(new KernelPathEntry(name, src, properties));
+			Map<String, Object> properties = getKernelProperties(kNode);
+			
+			list.add(new KernelPathEntry(id, name, src, properties));
 		}
 		return list;
 	}
 	
-	private Map<String, String> getKernelProperties(ConfigurationNode node) throws ConfigurationException{
+	private Map<String, Object> getKernelProperties(ConfigurationNode node) throws ConfigurationException{
 		List<ConfigurationNode> propertiesNodeList = node.getChildren(KERNEL_PROPERTY_NODE);
-		Map<String, String> properties = new HashMap<String, String>(propertiesNodeList.size());
+		Map<String, Object> properties = new HashMap<String, Object>(propertiesNodeList.size());
 		
 		for(ConfigurationNode pNode : propertiesNodeList){
-			String key, value;
+			String key;
+			Object value;
 			
 			List<ConfigurationNode> keyAttrList = pNode.getAttributes(KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE);
 			List<ConfigurationNode> valueAttrList = pNode.getAttributes(KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE);
@@ -144,13 +154,13 @@ public class KernelRepository implements IKernelRepository {
 			if(keyAttrList.size()>0){
 				key = (String) keyAttrList.get(0).getValue();
 			} else{
-				throw new ConfigurationException("KH: no required 'key' attribute in <kh:property> node");
+				throw new ConfigurationException("KH: no required '"+KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE+"' attribute in "+KERNEL_PROPERTY_NODE+" node");
 			}
 			
 			if(valueAttrList.size()>0){
-				value = (String) valueAttrList.get(0).getValue();
+				value = valueAttrList.get(0).getValue();
 			} else{
-				throw new ConfigurationException("KH: no required 'value' attribute in <kh:property> node");
+				throw new ConfigurationException("KH: no required '"+KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE+"' attribute in "+KERNEL_PROPERTY_NODE+" node");
 			}
 			
 			properties.put(key, value);

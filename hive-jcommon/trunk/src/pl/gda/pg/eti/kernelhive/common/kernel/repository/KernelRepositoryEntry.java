@@ -42,14 +42,28 @@ public class KernelRepositoryEntry implements Serializable {
 	}
 	
 	/**
-	 * gets kernel path URL for given kernel name
+	 * gets {@link KernelPathEntry} for given kernel name
 	 * @param name String
 	 * @return {@link URL}
 	 */
-	public URL getKernelPathForName(String name){
+	public KernelPathEntry getKernelPathEntryForName(String name){
 		for(KernelPathEntry e : kernelsPaths){
 			if(e.getName().equals(name)){
-				return e.getPath();
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * gets {@link KernelPathEntry} for given kernel id
+	 * @param id {@link String}
+	 * @return {@link KernelPathEntry}
+	 */
+	public KernelPathEntry getKernelPathEntryForId(String id){
+		for(KernelPathEntry e: kernelsPaths){
+			if(e.getId().equals(id)){
+				return e;
 			}
 		}
 		return null;

@@ -14,16 +14,19 @@ public class SourceFile implements ISourceFile, Serializable {
 
 	private static final long serialVersionUID = 192995314148788181L;
 	protected File file;
-	protected Map<String, String> properties;
+	protected String id;
+	protected Map<String, Object> properties;
 	
-	public SourceFile(File file){
+	public SourceFile(File file, String id){
 		this.file = file;
-		properties = new HashMap<String, String>();
+		this.id = id;
+		properties = new HashMap<String, Object>();
 	}
 	
-	public SourceFile(File file, Map<String, String> map){
+	public SourceFile(File file, String id, Map<String, Object> map){
 		this.file = file;
 		this.properties = map;
+		this.id = id;
 	}
 	
 	@Override
@@ -32,15 +35,20 @@ public class SourceFile implements ISourceFile, Serializable {
 	}
 
 	@Override
-	public String getProperty(String key) {
+	public Object getProperty(String key) {
 		return properties.get(key);
 	}
 
 	@Override
-	public void setProperty(String key, String value) {
+	public void setProperty(String key, Object value) {
 		properties.put(key, value);
 	}
 	
+	@Override
+	public String getId() {
+		return id;
+	}
+
 	@Override
 	public String toString(){
 		return this.file.getAbsolutePath();

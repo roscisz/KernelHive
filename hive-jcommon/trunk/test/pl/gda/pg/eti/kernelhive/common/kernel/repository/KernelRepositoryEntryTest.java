@@ -21,7 +21,7 @@ public class KernelRepositoryEntryTest {
 	@Before
 	public void setUp() throws Exception {
 		list = new ArrayList<KernelPathEntry>();
-		list.add(new KernelPathEntry("test", new URL("http://test.com"), null));
+		list.add(new KernelPathEntry("test", "test", new URL("http://test.com"), null));
 		type = GraphNodeType.GENERIC;
 		desc = "test";
 		entry = new KernelRepositoryEntry(type, desc, list);
@@ -39,7 +39,7 @@ public class KernelRepositoryEntryTest {
 
 	@Test
 	public void testGetKernelPathForName() {
-		assertEquals(list.get(0).getPath(), entry.getKernelPathForName("test"));
+		assertEquals(list.get(0).getPath(), entry.getKernelPathEntryForName("test").getPath());
 	}
 	
 	@Test

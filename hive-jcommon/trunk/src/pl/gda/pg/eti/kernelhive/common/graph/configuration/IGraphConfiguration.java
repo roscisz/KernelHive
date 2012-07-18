@@ -62,4 +62,5 @@ public interface IGraphConfiguration {
 	 * @throws ConfigurationException
 	 */
 	List<IGraphNode> loadGraph(File file) throws ConfigurationException;
+	
 }
