@@ -140,7 +140,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			bw.close();
 			br.close();
 
-			sourceFiles.add(new SourceFile(file, kpe
+			sourceFiles.add(new SourceFile(file, kpe.getId(), kpe
 					.getProperties()));
 		}
 		return sourceFiles;

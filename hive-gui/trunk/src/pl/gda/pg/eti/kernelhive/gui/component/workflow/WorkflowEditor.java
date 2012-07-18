@@ -112,12 +112,14 @@ public class WorkflowEditor extends JTabContent {
 		undoManager = new mxUndoManager();
 		mxGraph graph = loadProject(project);
 		graphComponent = new mxGraphComponent(graph);
+		graphComponent.setGridVisible(true);
 		graphComponent.getGraph().setAllowLoops(false);
 		graphComponent.add(nodePopup);
 		graphComponent.add(workspacePopup);
 		add(graphComponent);
 		rubberband = new mxRubberband(graphComponent);
 
+		
 		installListeners();
 	}
 
@@ -561,21 +563,6 @@ public class WorkflowEditor extends JTabContent {
 						nodePopup.show(graphComponent, e.getX(), e.getY());
 					} else {
 						workspacePopup.show(graphComponent, e.getX(), e.getY());
-					}
-				} else if (e.getButton() == MouseEvent.BUTTON2) {// XXX test
-																	// code
-					IGraphNode pNode = new GenericGraphNode(NodeIdGenerator
-							.generateId(), NodeNameGenerator.generateName());
-					pNode.setX(e.getX());
-					pNode.setY(e.getY());
-					project.addProjectNode(pNode);
-					graphComponent.getGraph().getModel().beginUpdate();
-					try {
-						addNode(graphComponent.getGraph(), graphComponent
-								.getGraph().getDefaultParent(), pNode
-								.getNodeId(), pNode, e.getX(), e.getY(), 80, 30);
-					} finally {
-						graphComponent.getGraph().getModel().endUpdate();
 					}
 				}
 			}

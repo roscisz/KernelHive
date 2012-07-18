@@ -39,7 +39,7 @@ import pl.gda.pg.eti.kernelhive.gui.project.impl.KernelHiveProject;
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public class MainFrameController {
 
@@ -55,7 +55,9 @@ public class MainFrameController {
 
 	/**
 	 * constructor
-	 * @param frame {@link MainFrame}
+	 * 
+	 * @param frame
+	 *            {@link MainFrame}
 	 */
 	public MainFrameController(MainFrame frame) {
 		this.frame = frame;
@@ -89,12 +91,15 @@ public class MainFrameController {
 				frame.setProjectTree(tree);
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
-				
-				IKernelRepository repository = new KernelRepository(AppConfiguration.getInstance().getKernelRepositoryURL());
-				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel(repository.getEntries());
+
+				IKernelRepository repository = new KernelRepository(
+						AppConfiguration.getInstance().getKernelRepositoryURL());
+				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel(
+						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
-				frame.getRepositoryScrollPane().setViewportView(frame.getRepositoryList());
-				
+				frame.getRepositoryScrollPane().setViewportView(
+						frame.getRepositoryList());
+
 			} catch (ConfigurationException e) {
 				LOG.warning("KH: cannot create new project");
 				JOptionPane
@@ -119,7 +124,7 @@ public class MainFrameController {
 		FileFilter ff = new FileNameExtensionFilter("xml", "xml");
 		fc.setFileFilter(ff);
 		if (fc.showDialog(frame.getContentPane(), "Select") == JFileChooser.APPROVE_OPTION) {
-			try{
+			try {
 				File file = fc.getSelectedFile();
 				project = new KernelHiveProject(file.getParentFile(), null);
 				project.setProjectFile(file);
@@ -127,19 +132,23 @@ public class MainFrameController {
 				FileTreeModel model = new FileTreeModel(
 						project.getProjectDirectory());
 				FileTree tree = new FileTree(frame, model);
-				tree.setCellRenderer(new FileCellRenderer(tree.getCellRenderer()));
+				tree.setCellRenderer(new FileCellRenderer(tree
+						.getCellRenderer()));
 				frame.setProjectTree(tree);
-				frame.getProjectScrollPane()
-						.setViewportView(frame.getProjectTree());
-				
-				IKernelRepository repository = new KernelRepository(AppConfiguration.getInstance().getKernelRepositoryURL());
-				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel(repository.getEntries());
+				frame.getProjectScrollPane().setViewportView(
+						frame.getProjectTree());
+
+				IKernelRepository repository = new KernelRepository(
+						AppConfiguration.getInstance().getKernelRepositoryURL());
+				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel(
+						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
-				frame.getRepositoryScrollPane().setViewportView(frame.getRepositoryList());
-				
+				frame.getRepositoryScrollPane().setViewportView(
+						frame.getRepositoryList());
+
 				openWorkflowEditor();
-			} catch(ConfigurationException e){
-				//TODO
+			} catch (ConfigurationException e) {
+				// TODO
 			}
 		}
 	}
@@ -166,6 +175,7 @@ public class MainFrameController {
 
 	/**
 	 * closes the selected tab
+	 * 
 	 * @param tab {@link JTabPanel}
 	 */
 	public void closeTab(JTabPanel tab) {
@@ -189,7 +199,7 @@ public class MainFrameController {
 					JOptionPane.YES_NO_CANCEL_OPTION);
 			if (result == JOptionPane.YES_OPTION) {
 				File f = content.getFile();
-				//File f = openedTabs.get(content);
+				// File f = openedTabs.get(content);
 				if (f != null && f.exists()) {
 					content.saveContent(f);
 				} else {
@@ -222,34 +232,34 @@ public class MainFrameController {
 
 	/**
 	 * opens new Tab and associates it with the given {@link File}
+	 * 
 	 * @param f {@link File}
 	 */
 	public void openTab(File f) {
+		SourceCodeEditor sourcePanel;
 		if (f != null) {
-			SourceCodeEditor sourcePanel = new SourceCodeEditor(frame,
-					f.getName());
+			sourcePanel = new SourceCodeEditor(frame, f.getName());
 			sourcePanel.setFile(f);
 			sourcePanel.loadContent(f);
 			sourcePanel.setSyntaxStyle(SyntaxStyle.resolveSyntaxStyle(f
 					.getName().substring(f.getName().indexOf(".") + 1,
 							f.getName().length())));
-			frame.getWorkspacePane().add(sourcePanel, 0);
-			frame.getWorkspacePane().setTabComponentAt(0,
-					new JTabPanel(sourcePanel));
-			//openedTabs.put(sourcePanel, f);
 		} else {
-			SourceCodeEditor sourcePanel = new SourceCodeEditor(frame, "new"
-					+ newFileCounter);
+			sourcePanel = new SourceCodeEditor(frame, "new" + newFileCounter);
 			newFileCounter++;
-			frame.getWorkspacePane().add(sourcePanel, 0);
-			frame.getWorkspacePane().setTabComponentAt(0,
-					new JTabPanel(sourcePanel));
-			openedTabs.put(sourcePanel, null);
 		}
+		frame.getWorkspacePane().addTab(sourcePanel.getName(), sourcePanel);
+		frame.getWorkspacePane().setTabComponentAt(0,
+				new JTabPanel(sourcePanel));
+		int index = frame.getWorkspacePane().getTabCount() - 1;
+		frame.getWorkspacePane().setTabComponentAt(index,
+				new JTabPanel(sourcePanel));
+		frame.getWorkspacePane().getModel().setSelectedIndex(index);
 	}
 
 	/**
 	 * saves the tab content
+	 * 
 	 * @param tab {@link JTabPanel}
 	 */
 	public void saveTab(JTabPanel tab) {
@@ -262,7 +272,6 @@ public class MainFrameController {
 					index);
 		}
 
-		//File f = openedTabs.get(content);
 		File f = content.getFile();
 		if (f != null && f.exists()) {
 			content.saveContent(f);
@@ -292,7 +301,9 @@ public class MainFrameController {
 
 	/**
 	 * saves the tab as...
-	 * @param tab {@link JTabPanel}
+	 * 
+	 * @param tab
+	 *            {@link JTabPanel}
 	 */
 	public void saveTabAs(JTabPanel tab) {
 		JTabContent content;
@@ -315,11 +326,7 @@ public class MainFrameController {
 					// TODO overwrite file?
 				} else {
 					content.saveContent(f);
-//					if (openedTabs.get(content) == null) {
-//						tab.getLabel().setText(content.getName());
-//						openedTabs.put(content, f);
-//					}
-					if(content.getFile()==null){
+					if (content.getFile() == null) {
 						tab.getLabel().setText(content.getName());
 						content.setFile(f);
 					}
@@ -336,19 +343,20 @@ public class MainFrameController {
 	 * saves all tabs
 	 */
 	public void saveAll() {
-		//TODO
+		// TODO
 	}
 
 	/**
 	 * refreshes all components of the application
 	 */
 	public void refresh() {
-		//refresh tree
-		this.frame.getProjectTree().setModel(this.frame.getProjectTree().getModel());
+		// refresh tree
+		this.frame.getProjectTree().setModel(
+				this.frame.getProjectTree().getModel());
 		this.frame.getProjectTree().updateUI();
-		//refresh tabs
+		// refresh tabs
 		Set<JTabContent> tabs = this.openedTabs.keySet();
-		for(JTabContent tab : tabs){
+		for (JTabContent tab : tabs) {
 			tab.refresh();
 		}
 	}
@@ -371,7 +379,9 @@ public class MainFrameController {
 
 	/**
 	 * controls the display of the toolbox component
-	 * @param visible boolean
+	 * 
+	 * @param visible
+	 *            boolean
 	 */
 	public void displayToolbox(boolean visible) {
 		frame.getToolBar().setVisible(visible);
@@ -379,7 +389,9 @@ public class MainFrameController {
 
 	/**
 	 * controls the display of the statusbar component
-	 * @param visible boolean
+	 * 
+	 * @param visible
+	 *            boolean
 	 */
 	public void displayStatusbar(boolean visible) {
 		frame.getStatusbar().setVisible(visible);
@@ -387,6 +399,7 @@ public class MainFrameController {
 
 	/**
 	 * controls the display of the side panel component
+	 * 
 	 * @param visible
 	 */
 	public void displaySidePanel(boolean visible) {
@@ -413,7 +426,7 @@ public class MainFrameController {
 			frame.getWorkspacePane().add(editor, 0);
 			JTabPanel tabControl = new JTabPanel(editor);
 			editor.setFile(project.getProjectFile());
-			//openedTabs.put(editor, project.getProjectFile());
+			// openedTabs.put(editor, project.getProjectFile());
 			frame.getWorkspacePane().setTabComponentAt(0, tabControl);
 		} else {
 			JOptionPane

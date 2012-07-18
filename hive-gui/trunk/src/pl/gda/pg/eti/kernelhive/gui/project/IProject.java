@@ -7,10 +7,21 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public interface IProject {
-
+	/**
+	 * gets project file
+	 * @return {@link File}
+	 */
 	File getProjectFile();
-	
+	/**
+	 * sets project file
+	 * @param file {@link File}
+	 */
 	void setProjectFile(File file);
 	/**
 	 * 

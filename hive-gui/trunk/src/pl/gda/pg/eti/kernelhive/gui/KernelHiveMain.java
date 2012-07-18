@@ -7,7 +7,7 @@ import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 /**
  * Main Class
- * @author marcel
+ * @author mschally
  *
  */
 public class KernelHiveMain {

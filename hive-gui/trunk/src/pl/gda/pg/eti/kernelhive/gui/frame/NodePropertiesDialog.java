@@ -5,29 +5,41 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
 /**
  * graph node properties dialog
- * @author marcel
- *
+ * 
+ * @author mschally
+ * 
  */
 public class NodePropertiesDialog extends JDialog {
 
 	private static final long serialVersionUID = -7313937306855473619L;
-	
+
 	private JTextField textFieldName;
 	private JTextField textFieldType;
 	private JTextField textFieldId;
@@ -35,158 +47,307 @@ public class NodePropertiesDialog extends JDialog {
 	private JList<ISourceFile> list;
 	private MainFrame frame;
 	private IGraphNode node;
-	
-	public NodePropertiesDialog(MainFrame frame, IGraphNode node){
+	private JTable table;
+
+	public NodePropertiesDialog(MainFrame frame, IGraphNode node) {
 		super(frame);
 		this.frame = frame;
 		this.node = node;
-		this.setBounds(this.getParent().getWidth()/2, this.getParent().getHeight()/2, 450, 300);
+		this.setBounds(this.getParent().getWidth() / 2, this.getParent()
+				.getHeight() / 2, 438, 491);
 		getContentPane().setLayout(null);
-		
+
 		JLabel lblName = new JLabel("Name");
 		lblName.setBounds(12, 41, 46, 15);
 		getContentPane().add(lblName);
-		
+
 		textFieldName = new JTextField();
-		textFieldName.setBounds(76, 39, 232, 19);
+		textFieldName.setBounds(76, 39, 338, 19);
 		getContentPane().add(textFieldName);
 		textFieldName.setColumns(10);
 		textFieldName.setText(node.getName());
-		
+
 		JLabel lblType = new JLabel("Type");
 		lblType.setBounds(12, 68, 46, 15);
 		getContentPane().add(lblType);
-		
+
 		textFieldType = new JTextField();
 		textFieldType.setEditable(false);
-		textFieldType.setBounds(76, 66, 232, 19);
+		textFieldType.setBounds(76, 66, 338, 19);
 		getContentPane().add(textFieldType);
 		textFieldType.setColumns(10);
 		textFieldType.setText(node.getType().toString());
-		
+
 		JLabel lblId = new JLabel("ID");
 		lblId.setBounds(12, 12, 46, 15);
 		getContentPane().add(lblId);
-		
+
 		textFieldId = new JTextField();
 		textFieldId.setEditable(false);
-		textFieldId.setBounds(76, 10, 232, 19);
+		textFieldId.setBounds(76, 10, 338, 19);
 		getContentPane().add(textFieldId);
 		textFieldId.setColumns(10);
 		textFieldId.setText(node.getNodeId());
-		
+
 		lblSourceFiles = new JLabel("Source Files");
 		lblSourceFiles.setBounds(12, 107, 92, 15);
 		getContentPane().add(lblSourceFiles);
-		
+
 		JButton btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(355, 230, 81, 25);
+		btnCancel.setBounds(333, 421, 81, 25);
 		btnCancel.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				close();
 			}
 		});
 		getContentPane().add(btnCancel);
-		
+
 		JButton btnSave = new JButton("Save");
-		btnSave.setBounds(262, 230, 81, 25);
+		btnSave.setBounds(240, 421, 81, 25);
 		btnSave.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				save();
-				close();
+				if (save()) {
+					close();
+				} else {
+					JOptionPane
+							.showMessageDialog(
+									NodePropertiesDialog.this,
+									"Duplicate keys in graph node properties - save failed!",
+									"Error",
+									JOptionPane.ERROR_MESSAGE,
+									new ImageIcon(
+											NodePropertiesDialog.class
+													.getResource("/com/sun/java/swing/plaf/windows/icons/Error.gif")));
+				}
 			}
 		});
 		getContentPane().add(btnSave);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(115, 107, 193, 96);
+		scrollPane.setBounds(115, 107, 299, 96);
 		getContentPane().add(scrollPane);
-		
+
 		list = new JList<ISourceFile>();
 		scrollPane.setViewportView(list);
-		
+
 		JButton btnAdd = new JButton("Add");
-		btnAdd.setBounds(319, 102, 92, 25);
-		btnAdd.setEnabled(false);
+		btnAdd.setBounds(322, 215, 92, 25);
+		btnAdd.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TableModel model = table.getModel();
+				if (model instanceof PropertiesTableModel) {
+					((PropertiesTableModel) model).addRow(new Object[2]);
+					((PropertiesTableModel) model).fireTableDataChanged();
+				}
+			}
+		});
 		getContentPane().add(btnAdd);
-		
+
 		JButton btnRemove = new JButton("Remove");
-		btnRemove.setBounds(320, 139, 91, 25);
-		btnRemove.setEnabled(false);
+		btnRemove.setBounds(323, 252, 91, 25);
+		btnRemove.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int rowIndex = table.getSelectedRow();
+				TableModel model = table.getModel();
+				if (model instanceof PropertiesTableModel) {
+					((PropertiesTableModel) model).removeRow(rowIndex);
+					((PropertiesTableModel) model).fireTableDataChanged();
+				}
+			}
+		});
 		getContentPane().add(btnRemove);
-		
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(115, 215, 193, 181);
+		getContentPane().add(scrollPane_1);
+
+		table = new JTable();
+		scrollPane_1.setViewportView(table);
+
+		JLabel lblProperties = new JLabel("Properties");
+		lblProperties.setBounds(12, 220, 92, 15);
+		getContentPane().add(lblProperties);
+
 		fillSourceFilesList(node.getSourceFiles());
-		
+		fillPropertiesTable(node.getProperties());
 	}
-	
-	private void save(){
+
+	private boolean save() {
 		node.setName(textFieldName.getText());
+		return saveProperties();
 	}
-	
-	private void close(){
+
+	private boolean saveProperties() {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		TableModel model = table.getModel();
+		if (model.getColumnCount() == 2) {
+			for (int i = 0; i < model.getRowCount(); i++) {
+				String key = (String) model.getValueAt(i, 0);
+				Object value = model.getValueAt(i, 1);
+				if (properties.containsKey(key)) {
+					return false;
+				} else {
+					properties.put(key, value);
+				}
+			}
+			node.setProperties(properties);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void close() {
 		this.setVisible(false);
 		this.dispose();
 	}
-	
-	private void fillSourceFilesList(List<ISourceFile> sourceFiles){
-		ListModel<ISourceFile> model = new SourceFilesListModel<ISourceFile>(sourceFiles);
+
+	private void fillSourceFilesList(List<ISourceFile> sourceFiles) {
+		ListModel<ISourceFile> model = new SourceFilesListModel(sourceFiles);
 		list.setModel(model);
 		list.addMouseListener(new MouseAdapter() {
-			
-			public void mouseClicked(MouseEvent e){
-				if(e.getClickCount()==2){
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
 					e.consume();
 					ISourceFile file = list.getSelectedValue();
 					frame.getController().openTab(file.getFile());
 				}
 			}
-			
+
 		});
 	}
-	
-	
-	private class SourceFilesListModel<E> implements ListModel<E>{
 
-		List<E> list;
+	private void fillPropertiesTable(Map<String, Object> properties) {
+		TableModel model = new PropertiesTableModel(properties);
+		table.setModel(model);
+		table.getSelectionModel().setSelectionMode(
+				ListSelectionModel.SINGLE_SELECTION);
+		model.addTableModelListener(table);
+	}
+
+	private class PropertiesTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1731110689845777045L;
+		private List<Object[]> dynamicArray;
+
+		public PropertiesTableModel(Map<String, Object> properties) {
+			dynamicArray = new ArrayList<Object[]>();
+			Set<String> keySet = properties.keySet();
+			for (String key : keySet) {
+				dynamicArray.add(new Object[] { key, properties.get(key) });
+			}
+		}
+
+		@Override
+		public int getRowCount() {
+			return dynamicArray.size();
+		}
+
+		@Override
+		public int getColumnCount() {
+			return 2;
+		}
+
+		@Override
+		public String getColumnName(int columnIndex) {
+			if (columnIndex == 0) {
+				return "Key";
+			} else if (columnIndex == 1) {
+				return "Value";
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			return String.class;
+		}
+
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return true;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if (rowIndex < dynamicArray.size() && columnIndex < 2) {
+				return dynamicArray.get(rowIndex)[columnIndex];
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			if (rowIndex < dynamicArray.size() && columnIndex < 2) {
+				dynamicArray.get(rowIndex)[columnIndex] = aValue;
+			}
+			for (TableModelListener l : getTableModelListeners()) {
+				l.tableChanged(new TableModelEvent(this, rowIndex, rowIndex,
+						columnIndex, TableModelEvent.UPDATE));
+			}
+		}
+
+		public void addRow(Object[] row) {
+			if (row.length == 2) {
+				dynamicArray.add(row);
+			} else {
+				return;
+			}
+		}
+
+		public void removeRow(int rowIndex) {
+			dynamicArray.remove(rowIndex);
+		}
+	}
+
+	private class SourceFilesListModel implements ListModel<ISourceFile> {
+
+		List<ISourceFile> list;
 		List<ListDataListener> listDataListeners;
-		
-		public SourceFilesListModel(List<E> list){
+
+		public SourceFilesListModel(List<ISourceFile> list) {
 			this.list = list;
 			listDataListeners = new ArrayList<ListDataListener>();
 		}
-		
+
 		@Override
 		public int getSize() {
-			if(list!=null){
+			if (list != null) {
 				return list.size();
-			} else{
+			} else {
 				return -1;
 			}
 		}
 
 		@Override
-		public E getElementAt(int index) {
-			if(list!=null){
+		public ISourceFile getElementAt(int index) {
+			if (list != null) {
 				return list.get(index);
-			} else{
+			} else {
 				return null;
 			}
 		}
 
 		@Override
 		public void addListDataListener(ListDataListener l) {
-			if(!listDataListeners.contains(l)){
+			if (!listDataListeners.contains(l)) {
 				listDataListeners.add(l);
 			}
 		}
 
 		@Override
 		public void removeListDataListener(ListDataListener l) {
-			if(listDataListeners.contains(l)){
+			if (listDataListeners.contains(l)) {
 				listDataListeners.remove(l);
 			}
 		}
