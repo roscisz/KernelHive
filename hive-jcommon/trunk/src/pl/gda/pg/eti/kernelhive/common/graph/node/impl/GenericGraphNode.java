@@ -2,7 +2,9 @@ package pl.gda.pg.eti.kernelhive.common.graph.node.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -116,10 +118,14 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	public void setParentNode(IGraphNode node) {
 		if (parentNode != null) {
 			parentNode.getChildrenNodes().remove(this);
+			disconnectPreviousNodes(this);
+			disconnectFollowingNodes(this);
 		}
 		parentNode = node;
 		if (parentNode != null) {
 			parentNode.getChildrenNodes().add(this);
+			disconnectPreviousNodes(this);
+			disconnectFollowingNodes(this);
 		}
 	}
 
@@ -206,6 +212,8 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		if (!childrenNodes.contains(node) && canAddChildNode(node)) {
 			childrenNodes.add(node);
 			node.setParentNode(this);
+			disconnectPreviousNodes(node);
+			disconnectFollowingNodes(node);
 			return true;
 		} else {
 			return true;
@@ -217,9 +225,27 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		if (childrenNodes.contains(node)) {
 			boolean result = childrenNodes.remove(node);
 			node.setParentNode(null);
+			disconnectPreviousNodes(node);
+			disconnectFollowingNodes(node);
 			return result;
 		} else {
 			return true;
+		}
+	}
+	
+	private void disconnectPreviousNodes(IGraphNode node){
+		List<IGraphNode> list = new ArrayList<IGraphNode>(node.getPreviousNodes());
+		Collections.copy(list, node.getPreviousNodes());
+		for(IGraphNode pNode : list){
+			node.removePreviousNode(pNode);
+		}
+	}
+	
+	private void disconnectFollowingNodes(IGraphNode node){
+		List<IGraphNode> list = new ArrayList<IGraphNode>(node.getFollowingNodes());
+		Collections.copy(list, node.getFollowingNodes());
+		for(IGraphNode fNode : list){
+			node.removeFollowingNode(fNode);
 		}
 	}
 
