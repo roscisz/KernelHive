@@ -28,10 +28,7 @@ import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.frame.NodePropertiesDialog;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
-import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
@@ -43,15 +40,18 @@ import com.mxgraph.layout.mxPartitionLayout;
 import com.mxgraph.layout.mxStackLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel.mxChildChange;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.util.mxMorphing;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
+import com.mxgraph.util.mxStyleUtils;
 import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
 import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
@@ -108,18 +108,19 @@ public class WorkflowEditor extends JTabContent {
 		setLayout(new BorderLayout());
 		setupNodePopupMenu();
 		setupWorkspacePopup();
-		
+
 		undoManager = new mxUndoManager();
 		mxGraph graph = loadProject(project);
 		graphComponent = new mxGraphComponent(graph);
 		graphComponent.setGridVisible(true);
 		graphComponent.getGraph().setAllowLoops(false);
+		graphComponent.getGraph().setAllowDanglingEdges(false);
 		graphComponent.add(nodePopup);
 		graphComponent.add(workspacePopup);
 		add(graphComponent);
+		
 		rubberband = new mxRubberband(graphComponent);
 
-		
 		installListeners();
 	}
 
@@ -145,27 +146,28 @@ public class WorkflowEditor extends JTabContent {
 										.getValue()));
 							}
 						}
-						
+
 						// restore children nodes TODO FIXME XXX reccurent
 						// in-depth resolving
 					} else if (childChange.getPrevious() != null) {// destroy
-						Iterator<IGraphNode> iter = node.getChildrenNodes().iterator();
-						while(iter.hasNext()){
+						Iterator<IGraphNode> iter = node.getChildrenNodes()
+								.iterator();
+						while (iter.hasNext()) {
 							iter.next();
 							iter.remove();
 						}
 						node.setParentNode(null);
 						iter = node.getFollowingNodes().iterator();
-						while(iter.hasNext()){
+						while (iter.hasNext()) {
 							iter.next();
 							iter.remove();
 						}
 						iter = node.getPreviousNodes().iterator();
-						while(iter.hasNext()){
+						while (iter.hasNext()) {
 							iter.next();
 							iter.remove();
 						}
-						
+
 						project.removeProjectNode(node, false);
 					}
 				} else {// edge
@@ -195,9 +197,16 @@ public class WorkflowEditor extends JTabContent {
 			mxCell parent = (mxCell) graph.getDefaultParent();
 			graph.getModel().beginUpdate();
 			try {
-				mxCell v1 = (mxCell) graph.insertVertex(parent,
-						node.getNodeId(), node, node.getX(), node.getY(), 80,
-						30);
+				mxCell v1;
+				if (node.canAddChildNode(null)) {
+					v1 = (mxCell) graph.insertVertex(parent, node.getNodeId(),
+							node, node.getX(), node.getY(), 80, 100,
+							mxStyleUtils.setStyle("", mxConstants.STYLE_SHAPE,
+									mxConstants.SHAPE_SWIMLANE));
+				} else {
+					v1 = (mxCell) graph.insertVertex(parent, node.getNodeId(),
+							node, node.getX(), node.getY(), 80, 30, "");
+				}
 				mapping.put(node, v1);
 			} finally {
 				graph.getModel().endUpdate();
@@ -209,8 +218,17 @@ public class WorkflowEditor extends JTabContent {
 			try {
 				mxCell v = mapping.get(node);
 				if (node.getParentNode() != null) {
-					v.setParent(mapping.get(node.getParentNode()));
+					graph.addCell(v, mapping.get(node.getParentNode()));
 				}
+			} finally {
+				graph.getModel().endUpdate();
+			}
+		}
+		for (IGraphNode node : projectNodes) {
+			graph.getModel().beginUpdate();
+			try {
+				mxCell v = mapping.get(node);
+				graph.extendParent(v);
 			} finally {
 				graph.getModel().endUpdate();
 			}
@@ -244,14 +262,15 @@ public class WorkflowEditor extends JTabContent {
 						.getSelectionCell();
 				if (cell != null) {
 					IGraphNode node = (IGraphNode) cell.getValue();
-					NodePropertiesDialog npd = new NodePropertiesDialog(getFrame(), node);
+					NodePropertiesDialog npd = new NodePropertiesDialog(
+							getFrame(), node);
 					npd.setVisible(true);
 					npd.addWindowListener(new WindowAdapter() {
-						public void windowClosed(WindowEvent e){
+						public void windowClosed(WindowEvent e) {
 							refresh();
 						}
-						
-						public void windowClosing(WindowEvent e){
+
+						public void windowClosing(WindowEvent e) {
 							refresh();
 						}
 					});
@@ -420,18 +439,18 @@ public class WorkflowEditor extends JTabContent {
 		if (cell.isVertex()) {
 			IGraphNode node = (IGraphNode) cell.getValue();
 			Iterator<IGraphNode> iter = node.getChildrenNodes().iterator();
-			while(iter.hasNext()){
+			while (iter.hasNext()) {
 				iter.next();
 				iter.remove();
 			}
 			node.setParentNode(null);
 			iter = node.getFollowingNodes().iterator();
-			while(iter.hasNext()){
+			while (iter.hasNext()) {
 				iter.next();
 				iter.remove();
 			}
 			iter = node.getPreviousNodes().iterator();
-			while(iter.hasNext()){
+			while (iter.hasNext()) {
 				iter.next();
 				iter.remove();
 			}
@@ -442,16 +461,6 @@ public class WorkflowEditor extends JTabContent {
 			IGraphNode sourceNode = (IGraphNode) source.getValue();
 			IGraphNode targetNode = (IGraphNode) target.getValue();
 			sourceNode.removeFollowingNode(targetNode);
-		}
-	}
-
-	private void addNode(mxGraph graph, Object parent, String id, Object value,
-			double x, double y, double width, double height) {
-		graph.getModel().beginUpdate();
-		try {
-			graph.insertVertex(parent, id, value, x, y, width, height);
-		} finally {
-			graph.getModel().endUpdate();
 		}
 	}
 
@@ -474,14 +483,17 @@ public class WorkflowEditor extends JTabContent {
 						.getProperty("edit"));
 				Object[] cells = graphComponent.getGraph().getSelectionCells();
 				for (Object cell : cells) {
-					if(((mxCell) cell).isVertex()){
+					if (((mxCell) cell).isVertex()) {
 						int x = (int) graphComponent.getGraph().getView()
 								.getState(cell).getX();
 						int y = (int) graphComponent.getGraph().getView()
 								.getState(cell).getY();
-						IGraphNode wfNode = (IGraphNode) ((mxCell) cell).getValue();
-						wfNode.setX(x);
-						wfNode.setY(y);
+						if (((mxCell) cell).getValue() instanceof IGraphNode) {
+							IGraphNode wfNode = (IGraphNode) ((mxCell) cell)
+									.getValue();
+							wfNode.setX(x);
+							wfNode.setY(y);
+						}
 					}
 				}
 			}
@@ -493,6 +505,37 @@ public class WorkflowEditor extends JTabContent {
 				setDirty(true);
 				if (getTabPanel() != null) {
 					getTabPanel().getLabel().setText("*" + name);
+				}
+				checkParentChanges(evt);
+			}
+
+			@SuppressWarnings("unchecked")
+			private void checkParentChanges(mxEventObject evt) {
+				Object obj = evt.getProperty("changes");
+				if (obj instanceof List) {
+					List<Object> list = (List<Object>) obj;
+					for (Object o : list) {
+						if (o instanceof mxChildChange) {
+							mxChildChange childChange = (mxChildChange) o;
+							mxCell cell = (mxCell) childChange.getChild();
+							mxCell parent = (mxCell) childChange.getParent();
+							mxCell previousParent = (mxCell) childChange
+									.getPrevious();
+							if (!parent.equals(previousParent)
+									&& cell.isVertex()
+									&& cell.getValue() instanceof IGraphNode) {
+								IGraphNode node = (IGraphNode) cell.getValue();
+								if (parent.getValue() instanceof IGraphNode) {
+									node.setParentNode((IGraphNode) parent
+											.getValue());
+								} else if (parent == graphComponent.getGraph()
+										.getDefaultParent()) {
+									node.setParentNode(null);
+								}
+								refresh();
+							}
+						}
+					}
 				}
 			}
 		};
@@ -551,27 +594,42 @@ public class WorkflowEditor extends JTabContent {
 		graphComponent.addMouseWheelListener(wheelTracker);
 
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				rubberband.mouseClicked(e);
-				
+
 				if (e.getButton() == MouseEvent.BUTTON3) {
 					mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(),
 							e.getY());
 					if (cell != null && cell.isVertex()) {
+						System.out.println(cell.getStyle());
 						nodePopup.show(graphComponent, e.getX(), e.getY());
 					} else {
 						workspacePopup.show(graphComponent, e.getX(), e.getY());
 					}
 				}
+				// else if(e.getButton() == MouseEvent.BUTTON2){
+				//
+				// mxCell parent = (mxCell)
+				// graphComponent.getGraph().getDefaultParent();
+				// graphComponent.getGraph().getModel().beginUpdate();
+				// try{
+				// String rootStyle = "";
+				// rootStyle = mxStyleUtils.setStyle(rootStyle,
+				// mxConstants.STYLE_SHAPE, mxConstants.SHAPE_SWIMLANE);
+				// graphComponent.getGraph().insertVertex(parent, "2", null,
+				// e.getX(), e.getY(), 100, 100, rootStyle);
+				// } finally{
+				// graphComponent.getGraph().getModel().endUpdate();
+				// }
+				// }
 			}
-			
+
 			@Override
-			public void mouseMoved(MouseEvent e){
+			public void mouseMoved(MouseEvent e) {
 				rubberband.mouseMoved(e);
 			}
-			
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -585,7 +643,7 @@ public class WorkflowEditor extends JTabContent {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				
+
 				rubberband.mousePressed(e);
 			}
 
@@ -604,8 +662,9 @@ public class WorkflowEditor extends JTabContent {
 			@Override
 			public void keyReleased(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-					Object[] cells = graphComponent.getGraph().getSelectionCells();
-					for(Object cell : cells){
+					Object[] cells = graphComponent.getGraph()
+							.getSelectionCells();
+					for (Object cell : cells) {
 						removeNode(graphComponent.getGraph(), (mxCell) cell);
 					}
 				}
@@ -616,7 +675,7 @@ public class WorkflowEditor extends JTabContent {
 			}
 		};
 		graphComponent.addKeyListener(keyTracker);
-		
+
 		dropTargetListener = new WorkflowEditorDropTargetListener(this);
 	}
 
@@ -642,19 +701,19 @@ public class WorkflowEditor extends JTabContent {
 	public void selectAll() {
 		graphComponent.getGraph().selectAll();
 	}
-	
+
 	@Override
-	public void refresh(){
+	public void refresh() {
 		graphComponent.setGraph(loadProject(project));
 		graphComponent.getGraph().getModel().beginUpdate();
-		try{
+		try {
 			graphComponent.getGraph().refresh();
-		} finally{
+		} finally {
 			graphComponent.getGraph().getModel().endUpdate();
 		}
 	}
-	
-	protected MainFrame getFrame(){
+
+	protected MainFrame getFrame() {
 		return frame;
 	}
 

@@ -18,6 +18,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import com.mxgraph.model.mxICell;
+
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
@@ -51,6 +53,8 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 
 	@Override
 	public void drop(DropTargetDropEvent dtde) {
+		File dir = null;
+		IGraphNode node = null;
 		try {
 			KernelRepositoryEntry kre = (KernelRepositoryEntry) dtde
 					.getTransferable().getTransferData(
@@ -68,7 +72,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 				if (fc.showDialog(editor, "Select") == JFileChooser.APPROVE_OPTION) {
 					// 1. select directory to store the copied kernels
 					String nodeId = NodeIdGenerator.generateId();
-					File dir = new File(fc.getSelectedFile().getAbsolutePath()
+					dir = new File(fc.getSelectedFile().getAbsolutePath()
 							+ System.getProperty("file.separator") + nodeId);
 					dir.mkdirs();
 					
@@ -78,7 +82,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 					
 					// 3. create appropriate graph node
 					IGraphNodeBuilder graphNodeBuilder = new GraphNodeBuilder();
-					IGraphNode node = graphNodeBuilder
+					node = graphNodeBuilder
 							.setType(kre.getGraphNodeType()).setId(nodeId)
 							.setName(NodeNameGenerator.generateName())
 							.setSourceFiles(sourceFiles).build();
@@ -110,6 +114,12 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			}
 		} catch (Exception e) {
 			LOG.severe("KH: " + e.getMessage());
+			if(node!=null&&dir!=null){
+				for(ISourceFile s : node.getSourceFiles()){
+					s.getFile().delete();
+				}
+				dir.delete();
+			}
 			dtde.rejectDrop();
 		}
 	}
