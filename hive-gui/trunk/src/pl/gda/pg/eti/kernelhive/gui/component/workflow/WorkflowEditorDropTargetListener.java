@@ -18,8 +18,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import com.mxgraph.model.mxICell;
-
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
