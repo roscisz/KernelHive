@@ -1,5 +1,10 @@
 package pl.gda.pg.eti.kernelhive.common.graph.node;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public enum GraphNodeType {
 	GENERIC("generic"), 
 	MERGER("merger"), 
@@ -29,5 +34,4 @@ public enum GraphNodeType {
 		}
 		return null;
 	}	
-	
 }

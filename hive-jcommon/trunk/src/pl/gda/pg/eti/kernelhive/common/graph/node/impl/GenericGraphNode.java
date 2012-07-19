@@ -35,6 +35,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		childrenNodes = new ArrayList<IGraphNode>();
 		nodeId = id;
 		properties = new HashMap<String, Object>();
+		parentNode = null;
 	}
 	
 	public GenericGraphNode(String id, String name){
@@ -44,12 +45,14 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		nodeId = id;
 		this.name = name;
 		properties = new HashMap<String, Object>();
+		parentNode = null;
 	}
 
 	public GenericGraphNode(String id, String name, List<IGraphNode> followingNodes,
 			List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes, Map<String, Object> properties) {
 		nodeId = id;
 		this.name = name;
+		parentNode = null;
 		if (followingNodes != null) {
 			this.followingNodes = followingNodes;
 		} else {

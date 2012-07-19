@@ -6,7 +6,11 @@ import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.CompositeGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.MergerGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.PartitionerGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.ProcessorGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
 /**
@@ -60,17 +64,21 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 					node = new GenericGraphNode(id);
 					break;
 				case COMPOSITE:
-	//				break;
+					node = new CompositeGraphNode(id);
+					break;
 				case DAC:
 	//				break;
 				case MASTERSLAVE:
 	//				break;
 				case MERGER:
-	//				break;
+					node = new MergerGraphNode(id);
+					break;
 				case PARTITIONER:
-	//				break;
+					node = new PartitionerGraphNode(id);
+					break;
 				case PROCESSOR:
-	//				break;
+					node = new ProcessorGraphNode(id);
+					break;
 				default:
 					throw new GraphNodeBuilderException("KH: unrecognised graph node type: "+type.toString());
 			}

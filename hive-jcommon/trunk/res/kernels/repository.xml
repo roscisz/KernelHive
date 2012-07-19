@@ -14,4 +14,25 @@
 			<kh:property key="required" value="true"/>
 		</kh:kernel>
 	</kh:entry>
+	<kh:entry type="merger" description="Merger Graph Node">
+		<kh:kernel id="680d7b83-c327-4d73-887f-3d4ed3ae14c4"
+		 		name="kernel.cl" 
+		 		src="/kernels/merger/kernel.cl">
+			<kh:property key="required" value="true"/>
+		</kh:kernel>
+	</kh:entry>
+	<kh:entry type="partitioner" description="Partitioner Graph Node">
+		<kh:kernel id="eff1aa1a-686b-49bb-8ba5-47f607f27a45"
+		 		name="kernel.cl" 
+		 		src="/kernels/partitioner/kernel.cl">
+			<kh:property key="required" value="true"/>
+		</kh:kernel>
+	</kh:entry>
+	<kh:entry type="composite" description="Composite Graph Node">
+		<kh:kernel id="3fab0b22-449e-4193-8f37-90193b91091d"
+		 		name="kernel.cl" 
+		 		src="/kernels/composite/kernel.cl">
+			<kh:property key="required" value="true"/>
+		</kh:kernel>
+	</kh:entry>
 </kh:repository>

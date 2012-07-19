@@ -104,7 +104,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 				Node valNode = new Node(
 						SOURCE_FILE_PROPERTY_NODE_VALUE_ATTRIBUTE);
 				valNode.setAttribute(true);
-				keyNode.setValue(val);
+				valNode.setValue(val);
 				propNode.addAttribute(keyNode);
 				propNode.addAttribute(valNode);
 				sourceNode.addChild(propNode);
