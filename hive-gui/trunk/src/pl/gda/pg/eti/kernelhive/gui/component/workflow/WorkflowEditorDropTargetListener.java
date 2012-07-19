@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
@@ -52,7 +53,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 	@Override
 	public void drop(DropTargetDropEvent dtde) {
 		File dir = null;
-		IGraphNode node = null;
+		GUIGraphNodeDecorator guiNode = null;
 		try {
 			KernelRepositoryEntry kre = (KernelRepositoryEntry) dtde
 					.getTransferable().getTransferData(
@@ -80,15 +81,15 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 					
 					// 3. create appropriate graph node
 					IGraphNodeBuilder graphNodeBuilder = new GraphNodeBuilder();
-					node = graphNodeBuilder
+					IGraphNode node = graphNodeBuilder
 							.setType(kre.getGraphNodeType()).setId(nodeId)
-							.setName(NodeNameGenerator.generateName())
-							.setSourceFiles(sourceFiles).build();
-					node.setX(dtde.getLocation().x);
-					node.setY(dtde.getLocation().y);
+							.setName(NodeNameGenerator.generateName()).build();
+					guiNode = new GUIGraphNodeDecorator(node, sourceFiles);
+					guiNode.setX(dtde.getLocation().x);
+					guiNode.setY(dtde.getLocation().y);
 					
 					// 4. add it to project
-					editor.project.addProjectNode(node);
+					editor.project.addProjectNode(guiNode);
 					
 					// 5. refresh graph
 					editor.refresh();
@@ -112,8 +113,8 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			}
 		} catch (Exception e) {
 			LOG.severe("KH: " + e.getMessage());
-			if(node!=null&&dir!=null){
-				for(ISourceFile s : node.getSourceFiles()){
+			if(guiNode!=null&&dir!=null){
+				for(ISourceFile s : guiNode.getSourceFiles()){
 					s.getFile().delete();
 				}
 				dir.delete();

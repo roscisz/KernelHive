@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGraphConfiguration;
-import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.GraphConfiguration;
+import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGUIGraphConfiguration;
+import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.GUIGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 
@@ -30,17 +30,17 @@ public class KernelHiveProject implements Serializable, IProject {
 	private String projectName;
 	private File projectDir;
 	private File projectFile;
-	private List<IGraphNode> nodes = new ArrayList<IGraphNode>();
-	private transient IGraphConfiguration config;
+	private List<GUIGraphNodeDecorator> nodes = new ArrayList<GUIGraphNodeDecorator>();
+	private transient IGUIGraphConfiguration config;
 
 	public KernelHiveProject(File projectDir, String projectName) {
 		this.projectName = projectName;
 		this.projectDir = projectDir;
-		config = new GraphConfiguration();
+		config = new GUIGraphConfiguration();
 	}
 
 	@Override
-	public void addProjectNode(IGraphNode node) {
+	public void addProjectNode(GUIGraphNodeDecorator node) {
 		if (!nodes.contains(node)) {
 			nodes.add(node);
 		}
@@ -62,7 +62,7 @@ public class KernelHiveProject implements Serializable, IProject {
 	}
 
 	@Override
-	public List<IGraphNode> getProjectNodes() {
+	public List<GUIGraphNodeDecorator> getProjectNodes() {
 		return nodes;
 	}
 
@@ -80,11 +80,11 @@ public class KernelHiveProject implements Serializable, IProject {
 	@Override
 	public void load(File file) throws ConfigurationException {
 		config.setConfigurationFile(file);
-		nodes = config.loadGraph();
+		nodes = config.loadGraphForGUI();
 	}
 
 	@Override
-	public void removeProjectNode(IGraphNode node, boolean removeFromDisc) {
+	public void removeProjectNode(GUIGraphNodeDecorator node, boolean removeFromDisc) {
 		if (nodes.contains(node)) {
 			nodes.remove(node);
 			if (removeFromDisc) {
@@ -120,7 +120,7 @@ public class KernelHiveProject implements Serializable, IProject {
 		}
 		
 		config.setConfigurationFile(file);
-		config.saveGraph(this.nodes);
+		config.saveGraphForGUI(this.nodes);
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class KernelHiveProject implements Serializable, IProject {
 	}
 
 	@Override
-	public void setProjectNodes(List<IGraphNode> nodes) {
+	public void setProjectNodes(List<GUIGraphNodeDecorator> nodes) {
 		this.nodes = nodes;
 	}
 

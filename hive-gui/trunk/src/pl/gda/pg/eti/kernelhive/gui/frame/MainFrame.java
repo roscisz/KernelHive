@@ -27,6 +27,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
+import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.controller.MainFrameController;
 
@@ -108,7 +109,7 @@ public class MainFrame extends JFrame {
 	private JButton btnStop;
 	private JMenuItem mntmPreferences;
 	private JTree projectTree;
-	private JList repositoryList;
+	private JList<KernelRepositoryEntry> repositoryList;
 	
 	private MainFrameController controller;
 	private JScrollPane projectScrollPane;
@@ -1049,11 +1050,11 @@ public class MainFrame extends JFrame {
 		this.controller = controller;
 	}
 
-	public JList getRepositoryList() {
+	public JList<KernelRepositoryEntry> getRepositoryList() {
 		return repositoryList;
 	}
 
-	public void setRepositoryList(JList repositoryList) {
+	public void setRepositoryList(JList<KernelRepositoryEntry> repositoryList) {
 		this.repositoryList = repositoryList;
 	}
 

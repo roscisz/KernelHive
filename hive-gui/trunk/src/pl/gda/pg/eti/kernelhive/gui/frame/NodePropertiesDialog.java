@@ -27,7 +27,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
 /**
@@ -46,10 +46,10 @@ public class NodePropertiesDialog extends JDialog {
 	private JLabel lblSourceFiles;
 	private JList<ISourceFile> list;
 	private MainFrame frame;
-	private IGraphNode node;
+	private GUIGraphNodeDecorator node;
 	private JTable table;
 
-	public NodePropertiesDialog(MainFrame frame, IGraphNode node) {
+	public NodePropertiesDialog(MainFrame frame, GUIGraphNodeDecorator node) {
 		super(frame);
 		this.frame = frame;
 		this.node = node;
@@ -65,7 +65,7 @@ public class NodePropertiesDialog extends JDialog {
 		textFieldName.setBounds(76, 39, 338, 19);
 		getContentPane().add(textFieldName);
 		textFieldName.setColumns(10);
-		textFieldName.setText(node.getName());
+		textFieldName.setText(node.getGraphNode().getName());
 
 		JLabel lblType = new JLabel("Type");
 		lblType.setBounds(12, 68, 46, 15);
@@ -76,7 +76,7 @@ public class NodePropertiesDialog extends JDialog {
 		textFieldType.setBounds(76, 66, 338, 19);
 		getContentPane().add(textFieldType);
 		textFieldType.setColumns(10);
-		textFieldType.setText(node.getType().toString());
+		textFieldType.setText(node.getGraphNode().getType().toString());
 
 		JLabel lblId = new JLabel("ID");
 		lblId.setBounds(12, 12, 46, 15);
@@ -87,7 +87,7 @@ public class NodePropertiesDialog extends JDialog {
 		textFieldId.setBounds(76, 10, 338, 19);
 		getContentPane().add(textFieldId);
 		textFieldId.setColumns(10);
-		textFieldId.setText(node.getNodeId());
+		textFieldId.setText(node.getGraphNode().getNodeId());
 
 		lblSourceFiles = new JLabel("Source Files");
 		lblSourceFiles.setBounds(12, 107, 92, 15);
@@ -177,11 +177,11 @@ public class NodePropertiesDialog extends JDialog {
 		getContentPane().add(lblProperties);
 
 		fillSourceFilesList(node.getSourceFiles());
-		fillPropertiesTable(node.getProperties());
+		fillPropertiesTable(node.getGraphNode().getProperties());
 	}
 
 	private boolean save() {
-		node.setName(textFieldName.getText());
+		node.getGraphNode().setName(textFieldName.getText());
 		return saveProperties();
 	}
 
@@ -198,7 +198,7 @@ public class NodePropertiesDialog extends JDialog {
 					properties.put(key, value);
 				}
 			}
-			node.setProperties(properties);
+			node.getGraphNode().setProperties(properties);
 			return true;
 		} else {
 			return false;

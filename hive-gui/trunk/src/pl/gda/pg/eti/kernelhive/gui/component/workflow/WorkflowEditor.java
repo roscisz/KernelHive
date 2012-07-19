@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
@@ -27,6 +28,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.frame.NodePropertiesDialog;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 
@@ -130,7 +132,7 @@ public class WorkflowEditor extends JTabContent {
 				mxChildChange childChange = (mxChildChange) change;
 				mxCell cell = (mxCell) childChange.getChild();
 				if (cell.isVertex()) {// vertex
-					IGraphNode node = (IGraphNode) cell.getValue();
+					GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell.getValue();
 					if (childChange.getPrevious() == null) {// restore
 						project.addProjectNode(node);
 						for (int i = 0; i < cell.getEdgeCount(); i++) {
@@ -138,10 +140,10 @@ public class WorkflowEditor extends JTabContent {
 									.getTerminal(true);
 							mxICell end = cell.getEdgeAt(i).getTerminal(false);
 							if (cell.equals(source)) {// add following node
-								node.addFollowingNode(((IGraphNode) end
+								node.getGraphNode().addFollowingNode(((IGraphNode) end
 										.getValue()));
 							} else {
-								node.addPreviousNode(((IGraphNode) source
+								node.getGraphNode().addPreviousNode(((IGraphNode) source
 										.getValue()));
 							}
 						}
@@ -149,19 +151,19 @@ public class WorkflowEditor extends JTabContent {
 						// restore children nodes TODO FIXME XXX reccurent
 						// in-depth resolving
 					} else if (childChange.getPrevious() != null) {// destroy
-						Iterator<IGraphNode> iter = node.getChildrenNodes()
+						Iterator<IGraphNode> iter = node.getGraphNode().getChildrenNodes()
 								.iterator();
 						while (iter.hasNext()) {
 							iter.next();
 							iter.remove();
 						}
-						node.setParentNode(null);
-						iter = node.getFollowingNodes().iterator();
+						node.getGraphNode().setParentNode(null);
+						iter = node.getGraphNode().getFollowingNodes().iterator();
 						while (iter.hasNext()) {
 							iter.next();
 							iter.remove();
 						}
-						iter = node.getPreviousNodes().iterator();
+						iter = node.getGraphNode().getPreviousNodes().iterator();
 						while (iter.hasNext()) {
 							iter.next();
 							iter.remove();
@@ -172,13 +174,13 @@ public class WorkflowEditor extends JTabContent {
 				} else {// edge
 					mxICell source = cell.getSource();
 					mxICell target = cell.getTarget();
-					IGraphNode sourceNode = (IGraphNode) source.getValue();
-					IGraphNode targetNode = (IGraphNode) target.getValue();
+					GUIGraphNodeDecorator sourceNode = (GUIGraphNodeDecorator) source.getValue();
+					GUIGraphNodeDecorator targetNode = (GUIGraphNodeDecorator) target.getValue();
 
 					if (childChange.getPrevious() == null) {// restore
-						sourceNode.addFollowingNode(targetNode);
+						sourceNode.getGraphNode().addFollowingNode(targetNode.getGraphNode());
 					} else if (childChange.getPrevious() != null) {// destroy
-						sourceNode.removeFollowingNode(targetNode);
+						sourceNode.getGraphNode().removeFollowingNode(targetNode.getGraphNode());
 					}
 				}
 			}
@@ -186,59 +188,59 @@ public class WorkflowEditor extends JTabContent {
 	}
 
 	private static mxGraph loadProject(IProject project) {
-		List<IGraphNode> projectNodes = project.getProjectNodes();
-		Hashtable<IGraphNode, mxCell> mapping = new Hashtable<IGraphNode, mxCell>(
+		List<GUIGraphNodeDecorator> projectNodes = project.getProjectNodes();
+		Map<IGraphNode, mxCell> mapping = new Hashtable<IGraphNode, mxCell>(
 				projectNodes.size());
 
 		mxGraph graph = new mxGraph();
 		// initial load of all nodes
-		for (IGraphNode node : projectNodes) {
+		for (GUIGraphNodeDecorator node : projectNodes) {
 			mxCell parent = (mxCell) graph.getDefaultParent();
 			graph.getModel().beginUpdate();
 			try {
 				mxCell v1;
-				if (node.canAddChildNode(null)) {
-					v1 = (mxCell) graph.insertVertex(parent, node.getNodeId(),
+				if (node.getGraphNode().canAddChildNode(null)) {
+					v1 = (mxCell) graph.insertVertex(parent, node.getGraphNode().getNodeId(),
 							node, node.getX(), node.getY(), 80, 100,
 							mxStyleUtils.setStyle("", mxConstants.STYLE_SHAPE,
 									mxConstants.SHAPE_SWIMLANE));
 				} else {
-					v1 = (mxCell) graph.insertVertex(parent, node.getNodeId(),
+					v1 = (mxCell) graph.insertVertex(parent, node.getGraphNode().getNodeId(),
 							node, node.getX(), node.getY(), 80, 30, "");
 				}
-				mapping.put(node, v1);
+				mapping.put(node.getGraphNode(), v1);
 			} finally {
 				graph.getModel().endUpdate();
 			}
 		}
 		// linking nodes to their parents
-		for (IGraphNode node : projectNodes) {
+		for (GUIGraphNodeDecorator node : projectNodes) {
 			graph.getModel().beginUpdate();
 			try {
-				mxCell v = mapping.get(node);
-				if (node.getParentNode() != null) {
-					graph.addCell(v, mapping.get(node.getParentNode()));
+				mxCell v = mapping.get(node.getGraphNode());
+				if (node.getGraphNode().getParentNode() != null) {
+					graph.addCell(v, mapping.get(node.getGraphNode().getParentNode()));
 				}
 			} finally {
 				graph.getModel().endUpdate();
 			}
 		}
-		for (IGraphNode node : projectNodes) {
+		for (GUIGraphNodeDecorator node : projectNodes) {
 			graph.getModel().beginUpdate();
 			try {
-				mxCell v = mapping.get(node);
+				mxCell v = mapping.get(node.getGraphNode());
 				graph.extendParent(v);
 			} finally {
 				graph.getModel().endUpdate();
 			}
 		}
 		// linking following nodes
-		for (IGraphNode node : projectNodes) {
+		for (GUIGraphNodeDecorator node : projectNodes) {
 			graph.getModel().beginUpdate();
 			try {
-				mxCell v = mapping.get(node);
+				mxCell v = mapping.get(node.getGraphNode());
 				mxCell parent = (mxCell) v.getParent();
-				List<IGraphNode> followingNodes = node.getFollowingNodes();
+				List<IGraphNode> followingNodes = node.getGraphNode().getFollowingNodes();
 				for (IGraphNode fNode : followingNodes) {
 					graph.insertEdge(parent, "", null, v, mapping.get(fNode));
 				}
@@ -260,7 +262,7 @@ public class WorkflowEditor extends JTabContent {
 				mxCell cell = (mxCell) graphComponent.getGraph()
 						.getSelectionCell();
 				if (cell != null) {
-					IGraphNode node = (IGraphNode) cell.getValue();
+					GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell.getValue();
 					NodePropertiesDialog npd = new NodePropertiesDialog(
 							getFrame(), node);
 					npd.setVisible(true);
@@ -436,19 +438,19 @@ public class WorkflowEditor extends JTabContent {
 			graph.getModel().endUpdate();
 		}
 		if (cell.isVertex()) {
-			IGraphNode node = (IGraphNode) cell.getValue();
-			Iterator<IGraphNode> iter = node.getChildrenNodes().iterator();
+			GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell.getValue();
+			Iterator<IGraphNode> iter = node.getGraphNode().getChildrenNodes().iterator();
 			while (iter.hasNext()) {
 				iter.next();
 				iter.remove();
 			}
-			node.setParentNode(null);
-			iter = node.getFollowingNodes().iterator();
+			node.getGraphNode().setParentNode(null);
+			iter = node.getGraphNode().getFollowingNodes().iterator();
 			while (iter.hasNext()) {
 				iter.next();
 				iter.remove();
 			}
-			iter = node.getPreviousNodes().iterator();
+			iter = node.getGraphNode().getPreviousNodes().iterator();
 			while (iter.hasNext()) {
 				iter.next();
 				iter.remove();
@@ -457,9 +459,9 @@ public class WorkflowEditor extends JTabContent {
 		} else {// edge
 			mxICell source = cell.getSource();
 			mxICell target = cell.getTarget();
-			IGraphNode sourceNode = (IGraphNode) source.getValue();
-			IGraphNode targetNode = (IGraphNode) target.getValue();
-			sourceNode.removeFollowingNode(targetNode);
+			GUIGraphNodeDecorator sourceNode = (GUIGraphNodeDecorator) source.getValue();
+			GUIGraphNodeDecorator targetNode = (GUIGraphNodeDecorator) target.getValue();
+			sourceNode.getGraphNode().removeFollowingNode(targetNode.getGraphNode());
 		}
 	}
 
@@ -488,7 +490,7 @@ public class WorkflowEditor extends JTabContent {
 						int y = (int) graphComponent.getGraph().getView()
 								.getState(cell).getY();
 						if (((mxCell) cell).getValue() instanceof IGraphNode) {
-							IGraphNode wfNode = (IGraphNode) ((mxCell) cell)
+							GUIGraphNodeDecorator wfNode = (GUIGraphNodeDecorator) ((mxCell) cell)
 									.getValue();
 							wfNode.setX(x);
 							wfNode.setY(y);
@@ -522,14 +524,14 @@ public class WorkflowEditor extends JTabContent {
 									.getPrevious();
 							if (!parent.equals(previousParent)
 									&& cell.isVertex()
-									&& cell.getValue() instanceof IGraphNode) {
-								IGraphNode node = (IGraphNode) cell.getValue();
-								if (parent.getValue() instanceof IGraphNode) {
-									node.setParentNode((IGraphNode) parent
-											.getValue());
+									&& cell.getValue() instanceof GUIGraphNodeDecorator) {
+								GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell.getValue();
+								if (parent.getValue() instanceof GUIGraphNodeDecorator) {
+									node.getGraphNode().setParentNode(((GUIGraphNodeDecorator) parent
+											.getValue()).getGraphNode());
 								} else if (parent == graphComponent.getGraph()
 										.getDefaultParent()) {
-									node.setParentNode(null);
+									node.getGraphNode().setParentNode(null);
 								}
 								refresh();
 							}
@@ -546,8 +548,8 @@ public class WorkflowEditor extends JTabContent {
 				if (cell.isEdge()) {
 					mxICell source = cell.getSource();
 					mxICell terminal = cell.getTarget();
-					IGraphNode wfSource = (IGraphNode) source.getValue();
-					wfSource.addFollowingNode((IGraphNode) terminal.getValue());
+					GUIGraphNodeDecorator wfSource = (GUIGraphNodeDecorator) source.getValue();
+					wfSource.getGraphNode().addFollowingNode(((GUIGraphNodeDecorator) terminal.getValue()).getGraphNode());
 				}
 			}
 		};
@@ -710,10 +712,6 @@ public class WorkflowEditor extends JTabContent {
 		} finally {
 			graphComponent.getGraph().getModel().endUpdate();
 		}
-	}
-
-	protected MainFrame getFrame() {
-		return frame;
 	}
 
 	private void setGraphLayout(WorkflowGraphLayout layout, boolean animate) {

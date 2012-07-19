@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 
 /**
  * 
@@ -75,21 +75,21 @@ public interface IProject {
 	 * 
 	 * @return list of project nodes
 	 */
-	List<IGraphNode> getProjectNodes();
+	List<GUIGraphNodeDecorator> getProjectNodes();
 	/**
 	 * sets list of project nodes
 	 * @param nodes List of project nodes
 	 */
-	void setProjectNodes(List<IGraphNode> nodes);
+	void setProjectNodes(List<GUIGraphNodeDecorator> nodes);
 	/**
 	 * add new project node
 	 * @param node new project node
 	 */
-	void addProjectNode(IGraphNode node);
+	void addProjectNode(GUIGraphNodeDecorator node);
 	/**
 	 * removes the selected project node
 	 * @param node project node to be removed
 	 * @param removeFromDisc boolean indicating whether to delete corresponding files from disc
 	 */
-	void removeProjectNode(IGraphNode node, boolean removeFromDisc);
+	void removeProjectNode(GUIGraphNodeDecorator node, boolean removeFromDisc);
 }
