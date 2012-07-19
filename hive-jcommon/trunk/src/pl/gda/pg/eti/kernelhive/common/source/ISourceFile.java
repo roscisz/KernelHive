@@ -14,16 +14,16 @@ public interface ISourceFile {
 	 * 
 	 * @return
 	 */
-	public File getFile();
+	File getFile();
 	/**
 	 * 
 	 * @param key
 	 * @return
 	 */
-	public Map<String, Object> getProperties();
+	Map<String, Object> getProperties();
 	/**
 	 * 
 	 * @return
 	 */
-	public String getId();
+	String getId();
 }

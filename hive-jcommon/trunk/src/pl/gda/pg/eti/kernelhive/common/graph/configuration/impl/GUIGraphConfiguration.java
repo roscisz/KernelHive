@@ -29,15 +29,15 @@ import pl.gda.pg.eti.kernelhive.common.source.SourceFile;
  */
 public class GUIGraphConfiguration extends AbstractGraphConfiguration implements IGUIGraphConfiguration {
 
-	protected static final String NODE_X_ATTRIBUTE = "x";
-	protected static final String NODE_Y_ATTRIBUTE = "y";
-	protected static final String NODE_SOURCE_FILES = "kh:node-source-files";
-	protected static final String SOURCE_FILE = "kh:source-file";
-	protected static final String SOURCE_FILE_SRC_ATTRIBUTE = "src";
-	protected static final String SOURCE_FILE_ID_ATTRIBUTE = "id";
-	protected static final String SOURCE_FILE_PROPERTY_NODE = "kh:property";
-	protected static final String SOURCE_FILE_PROPERTY_NODE_KEY_ATTRIBUTE = "key";
-	protected static final String SOURCE_FILE_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
+	private static final String NODE_X_ATTRIBUTE = "x";
+	private static final String NODE_Y_ATTRIBUTE = "y";
+	private static final String NODE_SOURCE_FILES = "kh:node-source-files";
+	private static final String SOURCE_FILE = "kh:source-file";
+	private static final String SOURCE_FILE_SRC_ATTRIBUTE = "src";
+	private static final String SOURCE_FILE_ID_ATTRIBUTE = "id";
+	private static final String SOURCE_FILE_PROPERTY_NODE = "kh:property";
+	private static final String SOURCE_FILE_PROPERTY_NODE_KEY_ATTRIBUTE = "key";
+	private static final String SOURCE_FILE_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
 	
 	private static final Logger LOG = Logger
 			.getLogger(GUIGraphConfiguration.class.getName());

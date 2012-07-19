@@ -1,7 +1,12 @@
 package pl.gda.pg.eti.kernelhive.common.file;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -167,5 +172,29 @@ public class FileUtils {
 			}
 		}
 		return sb.toString();
+	}
+
+	public static String readFileToString(File file) throws IOException {
+		BufferedReader br = null;
+		InputStream is = null;
+		InputStreamReader isr = null;
+		try {
+			is = new FileInputStream(file);
+			isr = new InputStreamReader(is, "utf8");
+			br = new BufferedReader(isr);
+			StringBuffer sb = new StringBuffer();
+			String buffer;
+			while((buffer = br.readLine())!=null){
+				sb.append(buffer+"\n");
+			}
+			return sb.toString();
+		} catch(SecurityException e){
+			throw new IOException(e);
+		} catch(UnsupportedEncodingException e){
+			throw new IOException(e);
+		}
+		finally {
+			is.close();
+		}
 	}
 }

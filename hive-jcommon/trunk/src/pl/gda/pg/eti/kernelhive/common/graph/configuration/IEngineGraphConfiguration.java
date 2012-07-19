@@ -26,4 +26,17 @@ public interface IEngineGraphConfiguration extends IGraphConfiguration {
 	 * @throws ConfigurationException
 	 */
 	List<EngineGraphNodeDecorator> loadGraphForEngine(File file) throws ConfigurationException;
+	/**
+	 * saves graph to the engine-specific xml format
+	 * @param graphNodes {@link List} of {@link EngineGraphNodeDecorator} objects
+	 * @throws ConfigurationException
+	 */
+	void saveGraphForEngine(List<EngineGraphNodeDecorator> graphNodes) throws ConfigurationException;
+	/**
+	 * saves graph to the engine-specific xml format
+	 * @param graphNodes {@link List} of {@link EngineGraphNodeDecorator} objects
+	 * @param file {@link File}
+	 * @throws ConfigurationException
+	 */
+	void saveGraphForEngine(List<EngineGraphNodeDecorator> graphNodes, File file) throws ConfigurationException;
 }
