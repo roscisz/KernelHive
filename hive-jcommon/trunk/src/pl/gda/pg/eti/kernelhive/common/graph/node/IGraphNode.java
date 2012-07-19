@@ -3,26 +3,17 @@ package pl.gda.pg.eti.kernelhive.common.graph.node;
 import java.util.List;
 import java.util.Map;
 
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
-
-
 
 public interface IGraphNode {
 	
 	String getNodeId();
-	void setNodeId(String id);
 	
 	String getName();
 	void setName(String name);
 	
 	GraphNodeType getType();
 
-	int getX();
-	int getY();
-	void setX(int x);
-	void setY(int y);
-	
 	List<IGraphNode> getFollowingNodes();
 	boolean canAddFollowingNode(IGraphNode node);
 	boolean addFollowingNode(IGraphNode node);
@@ -40,11 +31,6 @@ public interface IGraphNode {
 	boolean addChildNode(IGraphNode node);
 	boolean removeChildNode(IGraphNode node);
 	boolean canAddChildNode(IGraphNode node);
-	
-	List<ISourceFile> getSourceFiles();
-	boolean addSourceFile(ISourceFile file);
-	boolean removeSourceFile(ISourceFile file);
-	boolean canRemoveSourceFile(ISourceFile file);
 	
 	Map<String, Object> getProperties();
 	void setProperties(Map<String, Object> properties);

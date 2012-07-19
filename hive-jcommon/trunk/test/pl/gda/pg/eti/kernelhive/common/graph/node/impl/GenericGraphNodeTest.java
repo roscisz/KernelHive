@@ -16,27 +16,26 @@ import pl.gda.pg.eti.kernelhive.common.source.SourceFile;
 public class GenericGraphNodeTest {
 	
 	IGraphNode node;
-
+	String id;
+	
 	@Before
 	public void setUp() throws Exception {
-		node = new GenericGraphNode();
+		id = "id";
+		node = new GenericGraphNode(id);
 	}
 	
 	@Test
-	public void testSetAndGetNodeId(){
-		String id = "id";
-		assertNull(node.getNodeId());
-		node.setNodeId(id);
+	public void testGetNodeId(){
 		assertEquals(id, node.getNodeId());
 	}
 
 	@Test
 	public void testAddAndRemoveAndGetFollowingNodes() {
 		List<IGraphNode> list = new ArrayList<IGraphNode>();
-		IGraphNode followingNode = new GenericGraphNode();
+		IGraphNode followingNode = new GenericGraphNode("test", null);
 		assertEquals(list, node.getFollowingNodes());
 		list.add(followingNode);
-		node.addFollowingNode(node);
+		node.addFollowingNode(followingNode);
 		assertEquals(list.get(0), node.getFollowingNodes().get(0));
 		list.remove(followingNode);
 		node.removeFollowingNode(followingNode);
@@ -46,10 +45,10 @@ public class GenericGraphNodeTest {
 	@Test
 	public void testGetPreviousNodes() {
 		List<IGraphNode> list = new ArrayList<IGraphNode>();
-		IGraphNode previousNode = new GenericGraphNode();
+		IGraphNode previousNode = new GenericGraphNode("test", null);
 		assertEquals(list, node.getPreviousNodes());
 		list.add(previousNode);
-		node.addPreviousNode(node);
+		node.addPreviousNode(previousNode);
 		assertEquals(list.get(0), node.getPreviousNodes().get(0));
 		list.remove(previousNode);
 		node.removePreviousNode(previousNode);
@@ -59,7 +58,7 @@ public class GenericGraphNodeTest {
 	@Test
 	public void testGetChildrenNodes() {
 		List<IGraphNode> list = new ArrayList<IGraphNode>();
-		IGraphNode childNode = new GenericGraphNode();
+		IGraphNode childNode = new GenericGraphNode("test", null);
 		assertEquals(list, node.getChildrenNodes());
 		list.add(childNode);
 		node.addChildNode(childNode);
@@ -71,39 +70,9 @@ public class GenericGraphNodeTest {
 
 	@Test
 	public void testSetAndGetParentNode() {
-		IGraphNode parent = new GenericGraphNode();
+		IGraphNode parent = new GenericGraphNode("test", null);
 		assertNull(node.getParentNode());
 		node.setParentNode(parent);
 		assertEquals(parent, node.getParentNode());
 	}
-
-	@Test
-	public void testSetAndGetX() {
-		int x = 10;
-		assertEquals(0, node.getX());
-		node.setX(x);
-		assertEquals(x, node.getX());		
-	}
-
-	@Test
-	public void testGetY() {
-		int y = 10;
-		assertEquals(0, node.getY());
-		node.setY(y);
-		assertEquals(y, node.getY());
-	}
-
-	@Test
-	public void testAddAndRemoveAndGetSourceFiles() {
-		SourceFile sf = new SourceFile(new File("test"), "test");
-		List<ISourceFile> list = new ArrayList<ISourceFile>();
-		assertEquals(list, node.getSourceFiles());
-		list.add(sf);
-		node.addSourceFile(sf);
-		assertEquals(list, node.getSourceFiles());
-		list.remove(sf);
-		node.removeSourceFile(sf);
-		assertEquals(list, node.getSourceFiles());
-	}
-
 }

@@ -35,16 +35,6 @@ public class SourceFile implements ISourceFile, Serializable {
 	}
 
 	@Override
-	public Object getProperty(String key) {
-		return properties.get(key);
-	}
-
-	@Override
-	public void setProperty(String key, Object value) {
-		properties.put(key, value);
-	}
-	
-	@Override
 	public String getId() {
 		return id;
 	}
@@ -52,5 +42,10 @@ public class SourceFile implements ISourceFile, Serializable {
 	@Override
 	public String toString(){
 		return this.file.getAbsolutePath();
+	}
+
+	@Override
+	public Map<String, Object> getProperties() {
+		return properties;
 	}
 }

@@ -1,6 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.source;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * 
@@ -19,13 +20,7 @@ public interface ISourceFile {
 	 * @param key
 	 * @return
 	 */
-	public Object getProperty(String key);
-	/**
-	 * 
-	 * @param key
-	 * @param value
-	 */
-	public void setProperty(String key, Object value);
+	public Map<String, Object> getProperties();
 	/**
 	 * 
 	 * @return

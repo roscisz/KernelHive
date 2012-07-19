@@ -5,7 +5,6 @@ import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 
 /**
  * Graph Node Builder
@@ -32,12 +31,6 @@ public interface IGraphNodeBuilder {
 	 * @return {@link IGraphNodeBuilder}
 	 */
 	IGraphNodeBuilder setName(String name);
-	/**
-	 * sets source files list
-	 * @param sourceFiles {@link List}
-	 * @return {@link IGraphNodeBuilder}
-	 */
-	IGraphNodeBuilder setSourceFiles(List<ISourceFile> sourceFiles);
 	/**
 	 * sets graph node properties
 	 * @param properties {@link Map}

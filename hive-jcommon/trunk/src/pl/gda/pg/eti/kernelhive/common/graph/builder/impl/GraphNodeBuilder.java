@@ -1,6 +1,5 @@
 package pl.gda.pg.eti.kernelhive.common.graph.builder.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
@@ -10,7 +9,6 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 /**
  * Graph Node Builder Implementation
  * @author mschally
@@ -21,7 +19,6 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 	GraphNodeType type;
 	String id = null;
 	String name = null;
-	List<ISourceFile> sourceFiles = null;
 	Map<String, Object> properties = null;
 		
 	public GraphNodeBuilder(){	}
@@ -45,57 +42,51 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 	}
 
 	@Override
-	public IGraphNodeBuilder setSourceFiles(List<ISourceFile> sourceFiles) {
-		this.sourceFiles = sourceFiles;
-		return this;
-	}
-	
-	@Override
 	public IGraphNodeBuilder setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 		return this;
 	}
-
+	
+	
 	@Override
 	public IGraphNode build() throws GraphNodeBuilderException {
 		IGraphNode node = null;
-		switch(type){
-			case GENERIC:
-				node = new GenericGraphNode();
-				break;
-			case COMPOSITE:
-//				break;
-			case DAC:
-//				break;
-			case MASTERSLAVE:
-//				break;
-			case MERGER:
-//				break;
-			case PARTITIONER:
-//				break;
-			case PROCESSOR:
-//				break;
-			default:
-				throw new GraphNodeBuilderException("KH: unrecognised graph node type: "+type.toString());
+		if(id==null){
+			id = NodeIdGenerator.generateId();
 		}
-		if(id!=null){
-			node.setNodeId(id);
-		} else{
-			node.setNodeId(NodeIdGenerator.generateId());
-		}
-		if(name!=null){
-			node.setName(name);
-		} else{
-			node.setName(NodeNameGenerator.generateName());
-		}
-		if(sourceFiles!=null){
-			for(ISourceFile s : sourceFiles){
-				node.addSourceFile(s);
+		try{
+			switch(type){
+				case GENERIC:
+					node = new GenericGraphNode(id);
+					break;
+				case COMPOSITE:
+	//				break;
+				case DAC:
+	//				break;
+				case MASTERSLAVE:
+	//				break;
+				case MERGER:
+	//				break;
+				case PARTITIONER:
+	//				break;
+				case PROCESSOR:
+	//				break;
+				default:
+					throw new GraphNodeBuilderException("KH: unrecognised graph node type: "+type.toString());
 			}
+			if(name!=null){
+				node.setName(name);
+			} else{
+				node.setName(NodeNameGenerator.generateName());
+			}
+			if(properties!=null){
+				node.setProperties(properties);
+			}
+			return node;
+		} catch(NullPointerException e){
+			throw new GraphNodeBuilderException(e);
 		}
-		if(properties!=null){
-			node.setProperties(properties);
-		}
-		return node;
 	}
+
+	
 }

@@ -7,13 +7,7 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 
-/**
- * graph configuration interface
- * @author mschally
- *
- */
 public interface IGraphConfiguration {
-	
 	/**
 	 * sets file containing the xml project configuration
 	 * @param file {@link File} - XML configuration file
@@ -62,5 +56,4 @@ public interface IGraphConfiguration {
 	 * @throws ConfigurationException
 	 */
 	List<IGraphNode> loadGraph(File file) throws ConfigurationException;
-	
 }
