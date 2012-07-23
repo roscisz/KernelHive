@@ -1,7 +1,5 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
-import pl.gda.pg.eti.kernelhive.common.structure.HasID;
-
 public class HasID {
 	
 	private static int lastID = 0;

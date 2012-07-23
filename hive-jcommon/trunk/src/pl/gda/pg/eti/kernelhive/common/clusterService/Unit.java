@@ -3,9 +3,6 @@ package pl.gda.pg.eti.kernelhive.common.clusterService;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.gda.pg.eti.kernelhive.common.structure.Device;
-import pl.gda.pg.eti.kernelhive.common.structure.HasID;
-
 public class Unit extends HasID {
 	
 	private static String deviceSeparator = ";";
