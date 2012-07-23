@@ -110,11 +110,11 @@ public class MainFrame extends JFrame {
 	private JMenuItem mntmPreferences;
 	private JTree projectTree;
 	private JList<KernelRepositoryEntry> repositoryList;
-	
-	private MainFrameController controller;
 	private JScrollPane projectScrollPane;
 	private JMenuItem mntmWorkflowEditor;
 	private JScrollPane repositoryScrollPane;
+	
+	private MainFrameController controller;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
@@ -560,16 +560,37 @@ public class MainFrame extends JFrame {
 		toolBar = new JToolBar();
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		
-		btnStart = new JButton(BUNDLE.getString("MainFrame.btnStart.text")); //$NON-NLS-1$
+		btnStart = new JButton(BUNDLE.getString("MainFrame.btnStart.text"));
 		btnStart.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Play24.gif")));
+		btnStart.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.startWorkflowGraphExecution();
+			}
+		});
 		toolBar.add(btnStart);
 		
-		btnPause = new JButton(BUNDLE.getString("MainFrame.btnPause.text")); //$NON-NLS-1$
+		btnPause = new JButton(BUNDLE.getString("MainFrame.btnPause.text")); 
 		btnPause.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Pause24.gif")));
+		btnPause.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.pauseWorkflowGraphExecution();
+			}
+		});
 		toolBar.add(btnPause);
 		
-		btnStop = new JButton(BUNDLE.getString("MainFrame.btnStop.text")); //$NON-NLS-1$
+		btnStop = new JButton(BUNDLE.getString("MainFrame.btnStop.text"));
 		btnStop.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Stop24.gif")));
+		btnStop.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.stopWorkflowGraphExecution();
+			}
+		});
 		toolBar.add(btnStop);
 	}
 	
