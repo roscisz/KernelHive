@@ -27,6 +27,8 @@ import pl.gda.pg.eti.kernelhive.common.source.KernelString;
 public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		implements IEngineGraphConfiguration {
 
+	private static final String INPUT_DATA_NODE = "kh:input-data";
+	private static final String INPUT_DATA_NODE_URL_ATTRIBUTE = "url";
 	private static final String NODE_KERNELS = "kh:kernels";
 	private static final String KERNEL = "kh:kernel";
 	private static final String KERNEL_ID_ATTRIBUTE = "id";
@@ -46,8 +48,7 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		super(file);
 	}
 
-	private Node createGraphNodeForEngine(EngineGraphNodeDecorator node,
-			File file) throws ConfigurationException {
+	private Node createGraphNodeForEngine(EngineGraphNodeDecorator node) throws ConfigurationException {
 		try {
 			Node configNode = createNodeForEngine(node);
 			Node sendToNode = createSendToSubNode(node.getGraphNode());
@@ -99,6 +100,19 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 	private Node createNodeForEngine(EngineGraphNodeDecorator node) throws ConfigurationException {
 		Node configNode = createNode(node.getGraphNode());
 		return configNode;
+	}
+
+	@Override
+	public String getInputDataURL() throws ConfigurationException {
+		List<ConfigurationNode> dataNodes = config.getRoot().getChildren(
+				INPUT_DATA_NODE);
+		if(dataNodes.size()>0){
+			List<ConfigurationNode> urlAttrList = dataNodes.get(0).getAttributes(INPUT_DATA_NODE_URL_ATTRIBUTE);
+			if(urlAttrList.size()>0){
+				return (String) urlAttrList.get(0).getValue();
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -242,7 +256,7 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		try {
 			config.clear();
 			for (EngineGraphNodeDecorator engineNode : graphNodes) {
-				config.getRoot().addChild(createGraphNodeForEngine(engineNode, file));
+				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
 			}
 			config.save(file);
 		} catch (ConfigurationException e) {
@@ -251,5 +265,24 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 			throw e;
 		}
 
+	}
+
+	@Override
+	public void setInputDataURL(String inputDataUrl) throws ConfigurationException {
+		List<ConfigurationNode> dataNodes = config.getRoot().getChildren(
+				INPUT_DATA_NODE);
+		if (dataNodes.size() > 0) {
+			List<ConfigurationNode> attrList = dataNodes.get(0).getChildren(INPUT_DATA_NODE_URL_ATTRIBUTE);
+			if(attrList.size()>0){
+				attrList.get(0).setValue(inputDataUrl);
+			}
+		} else {
+			Node data = new Node(INPUT_DATA_NODE);
+			Node url = new Node(INPUT_DATA_NODE_URL_ATTRIBUTE);
+			url.setAttribute(true);
+			url.setValue(inputDataUrl);
+			data.addAttribute(url);
+			config.getRoot().addChild(data);
+		}
 	}
 }

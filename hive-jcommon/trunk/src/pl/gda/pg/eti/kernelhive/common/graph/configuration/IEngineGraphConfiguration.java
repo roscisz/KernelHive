@@ -39,4 +39,16 @@ public interface IEngineGraphConfiguration extends IGraphConfiguration {
 	 * @throws ConfigurationException
 	 */
 	void saveGraphForEngine(List<EngineGraphNodeDecorator> graphNodes, File file) throws ConfigurationException;
+	/**
+	 * gets input data url string
+	 * @return {@link String}
+	 * @throws ConfigurationException
+	 */
+	String getInputDataURL() throws ConfigurationException;
+	/**
+	 * sets input data url string
+	 * @param inputDataUrl {@link String}
+	 * @throws ConfigurationException
+	 */
+	void setInputDataURL(String inputDataUrl) throws ConfigurationException;
 }
