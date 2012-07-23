@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.common.structure;
+package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 public class Device {
 	private static String parameterSeparator = ":";

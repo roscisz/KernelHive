@@ -1,5 +1,5 @@
 
-package pl.gda.pg.eti.kernelhive.common.structure;
+package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

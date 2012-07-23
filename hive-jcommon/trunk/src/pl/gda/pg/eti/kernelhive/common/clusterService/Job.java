@@ -1,4 +1,7 @@
-package pl.gda.pg.eti.kernelhive.common.structure;
+package pl.gda.pg.eti.kernelhive.common.clusterService;
+
+import pl.gda.pg.eti.kernelhive.common.structure.HasID;
+import pl.gda.pg.eti.kernelhive.common.structure.Unit;
 
 public class Job extends HasID {
 	// OBSOLETE:	

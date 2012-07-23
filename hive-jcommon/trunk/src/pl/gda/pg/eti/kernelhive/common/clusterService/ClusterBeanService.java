@@ -1,5 +1,5 @@
 
-package pl.gda.pg.eti.kernelhive.common.structure;
+package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,13 +23,13 @@ public class ClusterBeanService
 {
 
     private final static URL CLUSTERBEANSERVICE_WSDL_LOCATION;
-    private final static Logger logger = Logger.getLogger(pl.gda.pg.eti.kernelhive.common.structure.ClusterBeanService.class.getName());
+    private final static Logger logger = Logger.getLogger(pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBeanService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = pl.gda.pg.eti.kernelhive.common.structure.ClusterBeanService.class.getResource(".");
+            baseUrl = pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBeanService.class.getResource(".");
             url = new URL(baseUrl, "http://localhost:8080/ClusterBeanService/ClusterBean?wsdl");
         } catch (MalformedURLException e) {
             logger.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/ClusterBeanService/ClusterBean?wsdl', retrying as a local file");

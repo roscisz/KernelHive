@@ -1,5 +1,5 @@
 
-package pl.gda.pg.eti.kernelhive.common.structure;
+package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -27,8 +27,8 @@ public interface ClusterBean {
      * @param arg0
      */
     @WebMethod
-    @RequestWrapper(localName = "update", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.structure.Update")
-    @ResponseWrapper(localName = "updateResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.structure.UpdateResponse")
+    @RequestWrapper(localName = "update", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.Update")
+    @ResponseWrapper(localName = "updateResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.UpdateResponse")
     public void update(
         @WebParam(name = "arg0", targetNamespace = "")
         Cluster arg0);
