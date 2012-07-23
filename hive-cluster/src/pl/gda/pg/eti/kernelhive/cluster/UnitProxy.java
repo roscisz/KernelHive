@@ -5,42 +5,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
+import pl.gda.pg.eti.kernelhive.common.structure.Device;
+import pl.gda.pg.eti.kernelhive.common.structure.Job;
+import pl.gda.pg.eti.kernelhive.common.structure.Unit;
 
 public class UnitProxy {
-	private static String deviceSeparator = ";";
-	
-	private SocketChannel socketChannel;
-	private List<Device> devices = new ArrayList<Device>();
-	
-	public UnitProxy(SocketChannel socketChannel) {
-		this.socketChannel = socketChannel;
-	}
 
-	public void update(String devicesString) {
-		String[] devicesArray = devicesString.split(deviceSeparator);
+	private SocketChannel socketChannel;
+	public Unit unit;
 	
-		int devicesCount = Integer.parseInt(devicesArray[0]);
-		
-		devices.clear();
-		for(int i = 1; i <= devicesCount; i++)
-			devices.add(new Device(devicesArray[i]));		
+	
+	public UnitProxy(SocketChannel socketChannel, Unit unit) {
+		this.socketChannel = socketChannel;
+		this.unit = unit;
 	}
 
 	@Override
 	public String toString() {
 		return "UnitProxy [socketChannel=" + socketChannel + ", devices="
-				+ devices + "]";
+				+ unit + "]";
 	}
 
+	/*
 	public List<Device> getDevices() {
-		return devices;
-	}
+		return unit.devices;
+	}*/
 	
-	public void runJob(HiveJob job) {
-		sendMessage(job.toString());		
+	public void runJob(Job job) {
+		sendMessage(job.toString());
 	}
 	
 	private void sendMessage(String message) {
+		System.out.println("Sending to socketChannel " + socketChannel);
 		TCPServer.sendMessage(socketChannel, message);
 	}
 

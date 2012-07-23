@@ -12,11 +12,19 @@ import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServerListener;
 import pl.gda.pg.eti.kernelhive.common.communication.UDPServer;
 import pl.gda.pg.eti.kernelhive.common.communication.UDPServerListener;
+import pl.gda.pg.eti.kernelhive.common.structure.Cluster;
+import pl.gda.pg.eti.kernelhive.common.structure.ClusterBean;
+import pl.gda.pg.eti.kernelhive.common.structure.ClusterBeanService;
+import pl.gda.pg.eti.kernelhive.common.structure.Device;
+import pl.gda.pg.eti.kernelhive.common.structure.Job;
+import pl.gda.pg.eti.kernelhive.common.structure.Unit;
 
 public class ClusterManager implements TCPServerListener, UDPServerListener {
 	
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
-	private List<HiveJob> currentJobs = new ArrayList<HiveJob>();
+	private List<Job> currentJobs = new ArrayList<Job>();
+	
+	private Cluster cluster = new Cluster();
 	
 	// OBSOLETE
 	private static String processDataKernel = "__kernel void processData(__global const int* input, unsigned int dataSize, __global int* output) { int i = get_global_id(0); output[i] = input[i]; }";
@@ -50,9 +58,9 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		if(command[0].equals("UPDATE")) {
 			commandUpdate(channel, command[1]);
 		}
-		/*else if(command[0].equals("test")) {
+		else if(command[0].equals("test")) {
 			test();			
-		}*/
+		}
 		else if(command[0].equals("OVER")) {
 			commandOver(command[1]);
 		}
@@ -62,13 +70,25 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	private void commandUpdate(SocketChannel channel, String data) {
 		UnitProxy proxy = unitsMap.get(channel);
 		if(proxy == null) {
-			proxy = new UnitProxy(channel);
+			Unit unit = new Unit();
+			cluster.unitList.add(unit);
+			proxy = new UnitProxy(channel, unit);
 			unitsMap.put(channel,  proxy);
+			updateClusterInEngine(cluster);
 		}
-		proxy.update(data);
+		proxy.unit.update(data);
 		System.out.println("Now we have " + unitsMap.size() + " clients");
 	}
 	
+	private void updateClusterInEngine(Cluster cluster) {
+		ClusterBeanService cbs = new ClusterBeanService();
+		ClusterBean cb = cbs.getClusterBeanPort();
+		cb.update(cluster);
+		/*ClusterBeanProxy cbp = new ClusterBeanProxy();
+		ClusterBean engine = cbp.getClusterBean();
+		engine.update(cluster);*/		
+	}
+
 	private void commandOver(String message) {
 		String[] command = message.split(" ", 2);
 		int id = Integer.parseInt(command[0]);
@@ -78,15 +98,17 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	private void test() {		
 		prepareJobs();
 		currentJobs.get(0).setDataAddress("localhost 31340 123");
-		currentJobs.get(0).run();		
+		Job job = currentJobs.get(0);
+		UnitProxy proxy = findUnitProxy(job.unit);
+		proxy.runJob(job);
 	}
 
 	private void prepareJobs() {
 		currentJobs.clear();
 		int id = 0;
 		for(UnitProxy up : unitsMap.values())
-			for(Device d : up.getDevices()) {
-				currentJobs.add(new HiveJob(up, d.name, id));
+			for(Device d : up.unit.devices) {
+				currentJobs.add(new Job(up.unit, d.name));
 				id++;
 			}
 		System.out.println("Prepared " + currentJobs.size() + " jobs.");
@@ -122,6 +144,13 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		}
 		else System.out.println("All jobs done.");
 		*/		
+	}
+	
+	private UnitProxy findUnitProxy(Unit unit) {
+		for(UnitProxy proxy : unitsMap.values())
+			if(proxy.unit.equals(unit))
+				return proxy;
+		return null;
 	}
 
 }
