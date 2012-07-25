@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.graph.node;
 
+import java.util.ArrayList;
 import java.util.List; 
 
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
@@ -13,6 +14,7 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 	
 	public GUIGraphNodeDecorator(IGraphNode node){
 		super(node);
+		this.sourceFiles = new ArrayList<ISourceFile>();
 	}
 	
 	public GUIGraphNodeDecorator(IGraphNode node, List<ISourceFile> sourceFiles){

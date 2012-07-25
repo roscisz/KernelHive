@@ -5,29 +5,24 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GraphConfigurationTest {
+public class EngineGraphConfigurationTest {
 
 	@Before
 	public void setUp() throws Exception {
 	}
 
 	@Test
-	public void testGetProjectName() {
+	public void testSetAndGetInputDataURL() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testSaveGraphListOfIGraphNode() {
+	public void testLoadGraphForEngine() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testLoadGraph() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetConfigurationFile() {
+	public void testSaveGraphForEngine() {
 		fail("Not yet implemented");
 	}
 
