@@ -1,6 +1,8 @@
 package pl.gda.pg.eti.kernelhive.common.graph.configuration.impl;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +48,22 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 
 	public EngineGraphConfiguration(File file) {
 		super(file);
+	}
+	
+	/**
+	 * FIXME: dirty hack
+	 */
+	public static File putStringIntoFile(String serializedConf) {
+		File ret = new File("tempConf.xml");
+		FileWriter fw;
+		try {
+			fw = new FileWriter(ret);
+			fw.write(serializedConf);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 
 	private Node createGraphNodeForEngine(EngineGraphNodeDecorator node) throws ConfigurationException {
