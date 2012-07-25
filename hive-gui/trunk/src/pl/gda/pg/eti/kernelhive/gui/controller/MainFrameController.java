@@ -3,7 +3,10 @@ package pl.gda.pg.eti.kernelhive.gui.controller;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -16,7 +19,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.ClientBean;
+import pl.gda.pg.eti.kernelhive.common.clientService.ClientBeanService;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
+import pl.gda.pg.eti.kernelhive.common.graph.configuration.IEngineGraphConfiguration;
+import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfiguration;
+import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeDecoratorConverter;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeDecoratorConverterException;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.impl.KernelRepository;
@@ -530,6 +541,29 @@ public class MainFrameController {
 			}
 			int ret = wizard.showNonModalDialog();
 			if(ret==Wizard.FINISH_RETURN_CODE){
+				IEngineGraphConfiguration engConfig = new EngineGraphConfiguration();
+				StringWriter w = new StringWriter();
+				List<EngineGraphNodeDecorator> engineNodes = new ArrayList<EngineGraphNodeDecorator>();
+				for(GUIGraphNodeDecorator g : project.getProjectNodes()){
+					try {
+						engineNodes.add(GraphNodeDecoratorConverter.convertGuiToEngine(g));
+					} catch (GraphNodeDecoratorConverterException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return;
+					}
+				}
+				try {
+					engConfig.saveGraphForEngine(engineNodes, w);
+					String engineGraphString = w.getBuffer().toString();
+					
+					ClientBean clientBean = new ClientBeanService().getClientBeanPort();
+					clientBean.runGraph(engineGraphString);
+				} catch (ConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
 				// save graph nodes and data url to engine xml format
 				// send xml as bytes[] or String via WS (+authorization with user/pass
 				// pair)
