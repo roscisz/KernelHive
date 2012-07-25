@@ -1,6 +1,8 @@
 package pl.gda.pg.eti.kernelhive.common.graph.configuration;
 
 import java.io.File;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -51,4 +53,18 @@ public interface IEngineGraphConfiguration extends IGraphConfiguration {
 	 * @throws ConfigurationException
 	 */
 	void setInputDataURL(String inputDataUrl) throws ConfigurationException;
+	/**
+	 * saves Graph to the engine-specific xml format
+	 * @param graphNodes
+	 * @param writer
+	 * @throws ConfigurationException
+	 */
+	void saveGraphForEngine(List<EngineGraphNodeDecorator> graphNodes, Writer writer) throws ConfigurationException;
+	/**
+	 * loads graph from the engine-specific xml format
+	 * @param reader
+	 * @return
+	 * @throws ConfigurationException
+	 */
+	List<EngineGraphNodeDecorator> loadGraphForEngine(Reader reader) throws ConfigurationException;
 }

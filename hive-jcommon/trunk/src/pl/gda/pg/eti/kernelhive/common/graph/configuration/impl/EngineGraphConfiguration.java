@@ -3,6 +3,8 @@ package pl.gda.pg.eti.kernelhive.common.graph.configuration.impl;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,17 +44,12 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 	private static Logger LOG = Logger.getLogger(EngineGraphConfiguration.class
 			.getName());
 
-	public EngineGraphConfiguration() {
-		super();
-	}
-
-	public EngineGraphConfiguration(File file) {
-		super(file);
-	}
-	
 	/**
-	 * FIXME: dirty hack
+	 * to read/write graph from/to string, 
+	 * saveGraphForEngine/loadGraphForEngine with (respective)
+	 *  {@link Reader} and {@link Writer} as an parameter
 	 */
+	@Deprecated
 	public static File putStringIntoFile(String serializedConf) {
 		File ret = new File("tempConf.xml");
 		FileWriter fw;
@@ -66,7 +63,16 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		return ret;
 	}
 
-	private Node createGraphNodeForEngine(EngineGraphNodeDecorator node) throws ConfigurationException {
+	public EngineGraphConfiguration() {
+		super();
+	}
+
+	public EngineGraphConfiguration(File file) {
+		super(file);
+	}
+
+	private Node createGraphNodeForEngine(EngineGraphNodeDecorator node)
+			throws ConfigurationException {
 		try {
 			Node configNode = createNodeForEngine(node);
 			Node sendToNode = createSendToSubNode(node.getGraphNode());
@@ -83,13 +89,12 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		}
 	}
 
-	private Node createKernelsSubNode(EngineGraphNodeDecorator node) throws ConfigurationException {
+	private Node createKernelsSubNode(EngineGraphNodeDecorator node)
+			throws ConfigurationException {
 		Node sourcesNode = new Node(NODE_KERNELS);
 		for (IKernelString s : node.getKernels()) {
 			Node sourceNode = new Node(KERNEL);
-			Node srcAttr = new Node(
-					KERNEL_SRC_ATTRIBUTE,
-					s.getKernel());
+			Node srcAttr = new Node(KERNEL_SRC_ATTRIBUTE, s.getKernel());
 			Node srcIdAttr = new Node(KERNEL_ID_ATTRIBUTE, s.getId());
 			srcIdAttr.setAttribute(true);
 			srcAttr.setAttribute(true);
@@ -102,8 +107,7 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 				Node keyNode = new Node(KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE);
 				keyNode.setAttribute(true);
 				keyNode.setValue(key);
-				Node valNode = new Node(
-						KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE);
+				Node valNode = new Node(KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE);
 				valNode.setAttribute(true);
 				keyNode.setValue(val);
 				propNode.addAttribute(keyNode);
@@ -115,7 +119,8 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		return sourcesNode;
 	}
 
-	private Node createNodeForEngine(EngineGraphNodeDecorator node) throws ConfigurationException {
+	private Node createNodeForEngine(EngineGraphNodeDecorator node)
+			throws ConfigurationException {
 		Node configNode = createNode(node.getGraphNode());
 		return configNode;
 	}
@@ -124,9 +129,10 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 	public String getInputDataURL() throws ConfigurationException {
 		List<ConfigurationNode> dataNodes = config.getRoot().getChildren(
 				INPUT_DATA_NODE);
-		if(dataNodes.size()>0){
-			List<ConfigurationNode> urlAttrList = dataNodes.get(0).getAttributes(INPUT_DATA_NODE_URL_ATTRIBUTE);
-			if(urlAttrList.size()>0){
+		if (dataNodes.size() > 0) {
+			List<ConfigurationNode> urlAttrList = dataNodes.get(0)
+					.getAttributes(INPUT_DATA_NODE_URL_ATTRIBUTE);
+			if (urlAttrList.size() > 0) {
 				return (String) urlAttrList.get(0).getValue();
 			}
 		}
@@ -152,6 +158,15 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 					+ file.getPath() + " " + e.getMessage());
 			throw e;
 		}
+	}
+
+	@Override
+	public List<EngineGraphNodeDecorator> loadGraphForEngine(Reader reader)
+			throws ConfigurationException {
+		config.clear();
+		config.load(reader);
+		// config.validate();//TODO attach schema
+		return loadGraphFromXMLForEngine();
 	}
 
 	private List<EngineGraphNodeDecorator> loadGraphFromXMLForEngine()
@@ -286,12 +301,32 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 	}
 
 	@Override
-	public void setInputDataURL(String inputDataUrl) throws ConfigurationException {
+	public void saveGraphForEngine(List<EngineGraphNodeDecorator> graphNodes,
+			Writer writer) throws ConfigurationException {
+		XMLConfiguration tempConfig = (XMLConfiguration) config.clone();
+		File tempFile = config.getFile();
+		try{
+			config.clear();
+			for (EngineGraphNodeDecorator engineNode : graphNodes) {
+				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
+			}
+			config.save(writer);
+		} catch(ConfigurationException e){
+			config = tempConfig;
+			config.save(tempFile);
+		}
+
+	}
+
+	@Override
+	public void setInputDataURL(String inputDataUrl)
+			throws ConfigurationException {
 		List<ConfigurationNode> dataNodes = config.getRoot().getChildren(
 				INPUT_DATA_NODE);
 		if (dataNodes.size() > 0) {
-			List<ConfigurationNode> attrList = dataNodes.get(0).getChildren(INPUT_DATA_NODE_URL_ATTRIBUTE);
-			if(attrList.size()>0){
+			List<ConfigurationNode> attrList = dataNodes.get(0).getChildren(
+					INPUT_DATA_NODE_URL_ATTRIBUTE);
+			if (attrList.size() > 0) {
 				attrList.get(0).setValue(inputDataUrl);
 			}
 		} else {
