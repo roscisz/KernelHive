@@ -1,6 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.graph.node;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
@@ -21,8 +22,17 @@ public class GraphNodeDecoratorConverter {
 			}
 			return engineNode;
 		} catch(IOException e){
-			throw new GraphNodeDecoratorConverterException(e);
+			throw new GraphNodeDecoratorConverterException(e, node);
 		}
+	}
+	
+	public static List<EngineGraphNodeDecorator> convertGuiToEngine(List<GUIGraphNodeDecorator> guiNodes) throws GraphNodeDecoratorConverterException{
+		List<EngineGraphNodeDecorator> engineNodes = new ArrayList<EngineGraphNodeDecorator>();
+		for (GUIGraphNodeDecorator g : guiNodes) {
+			engineNodes.add(GraphNodeDecoratorConverter
+						.convertGuiToEngine(g));
+		}
+		return engineNodes;
 	}
 	
 }
