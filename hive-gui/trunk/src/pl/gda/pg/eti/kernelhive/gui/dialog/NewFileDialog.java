@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.frame;
+package pl.gda.pg.eti.kernelhive.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.frame.wizard.workflow;
+package pl.gda.pg.eti.kernelhive.gui.workflow.wizard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,8 +10,8 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.validation.GraphValidator;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.WizardPanelDescriptor;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
+import pl.gda.pg.eti.kernelhive.gui.wizard.WizardPanelDescriptor;
 
 public class GraphValidationPanelDescriptor extends WizardPanelDescriptor implements ActionListener {
 

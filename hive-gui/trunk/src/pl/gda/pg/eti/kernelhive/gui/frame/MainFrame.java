@@ -29,7 +29,6 @@ import javax.swing.border.EmptyBorder;
 
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
-import pl.gda.pg.eti.kernelhive.gui.controller.MainFrameController;
 
 import javax.swing.JTree;
 import javax.swing.JScrollPane;

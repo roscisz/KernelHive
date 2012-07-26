@@ -30,6 +30,7 @@ import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.common.source.SourceFile;
 import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.TransferableKernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
 /**
  * 
@@ -61,7 +62,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 
 			if (dtde.isDataFlavorSupported(TransferableKernelRepositoryEntry.entryFlavour)) {
 				dtde.acceptDrop(DnDConstants.ACTION_COPY);
-				
+
 				JFileChooser fc = new JFileChooser(
 						editor.project.getProjectDirectory());
 				fc.setDialogTitle("Choose directory...");
@@ -74,11 +75,12 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 					dir = new File(fc.getSelectedFile().getAbsolutePath()
 							+ System.getProperty("file.separator") + nodeId);
 					dir.mkdirs();
-					
+
 					// 2. get input streams to the kernel templates, save the
 					// content to new files
-					List<ISourceFile> sourceFiles = copyKernelsFromTemplates(kre, dir);
-					
+					List<ISourceFile> sourceFiles = copyKernelsFromTemplates(
+							kre, dir);
+
 					// 3. create appropriate graph node
 					IGraphNodeBuilder graphNodeBuilder = new GraphNodeBuilder();
 					IGraphNode node = graphNodeBuilder
@@ -87,23 +89,17 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 					guiNode = new GUIGraphNodeDecorator(node, sourceFiles);
 					guiNode.setX(dtde.getLocation().x);
 					guiNode.setY(dtde.getLocation().y);
-					
+
 					// 4. add it to project
 					editor.project.addProjectNode(guiNode);
-					
+
 					// 5. refresh graph
 					editor.refresh();
 
 				} else {
-					JOptionPane
-							.showMessageDialog(
-									editor,
-									"You have to choose a directory to place kernel files!",
-									"Error",
-									JOptionPane.ERROR_MESSAGE,
-									new ImageIcon(
-											WorkflowEditorDropTargetListener.class
-													.getResource("/com/sun/java/swing/plaf/windows/icons/Error.gif")));
+					MessageDialog
+							.showErrorDialog(editor, "Error",
+									"You have to choose a directory to place kernel files!");
 					return;
 				}
 				dtde.dropComplete(true);
@@ -113,8 +109,8 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			}
 		} catch (Exception e) {
 			LOG.severe("KH: " + e.getMessage());
-			if(guiNode!=null&&dir!=null){
-				for(ISourceFile s : guiNode.getSourceFiles()){
+			if (guiNode != null && dir != null) {
+				for (ISourceFile s : guiNode.getSourceFiles()) {
 					s.getFile().delete();
 				}
 				dir.delete();
@@ -122,22 +118,20 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			dtde.rejectDrop();
 		}
 	}
-	
-	private List<ISourceFile> copyKernelsFromTemplates(KernelRepositoryEntry kre, File rootDir) throws SecurityException, IOException{
+
+	private List<ISourceFile> copyKernelsFromTemplates(
+			KernelRepositoryEntry kre, File rootDir) throws SecurityException,
+			IOException {
 		List<ISourceFile> sourceFiles = new ArrayList<ISourceFile>(kre
 				.getKernelPaths().size());
 		for (KernelPathEntry kpe : kre.getKernelPaths()) {
-			BufferedReader br = new BufferedReader(
-					new InputStreamReader(kpe.getPath()
-							.openConnection().getInputStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(kpe
+					.getPath().openConnection().getInputStream()));
 
-			File file = FileUtils.createNewFile(rootDir
-					.getAbsolutePath()
-					+ System.getProperty("file.separator")
-					+ kpe.getName());
+			File file = FileUtils.createNewFile(rootDir.getAbsolutePath()
+					+ System.getProperty("file.separator") + kpe.getName());
 
-			BufferedWriter bw = new BufferedWriter(new FileWriter(
-					file));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
 			String line = br.readLine();
 			while (line != null) {

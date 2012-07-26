@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.frame.wizard.workflow;
+package pl.gda.pg.eti.kernelhive.gui.workflow.wizard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.WizardPanelDescriptor;
+import pl.gda.pg.eti.kernelhive.gui.wizard.WizardPanelDescriptor;
 
 public class InputDataPanelDescriptor extends WizardPanelDescriptor implements ActionListener{
 	

@@ -1,14 +1,11 @@
-package pl.gda.pg.eti.kernelhive.gui.controller;
+package pl.gda.pg.eti.kernelhive.gui.frame;
 
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
@@ -19,13 +16,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-import pl.gda.pg.eti.kernelhive.common.clientService.ClientBean;
-import pl.gda.pg.eti.kernelhive.common.clientService.ClientBeanService;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IEngineGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfiguration;
-import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeDecoratorConverter;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeDecoratorConverterException;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
@@ -42,17 +35,16 @@ import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTree;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTreeModel;
 import pl.gda.pg.eti.kernelhive.gui.component.workflow.WorkflowEditor;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
-import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
-import pl.gda.pg.eti.kernelhive.gui.frame.NewFileDialog;
-import pl.gda.pg.eti.kernelhive.gui.frame.NewProjectDialog;
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.Wizard;
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.WizardPanelDescriptor;
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.WizardPanelNotFoundException;
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.workflow.GraphValidationPanelDescriptor;
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.workflow.InputDataPanelDescriptor;
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.workflow.UserCredentialsPanelDescriptor;
+import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
+import pl.gda.pg.eti.kernelhive.gui.dialog.NewFileDialog;
+import pl.gda.pg.eti.kernelhive.gui.dialog.NewProjectDialog;
+import pl.gda.pg.eti.kernelhive.gui.graph.execution.GraphExecution;
+import pl.gda.pg.eti.kernelhive.gui.graph.execution.IGraphExecution;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.impl.KernelHiveProject;
+import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.IWorkflowWizardDisplay;
+import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplay;
+import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplayException;
 
 /**
  * 
@@ -68,7 +60,6 @@ public class MainFrameController {
 
 	private MainFrame frame;
 	private IProject project;
-	private HashMap<JTabContent, File> openedTabs;
 	private int newFileCounter;
 
 	/**
@@ -80,7 +71,6 @@ public class MainFrameController {
 	public MainFrameController(MainFrame frame) {
 		this.frame = frame;
 		newFileCounter = 1;
-		openedTabs = new HashMap<JTabContent, File>();
 	}
 
 	/**
@@ -139,13 +129,11 @@ public class MainFrameController {
 				frame.getWorkspacePane().remove(content);
 			} else if (result == JOptionPane.NO_OPTION) {
 				frame.getWorkspacePane().remove(content);
-				openedTabs.remove(content);
 			} else if (result == JOptionPane.CANCEL_OPTION) {
 
 			}
 		} else {
 			frame.getWorkspacePane().remove(content);
-			openedTabs.remove(content);
 		}
 	}
 
@@ -243,12 +231,11 @@ public class MainFrameController {
 
 			} catch (ConfigurationException e) {
 				LOG.warning("KH: cannot create new project");
-				JOptionPane
-						.showMessageDialog(
+				MessageDialog
+						.showErrorDialog(
 								frame,
-								BUNDLE.getString("MainFrameController.newProject.cannotCreate.text"),
 								BUNDLE.getString("MainFrameController.newProject.cannotCreate.title"),
-								JOptionPane.ERROR_MESSAGE);
+								BUNDLE.getString("MainFrameController.newProject.cannotCreate.text"));
 				e.printStackTrace();
 			}
 		}
@@ -336,12 +323,11 @@ public class MainFrameController {
 			editor.setFile(project.getProjectFile());
 			frame.getWorkspacePane().setTabComponentAt(0, tabControl);
 		} else {
-			JOptionPane
-					.showMessageDialog(
+			MessageDialog
+					.showErrorDialog(
 							frame,
-							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.text"),
 							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.title"),
-							JOptionPane.ERROR_MESSAGE);
+							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.text"));
 		}
 	}
 
@@ -379,9 +365,11 @@ public class MainFrameController {
 				this.frame.getProjectTree().getModel());
 		this.frame.getProjectTree().updateUI();
 		// refresh tabs
-		Set<JTabContent> tabs = this.openedTabs.keySet();
-		for (JTabContent tab : tabs) {
-			tab.refresh();
+		Component[] tabContents = this.frame.getWorkspacePane().getComponents();
+		for (Component c : tabContents) {
+			if (c instanceof JTabContent) {
+				((JTabContent) c).refresh();
+			}
 		}
 	}
 
@@ -389,11 +377,11 @@ public class MainFrameController {
 	 * saves all tabs
 	 */
 	public void saveAll() {
-		for(int i=0; i<frame.getWorkspacePane().getTabCount(); i++){
+		for (int i = 0; i < frame.getWorkspacePane().getTabCount(); i++) {
 			Component c = frame.getWorkspacePane().getTabComponentAt(i);
-			if(c instanceof JTabPanel){
-				JTabContent tc = ((JTabPanel)c).getTabContent();
-				if(tc.getFile()!=null){
+			if (c instanceof JTabPanel) {
+				JTabContent tc = ((JTabPanel) c).getTabContent();
+				if (tc.getFile() != null) {
 					tc.saveContent(tc.getFile());
 				}
 			}
@@ -445,7 +433,6 @@ public class MainFrameController {
 						content.setFile(f);
 						content.saveContent(f);
 						tab.getLabel().setText(content.getName());
-						openedTabs.put(content, f);
 					}
 				} catch (IOException e) {
 					LOG.severe("KH: cannot create new file!");
@@ -522,54 +509,47 @@ public class MainFrameController {
 	 * 
 	 */
 	public void startWorkflowGraphExecution() {
-		if(project!=null){
-			// TODO
-			Wizard wizard = new Wizard(frame);
-			wizard.getDialog().setTitle("Send Workflow To Execution");
-			WizardPanelDescriptor desc1 = new GraphValidationPanelDescriptor(project);
-			wizard.registerWizardPanel(GraphValidationPanelDescriptor.IDENTIFIER, desc1);
-			WizardPanelDescriptor desc2 = new InputDataPanelDescriptor();
-			wizard.registerWizardPanel(InputDataPanelDescriptor.IDENTIFIER, desc2);
-			WizardPanelDescriptor desc3 = new UserCredentialsPanelDescriptor();
-			wizard.registerWizardPanel(UserCredentialsPanelDescriptor.IDENTIFIER, desc3);
+		IEngineGraphConfiguration engConfig = new EngineGraphConfiguration();
+		StringWriter w = new StringWriter();
+		IGraphExecution execution = new GraphExecution();
+		IWorkflowWizardDisplay wizardDisplay;
+
+		if (project != null) {
 			try {
-				wizard.setCurrentPanel(GraphValidationPanelDescriptor.IDENTIFIER);
-			} catch (WizardPanelNotFoundException e) {
-				// TODO handle
+				wizardDisplay = new WorkflowWizardDisplay(frame,
+						"Send Workflow To Execution", project);
+				if (wizardDisplay.displayWizard() == IWorkflowWizardDisplay.WIZARD_FINISH_RETURN_CODE) {
+					engConfig.saveGraphForEngine(GraphNodeDecoratorConverter
+							.convertGuiToEngine(project.getProjectNodes()), w);
+					byte[] graphStream = w.getBuffer().toString()
+							.getBytes("utf-8");
+					execution.setInputDataUrl(wizardDisplay.getInputDataUrl());
+					execution.setUsername(wizardDisplay.getUsername());
+					execution.setPassword(wizardDisplay.getPassword());
+					execution.setSerializedGraphStream(graphStream);
+					execution.execute();
+				}
+			} catch (WorkflowWizardDisplayException e) {
+				MessageDialog.showErrorDialog(frame, "Error",
+						"Error occured in displaying workflow wizard!");
 				e.printStackTrace();
-				return;
+			} catch (GraphNodeDecoratorConverterException e) {
+				MessageDialog.showErrorDialog(frame, "Error",
+						"Could not convert the graph node with id: "
+								+ e.getNodeDecorator().getGraphNode()
+										.getNodeId()
+								+ " to the format required by engine!");
+				e.printStackTrace();
+			} catch (ConfigurationException e) {
+				MessageDialog.showErrorDialog(frame, "Error",
+						"Error saving graph configuration to stream!");
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				MessageDialog
+						.showErrorDialog(frame, "Error",
+								"The graph stream could not be created - unsupported encoding: 'utf-8'");
+				e.printStackTrace();
 			}
-			int ret = wizard.showNonModalDialog();
-			if(ret==Wizard.FINISH_RETURN_CODE){
-				IEngineGraphConfiguration engConfig = new EngineGraphConfiguration();
-				StringWriter w = new StringWriter();
-				List<EngineGraphNodeDecorator> engineNodes = new ArrayList<EngineGraphNodeDecorator>();
-				for(GUIGraphNodeDecorator g : project.getProjectNodes()){
-					try {
-						engineNodes.add(GraphNodeDecoratorConverter.convertGuiToEngine(g));
-					} catch (GraphNodeDecoratorConverterException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return;
-					}
-				}
-				try {
-					engConfig.saveGraphForEngine(engineNodes, w);
-					String engineGraphString = w.getBuffer().toString();
-					
-					ClientBean clientBean = new ClientBeanService().getClientBeanPort();
-					clientBean.runGraph(engineGraphString);
-				} catch (ConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
-				// save graph nodes and data url to engine xml format
-				// send xml as bytes[] or String via WS (+authorization with user/pass
-				// pair)
-				// receive response after send
-				// display response
-			}		
 		}
 	}
 
@@ -578,7 +558,7 @@ public class MainFrameController {
 	 */
 	public void stopWorkflowGraphExecution() {
 		// TODO Auto-generated method stub
-		//stop the last started execution
+		// stop the last started execution
 	}
 
 	/**

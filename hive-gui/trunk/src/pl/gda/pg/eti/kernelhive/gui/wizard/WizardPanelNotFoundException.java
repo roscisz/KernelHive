@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.frame.wizard;
+package pl.gda.pg.eti.kernelhive.gui.wizard;
 
 public class WizardPanelNotFoundException extends Exception {
 

@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.frame;
+package pl.gda.pg.eti.kernelhive.gui.dialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -29,6 +27,7 @@ import javax.swing.table.TableModel;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 /**
  * graph node properties dialog
@@ -113,15 +112,7 @@ public class NodePropertiesDialog extends JDialog {
 				if (save()) {
 					close();
 				} else {
-					JOptionPane
-							.showMessageDialog(
-									NodePropertiesDialog.this,
-									"Duplicate keys in graph node properties - save failed!",
-									"Error",
-									JOptionPane.ERROR_MESSAGE,
-									new ImageIcon(
-											NodePropertiesDialog.class
-													.getResource("/com/sun/java/swing/plaf/windows/icons/Error.gif")));
+					MessageDialog.showErrorDialog(NodePropertiesDialog.this, "Error", "Duplicate keys in graph node properties - save failed!");
 				}
 			}
 		});

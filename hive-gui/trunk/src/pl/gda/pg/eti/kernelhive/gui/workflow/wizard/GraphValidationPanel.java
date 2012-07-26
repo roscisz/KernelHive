@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.frame.wizard.workflow;
+package pl.gda.pg.eti.kernelhive.gui.workflow.wizard;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;

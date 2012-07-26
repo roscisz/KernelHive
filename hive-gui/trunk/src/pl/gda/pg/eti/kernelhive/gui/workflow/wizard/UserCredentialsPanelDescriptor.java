@@ -1,9 +1,9 @@
-package pl.gda.pg.eti.kernelhive.gui.frame.wizard.workflow;
+package pl.gda.pg.eti.kernelhive.gui.workflow.wizard;
 
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
-import pl.gda.pg.eti.kernelhive.gui.frame.wizard.WizardPanelDescriptor;
+import pl.gda.pg.eti.kernelhive.gui.wizard.WizardPanelDescriptor;
 
 public class UserCredentialsPanelDescriptor extends WizardPanelDescriptor implements CaretListener {
 
