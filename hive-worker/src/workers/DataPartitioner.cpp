@@ -68,7 +68,8 @@ void DataPartitioner::workSpecific() {
 	// Set kernel agrguments
 	context->setBufferArg(0, INPUT_BUFFER);
 	context->setValueArg(1, sizeof(unsigned int), (void*)&totalDataSize);
-	context->setBufferArg(2, OUTPUT_BUFFER);
+	context->setValueArg(2, sizeof(unsigned int), (void*)&partsCount);
+	context->setBufferArg(3, OUTPUT_BUFFER);
 
 	// Execute the kernel
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
