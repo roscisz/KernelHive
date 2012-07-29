@@ -43,7 +43,7 @@ public class NodePropertiesDialog extends JDialog {
 	private JTextField textFieldType;
 	private JTextField textFieldId;
 	private JLabel lblSourceFiles;
-	private JList<ISourceFile> list;
+	private JList list;
 	private MainFrame frame;
 	private GUIGraphNodeDecorator node;
 	private JTable table;
@@ -122,7 +122,7 @@ public class NodePropertiesDialog extends JDialog {
 		scrollPane.setBounds(115, 107, 299, 96);
 		getContentPane().add(scrollPane);
 
-		list = new JList<ISourceFile>();
+		list = new JList();
 		scrollPane.setViewportView(list);
 
 		JButton btnAdd = new JButton("Add");
@@ -202,14 +202,14 @@ public class NodePropertiesDialog extends JDialog {
 	}
 
 	private void fillSourceFilesList(List<ISourceFile> sourceFiles) {
-		ListModel<ISourceFile> model = new SourceFilesListModel(sourceFiles);
+		ListModel model = new SourceFilesListModel(sourceFiles);
 		list.setModel(model);
 		list.addMouseListener(new MouseAdapter() {
 
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					e.consume();
-					ISourceFile file = list.getSelectedValue();
+					ISourceFile file = (ISourceFile) list.getSelectedValue();
 					frame.getController().openTab(file.getFile());
 				}
 			}
@@ -301,7 +301,7 @@ public class NodePropertiesDialog extends JDialog {
 		}
 	}
 
-	private class SourceFilesListModel implements ListModel<ISourceFile> {
+	private class SourceFilesListModel implements ListModel {
 
 		List<ISourceFile> list;
 		List<ListDataListener> listDataListeners;

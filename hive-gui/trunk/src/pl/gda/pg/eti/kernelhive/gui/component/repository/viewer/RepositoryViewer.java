@@ -10,7 +10,7 @@ import javax.swing.ListSelectionModel;
 
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 
-public class RepositoryViewer extends JList<KernelRepositoryEntry> {
+public class RepositoryViewer extends JList {
 
 	/**
 	 * 
@@ -27,7 +27,7 @@ public class RepositoryViewer extends JList<KernelRepositoryEntry> {
 		initRepositoryViewer();
 	}
 
-	public RepositoryViewer(ListModel<KernelRepositoryEntry> model) {
+	public RepositoryViewer(ListModel model) {
 		super(model);
 		initRepositoryViewer();
 	}

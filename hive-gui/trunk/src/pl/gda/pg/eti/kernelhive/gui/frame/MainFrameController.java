@@ -223,7 +223,7 @@ public class MainFrameController {
 
 				IKernelRepository repository = new KernelRepository(
 						AppConfiguration.getInstance().getKernelRepositoryURL());
-				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel(
+				ListModel repoModel = new RepositoryViewerModel(
 						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
 				frame.getRepositoryScrollPane().setViewportView(
@@ -268,7 +268,7 @@ public class MainFrameController {
 
 				IKernelRepository repository = new KernelRepository(
 						AppConfiguration.getInstance().getKernelRepositoryURL());
-				ListModel<KernelRepositoryEntry> repoModel = new RepositoryViewerModel(
+				ListModel repoModel = new RepositoryViewerModel(
 						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
 				frame.getRepositoryScrollPane().setViewportView(

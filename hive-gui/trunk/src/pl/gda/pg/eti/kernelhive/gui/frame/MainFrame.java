@@ -108,7 +108,7 @@ public class MainFrame extends JFrame {
 	private JButton btnStop;
 	private JMenuItem mntmPreferences;
 	private JTree projectTree;
-	private JList<KernelRepositoryEntry> repositoryList;
+	private JList repositoryList;
 	private JScrollPane projectScrollPane;
 	private JMenuItem mntmWorkflowEditor;
 	private JScrollPane repositoryScrollPane;
@@ -1070,11 +1070,11 @@ public class MainFrame extends JFrame {
 		this.controller = controller;
 	}
 
-	public JList<KernelRepositoryEntry> getRepositoryList() {
+	public JList getRepositoryList() {
 		return repositoryList;
 	}
 
-	public void setRepositoryList(JList<KernelRepositoryEntry> repositoryList) {
+	public void setRepositoryList(JList repositoryList) {
 		this.repositoryList = repositoryList;
 	}
 

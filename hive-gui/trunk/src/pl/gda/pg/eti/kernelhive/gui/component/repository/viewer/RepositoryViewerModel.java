@@ -9,7 +9,7 @@ import javax.swing.event.ListDataListener;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 
 
-public class RepositoryViewerModel implements ListModel<KernelRepositoryEntry> {
+public class RepositoryViewerModel implements ListModel {
 
 	private List<KernelRepositoryEntry> list;
 	private List<ListDataListener> listenersList;

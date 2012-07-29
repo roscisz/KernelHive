@@ -20,7 +20,7 @@ public class RepositoryViewerDragGestureListener implements DragGestureListener 
 		Cursor cursor = null;
 		if(dge.getComponent() instanceof RepositoryViewer){
 			RepositoryViewer rv = (RepositoryViewer) dge.getComponent();
-			KernelRepositoryEntry kre = rv.getSelectedValue();
+			KernelRepositoryEntry kre = (KernelRepositoryEntry) rv.getSelectedValue();
 			
 			if(dge.getDragAction()==DnDConstants.ACTION_COPY){
 				cursor = DragSource.DefaultCopyDrop;
