@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
+import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
+import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBeanService;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.CommunicationException;
 import pl.gda.pg.eti.kernelhive.common.communication.DataPublisher;
 import pl.gda.pg.eti.kernelhive.common.communication.NetworkAddress;
@@ -12,12 +18,6 @@ import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServerListener;
 import pl.gda.pg.eti.kernelhive.common.communication.UDPServer;
 import pl.gda.pg.eti.kernelhive.common.communication.UDPServerListener;
-import pl.gda.pg.eti.kernelhive.common.structure.Cluster;
-import pl.gda.pg.eti.kernelhive.common.structure.ClusterBean;
-import pl.gda.pg.eti.kernelhive.common.structure.ClusterBeanService;
-import pl.gda.pg.eti.kernelhive.common.structure.Device;
-import pl.gda.pg.eti.kernelhive.common.structure.Job;
-import pl.gda.pg.eti.kernelhive.common.structure.Unit;
 
 public class ClusterManager implements TCPServerListener, UDPServerListener {
 	
@@ -58,9 +58,6 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		if(command[0].equals("UPDATE")) {
 			commandUpdate(channel, command[1]);
 		}
-		else if(command[0].equals("test")) {
-			test();			
-		}
 		else if(command[0].equals("OVER")) {
 			commandOver(command[1]);
 		}
@@ -95,25 +92,6 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		onJobDone(id, command[1]);		
 	}
 	
-	private void test() {		
-		prepareJobs();
-		currentJobs.get(0).setDataAddress("localhost 31340 123");
-		Job job = currentJobs.get(0);
-		UnitProxy proxy = findUnitProxy(job.unit);
-		proxy.runJob(job);
-	}
-
-	private void prepareJobs() {
-		currentJobs.clear();
-		int id = 0;
-		for(UnitProxy up : unitsMap.values())
-			for(Device d : up.unit.devices) {
-				currentJobs.add(new Job(up.unit, d.name));
-				id++;
-			}
-		System.out.println("Prepared " + currentJobs.size() + " jobs.");
-	}
-
 	@Override
 	public void onDisconnection(SocketChannel channel) {
 		
