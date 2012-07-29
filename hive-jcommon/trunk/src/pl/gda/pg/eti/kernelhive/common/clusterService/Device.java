@@ -11,6 +11,10 @@ public class Device {
 	public int globalMemoryBytes;
 	public int localMemoryBytes;
 	public int workGroupSize;
+	
+	public boolean busy = false;
+	
+	public Unit unit;
 
 	public Device() {
 		

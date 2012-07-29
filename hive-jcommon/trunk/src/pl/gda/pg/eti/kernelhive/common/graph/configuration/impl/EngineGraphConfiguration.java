@@ -44,6 +44,13 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 	private static Logger LOG = Logger.getLogger(EngineGraphConfiguration.class
 			.getName());
 
+	public EngineGraphConfiguration(String serializedConf) {
+		super();
+		File inputFile = putStringIntoFile(serializedConf);		
+		readFromFile(inputFile);
+		inputFile.delete();
+	}
+
 	/**
 	 * to read/write graph from/to string, 
 	 * saveGraphForEngine/loadGraphForEngine with (respective)

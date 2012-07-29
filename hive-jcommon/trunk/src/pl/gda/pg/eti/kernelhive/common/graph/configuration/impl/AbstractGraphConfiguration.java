@@ -12,18 +12,13 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration.Node;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
-import org.apache.commons.configuration.web.AppletConfiguration;
 
-import pl.gda.pg.eti.kernelhive.common.configuration.CommonConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelPathEntry;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.impl.KernelRepository;
 
 /**
  * 
@@ -63,10 +58,14 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 	}
 
 	public AbstractGraphConfiguration(File file) {
-		this.configFile = file;
 		config = new XMLConfiguration();
-		config.setFile(this.configFile);
 		config.setRootElementName(ROOT_NODE);
+		readFromFile(file);
+	}
+
+	protected void readFromFile(File file) {
+		this.configFile = file;
+		config.setFile(this.configFile);		
 	}
 
 	protected Node createChildrenSubNode(IGraphNode node)

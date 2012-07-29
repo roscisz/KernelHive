@@ -1,6 +1,5 @@
 package pl.gda.pg.eti.kernelhive.common.graph.builder;
 
-import java.util.List;
 import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;

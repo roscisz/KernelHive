@@ -1,11 +1,10 @@
 package pl.gda.pg.eti.kernelhive.common.graph.node;
 
 import java.util.ArrayList;
-import java.util.List; 
+import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
-import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 

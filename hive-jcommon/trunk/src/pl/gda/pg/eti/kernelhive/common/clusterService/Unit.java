@@ -6,6 +6,7 @@ import java.util.List;
 public class Unit extends HasID {
 	
 	private static String deviceSeparator = ";";
+	public Cluster cluster;
 	
 	public List<Device> devices = new ArrayList<Device>();
 	
