@@ -13,8 +13,10 @@ namespace KernelHive {
  * A worker which implements the dataMerger kernel logic.
  * Parameters currently expected as input:
  * <ul>
- *   <li>n - number of data packages</li>
- *   <li>n data identifiers, one for each package</li>
+ *   <li>n - number of parts to merge</li>
+ *   <li>n tuples of input data host, port and ID, one for each part</li>
+ *   <li>output data host</li>
+ *   <li>output data port</li>
  * </ul>
  */
 class DataMerger : public BasicWorker {
@@ -60,6 +62,9 @@ private:
 	/** The number of data sources to merge from. */
 	int datasCount;
 
+	/** The addresses from which the data can be downloaded. */
+	NetworkAddress** inputDataAddresses;
+
 	/** The identifier which can be used to download data for this worker. */
 	std::string** dataIds;
 
@@ -68,6 +73,9 @@ private:
 
 	/** The total size of data received from all sources. */
 	size_t totalDataSize;
+
+	/** The address to which the output data will be uploaded. */
+	NetworkAddress* outputDataAddress;
 
 	/** A buffer for storing the result of calculations. */
 	SynchronizedBuffer* resultBuffer;

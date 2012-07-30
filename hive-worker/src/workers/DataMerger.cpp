@@ -17,6 +17,8 @@ const char* DataMerger::KERNEL = "mergeData";
 DataMerger::DataMerger(char **argv) : BasicWorker(argv) {
 	datasCount = 0;
 	totalDataSize = 0;
+	inputDataAddresses = NULL;
+	outputDataAddress = NULL;
 	dataIds = NULL;
 	dataIdsInt = NULL;
 	resultBuffer = NULL;
@@ -37,12 +39,14 @@ const char* DataMerger::getKernelName() {
 void DataMerger::workSpecific() {
 	runAllDownloads(); // Download data and the kernel
 
+	setPercentDone(20);
+
 	// Wait for the data to be ready
 	waitForAllDownloads();
 	setPercentDone(40);
 
 	for (int i = 0; i < datasCount; i++) {
-		totalDataSize += buffers[i]->getSize();
+		totalDataSize += buffers[dataIdsInt[i]]->getSize();
 	}
 
 	resultBuffer->allocate(totalDataSize); // Allocate local result buffer
@@ -56,9 +60,9 @@ void DataMerger::workSpecific() {
 	OpenClEvent** copyEvents = new OpenClEvent*[datasCount];
 	for (int i = 0; i < datasCount; i++) {
 		OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, copyOffset,
-				buffers[i]->getSize()*sizeof(byte), (void*)buffers[i]->getRawData());
+				buffers[dataIdsInt[i]]->getSize()*sizeof(byte), (void*)buffers[dataIdsInt[i]]->getRawData());
 		copyEvents[i] = &dataCopy;
-		copyOffset += buffers[i]->getSize();
+		copyOffset += buffers[dataIdsInt[i]]->getSize();
 	}
 
 	// Compile and prepare the kernel for execution
@@ -73,7 +77,8 @@ void DataMerger::workSpecific() {
 	// Set kernel agrguments
 	context->setBufferArg(0, INPUT_BUFFER);
 	context->setValueArg(1, sizeof(unsigned int), (void*)&totalDataSize);
-	context->setBufferArg(2, OUTPUT_BUFFER);
+	context->setValueArg(2, sizeof(unsigned int), (void*)&datasCount);
+	context->setBufferArg(3, OUTPUT_BUFFER);
 
 	// Execute the kernel
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
@@ -85,30 +90,30 @@ void DataMerger::workSpecific() {
 	setPercentDone(90);
 
 	// Upload data to repository
-	/* TODO Conform to new parameters style
-	DataUploader* uploader = new DataUploader(dataAddress, resultBuffer);
+	DataUploader* uploader = new DataUploader(outputDataAddress, resultBuffer);
 	threadManager->runThread(uploader);
 	threadManager->waitForThread(uploader);
 	setPercentDone(100);
 	delete uploader;
-	*/
 }
 
 void DataMerger::initSpecific(char *const argv[]) {
 	datasCount = KhUtils::atoi(nextParam(argv));
+	inputDataAddresses = new NetworkAddress*[datasCount];
 	dataIds = new std::string*[datasCount];
 	dataIdsInt = new int[datasCount];
 	for (int i = 0; i < datasCount; i++) {
+		inputDataAddresses[i] = new NetworkAddress(nextParam(argv), nextParam(argv));
 		dataIds[i] = new std::string(nextParam(argv));
 		dataIdsInt[i] = KhUtils::atoi(dataIds[i]->c_str());
 		buffers[dataIdsInt[i]] = new SynchronizedBuffer();
-		/* TODO Conform to new parameters style
-		downloaders[dataIdsInt[i]] = new DataDownloader(dataAddress,
-			dataIds[i]->c_str(), buffers[dataIdsInt[0]]);
-			*/
+		downloaders[dataIdsInt[i]] = new DataDownloader(inputDataAddresses[i],
+			dataIds[i]->c_str(), buffers[dataIdsInt[i]]);
 	}
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
+
+	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	resultBuffer = new SynchronizedBuffer();
 }
 
@@ -122,6 +127,15 @@ void DataMerger::cleanupResources() {
 			delete dataIds[i];
 		}
 		delete [] dataIds;
+	}
+	if (inputDataAddresses != NULL) {
+		for (int i = 0; i < datasCount; i++) {
+			delete inputDataAddresses[i];
+		}
+		delete [] inputDataAddresses;
+	}
+	if (outputDataAddress != NULL) {
+		delete outputDataAddress;
 	}
 	if (dataIdsInt != NULL) {
 		delete [] dataIdsInt;
