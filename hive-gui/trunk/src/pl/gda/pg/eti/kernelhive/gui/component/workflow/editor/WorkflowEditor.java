@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.component.workflow;
+package pl.gda.pg.eti.kernelhive.gui.component.workflow.editor;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

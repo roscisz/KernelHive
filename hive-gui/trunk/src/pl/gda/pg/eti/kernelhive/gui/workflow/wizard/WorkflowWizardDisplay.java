@@ -47,7 +47,7 @@ public class WorkflowWizardDisplay implements IWorkflowWizardDisplay {
 		} catch (WizardPanelNotFoundException e) {
 			throw new WorkflowWizardDisplayException(e);
 		}
-		return wizard.showNonModalDialog();
+		return wizard.showModalDialog();
 	}
 	
 	@Override
@@ -69,5 +69,4 @@ public class WorkflowWizardDisplay implements IWorkflowWizardDisplay {
 			return null;
 		}
 	}
-
 }

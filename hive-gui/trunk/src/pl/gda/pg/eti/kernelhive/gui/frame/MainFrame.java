@@ -27,7 +27,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 
 import javax.swing.JTree;
@@ -111,9 +110,11 @@ public class MainFrame extends JFrame {
 	private JList repositoryList;
 	private JScrollPane projectScrollPane;
 	private JMenuItem mntmWorkflowEditor;
+	private JMenuItem mntmWorkflowExecutions;
 	private JScrollPane repositoryScrollPane;
 	
 	private MainFrameController controller;
+	
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));  
@@ -503,6 +504,16 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnTools.add(mntmWorkflowEditor);
+		
+		mntmWorkflowExecutions = new JMenuItem("Workflow Executions");
+		mntmWorkflowExecutions.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.openWorkflowViewer();
+			}
+		});
+		mnTools.add(mntmWorkflowExecutions);
 	}
 	
 	private void initHelpMenu(){

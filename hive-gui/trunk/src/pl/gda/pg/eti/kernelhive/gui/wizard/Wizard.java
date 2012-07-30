@@ -1,6 +1,7 @@
 package pl.gda.pg.eti.kernelhive.gui.wizard;
 
 import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -41,7 +42,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
 	private WizardModel model;
 	private WizardController controller;
 	private WizardDialog dialog;
-	private int returnCode;
+	private int returnCode = -1;
 
 	public Wizard() {
 		this((Frame) null);
@@ -165,7 +166,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
 	 * @return
 	 */
 	public int showModalDialog() {
-		dialog.setModal(true);
+		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
 		dialog.pack();
 		dialog.setVisible(true);
 		return returnCode;
@@ -180,7 +181,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
 	 * @return
 	 */
 	public int showNonModalDialog(){
-		dialog.setModal(false);
+		dialog.setModalityType(ModalityType.MODELESS);
 		dialog.pack();
 		dialog.setVisible(true);
 		return returnCode;

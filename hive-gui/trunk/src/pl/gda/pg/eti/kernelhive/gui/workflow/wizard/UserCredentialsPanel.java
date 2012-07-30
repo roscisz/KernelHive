@@ -1,7 +1,5 @@
 package pl.gda.pg.eti.kernelhive.gui.workflow.wizard;
 
-import java.awt.event.ActionListener;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;

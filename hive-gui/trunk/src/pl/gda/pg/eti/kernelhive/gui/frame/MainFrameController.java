@@ -22,7 +22,6 @@ import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfi
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeDecoratorConverter;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeDecoratorConverterException;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.impl.KernelRepository;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
@@ -33,7 +32,8 @@ import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor.SyntaxStyl
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileCellRenderer;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTree;
 import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTreeModel;
-import pl.gda.pg.eti.kernelhive.gui.component.workflow.WorkflowEditor;
+import pl.gda.pg.eti.kernelhive.gui.component.workflow.editor.WorkflowEditor;
+import pl.gda.pg.eti.kernelhive.gui.component.workflow.viewer.WorkflowViewer;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NewFileDialog;
@@ -329,6 +329,13 @@ public class MainFrameController {
 							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.title"),
 							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.text"));
 		}
+	}
+
+	public void openWorkflowViewer() {
+		WorkflowViewer wv = new WorkflowViewer(frame);
+		frame.getWorkspacePane().add(wv, 0);
+		JTabPanel tabControl = new JTabPanel(wv);
+		frame.getWorkspacePane().setTabComponentAt(0, tabControl);
 	}
 
 	/**

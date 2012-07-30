@@ -7,7 +7,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JButton;
+//import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
@@ -18,7 +18,7 @@ public class GraphValidationPanel extends JPanel {
 	private static final long serialVersionUID = -5013549974156444286L;
 	
 	private JTable table;
-	private JButton btnRevalidate;
+	//private JButton btnRevalidate;
 	
 	public GraphValidationPanel() {
 		setSize(new Dimension(450, 300));
@@ -37,13 +37,13 @@ public class GraphValidationPanel extends JPanel {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		
-		btnRevalidate = new JButton("Revalidate");
-		btnRevalidate.setBounds(12, 263, 117, 25);
-		add(btnRevalidate);
+//		btnRevalidate = new JButton("Revalidate");
+//		btnRevalidate.setBounds(12, 263, 117, 25);
+//		add(btnRevalidate);
 	}
 	
 	void addButtonActionListener(ActionListener l){
-		btnRevalidate.addActionListener(l);
+//		btnRevalidate.addActionListener(l);
 	}
 	
 	public void displayGraphValidationResults(List<ValidationResult> validationResults){
