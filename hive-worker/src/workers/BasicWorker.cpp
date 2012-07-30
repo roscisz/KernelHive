@@ -19,7 +19,6 @@ const char* BasicWorker::OUTPUT_BUFFER = "outputBuffer";
 // ========================================================================= //
 
 BasicWorker::BasicWorker(char **argv) : Worker(argv) {
-	//dataAddress = NULL;
 	kernelAddress = NULL;
 	device = NULL;
 	numberOfDimensions = 0;
@@ -125,17 +124,12 @@ void BasicWorker::init(char *const argv[]) {
 	kernelDataIdInt = KhUtils::atoi(kernelDataId.c_str());
 	buffers[kernelDataIdInt] = new SynchronizedBuffer();
 
-	//dataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-
 	setPercentDone(0);
 
 	initSpecific(argv);
 }
 
 void BasicWorker::deallocateResources() {
-//	if (dataAddress != NULL) {
-//		delete dataAddress;
-//	}
 	if (kernelAddress != NULL) {
 		delete kernelAddress;
 	}

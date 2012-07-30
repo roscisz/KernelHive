@@ -10,8 +10,11 @@ namespace KernelHive {
  * A worker which implements the dataPartitioner kernel logic.
  * Parameters currently expected as input:
  * <ul>
- *   <li>data identifier</li>
+ *   <li>input data host</li>
+ *   <li>input data port</li>
+ *   <li>input data identifier</li>
  *   <li>n - number of parts to split to</li>
+ *   <li>n pairs of output data host and port, one for each part after splitting</li>
  * </ul>
  */
 class DataPartitioner : public BasicWorker {

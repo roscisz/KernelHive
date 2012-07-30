@@ -73,9 +73,6 @@ protected:
 	/** The execution context name of the output data buffer. */
 	static const char* OUTPUT_BUFFER;
 
-	/** The address from which the data can be downloaded. */
-	//NetworkAddress* dataAddress;
-
 	/** The address from which the kernel can be downloaded. */
 	NetworkAddress* kernelAddress;
 
