@@ -19,7 +19,7 @@ const char* BasicWorker::OUTPUT_BUFFER = "outputBuffer";
 // ========================================================================= //
 
 BasicWorker::BasicWorker(char **argv) : Worker(argv) {
-	dataAddress = NULL;
+	//dataAddress = NULL;
 	kernelAddress = NULL;
 	device = NULL;
 	numberOfDimensions = 0;
@@ -95,13 +95,10 @@ const char* BasicWorker::getAllUploadIDStrings() {
 // ========================================================================= //
 
 void BasicWorker::init(char *const argv[]) {
-	dataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	kernelAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-
 	deviceId = nextParam(argv);
 	device = OpenClHost::getInstance()->lookupDevice(deviceId);
 	if (device == NULL) {
-		throw KernelHiveException("Device not found!");
+		throw KernelHiveException(deviceId);
 	}
 
 	context = new ExecutionContext(*device);
@@ -123,9 +120,12 @@ void BasicWorker::init(char *const argv[]) {
 		localSizes[i] = KhUtils::atoi(nextParam(argv));
 	}
 
+	kernelAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	kernelDataId = nextParam(argv);
 	kernelDataIdInt = KhUtils::atoi(kernelDataId.c_str());
 	buffers[kernelDataIdInt] = new SynchronizedBuffer();
+
+	//dataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 
 	setPercentDone(0);
 
@@ -133,9 +133,9 @@ void BasicWorker::init(char *const argv[]) {
 }
 
 void BasicWorker::deallocateResources() {
-	if (dataAddress != NULL) {
-		delete dataAddress;
-	}
+//	if (dataAddress != NULL) {
+//		delete dataAddress;
+//	}
 	if (kernelAddress != NULL) {
 		delete kernelAddress;
 	}

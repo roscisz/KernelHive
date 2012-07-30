@@ -21,6 +21,8 @@ const char* DataProcessor::KERNEL = "processData";
 // ========================================================================= //
 
 DataProcessor::DataProcessor(char **argv) : BasicWorker(argv) {
+	inputDataAddress = NULL;
+	outputDataAddress = NULL;
 	resultBuffer = NULL;
 }
 
@@ -37,13 +39,16 @@ const char* DataProcessor::getKernelName() {
 }
 
 void DataProcessor::initSpecific(char *const argv[]) {
+	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	dataId = nextParam(argv);
 	dataIdInt = KhUtils::atoi(dataId.c_str());
+
+	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 
 	buffers[dataIdInt] = new SynchronizedBuffer();
 	resultBuffer = new SynchronizedBuffer();
 
-	downloaders[dataIdInt] = new DataDownloader(dataAddress,
+	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
@@ -94,7 +99,7 @@ void DataProcessor::workSpecific() {
 	setPercentDone(90);
 
 	// Upload data to repository
-	uploaders.push_back(new DataUploader(dataAddress, resultBuffer));
+	uploaders.push_back(new DataUploader(outputDataAddress, resultBuffer));
 	runAllUploads();
 	waitForAllUploads();
 	setPercentDone(100);
@@ -107,6 +112,12 @@ void DataProcessor::workSpecific() {
 // ========================================================================= //
 
 void DataProcessor::cleanupResources() {
+	if (inputDataAddress != NULL) {
+		delete inputDataAddress;
+	}
+	if (outputDataAddress != NULL) {
+		delete outputDataAddress;
+	}
 	if (resultBuffer != NULL) {
 		delete resultBuffer;
 	}

@@ -11,7 +11,11 @@ namespace KernelHive {
  * A worker which implements the dataProcessor kernel logic.
  * Parameters currently expected as input:
  * <ul>
- *   <li>data identifier</li>
+ *   <li>input data host</li>
+ *   <li>input data port</li>
+ *   <li>input data identifier</li>
+ *   <li>output data host</li>
+ *   <li>output data port</li>
  * </ul>
  */
 class DataProcessor : public BasicWorker {
@@ -54,11 +58,17 @@ private:
 	/** The name of the Kernel to use by the DataProcessor worker. */
 	static const char* KERNEL;
 
+	/** The address from which the data can be downloaded. */
+	NetworkAddress* inputDataAddress;
+
 	/** The identifier which can be used to download data for this worker. */
 	std::string dataId;
 
 	/** The data identifier in the integer number form. */
 	int dataIdInt;
+
+	/** The address from which the data can be downloaded. */
+	NetworkAddress* outputDataAddress;
 
 	/** A buffer for storing the result of calculations. */
 	SynchronizedBuffer* resultBuffer;

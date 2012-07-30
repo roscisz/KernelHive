@@ -74,7 +74,7 @@ protected:
 	static const char* OUTPUT_BUFFER;
 
 	/** The address from which the data can be downloaded. */
-	NetworkAddress* dataAddress;
+	//NetworkAddress* dataAddress;
 
 	/** The address from which the kernel can be downloaded. */
 	NetworkAddress* kernelAddress;

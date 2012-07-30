@@ -85,11 +85,13 @@ void DataMerger::workSpecific() {
 	setPercentDone(90);
 
 	// Upload data to repository
+	/* TODO Conform to new parameters style
 	DataUploader* uploader = new DataUploader(dataAddress, resultBuffer);
 	threadManager->runThread(uploader);
 	threadManager->waitForThread(uploader);
 	setPercentDone(100);
 	delete uploader;
+	*/
 }
 
 void DataMerger::initSpecific(char *const argv[]) {
@@ -100,8 +102,10 @@ void DataMerger::initSpecific(char *const argv[]) {
 		dataIds[i] = new std::string(nextParam(argv));
 		dataIdsInt[i] = KhUtils::atoi(dataIds[i]->c_str());
 		buffers[dataIdsInt[i]] = new SynchronizedBuffer();
+		/* TODO Conform to new parameters style
 		downloaders[dataIdsInt[i]] = new DataDownloader(dataAddress,
 			dataIds[i]->c_str(), buffers[dataIdsInt[0]]);
+			*/
 	}
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);

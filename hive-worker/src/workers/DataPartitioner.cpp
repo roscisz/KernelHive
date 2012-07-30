@@ -83,7 +83,9 @@ void DataPartitioner::workSpecific() {
 		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, readOffset,
 				partDataSize*sizeof(byte), (void*)resultBuffers[i]->getRawData());
 		copyEvents[i] = &dataCopy;
+		/* TODO Conform to new parameters style
 		uploaders.push_back(new DataUploader(dataAddress, resultBuffers[i]));
+		*/
 		readOffset += partDataSize;
 	}
 	context->waitForEvents(partsCount, copyEvents);
@@ -106,8 +108,10 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 		resultBuffers[i] = new SynchronizedBuffer();
 	}
 
+	/* TODO Conform to new parameters style
 	downloaders[dataIdInt] = new DataDownloader(dataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
+			*/
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 }
