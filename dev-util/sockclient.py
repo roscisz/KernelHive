@@ -13,7 +13,7 @@ READ_BATCH = 20480
 INT_MAX = 2147483647
 OUTPUT_FILE = 'output'
 
-DATA_ID = '666'
+DATA_ID = str(random.randint(0, 100))
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -26,6 +26,8 @@ if __name__ == "__main__":
 		fsize = os.path.getsize(sys.argv[2])
 	else:
 		sys.exit("file not provided")
+
+	ofile = OUTPUT_FILE + DATA_ID;
 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -56,10 +58,10 @@ if __name__ == "__main__":
 			elif re.match(r'4 (\d+) (\d+)', msg):
 				matcher = re.match(r'4 (\d+) (\d+) (.*)', msg, re.DOTALL)
 				print 'Received a package of size ', matcher.group(2)
-				with open(OUTPUT_FILE, 'ab') as out:
+				with open(ofile, 'ab') as out:
 					out.write(matcher.group(3))
 			else:
-				with open(OUTPUT_FILE, 'ab') as out:
+				with open(ofile, 'ab') as out:
 					out.write(msg)
 
 		conn.close()
