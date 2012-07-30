@@ -17,6 +17,7 @@ const char* DataPartitioner::KERNEL = "partitionData";
 DataPartitioner::DataPartitioner(char **argv) : BasicWorker(argv) {
 	partsCount = 0;
 	totalDataSize = 0;
+	outputDataAddresses = NULL;
 	resultBuffers = NULL;
 }
 
@@ -83,9 +84,7 @@ void DataPartitioner::workSpecific() {
 		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, readOffset,
 				partDataSize*sizeof(byte), (void*)resultBuffers[i]->getRawData());
 		copyEvents[i] = &dataCopy;
-		/* TODO Conform to new parameters style
-		uploaders.push_back(new DataUploader(dataAddress, resultBuffers[i]));
-		*/
+		uploaders.push_back(new DataUploader(outputDataAddresses[i], resultBuffers[i]));
 		readOffset += partDataSize;
 	}
 	context->waitForEvents(partsCount, copyEvents);
@@ -97,21 +96,24 @@ void DataPartitioner::workSpecific() {
 }
 
 void DataPartitioner::initSpecific(char *const argv[]) {
+	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	dataId = nextParam(argv);
 	dataIdInt = KhUtils::atoi(dataId.c_str());
 
 	buffers[dataIdInt] = new SynchronizedBuffer();
 
+
 	partsCount = KhUtils::atoi(nextParam(argv));
 	resultBuffers = new SynchronizedBuffer*[partsCount];
+	outputDataAddresses = new NetworkAddress*[partsCount];
 	for (int i = 0; i < partsCount; i++) {
 		resultBuffers[i] = new SynchronizedBuffer();
+		outputDataAddresses[i] = new NetworkAddress(nextParam(argv), nextParam(argv));
 	}
 
-	/* TODO Conform to new parameters style
-	downloaders[dataIdInt] = new DataDownloader(dataAddress,
+	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
-			*/
+
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 }
@@ -121,6 +123,14 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 // ========================================================================= //
 
 void DataPartitioner::cleanupResources() {
+	if (outputDataAddresses != NULL) {
+			for (int i = 0; i < partsCount; i++) {
+				if (outputDataAddresses[i] != NULL) {
+					delete outputDataAddresses[i];
+				}
+			}
+			delete [] outputDataAddresses;
+		}
 	if (resultBuffers != NULL) {
 		for (int i = 0; i < partsCount; i++) {
 			if (resultBuffers[i] != NULL) {

@@ -52,6 +52,9 @@ private:
 	/** The number of parts to split input data to. */
 	int partsCount;
 
+	/** The address from which the data can be downloaded. */
+	NetworkAddress* inputDataAddress;
+
 	/** The total size of data received from all sources. */
 	size_t totalDataSize;
 
@@ -60,6 +63,9 @@ private:
 
 	/** The data identifier in the integer number form. */
 	int dataIdInt;
+
+	/** The network addresses to which outputs will be uploaded. */
+	NetworkAddress** outputDataAddresses;
 
 	/** Buffers array for storing data parts. */
 	SynchronizedBuffer** resultBuffers;
