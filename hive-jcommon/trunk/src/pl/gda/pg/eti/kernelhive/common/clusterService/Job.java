@@ -2,16 +2,22 @@ package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 
 public class Job extends HasID {
 	
 	public enum JobState {
-		WAITING,
+		PENDING,
 		READY,
 		SCHEDULED,
 		PROCESSING,
 		FINISHED
+	}
+	
+	public Job() {
+		
 	}
 
 	// TODO: forward properties to the node
@@ -28,8 +34,9 @@ public class Job extends HasID {
 	public Device device;
 	
 	private Task task;
+	@XmlTransient
 	public EngineGraphNodeDecorator node;
-	public JobState state = JobState.WAITING;
+	public JobState state = JobState.PENDING;
 	public int progress = -1;
 		
 	public Job(EngineGraphNodeDecorator node, Task task) {

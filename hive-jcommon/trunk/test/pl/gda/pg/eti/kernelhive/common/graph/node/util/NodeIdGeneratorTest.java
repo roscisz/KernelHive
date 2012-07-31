@@ -1,6 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.graph.node.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;

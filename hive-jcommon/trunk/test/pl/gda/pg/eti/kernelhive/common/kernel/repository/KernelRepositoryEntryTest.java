@@ -1,6 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.kernel.repository;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
 import java.util.ArrayList;

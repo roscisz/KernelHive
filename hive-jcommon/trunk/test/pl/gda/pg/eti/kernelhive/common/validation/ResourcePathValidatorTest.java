@@ -1,6 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 

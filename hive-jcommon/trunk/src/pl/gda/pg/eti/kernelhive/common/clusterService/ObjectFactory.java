@@ -24,7 +24,9 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _GetJobResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getJobResponse");
     private final static QName _UpdateResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "updateResponse");
+    private final static QName _GetJob_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getJob");
     private final static QName _Update_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "update");
 
     /**
@@ -32,14 +34,6 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link Cluster }
-     * 
-     */
-    public Cluster createCluster() {
-        return new Cluster();
     }
 
     /**
@@ -51,27 +45,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Unit }
+     * Create an instance of {@link GetJob }
      * 
      */
-    public Unit createUnit() {
-        return new Unit();
-    }
-
-    /**
-     * Create an instance of {@link UpdateResponse }
-     * 
-     */
-    public UpdateResponse createUpdateResponse() {
-        return new UpdateResponse();
-    }
-
-    /**
-     * Create an instance of {@link Update }
-     * 
-     */
-    public Update createUpdate() {
-        return new Update();
+    public GetJob createGetJob() {
+        return new GetJob();
     }
 
     /**
@@ -83,12 +61,78 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link UpdateResponse }
+     * 
+     */
+    public UpdateResponse createUpdateResponse() {
+        return new UpdateResponse();
+    }
+
+    /**
+     * Create an instance of {@link Unit }
+     * 
+     */
+    public Unit createUnit() {
+        return new Unit();
+    }
+
+    /**
+     * Create an instance of {@link GetJobResponse }
+     * 
+     */
+    public GetJobResponse createGetJobResponse() {
+        return new GetJobResponse();
+    }
+
+    /**
+     * Create an instance of {@link Cluster }
+     * 
+     */
+    public Cluster createCluster() {
+        return new Cluster();
+    }
+
+    /**
+     * Create an instance of {@link Update }
+     * 
+     */
+    public Update createUpdate() {
+        return new Update();
+    }
+
+    /**
+     * Create an instance of {@link Job }
+     * 
+     */
+    public Job createJob() {
+        return new Job();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetJobResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "getJobResponse")
+    public JAXBElement<GetJobResponse> createGetJobResponse(GetJobResponse value) {
+        return new JAXBElement<GetJobResponse>(_GetJobResponse_QNAME, GetJobResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "updateResponse")
     public JAXBElement<UpdateResponse> createUpdateResponse(UpdateResponse value) {
         return new JAXBElement<UpdateResponse>(_UpdateResponse_QNAME, UpdateResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetJob }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "getJob")
+    public JAXBElement<GetJob> createGetJob(GetJob value) {
+        return new JAXBElement<GetJob>(_GetJob_QNAME, GetJob.class, null, value);
     }
 
     /**

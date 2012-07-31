@@ -1,6 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.kernel.repository.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Before;

@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.RequestWrapper;
@@ -32,5 +33,16 @@ public interface ClusterBean {
     public void update(
         @WebParam(name = "arg0", targetNamespace = "")
         Cluster arg0);
+
+    /**
+     * 
+     * @return
+     *     returns pl.gda.pg.eti.kernelhive.common.clusterService.Job
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getJob", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.GetJob")
+    @ResponseWrapper(localName = "getJobResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.GetJobResponse")
+    public Job getJob();
 
 }
