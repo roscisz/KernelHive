@@ -266,5 +266,17 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		if(getFile()!=null){
 			loadContent(getFile());
 		}
+		setDirty(false);
+		getTabPanel().getLabel().setText(fileName);
+	}
+
+	@Override
+	public boolean saveContent() {
+		return saveContent(getFile());
+	}
+
+	@Override
+	public boolean loadContent() {
+		return loadContent(getFile());
 	}
 }

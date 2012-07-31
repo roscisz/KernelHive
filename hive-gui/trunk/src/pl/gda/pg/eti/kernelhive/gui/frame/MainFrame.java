@@ -54,8 +54,8 @@ public class MainFrame extends JFrame {
 	private JMenuItem mntmSaveAs;
 	private JMenuItem mntmSaveAll;
 	private JMenuItem mntmRefresh;
-	private JMenuItem mntmImport;
-	private JMenuItem mntmExport;
+	private JMenuItem mntmLogin;
+	private JMenuItem mntmLogout;
 	private JMenuItem mntmExit;
 	private JMenu mnEdit;
 	private JMenuItem mntmUndo;
@@ -248,27 +248,27 @@ public class MainFrame extends JFrame {
 		separator_3 = new JSeparator();
 		mnFile.add(separator_3);
 
-		mntmImport = new JMenuItem(BUNDLE.getString("MainFrame.mntmImport.text"));  
-		mntmImport.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Import16.gif")));
-		mntmImport.addActionListener(new ActionListener() {
+		mntmLogin = new JMenuItem(BUNDLE.getString("MainFrame.mntmImport.text"));  
+		mntmLogin.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Import16.gif")));
+		mntmLogin.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO Auto-generated method stub
 			}
 		});
-		mnFile.add(mntmImport);
+		mnFile.add(mntmLogin);
 
-		mntmExport = new JMenuItem(BUNDLE.getString("MainFrame.mntmExport.text"));  
-		mntmExport.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Export16.gif")));
-		mntmExport.addActionListener(new ActionListener() {
+		mntmLogout = new JMenuItem(BUNDLE.getString("MainFrame.mntmExport.text"));  
+		mntmLogout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Export16.gif")));
+		mntmLogout.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 			}
 		});
-		mnFile.add(mntmExport);
+		mnFile.add(mntmLogout);
 		
 		separator_4 = new JSeparator();
 		mnFile.add(separator_4);
@@ -738,19 +738,19 @@ public class MainFrame extends JFrame {
 	}
 
 	public JMenuItem getMntmImport() {
-		return mntmImport;
+		return mntmLogin;
 	}
 
 	public void setMntmImport(JMenuItem mntmImport) {
-		this.mntmImport = mntmImport;
+		this.mntmLogin = mntmImport;
 	}
 
 	public JMenuItem getMntmExport() {
-		return mntmExport;
+		return mntmLogout;
 	}
 
 	public void setMntmExport(JMenuItem mntmExport) {
-		this.mntmExport = mntmExport;
+		this.mntmLogout = mntmExport;
 	}
 
 	public JMenuItem getMntmExit() {

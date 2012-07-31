@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
@@ -91,7 +89,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 					guiNode.setY(dtde.getLocation().y);
 
 					// 4. add it to project
-					editor.project.addProjectNode(guiNode);
+					editor.getProject().addProjectNode(guiNode);
 
 					// 5. refresh graph
 					editor.refresh();

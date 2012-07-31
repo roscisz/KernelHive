@@ -28,6 +28,8 @@ import javax.swing.table.TableModel;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
+import java.awt.Rectangle;
+import java.awt.Dimension;
 
 /**
  * graph node properties dialog
@@ -50,10 +52,12 @@ public class NodePropertiesDialog extends JDialog {
 
 	public NodePropertiesDialog(MainFrame frame, GUIGraphNodeDecorator node) {
 		super(frame);
+		getContentPane().setSize(new Dimension(460, 500));
+		getContentPane().setPreferredSize(new Dimension(460, 500));
+		setPreferredSize(new Dimension(460, 500));
+		setBounds(new Rectangle(getParent().getX(), getParent().getY(), 460, 500));
 		this.frame = frame;
 		this.node = node;
-		this.setBounds(this.getParent().getWidth() / 2, this.getParent()
-				.getHeight() / 2, 438, 491);
 		getContentPane().setLayout(null);
 
 		JLabel lblName = new JLabel("Name");
@@ -166,7 +170,7 @@ public class NodePropertiesDialog extends JDialog {
 		JLabel lblProperties = new JLabel("Properties");
 		lblProperties.setBounds(12, 220, 92, 15);
 		getContentPane().add(lblProperties);
-
+		
 		fillSourceFilesList(node.getSourceFiles());
 		fillPropertiesTable(node.getGraphNode().getProperties());
 	}

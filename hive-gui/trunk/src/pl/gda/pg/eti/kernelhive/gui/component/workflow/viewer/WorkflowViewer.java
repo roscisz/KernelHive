@@ -14,9 +14,9 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 	
 	private WorkflowViewerPanel panel;
 	
-	public WorkflowViewer(MainFrame frame) {
+	public WorkflowViewer(MainFrame frame, String title) {
 		super(frame);
-		this.setName("Workflow Viewer");
+		this.setName(title);
 		panel = new WorkflowViewerPanel();
 		panel.addRefreshBtnActionListener(this);
 		add(panel);
@@ -62,12 +62,23 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	@Override
 	public void refresh() {
+		//TODO retrieve data
+		panel.refreshTableContents();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//TODO retrieve data
-		panel.refreshTableContents();		
+		refresh();	
+	}
+
+	@Override
+	public boolean saveContent() {
+		return true;
+	}
+
+	@Override
+	public boolean loadContent() {
+		return true;
 	}
 
 }

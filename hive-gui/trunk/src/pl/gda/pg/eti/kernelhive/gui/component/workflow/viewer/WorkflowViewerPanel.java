@@ -68,6 +68,7 @@ public class WorkflowViewerPanel extends JPanel {
 
 	private class WorkflowExecutionsTableModel extends AbstractTableModel {
 
+		private static final long serialVersionUID = 4135149168329669058L;
 		private final int columnSize = 4;
 		private final String[] columnNames = new String[] { "ID", "Name",
 				"Status", "Results" };
@@ -131,7 +132,5 @@ public class WorkflowViewerPanel extends JPanel {
 						columnIndex, TableModelEvent.UPDATE));
 			}
 		}
-
 	}
-
 }

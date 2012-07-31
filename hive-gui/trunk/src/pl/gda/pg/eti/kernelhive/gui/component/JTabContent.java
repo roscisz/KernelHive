@@ -30,11 +30,21 @@ public abstract class JTabContent extends JPanel {
 	 */
 	public abstract boolean saveContent(File file);
 	/**
+	 * saves content
+	 * @return true on success, false on failure
+	 */
+	public abstract boolean saveContent();
+	/**
 	 * Loads the content from specified file
 	 * @param file File
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean loadContent(File file);
+	/**
+	 * loads content
+	 * @return true on success, false on failure
+	 */
+	public abstract boolean loadContent();
 	/**
 	 * redo the last action
 	 */

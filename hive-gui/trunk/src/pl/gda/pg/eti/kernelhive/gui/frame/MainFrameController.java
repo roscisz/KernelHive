@@ -73,12 +73,33 @@ public class MainFrameController {
 		newFileCounter = 1;
 	}
 
+	private void addTabToWorkspacePane(JTabContent tab){
+		frame.getWorkspacePane().addTab(tab.getName(), tab);
+		int index = frame.getWorkspacePane().getTabCount() - 1;
+		frame.getWorkspacePane().setTabComponentAt(index, new JTabPanel(tab));
+		frame.getWorkspacePane().getModel().setSelectedIndex(index);
+	}
+
 	/**
 	 * closes project
 	 */
 	public void closeProject() {
 		saveAll();
 		saveProject();
+		project = null;
+		newFileCounter = 1;
+		frame.getProjectScrollPane().setViewportView(null);
+		frame.setProjectTree(null);
+		frame.getRepositoryScrollPane().setViewportView(null);
+		frame.setRepositoryList(null);
+		
+		
+		while(frame.getWorkspacePane().getTabCount()>0){
+			Component c = frame.getWorkspacePane().getTabComponentAt(0);
+			if (c instanceof JTabPanel) {
+				closeTab((JTabPanel) c);
+			}
+		}
 	}
 
 	/**
@@ -89,10 +110,10 @@ public class MainFrameController {
 	 */
 	public void closeTab(JTabPanel tab) {
 		JTabContent content;
+		int index = frame.getWorkspacePane().getSelectedIndex();
 		if (tab != null) {
 			content = tab.getTabContent();
 		} else {
-			int index = frame.getWorkspacePane().getSelectedIndex();
 			if (index != -1) {
 				content = (JTabContent) frame.getWorkspacePane()
 						.getComponentAt(index);
@@ -108,32 +129,19 @@ public class MainFrameController {
 					JOptionPane.YES_NO_CANCEL_OPTION);
 			if (result == JOptionPane.YES_OPTION) {
 				File f = content.getFile();
-				// File f = openedTabs.get(content);
 				if (f != null && f.exists()) {
 					content.saveContent(f);
 				} else {
-					NewFileDialog nfd = new NewFileDialog();
-					nfd.setVisible(true);
-					if (nfd.getStatus() == NewFileDialog.APPROVE_OPTION) {
-						try {
-							f = FileUtils.createNewFile(nfd.getFileDirectory()
-									+ System.getProperty("file.separator")
-									+ nfd.getFileName());
-							content.saveContent(f);
-						} catch (IOException e) {
-							LOG.severe("KH: cannot create new file!");
-							e.printStackTrace();
-						}
-					}
+					saveTabAs(tab);
 				}
-				frame.getWorkspacePane().remove(content);
+				frame.getWorkspacePane().removeTabAt(index);
 			} else if (result == JOptionPane.NO_OPTION) {
-				frame.getWorkspacePane().remove(content);
+				frame.getWorkspacePane().removeTabAt(index);
 			} else if (result == JOptionPane.CANCEL_OPTION) {
-
+				//do nothing
 			}
 		} else {
-			frame.getWorkspacePane().remove(content);
+			frame.getWorkspacePane().removeTabAt(index);
 		}
 	}
 
@@ -191,6 +199,7 @@ public class MainFrameController {
 	public void exit() {
 		saveAll();
 		saveProject();
+		frame.setVisible(false);
 		frame.dispose();
 	}
 
@@ -275,12 +284,16 @@ public class MainFrameController {
 						frame.getRepositoryList());
 
 				openWorkflowEditor();
+				
+				int a = frame.getWorkspacePane().getTabCount();
+				int b = frame.getWorkspacePane().getComponentCount();
+				a = 1;
 			} catch (ConfigurationException e) {
 				// TODO
 			}
 		}
 	}
-
+	
 	/**
 	 * opens new Tab and associates it with the given {@link File}
 	 * 
@@ -300,13 +313,7 @@ public class MainFrameController {
 			sourcePanel = new SourceCodeEditor(frame, "new" + newFileCounter);
 			newFileCounter++;
 		}
-		frame.getWorkspacePane().addTab(sourcePanel.getName(), sourcePanel);
-		frame.getWorkspacePane().setTabComponentAt(0,
-				new JTabPanel(sourcePanel));
-		int index = frame.getWorkspacePane().getTabCount() - 1;
-		frame.getWorkspacePane().setTabComponentAt(index,
-				new JTabPanel(sourcePanel));
-		frame.getWorkspacePane().getModel().setSelectedIndex(index);
+		addTabToWorkspacePane(sourcePanel);
 	}
 
 	/**
@@ -318,10 +325,7 @@ public class MainFrameController {
 					frame,
 					BUNDLE.getString("MainFrameController.openWorkflowEditor.workflowEditor.text"),
 					project);
-			frame.getWorkspacePane().add(editor, 0);
-			JTabPanel tabControl = new JTabPanel(editor);
-			editor.setFile(project.getProjectFile());
-			frame.getWorkspacePane().setTabComponentAt(0, tabControl);
+			addTabToWorkspacePane(editor);
 		} else {
 			MessageDialog
 					.showErrorDialog(
@@ -332,10 +336,11 @@ public class MainFrameController {
 	}
 
 	public void openWorkflowViewer() {
-		WorkflowViewer wv = new WorkflowViewer(frame);
-		frame.getWorkspacePane().add(wv, 0);
-		JTabPanel tabControl = new JTabPanel(wv);
-		frame.getWorkspacePane().setTabComponentAt(0, tabControl);
+		WorkflowViewer wv = new WorkflowViewer(frame, "Workflow Viewer");
+		addTabToWorkspacePane(wv);
+//		frame.getWorkspacePane().add(wv, 0);
+//		JTabPanel tabControl = new JTabPanel(wv);
+//		frame.getWorkspacePane().setTabComponentAt(0, tabControl);
 	}
 
 	/**
@@ -387,10 +392,12 @@ public class MainFrameController {
 		for (int i = 0; i < frame.getWorkspacePane().getTabCount(); i++) {
 			Component c = frame.getWorkspacePane().getTabComponentAt(i);
 			if (c instanceof JTabPanel) {
-				JTabContent tc = ((JTabPanel) c).getTabContent();
-				if (tc.getFile() != null) {
-					tc.saveContent(tc.getFile());
-				}
+				saveTab((JTabPanel) c);
+//				
+//				JTabContent tc = ((JTabPanel) c).getTabContent();
+//				if (tc.getFile() != null) {
+//					tc.saveContent(tc.getFile());
+//				}
 			}
 		}
 	}
@@ -399,11 +406,13 @@ public class MainFrameController {
 	 * saves project
 	 */
 	public void saveProject() {
-		try {
-			project.save();
-		} catch (ConfigurationException e) {
-			LOG.warning("KH: could not save project");
-			e.printStackTrace();
+		if(project!=null){
+			try {
+				project.save();
+			} catch (ConfigurationException e) {
+				LOG.warning("KH: could not save project");
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -423,29 +432,8 @@ public class MainFrameController {
 					index);
 		}
 
-		File f = content.getFile();
-		if (f != null && f.exists()) {
-			content.saveContent(f);
-		} else {
-			NewFileDialog nfd = new NewFileDialog();
-			nfd.setVisible(true);
-			if (nfd.getStatus() == NewFileDialog.APPROVE_OPTION) {
-				try {
-					f = FileUtils.createNewFile(nfd.getFileDirectory()
-							+ System.getProperty("file.separator")
-							+ nfd.getFileName());
-					if (f == null) {
-						// TODO overwrite file?
-					} else {
-						content.setFile(f);
-						content.saveContent(f);
-						tab.getLabel().setText(content.getName());
-					}
-				} catch (IOException e) {
-					LOG.severe("KH: cannot create new file!");
-					e.printStackTrace();
-				}
-			}
+		if(!content.saveContent()){
+			saveTabAs(tab);
 		}
 	}
 

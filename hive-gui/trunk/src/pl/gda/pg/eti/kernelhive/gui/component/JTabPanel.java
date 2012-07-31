@@ -120,8 +120,7 @@ public class JTabPanel extends JPanel {
 			int i = pane.indexOfComponent(content);
 			if(i != -1){
 				content.getFrame().getController().closeTab(JTabPanel.this);
-			}
-			
+			}			
 		}
 		
 		@Override

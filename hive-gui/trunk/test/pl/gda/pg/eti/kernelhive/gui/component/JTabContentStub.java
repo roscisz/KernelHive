@@ -69,4 +69,16 @@ public class JTabContentStub extends JTabContent {
 		
 	}
 
+	@Override
+	public boolean saveContent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean loadContent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
