@@ -9,8 +9,10 @@ import javax.jws.WebService;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Task;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IClientBeanRemote;
@@ -33,11 +35,11 @@ public class ClientBean implements IClientBeanRemote {
 
 	@Override
 	@WebMethod
-	public Integer runTask(String serializedGraphConf) {
+	public Integer runWorkflow(String serializedGraphConf) {
 		EngineGraphConfiguration egc = new EngineGraphConfiguration();
 		try {
 			List<EngineGraphNodeDecorator> nodes = egc.loadGraphForEngine(new StringReader(ClientBean.serializedGraphConf));
-			return HiveEngine.getInstance().runTask(nodes);
+			return HiveEngine.getInstance().runWorkflow(nodes);
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 			return null;
@@ -45,27 +47,30 @@ public class ClientBean implements IClientBeanRemote {
 	}
 
 	@Override
-	public List<Task> browseTasks() {
+	@WebMethod
+	public List<WorkflowInfo> browseWorkflows() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@WebMethod
 	public String getResults(Integer taskID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void deleteTask(Integer taskID) {
+	@WebMethod
+	public void deleteWorkflow(Integer taskID) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<Cluster> browseInfrastructure() {
-		// TODO Auto-generated method stub
-		return null;
+	@WebMethod
+	public List<ClusterInfo> browseInfrastructure() {	
+		return HiveEngine.getInstance().getInfrastructureInfo();
 	}
 
 }

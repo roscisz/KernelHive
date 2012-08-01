@@ -5,21 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Task;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleDeviceOptimizer;
-import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleJobOptimizer;
-import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleTaskOptimizer;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 
 public class HiveEngine {
 	
 	private static HiveEngine instance;
 	
 	private Map<String, Cluster> clusters = new HashMap<String, Cluster>();
-	private Map<Integer, Task> tasks = new HashMap<Integer, Task>();
+	private Map<Integer, Workflow> tasks = new HashMap<Integer, Workflow>();
 		
 	private HiveEngine() {
 		
@@ -37,40 +36,25 @@ public class HiveEngine {
 		System.out.println("Engine knows about clusters: " + clusters);
 	}
 	
-	public Integer runTask(List<EngineGraphNodeDecorator> nodes) {
-		Task newTask = initializeTask(nodes);
-		tasks.put(newTask.ID, newTask);		
-		processTask(newTask);		
-		return newTask.ID;
+	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes) {
+		Workflow newWorkflow = initializeTask(nodes);
+		tasks.put(newWorkflow.ID, newWorkflow);
+
+		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(newWorkflow);
+		 
+		for(Job job : readyJobs) {
+			job.run();
+		}	
+		
+		return newWorkflow.ID;
 	}
 	
-	private Task initializeTask(List<EngineGraphNodeDecorator> nodes) {
-		Task newTask = new Task(nodes);
+	private Workflow initializeTask(List<EngineGraphNodeDecorator> nodes) {
+		Workflow newTask = new Workflow(nodes);
 
 		// TODO: coś jeszcze? Jeśli nie, to ta metoda jest niepotrzebna :P
 		
 		return newTask;
-	}
-
-	private void processTask(Task task) {
-		List<Job> readyJobs = task.getReadyJobs();
-		
-		if(readyJobs.size() == 0) {
-			if(task.checkFinished())
-				; // przygotowujemy wyniki do pobrania
-			else
-				; // coś się zablokowało			
-		}
-		
-		readyJobs = new SimpleTaskOptimizer().arrangeJobs(readyJobs);
-		
-		List<Device> devices = new SimpleDeviceOptimizer().arrangeDevices(clusters.values());
-		
-		readyJobs = new SimpleJobOptimizer().scheduleJobs(readyJobs, devices);
-		
-		for(Job job : readyJobs) {
-			job.run();			
-		}							
 	}
 	
 	public void cleanup() {
@@ -85,6 +69,19 @@ public class HiveEngine {
 
 	public Cluster getCluster(String ip) {
 		return clusters.get(ip);
+	}
+
+	public List<Cluster> getInfrastructure() {
+		return new ArrayList<Cluster>(clusters.values());
+	}
+
+	public List<ClusterInfo> getInfrastructureInfo() {
+		List<ClusterInfo> ret = new ArrayList<ClusterInfo>();
+		
+		for(Cluster cluster : clusters.values())
+			ret.add(cluster.getClusterInfo());
+		
+		return ret;
 	}
 
 }
