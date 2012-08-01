@@ -24,16 +24,16 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _BrowseTasksResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseTasksResponse");
-    private final static QName _DeleteTaskResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "deleteTaskResponse");
+    private final static QName _BrowseWorkflows_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseWorkflows");
+    private final static QName _DeleteWorkflowResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "deleteWorkflowResponse");
     private final static QName _GetResults_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getResults");
-    private final static QName _RunTaskResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "runTaskResponse");
-    private final static QName _RunTask_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "runTask");
+    private final static QName _BrowseWorkflowsResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseWorkflowsResponse");
     private final static QName _GetResultsResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getResultsResponse");
-    private final static QName _BrowseTasks_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseTasks");
+    private final static QName _DeleteWorkflow_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "deleteWorkflow");
     private final static QName _BrowseInfrastructureResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseInfrastructureResponse");
-    private final static QName _DeleteTask_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "deleteTask");
+    private final static QName _RunWorkflowResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "runWorkflowResponse");
     private final static QName _BrowseInfrastructure_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseInfrastructure");
+    private final static QName _RunWorkflow_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "runWorkflow");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: pl.gda.pg.eti.kernelhive.common.clientService
@@ -43,11 +43,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetResults }
+     * Create an instance of {@link RunWorkflow }
      * 
      */
-    public GetResults createGetResults() {
-        return new GetResults();
+    public RunWorkflow createRunWorkflow() {
+        return new RunWorkflow();
+    }
+
+    /**
+     * Create an instance of {@link RunWorkflowResponse }
+     * 
+     */
+    public RunWorkflowResponse createRunWorkflowResponse() {
+        return new RunWorkflowResponse();
+    }
+
+    /**
+     * Create an instance of {@link BrowseWorkflows }
+     * 
+     */
+    public BrowseWorkflows createBrowseWorkflows() {
+        return new BrowseWorkflows();
     }
 
     /**
@@ -59,43 +75,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RunTaskResponse }
+     * Create an instance of {@link WorkflowInfo }
      * 
      */
-    public RunTaskResponse createRunTaskResponse() {
-        return new RunTaskResponse();
+    public WorkflowInfo createWorkflowInfo() {
+        return new WorkflowInfo();
     }
 
     /**
-     * Create an instance of {@link TaskInfo }
+     * Create an instance of {@link DeleteWorkflow }
      * 
      */
-    public TaskInfo createTaskInfo() {
-        return new TaskInfo();
-    }
-
-    /**
-     * Create an instance of {@link BrowseInfrastructureResponse }
-     * 
-     */
-    public BrowseInfrastructureResponse createBrowseInfrastructureResponse() {
-        return new BrowseInfrastructureResponse();
-    }
-
-    /**
-     * Create an instance of {@link BrowseTasks }
-     * 
-     */
-    public BrowseTasks createBrowseTasks() {
-        return new BrowseTasks();
-    }
-
-    /**
-     * Create an instance of {@link BrowseTasksResponse }
-     * 
-     */
-    public BrowseTasksResponse createBrowseTasksResponse() {
-        return new BrowseTasksResponse();
+    public DeleteWorkflow createDeleteWorkflow() {
+        return new DeleteWorkflow();
     }
 
     /**
@@ -107,19 +99,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RunTask }
+     * Create an instance of {@link BrowseWorkflowsResponse }
      * 
      */
-    public RunTask createRunTask() {
-        return new RunTask();
+    public BrowseWorkflowsResponse createBrowseWorkflowsResponse() {
+        return new BrowseWorkflowsResponse();
     }
 
     /**
-     * Create an instance of {@link DeleteTaskResponse }
+     * Create an instance of {@link BrowseInfrastructureResponse }
      * 
      */
-    public DeleteTaskResponse createDeleteTaskResponse() {
-        return new DeleteTaskResponse();
+    public BrowseInfrastructureResponse createBrowseInfrastructureResponse() {
+        return new BrowseInfrastructureResponse();
+    }
+
+    /**
+     * Create an instance of {@link DeleteWorkflowResponse }
+     * 
+     */
+    public DeleteWorkflowResponse createDeleteWorkflowResponse() {
+        return new DeleteWorkflowResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetResults }
+     * 
+     */
+    public GetResults createGetResults() {
+        return new GetResults();
     }
 
     /**
@@ -131,29 +139,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DeleteTask }
+     * Create an instance of {@link JAXBElement }{@code <}{@link BrowseWorkflows }{@code >}}
      * 
      */
-    public DeleteTask createDeleteTask() {
-        return new DeleteTask();
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "browseWorkflows")
+    public JAXBElement<BrowseWorkflows> createBrowseWorkflows(BrowseWorkflows value) {
+        return new JAXBElement<BrowseWorkflows>(_BrowseWorkflows_QNAME, BrowseWorkflows.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BrowseTasksResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteWorkflowResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "browseTasksResponse")
-    public JAXBElement<BrowseTasksResponse> createBrowseTasksResponse(BrowseTasksResponse value) {
-        return new JAXBElement<BrowseTasksResponse>(_BrowseTasksResponse_QNAME, BrowseTasksResponse.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteTaskResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "deleteTaskResponse")
-    public JAXBElement<DeleteTaskResponse> createDeleteTaskResponse(DeleteTaskResponse value) {
-        return new JAXBElement<DeleteTaskResponse>(_DeleteTaskResponse_QNAME, DeleteTaskResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "deleteWorkflowResponse")
+    public JAXBElement<DeleteWorkflowResponse> createDeleteWorkflowResponse(DeleteWorkflowResponse value) {
+        return new JAXBElement<DeleteWorkflowResponse>(_DeleteWorkflowResponse_QNAME, DeleteWorkflowResponse.class, null, value);
     }
 
     /**
@@ -166,21 +166,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RunTaskResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link BrowseWorkflowsResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "runTaskResponse")
-    public JAXBElement<RunTaskResponse> createRunTaskResponse(RunTaskResponse value) {
-        return new JAXBElement<RunTaskResponse>(_RunTaskResponse_QNAME, RunTaskResponse.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RunTask }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "runTask")
-    public JAXBElement<RunTask> createRunTask(RunTask value) {
-        return new JAXBElement<RunTask>(_RunTask_QNAME, RunTask.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "browseWorkflowsResponse")
+    public JAXBElement<BrowseWorkflowsResponse> createBrowseWorkflowsResponse(BrowseWorkflowsResponse value) {
+        return new JAXBElement<BrowseWorkflowsResponse>(_BrowseWorkflowsResponse_QNAME, BrowseWorkflowsResponse.class, null, value);
     }
 
     /**
@@ -193,12 +184,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BrowseTasks }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteWorkflow }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "browseTasks")
-    public JAXBElement<BrowseTasks> createBrowseTasks(BrowseTasks value) {
-        return new JAXBElement<BrowseTasks>(_BrowseTasks_QNAME, BrowseTasks.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "deleteWorkflow")
+    public JAXBElement<DeleteWorkflow> createDeleteWorkflow(DeleteWorkflow value) {
+        return new JAXBElement<DeleteWorkflow>(_DeleteWorkflow_QNAME, DeleteWorkflow.class, null, value);
     }
 
     /**
@@ -211,12 +202,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteTask }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link RunWorkflowResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "deleteTask")
-    public JAXBElement<DeleteTask> createDeleteTask(DeleteTask value) {
-        return new JAXBElement<DeleteTask>(_DeleteTask_QNAME, DeleteTask.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "runWorkflowResponse")
+    public JAXBElement<RunWorkflowResponse> createRunWorkflowResponse(RunWorkflowResponse value) {
+        return new JAXBElement<RunWorkflowResponse>(_RunWorkflowResponse_QNAME, RunWorkflowResponse.class, null, value);
     }
 
     /**
@@ -226,6 +217,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "browseInfrastructure")
     public JAXBElement<BrowseInfrastructure> createBrowseInfrastructure(BrowseInfrastructure value) {
         return new JAXBElement<BrowseInfrastructure>(_BrowseInfrastructure_QNAME, BrowseInfrastructure.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RunWorkflow }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "runWorkflow")
+    public JAXBElement<RunWorkflow> createRunWorkflow(RunWorkflow value) {
+        return new JAXBElement<RunWorkflow>(_RunWorkflow_QNAME, RunWorkflow.class, null, value);
     }
 
 }

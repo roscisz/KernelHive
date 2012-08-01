@@ -8,12 +8,16 @@ import java.util.Map;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 
-public class Task extends HasID {
+public class Workflow extends HasID {
 	
 	private Map<Integer, Job> jobs = new Hashtable<Integer, Job>();
 	private List<Job> readyJobs = new ArrayList<Job>();
 	
-	public Task(List<EngineGraphNodeDecorator> graph) {
+	public enum WorkflowState {
+		
+	}
+	
+	public Workflow(List<EngineGraphNodeDecorator> graph) {
 		super();
 				
 		for(EngineGraphNodeDecorator node : graph) {

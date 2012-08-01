@@ -33,13 +33,13 @@ public class Job extends HasID {
 	
 	public Device device;
 	
-	private Task task;
+	private Workflow task;
 	@XmlTransient
 	public EngineGraphNodeDecorator node;
 	public JobState state = JobState.PENDING;
 	public int progress = -1;
 		
-	public Job(EngineGraphNodeDecorator node, Task task) {
+	public Job(EngineGraphNodeDecorator node, Workflow task) {
 		this.node = node;
 		this.task = task;	
 	}		

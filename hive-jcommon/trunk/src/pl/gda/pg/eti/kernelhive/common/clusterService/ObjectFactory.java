@@ -61,6 +61,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Update }
+     * 
+     */
+    public Update createUpdate() {
+        return new Update();
+    }
+
+    /**
      * Create an instance of {@link UpdateResponse }
      * 
      */
@@ -90,14 +98,6 @@ public class ObjectFactory {
      */
     public Cluster createCluster() {
         return new Cluster();
-    }
-
-    /**
-     * Create an instance of {@link Update }
-     * 
-     */
-    public Update createUpdate() {
-        return new Update();
     }
 
     /**

@@ -40,31 +40,6 @@ public interface ClientBean {
 
     /**
      * 
-     * @param arg0
-     * @return
-     *     returns java.lang.Integer
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "runTask", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunTask")
-    @ResponseWrapper(localName = "runTaskResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunTaskResponse")
-    public Integer runTask(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0);
-
-    /**
-     * 
-     * @param arg0
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteTask", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteTask")
-    @ResponseWrapper(localName = "deleteTaskResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteTaskResponse")
-    public void deleteTask(
-        @WebParam(name = "arg0", targetNamespace = "")
-        Integer arg0);
-
-    /**
-     * 
      * @return
      *     returns java.util.List<pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo>
      */
@@ -76,13 +51,38 @@ public interface ClientBean {
 
     /**
      * 
+     * @param arg0
      * @return
-     *     returns java.util.List<pl.gda.pg.eti.kernelhive.common.clientService.TaskInfo>
+     *     returns java.lang.Integer
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "browseTasks", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.BrowseTasks")
-    @ResponseWrapper(localName = "browseTasksResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.BrowseTasksResponse")
-    public List<TaskInfo> browseTasks();
+    @RequestWrapper(localName = "runWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunWorkflow")
+    @ResponseWrapper(localName = "runWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunWorkflowResponse")
+    public Integer runWorkflow(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
+
+    /**
+     * 
+     * @return
+     *     returns java.util.List<pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "browseWorkflows", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.BrowseWorkflows")
+    @ResponseWrapper(localName = "browseWorkflowsResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.BrowseWorkflowsResponse")
+    public List<WorkflowInfo> browseWorkflows();
+
+    /**
+     * 
+     * @param arg0
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteWorkflow")
+    @ResponseWrapper(localName = "deleteWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteWorkflowResponse")
+    public void deleteWorkflow(
+        @WebParam(name = "arg0", targetNamespace = "")
+        Integer arg0);
 
 }
