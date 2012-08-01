@@ -132,7 +132,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public boolean removeFollowingNode(IGraphNode node) {
-		if (followingNodes.contains(node)) {
+		if (node!=null && followingNodes.contains(node)) {
 			boolean result = followingNodes.remove(node);
 			result &= node.removePreviousNode(this);
 			return result;
@@ -154,7 +154,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public boolean removePreviousNode(IGraphNode node) {
-		if (previousNodes.contains(node)) {
+		if (node!=null && previousNodes.contains(node)) {
 			boolean result = previousNodes.remove(node);
 			result &= node.removeFollowingNode(this);
 			return result;
