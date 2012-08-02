@@ -36,5 +36,4 @@ public class GraphExecution implements IGraphExecution {
 		}
 		return 0;
 	}
-
 }
