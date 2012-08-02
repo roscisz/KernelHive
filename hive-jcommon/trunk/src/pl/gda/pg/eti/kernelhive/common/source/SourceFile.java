@@ -2,8 +2,12 @@ package pl.gda.pg.eti.kernelhive.common.source;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 
 /**
  * 
@@ -47,5 +51,17 @@ public class SourceFile implements ISourceFile, Serializable {
 	@Override
 	public Map<String, Object> getProperties() {
 		return properties;
+	}
+
+	@Override
+	public List<ValidationResult> validate() {
+		List<ValidationResult> result = new ArrayList<ValidationResult>();
+		
+		return result;		
+	}
+
+	@Override
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
 	}
 }

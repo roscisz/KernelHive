@@ -5,6 +5,9 @@
 				name="kernel.cl" 
 				src="/kernels/generic/kernel.cl">
 			<kh:property key="required" value="true"/>
+			<kh:property key="globalSize" value="1 1 1"/>
+			<kh:property key="localSize" value="1 1 1"/>
+			<kh:property key="offset" value="1 1 1"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="processor" description="Processor Graph Node">
@@ -12,6 +15,9 @@
 		 		name="kernel.cl" 
 		 		src="/kernels/processor/kernel.cl">
 			<kh:property key="required" value="true"/>
+			<kh:property key="globalSize" value="1 1 1"/>
+			<kh:property key="localSize" value="1 1 1"/>
+			<kh:property key="offset" value="1 1 1"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="merger" description="Merger Graph Node">
@@ -19,6 +25,9 @@
 		 		name="kernel.cl" 
 		 		src="/kernels/merger/kernel.cl">
 			<kh:property key="required" value="true"/>
+			<kh:property key="globalSize" value="1 1 1"/>
+			<kh:property key="localSize" value="1 1 1"/>
+			<kh:property key="offset" value="1 1 1"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="partitioner" description="Partitioner Graph Node">
@@ -26,6 +35,9 @@
 		 		name="kernel.cl" 
 		 		src="/kernels/partitioner/kernel.cl">
 			<kh:property key="required" value="true"/>
+			<kh:property key="globalSize" value="1 1 1"/>
+			<kh:property key="localSize" value="1 1 1"/>
+			<kh:property key="offset" value="1 1 1"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="composite" description="Composite Graph Node">
@@ -33,6 +45,9 @@
 		 		name="kernel.cl" 
 		 		src="/kernels/composite/kernel.cl">
 			<kh:property key="required" value="true"/>
+			<kh:property key="globalSize" value="1 1 1"/>
+			<kh:property key="localSize" value="1 1 1"/>
+			<kh:property key="offset" value="1 1 1"/>
 		</kh:kernel>
 	</kh:entry>
 </kh:repository>
