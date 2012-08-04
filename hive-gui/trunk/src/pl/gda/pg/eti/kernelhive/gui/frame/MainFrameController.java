@@ -38,10 +38,11 @@ import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NewProjectDialog;
-import pl.gda.pg.eti.kernelhive.gui.graph.execution.GraphExecution;
-import pl.gda.pg.eti.kernelhive.gui.graph.execution.IGraphExecution;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.impl.KernelHiveProject;
+import pl.gda.pg.eti.kernelhive.gui.workflow.execution.WorkflowExecution;
+import pl.gda.pg.eti.kernelhive.gui.workflow.execution.IWorkflowExecution;
+import pl.gda.pg.eti.kernelhive.gui.workflow.execution.WorkflowExecutionListener;
 import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.IWorkflowWizardDisplay;
 import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplay;
 import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplayException;
@@ -285,9 +286,6 @@ public class MainFrameController {
 
 				openWorkflowEditor();
 				
-				int a = frame.getWorkspacePane().getTabCount();
-				int b = frame.getWorkspacePane().getComponentCount();
-				a = 1;
 			} catch (ConfigurationException e) {
 				// TODO
 			}
@@ -506,8 +504,16 @@ public class MainFrameController {
 	public void startWorkflowGraphExecution() {
 		IEngineGraphConfiguration engConfig = new EngineGraphConfiguration();
 		StringWriter w = new StringWriter();
-		IGraphExecution execution = new GraphExecution();
 		IWorkflowWizardDisplay wizardDisplay;
+		IWorkflowExecution execution = new WorkflowExecution();
+		execution.addWorkflowExecutionListener(new WorkflowExecutionListener() {
+			
+			@Override
+			public void workflowSubmissionCompleted(Integer workflowId) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		if (project != null) {
 			try {
@@ -515,15 +521,15 @@ public class MainFrameController {
 						"Send Workflow To Execution", project);
 				if (wizardDisplay.displayWizard() == IWorkflowWizardDisplay.WIZARD_FINISH_RETURN_CODE) {
 					engConfig.setProjectName(project.getProjectName());
+					engConfig.setInputDataURL(wizardDisplay.getInputDataUrl().toExternalForm());
 					engConfig.saveGraphForEngine(GraphNodeDecoratorConverter
 							.convertGuiToEngine(project.getProjectNodes()), w);
 					byte[] graphStream = w.getBuffer().toString()
-							.getBytes("utf-8");
-					execution.setInputDataUrl(wizardDisplay.getInputDataUrl());
+							.getBytes("utf-8");					
 					execution.setUsername(wizardDisplay.getUsername());
 					execution.setPassword(wizardDisplay.getPassword());
 					execution.setSerializedGraphStream(graphStream);
-					execution.execute();
+					execution.submitForExecution();
 				}
 			} catch (WorkflowWizardDisplayException e) {
 				MessageDialog.showErrorDialog(frame, "Error",

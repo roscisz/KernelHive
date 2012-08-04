@@ -17,6 +17,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
+
 public class WorkflowViewerPanel extends JPanel {
 
 	private static final long serialVersionUID = -2548380853826858288L;
@@ -39,11 +41,11 @@ public class WorkflowViewerPanel extends JPanel {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 
-		fillWorkflowExecutionsTable();
+		fillWorkflowExecutionsTable(null);
 	}
 
-	private void fillWorkflowExecutionsTable() {
-		WorkflowExecutionsTableModel model = new WorkflowExecutionsTableModel();
+	private void fillWorkflowExecutionsTable(List<WorkflowInfo> workflows) {
+		WorkflowExecutionsTableModel model = new WorkflowExecutionsTableModel(workflows);
 		table.setModel(model);
 		table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.SINGLE_SELECTION);
@@ -58,8 +60,8 @@ public class WorkflowViewerPanel extends JPanel {
 		btnRefresh.removeActionListener(l);
 	}
 	
-	public void refreshTableContents(){
-		fillWorkflowExecutionsTable();
+	public void reloadTableContents(List<WorkflowInfo> workflows){
+		fillWorkflowExecutionsTable(workflows);
 	}
 	
 	public void selectAllTableContents(){
@@ -76,7 +78,7 @@ public class WorkflowViewerPanel extends JPanel {
 				String.class, String.class, URL.class };
 		List<Object[]> data = new ArrayList<Object[]>();
 
-		public WorkflowExecutionsTableModel() {
+		public WorkflowExecutionsTableModel(List<WorkflowInfo> workflows) {
 			super();
 		}
 

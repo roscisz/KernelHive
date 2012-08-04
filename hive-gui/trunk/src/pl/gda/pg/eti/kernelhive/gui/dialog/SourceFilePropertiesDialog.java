@@ -11,7 +11,6 @@ import java.util.Set;
 import javax.swing.JDialog;
 
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
-import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -174,6 +173,8 @@ public class SourceFilePropertiesDialog extends JDialog {
 	}
 	
 	private class PropertiesTableModel extends AbstractTableModel{
+		private static final long serialVersionUID = -1313805087006665662L;
+		
 		private List<Object[]> dynamicArray;
 
 		public PropertiesTableModel(Map<String, Object> properties) {

@@ -3,7 +3,10 @@ package pl.gda.pg.eti.kernelhive.gui.component.workflow.viewer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.ClientBeanService;
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
@@ -13,6 +16,7 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	
 	private WorkflowViewerPanel panel;
+	
 	
 	public WorkflowViewer(MainFrame frame, String title) {
 		super(frame);
@@ -62,8 +66,10 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	@Override
 	public void refresh() {
+		ClientBeanService proxy = new ClientBeanService();
+		List<WorkflowInfo> workflows = proxy.getClientBeanPort().browseWorkflows();
 		//TODO retrieve data
-		panel.refreshTableContents();
+		panel.reloadTableContents(workflows);
 	}
 
 	@Override
