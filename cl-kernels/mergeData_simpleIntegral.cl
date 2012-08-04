@@ -1,5 +1,5 @@
 // The goal of this kernel is to sum the results of earlier integral processing
-__kernel void mergeData(__global const float* input, unsigned int dataSize, unsigned int partsCount, __global float* output) {
+__kernel void mergeData(__global const float* input, unsigned int dataSize, unsigned int partsCount, __global float* output, unsigned int outputSize) {
  
     // Get the index of the current element to be processed
     int id = get_global_id(0);

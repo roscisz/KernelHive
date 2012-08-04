@@ -49,11 +49,9 @@ void DataMerger::workSpecific() {
 		totalDataSize += buffers[dataIdsInt[i]]->getSize();
 	}
 
-	resultBuffer->allocate(totalDataSize); // Allocate local result buffer
-
 	// Allocate input and output buffers on the device
 	context->createBuffer(INPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_READ_ONLY);
-	context->createBuffer(OUTPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_WRITE_ONLY);
+	context->createBuffer(OUTPUT_BUFFER, outputSize*sizeof(byte), CL_MEM_WRITE_ONLY);
 
 	// Begin copying data to the device
 	size_t copyOffset = 0;
@@ -79,6 +77,7 @@ void DataMerger::workSpecific() {
 	context->setValueArg(1, sizeof(unsigned int), (void*)&totalDataSize);
 	context->setValueArg(2, sizeof(unsigned int), (void*)&datasCount);
 	context->setBufferArg(3, OUTPUT_BUFFER);
+	context->setValueArg(4, sizeof(unsigned int), (void*)&outputSize);
 
 	// Execute the kernel
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
@@ -86,7 +85,7 @@ void DataMerger::workSpecific() {
 	setPercentDone(80);
 
 	// Copy the result:
-	context->read(OUTPUT_BUFFER, 0, totalDataSize*sizeof(byte), (void*)resultBuffer->getRawData());
+	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffer->getRawData());
 	setPercentDone(90);
 
 	// Upload data to repository
@@ -114,7 +113,7 @@ void DataMerger::initSpecific(char *const argv[]) {
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	resultBuffer = new SynchronizedBuffer();
+	resultBuffer = new SynchronizedBuffer(outputSize);
 }
 
 // ========================================================================= //
