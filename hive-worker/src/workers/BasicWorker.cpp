@@ -119,6 +119,8 @@ void BasicWorker::init(char *const argv[]) {
 		localSizes[i] = KhUtils::atoi(nextParam(argv));
 	}
 
+	outputSize = (size_t)KhUtils::atoi(nextParam(argv));
+
 	kernelAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	kernelDataId = nextParam(argv);
 	kernelDataIdInt = KhUtils::atoi(kernelDataId.c_str());

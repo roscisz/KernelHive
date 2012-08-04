@@ -100,6 +100,9 @@ protected:
 	/** Local workgroup sizes in each dimension. */
 	size_t* localSizes;
 
+	/** Defines the size of the output that will be produced by this worker. */
+	size_t outputSize;
+
 	/** The OpenCL device which will be used for execution. */
 	OpenClDevice* device;
 
