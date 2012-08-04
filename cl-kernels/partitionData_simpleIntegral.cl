@@ -1,5 +1,5 @@
 // The goal of this kernel is to create a range of values which will be used to calculate an integral.
-__kernel void partitionData(__global const float* input, unsigned int dataSize, unsigned int partsCount, __global float* output) {
+__kernel void partitionData(__global const float* input, unsigned int dataSize, unsigned int partsCount, __global float* output, unsigned int outputSize) {
  
     // Get the index of the current element to be processed
     int id = get_global_id(0);

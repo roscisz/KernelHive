@@ -41,16 +41,16 @@ void DataPartitioner::workSpecific() {
 	setPercentDone(40);
 
 	totalDataSize = buffers[dataIdInt]->getSize();
-	size_t partDataSize = totalDataSize / partsCount;
+	size_t outputPartDataSize = outputSize / partsCount;
 
 	// Allocate local result buffers
 	for (int i = 0; i < partsCount; i++) {
-		resultBuffers[i]->allocate(partDataSize);
+		resultBuffers[i]->allocate(outputPartDataSize);
 	}
 
 	// Allocate input and output buffers on the device
 	context->createBuffer(INPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_READ_ONLY);
-	context->createBuffer(OUTPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_WRITE_ONLY);
+	context->createBuffer(OUTPUT_BUFFER, outputSize*sizeof(byte), CL_MEM_WRITE_ONLY);
 
 	// Begin copying data to the device
 	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
@@ -71,6 +71,7 @@ void DataPartitioner::workSpecific() {
 	context->setValueArg(1, sizeof(unsigned int), (void*)&totalDataSize);
 	context->setValueArg(2, sizeof(unsigned int), (void*)&partsCount);
 	context->setBufferArg(3, OUTPUT_BUFFER);
+	context->setValueArg(4, sizeof(unsigned int), (void*)&outputSize);
 
 	// Execute the kernel
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
@@ -82,10 +83,10 @@ void DataPartitioner::workSpecific() {
 	OpenClEvent** copyEvents = new OpenClEvent*[partsCount];
 	for (int i = 0; i < partsCount; i++) {
 		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, readOffset,
-				partDataSize*sizeof(byte), (void*)resultBuffers[i]->getRawData());
+				outputPartDataSize*sizeof(byte), (void*)resultBuffers[i]->getRawData());
 		copyEvents[i] = &dataCopy;
 		uploaders.push_back(new DataUploader(outputDataAddresses[i], resultBuffers[i]));
-		readOffset += partDataSize;
+		readOffset += outputPartDataSize;
 	}
 	context->waitForEvents(partsCount, copyEvents);
 	setPercentDone(90);
