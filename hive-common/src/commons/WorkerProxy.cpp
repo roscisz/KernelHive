@@ -45,7 +45,7 @@ void WorkerProxy::forkAndExec(char *binaryPath, char *const argv[]) {
 
 WorkerProxy *WorkerProxy::create(char *params) {
 	// TODO: worker factory
-	return new WorkerProxy("../build/hive-worker/DataPartitioner", params);
+	return new WorkerProxy("../build/hive-worker/DataProcessor", params);
 }
 
 WorkerProxy::~WorkerProxy() {
