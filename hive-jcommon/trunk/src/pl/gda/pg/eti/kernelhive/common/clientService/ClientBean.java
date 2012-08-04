@@ -34,7 +34,7 @@ public interface ClientBean {
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "getResults", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.GetResults")
     @ResponseWrapper(localName = "getResultsResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.GetResultsResponse")
-    public String getResults(
+    public String getWorkflowResults(
         @WebParam(name = "arg0", targetNamespace = "")
         Integer arg0);
 
@@ -59,7 +59,7 @@ public interface ClientBean {
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "runWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunWorkflow")
     @ResponseWrapper(localName = "runWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunWorkflowResponse")
-    public Integer runWorkflow(
+    public Integer submitWorkflow(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0);
 
@@ -81,7 +81,7 @@ public interface ClientBean {
     @WebMethod
     @RequestWrapper(localName = "deleteWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteWorkflow")
     @ResponseWrapper(localName = "deleteWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteWorkflowResponse")
-    public void deleteWorkflow(
+    public void terminateWorkflow(
         @WebParam(name = "arg0", targetNamespace = "")
         Integer arg0);
 
