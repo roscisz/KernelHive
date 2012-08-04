@@ -35,7 +35,7 @@ public class ClientBean implements IClientBeanRemote {
 
 	@Override
 	@WebMethod
-	public Integer runWorkflow(String serializedGraphConf) {
+	public Integer submitWorkflow(String serializedGraphConf) {
 		EngineGraphConfiguration egc = new EngineGraphConfiguration();
 		try {
 			List<EngineGraphNodeDecorator> nodes = egc.loadGraphForEngine(new StringReader(ClientBean.serializedGraphConf));
@@ -55,14 +55,14 @@ public class ClientBean implements IClientBeanRemote {
 
 	@Override
 	@WebMethod
-	public String getResults(Integer taskID) {
+	public String getWorkflowResults(Integer taskID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	@WebMethod
-	public void deleteWorkflow(Integer taskID) {
+	public void terminateWorkflow(Integer taskID) {
 		// TODO Auto-generated method stub
 		
 	}

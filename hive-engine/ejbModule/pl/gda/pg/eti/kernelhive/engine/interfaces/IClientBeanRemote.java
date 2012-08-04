@@ -12,10 +12,10 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
 public interface IClientBeanRemote {
 	
 	// TODO: uwierzytelnienie
-	public Integer runWorkflow(String graphConfigurationString);
+	public Integer submitWorkflow(String graphConfigurationString);
 	public List<WorkflowInfo> browseWorkflows();
-	public String getResults(Integer workflowID);
-	public void deleteWorkflow(Integer workflowID);
+	public String getWorkflowResults(Integer workflowID);
+	public void terminateWorkflow(Integer workflowID);
 	public List<ClusterInfo> browseInfrastructure();
 
 }
