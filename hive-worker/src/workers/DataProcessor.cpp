@@ -46,7 +46,7 @@ void DataProcessor::initSpecific(char *const argv[]) {
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 
 	buffers[dataIdInt] = new SynchronizedBuffer();
-	resultBuffer = new SynchronizedBuffer();
+	resultBuffer = new SynchronizedBuffer(outputSize);
 
 	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
@@ -64,11 +64,9 @@ void DataProcessor::workSpecific() {
 
 	size_t size = buffers[dataIdInt]->getSize();
 
-	resultBuffer->allocate(size); // Allocate local result buffer
-
 	// Allocate input and output buffers on the device
 	context->createBuffer(INPUT_BUFFER, size*sizeof(byte), CL_MEM_READ_ONLY);
-	context->createBuffer(OUTPUT_BUFFER, size*sizeof(byte), CL_MEM_WRITE_ONLY);
+	context->createBuffer(OUTPUT_BUFFER, outputSize*sizeof(byte), CL_MEM_WRITE_ONLY);
 
 	// Begin copying data to the device
 	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
@@ -88,6 +86,7 @@ void DataProcessor::workSpecific() {
 	context->setBufferArg(0, INPUT_BUFFER);
 	context->setValueArg(1, sizeof(unsigned int), (void*)&size);
 	context->setBufferArg(2, OUTPUT_BUFFER);
+	context->setValueArg(3, sizeof(unsigned int), (void*)&outputSize);
 
 	// Execute the kernel
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
@@ -95,7 +94,7 @@ void DataProcessor::workSpecific() {
 	setPercentDone(80);
 
 	// Copy the result:
-	context->read(OUTPUT_BUFFER, 0, size*sizeof(byte), (void*)resultBuffer->getRawData());
+	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffer->getRawData());
 	setPercentDone(90);
 
 	// Upload data to repository
