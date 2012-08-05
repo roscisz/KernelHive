@@ -4,18 +4,18 @@ __kernel void partitionData(__global const float* input, unsigned int dataSize, 
     // Get the index of the current element to be processed
     int id = get_global_id(0);
     // Get the number of data items per processing thread
-    int itemsPerThread = outputSize / get_global_size();
+    int actualItemsCount = outputSize / sizeof(float);
+    int itemsPerThread = actualItemsCount / get_global_size(0);
     
-    // Get data spread bound:
+    // Get data spread bound:        
     float start = input[0];
     float end = input[1];
     
     // Get the delta:
-    float delta = (to - from) / dataSize;
-    
+    float delta = (end - start) / actualItemsCount;
     for (int i = 0; i < itemsPerThread; i++) {
         int idx = (id*itemsPerThread)+i;
-        output[idx] = from + (idx * delta);
-    }        
+        output[idx] = start + (idx * delta);
+    } 
 }
 
