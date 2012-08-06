@@ -7,9 +7,11 @@ __kernel void processData(__global const float* input, unsigned int dataSize, __
     int actualItemsCount = outputSize / sizeof(float);
     int itemsPerThread = actualItemsCount / get_global_size(0);
     
+    float delta = input[1] - input[0];
+    
     for (int i = 0; i < itemsPerThread; i++) {
         int idx = (id*itemsPerThread)+i;
-        output[idx] = exp(input[idx]);
+        output[idx] = exp(input[idx]) * delta;
     }        
 }
 
