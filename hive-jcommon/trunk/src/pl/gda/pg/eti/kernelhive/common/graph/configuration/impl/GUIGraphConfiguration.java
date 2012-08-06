@@ -124,7 +124,9 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 	@Override
 	public List<GUIGraphNodeDecorator> loadGraphForGUI(File file)
 			throws ConfigurationException {
+		XMLConfiguration temp = (XMLConfiguration) config.clone();
 		try {
+			config.clear();
 			config.setFile(file);
 			config.load();
 			// config.validate();//TODO attach schema
@@ -132,6 +134,8 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		} catch (ConfigurationException e) {
 			LOG.severe("KH: could not load gui graph from file: "
 					+ file.getPath() + " " + e.getMessage());
+			config = temp;
+			config.save();
 			throw e;
 		}
 	}

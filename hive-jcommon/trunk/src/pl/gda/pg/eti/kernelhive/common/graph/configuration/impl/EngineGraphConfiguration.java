@@ -155,7 +155,10 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 	@Override
 	public List<EngineGraphNodeDecorator> loadGraphForEngine(File file)
 			throws ConfigurationException {
+		XMLConfiguration temp = null;
 		try {
+			temp = (XMLConfiguration) config.clone();
+			config.clear();
 			config.setFile(file);
 			config.load();
 			// config.validate();//TODO attach schema
@@ -163,6 +166,8 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		} catch (ConfigurationException e) {
 			LOG.severe("KH: could not load engine graph from file: "
 					+ file.getPath() + " " + e.getMessage());
+			config = temp;
+			config.save();
 			throw e;
 		}
 	}

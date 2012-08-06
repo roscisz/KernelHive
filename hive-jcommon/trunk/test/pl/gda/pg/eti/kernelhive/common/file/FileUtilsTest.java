@@ -114,7 +114,9 @@ public class FileUtilsTest {
 	
 	@Test
 	public void testTranslateAbsoluteToRelativePath(){
-		//TODO test!
+		String basePath = "/etc";
+		String pathToTranslate = "/etc/init.d";
+		String result = FileUtils.translateAbsoluteToRelativePath(basePath, pathToTranslate);
+		assertEquals("./init.d", result);
 	}
-
 }

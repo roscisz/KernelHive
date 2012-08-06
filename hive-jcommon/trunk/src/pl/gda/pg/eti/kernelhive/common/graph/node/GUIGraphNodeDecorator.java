@@ -64,4 +64,41 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 	public String toString() {
 		return node.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((sourceFiles == null) ? 0 : sourceFiles.hashCode()) + ((node == null) ? 0 : node.hashCode());
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GUIGraphNodeDecorator other = (GUIGraphNodeDecorator) obj;
+		if (sourceFiles == null) {
+			if (other.sourceFiles != null)
+				return false;
+		} else if (!sourceFiles.equals(other.sourceFiles))
+			return false;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		if(node == null){
+			if(other.getGraphNode()!=null)
+				return false;
+		} else if(!node.equals(other.getGraphNode()))
+			return false;
+		return true;
+	}
 }
