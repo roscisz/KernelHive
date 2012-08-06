@@ -5,10 +5,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
-import pl.gda.pg.eti.kernelhive.common.clientService.ClientBeanService;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
+import pl.gda.pg.eti.kernelhive.gui.networking.IWorkflowService;
+import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowService;
+import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceListenerAdapter;
 
 public class WorkflowViewer extends JTabContent implements ActionListener {
 
@@ -16,14 +18,22 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	
 	private WorkflowViewerPanel panel;
-	
-	
+	private IWorkflowService service;
+	private WorkflowServiceListenerAdapter adapter;
+		
 	public WorkflowViewer(MainFrame frame, String title) {
 		super(frame);
 		this.setName(title);
 		panel = new WorkflowViewerPanel();
 		panel.addRefreshBtnActionListener(this);
 		add(panel);
+		service = new WorkflowService();
+		adapter = new WorkflowServiceListenerAdapter() {
+			@Override
+			public void workflowBrowseCompleted(List<WorkflowInfo> workflowInfo) {
+				panel.reloadTableContents(workflowInfo);
+			}
+		};
 	}
 
 	@Override
@@ -66,10 +76,7 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	@Override
 	public void refresh() {
-		ClientBeanService proxy = new ClientBeanService();
-		List<WorkflowInfo> workflows = proxy.getClientBeanPort().browseWorkflows();
-		//TODO retrieve data
-		panel.reloadTableContents(workflows);
+		service.browseWorkflows(adapter);
 	}
 
 	@Override

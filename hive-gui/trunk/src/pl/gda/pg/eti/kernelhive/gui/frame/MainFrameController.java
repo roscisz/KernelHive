@@ -74,7 +74,7 @@ public class MainFrameController {
 		newFileCounter = 1;
 	}
 
-	private void addTabToWorkspacePane(JTabContent tab){
+	private void addTabToWorkspacePane(JTabContent tab) {
 		frame.getWorkspacePane().addTab(tab.getName(), tab);
 		int index = frame.getWorkspacePane().getTabCount() - 1;
 		frame.getWorkspacePane().setTabComponentAt(index, new JTabPanel(tab));
@@ -93,9 +93,8 @@ public class MainFrameController {
 		frame.setProjectTree(null);
 		frame.getRepositoryScrollPane().setViewportView(null);
 		frame.setRepositoryList(null);
-		
-		
-		while(frame.getWorkspacePane().getTabCount()>0){
+
+		while (frame.getWorkspacePane().getTabCount() > 0) {
 			Component c = frame.getWorkspacePane().getTabComponentAt(0);
 			if (c instanceof JTabPanel) {
 				closeTab((JTabPanel) c);
@@ -139,7 +138,6 @@ public class MainFrameController {
 			} else if (result == JOptionPane.NO_OPTION) {
 				frame.getWorkspacePane().removeTabAt(index);
 			} else if (result == JOptionPane.CANCEL_OPTION) {
-				//do nothing
 			}
 		} else {
 			frame.getWorkspacePane().removeTabAt(index);
@@ -255,6 +253,7 @@ public class MainFrameController {
 	 * opens project
 	 */
 	public void openProject() {
+		File file = null;
 		JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fc.setAcceptAllFileFilterUsed(false);
@@ -263,7 +262,7 @@ public class MainFrameController {
 		fc.setFileFilter(ff);
 		if (fc.showDialog(frame.getContentPane(), "Select") == JFileChooser.APPROVE_OPTION) {
 			try {
-				File file = fc.getSelectedFile();
+				file = fc.getSelectedFile();
 				project = new KernelHiveProject(file.getParentFile(), null);
 				project.setProjectFile(file);
 				project.load();
@@ -285,13 +284,18 @@ public class MainFrameController {
 						frame.getRepositoryList());
 
 				openWorkflowEditor();
-				
+
 			} catch (ConfigurationException e) {
-				// TODO
+				MessageDialog.showErrorDialog(
+						frame,
+						"Error",
+						"Could not open the project file: "
+								+ file.getAbsolutePath() + " Reason: "
+								+ e.getMessage());
 			}
 		}
 	}
-	
+
 	/**
 	 * opens new Tab and associates it with the given {@link File}
 	 * 
@@ -336,9 +340,6 @@ public class MainFrameController {
 	public void openWorkflowViewer() {
 		WorkflowViewer wv = new WorkflowViewer(frame, "Workflow Viewer");
 		addTabToWorkspacePane(wv);
-//		frame.getWorkspacePane().add(wv, 0);
-//		JTabPanel tabControl = new JTabPanel(wv);
-//		frame.getWorkspacePane().setTabComponentAt(0, tabControl);
 	}
 
 	/**
@@ -391,11 +392,6 @@ public class MainFrameController {
 			Component c = frame.getWorkspacePane().getTabComponentAt(i);
 			if (c instanceof JTabPanel) {
 				saveTab((JTabPanel) c);
-//				
-//				JTabContent tc = ((JTabPanel) c).getTabContent();
-//				if (tc.getFile() != null) {
-//					tc.saveContent(tc.getFile());
-//				}
 			}
 		}
 	}
@@ -404,7 +400,7 @@ public class MainFrameController {
 	 * saves project
 	 */
 	public void saveProject() {
-		if(project!=null){
+		if (project != null) {
 			try {
 				project.save();
 			} catch (ConfigurationException e) {
@@ -430,7 +426,7 @@ public class MainFrameController {
 					index);
 		}
 
-		if(!content.saveContent()){
+		if (!content.saveContent()) {
 			saveTabAs(tab);
 		}
 	}
@@ -459,7 +455,12 @@ public class MainFrameController {
 						+ System.getProperty("file.separator")
 						+ nfd.getFileName());
 				if (f == null) {
-					// TODO overwrite file?
+					MessageDialog.showErrorDialog(
+							frame,
+							"Error",
+							"The file: " + nfd.getFileDirectory()
+									+ System.getProperty("file.separator")
+									+ nfd.getFileName() + " already exists");
 				} else {
 					content.saveContent(f);
 					if (content.getFile() == null) {
@@ -472,7 +473,6 @@ public class MainFrameController {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	/**
@@ -507,11 +507,12 @@ public class MainFrameController {
 		IWorkflowWizardDisplay wizardDisplay;
 		IWorkflowExecution execution = new WorkflowExecution();
 		execution.addWorkflowExecutionListener(new WorkflowExecutionListener() {
-			
+
 			@Override
 			public void workflowSubmissionCompleted(Integer workflowId) {
-				// TODO Auto-generated method stub
-				
+				MessageDialog.showErrorDialog(frame, "Success",
+						"Workflow send to execution. Workflow ID is "
+								+ workflowId);
 			}
 		});
 
@@ -521,11 +522,12 @@ public class MainFrameController {
 						"Send Workflow To Execution", project);
 				if (wizardDisplay.displayWizard() == IWorkflowWizardDisplay.WIZARD_FINISH_RETURN_CODE) {
 					engConfig.setProjectName(project.getProjectName());
-					engConfig.setInputDataURL(wizardDisplay.getInputDataUrl().toExternalForm());
+					engConfig.setInputDataURL(wizardDisplay.getInputDataUrl()
+							.toExternalForm());
 					engConfig.saveGraphForEngine(GraphNodeDecoratorConverter
 							.convertGuiToEngine(project.getProjectNodes()), w);
 					byte[] graphStream = w.getBuffer().toString()
-							.getBytes("utf-8");					
+							.getBytes("utf-8");
 					execution.setUsername(wizardDisplay.getUsername());
 					execution.setPassword(wizardDisplay.getPassword());
 					execution.setSerializedGraphStream(graphStream);

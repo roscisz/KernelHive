@@ -7,7 +7,6 @@ import javax.swing.ListSelectionModel;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow.WorkflowState;
 
 public class WorkflowViewerPanel extends JPanel {
 
@@ -74,12 +74,16 @@ public class WorkflowViewerPanel extends JPanel {
 		private final int columnSize = 4;
 		private final String[] columnNames = new String[] { "ID", "Name",
 				"Status", "Results" };
-		private final Class[] columnClasses = new Class[] { String.class,
-				String.class, String.class, URL.class };
+		@SuppressWarnings("rawtypes")
+		private final Class[] columnClasses = new Class[] { Integer.class,
+				String.class, WorkflowState.class, String.class };
 		List<Object[]> data = new ArrayList<Object[]>();
 
 		public WorkflowExecutionsTableModel(List<WorkflowInfo> workflows) {
 			super();
+			for(WorkflowInfo wi : workflows){
+				data.add(new Object[] {wi.ID, wi.name, wi.state, wi.result});
+			}
 		}
 
 		@Override

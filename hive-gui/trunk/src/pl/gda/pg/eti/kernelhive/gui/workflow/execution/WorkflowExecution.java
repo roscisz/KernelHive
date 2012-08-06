@@ -24,7 +24,9 @@ public class WorkflowExecution implements IWorkflowExecution {
 		serviceAdapter = new WorkflowServiceListenerAdapter() {
 			@Override
 			public void submitWorkflowCompleted(Integer workflowId) {
-				
+				for(WorkflowExecutionListener l : listeners){
+					l.workflowSubmissionCompleted(workflowId);
+				}
 			}
 		};
 	}
@@ -53,14 +55,16 @@ public class WorkflowExecution implements IWorkflowExecution {
 
 	@Override
 	public void addWorkflowExecutionListener(WorkflowExecutionListener listener) {
-		// TODO Auto-generated method stub
-		
+		if(!listeners.contains(listener)){
+			listeners.add(listener);
+		}
 	}
 
 	@Override
 	public void removeWorkflowExecutionListener(
 			WorkflowExecutionListener listener) {
-		// TODO Auto-generated method stub
-		
+		if(listeners.contains(listener)){
+			listeners.remove(listener);
+		}
 	}
 }
