@@ -14,7 +14,20 @@ public class Workflow extends HasID {
 	private List<Job> readyJobs = new ArrayList<Job>();
 	
 	public enum WorkflowState {
+		PENDING("pending"), COMPLETED("completed"), 
+		TERMINATED("terminated"), SUBMITTED("submitted"),
+		ERROR("error"), WARNING("warning"), PROCESSING("processing");
 		
+		private String state;
+		
+		WorkflowState(String state){
+			this.state = state;
+		}
+		
+		@Override
+		public String toString(){
+			return state;
+		}		
 	}
 	
 	public Workflow(List<EngineGraphNodeDecorator> graph) {
