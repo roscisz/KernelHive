@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.xml.ws.WebServiceException;
+
 import pl.gda.pg.eti.kernelhive.common.clientService.ClientBeanService;
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
@@ -18,11 +20,14 @@ public class WorkflowService implements IWorkflowService {
 	private ExecutorService executorService;
 	private ClientBeanService clientService;	
 	
-	public WorkflowService(){
+	public WorkflowService() throws WorkflowServiceException{
 		executorService = Executors.newFixedThreadPool(5);
+		try{
 		clientService = new ClientBeanService();
+		} catch(WebServiceException e){
+			throw new WorkflowServiceException(e);
+		}
 	}
-
 
 	@Override
 	public void browseInfrastructure(final WorkflowServiceListener listener) {

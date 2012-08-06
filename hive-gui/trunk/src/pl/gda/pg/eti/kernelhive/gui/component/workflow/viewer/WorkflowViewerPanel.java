@@ -81,8 +81,10 @@ public class WorkflowViewerPanel extends JPanel {
 
 		public WorkflowExecutionsTableModel(List<WorkflowInfo> workflows) {
 			super();
-			for(WorkflowInfo wi : workflows){
-				data.add(new Object[] {wi.ID, wi.name, wi.state, wi.result});
+			if(workflows!=null){
+				for(WorkflowInfo wi : workflows){
+					data.add(new Object[] {wi.ID, wi.name, wi.state, wi.result});
+				}
 			}
 		}
 

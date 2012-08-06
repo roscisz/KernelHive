@@ -10,6 +10,7 @@ import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.networking.IWorkflowService;
 import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowService;
+import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceException;
 import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceListenerAdapter;
 
 public class WorkflowViewer extends JTabContent implements ActionListener {
@@ -27,13 +28,17 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 		panel = new WorkflowViewerPanel();
 		panel.addRefreshBtnActionListener(this);
 		add(panel);
-		service = new WorkflowService();
-		adapter = new WorkflowServiceListenerAdapter() {
-			@Override
-			public void workflowBrowseCompleted(List<WorkflowInfo> workflowInfo) {
-				panel.reloadTableContents(workflowInfo);
-			}
-		};
+		try {
+			service = new WorkflowService();
+			adapter = new WorkflowServiceListenerAdapter() {
+				@Override
+				public void workflowBrowseCompleted(List<WorkflowInfo> workflowInfo) {
+					panel.reloadTableContents(workflowInfo);
+				}
+			};
+		} catch (WorkflowServiceException e) {
+			e.printStackTrace();
+		}		
 	}
 
 	@Override

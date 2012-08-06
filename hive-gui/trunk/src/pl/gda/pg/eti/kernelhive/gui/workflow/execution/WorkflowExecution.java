@@ -4,6 +4,7 @@ import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.gui.networking.IWorkflowService;
 import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowService;
+import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceException;
 import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceListenerAdapter;
 
 public class WorkflowExecution implements IWorkflowExecution {
@@ -11,12 +12,16 @@ public class WorkflowExecution implements IWorkflowExecution {
 	private byte[] graphStream = null;
 	private String username = null;
 	private char[] password = null;
-	private IWorkflowService service;
-	private WorkflowServiceListenerAdapter serviceAdapter;
+	private IWorkflowService service = null;
+	private WorkflowServiceListenerAdapter serviceAdapter = null;
 	private List<WorkflowExecutionListener> listeners;
 	
 	public WorkflowExecution(){
-		service = new WorkflowService();
+		try {
+			service = new WorkflowService();
+		} catch (WorkflowServiceException e) {
+			e.printStackTrace();
+		}
 		initListeners();
 	}
 	
@@ -48,7 +53,7 @@ public class WorkflowExecution implements IWorkflowExecution {
 
 	@Override
 	public void submitForExecution() {
-		if(graphStream!=null){
+		if(graphStream!=null&&service!=null){
 			service.submitWorkflow(new String(graphStream), serviceAdapter);
 		}	
 	}
