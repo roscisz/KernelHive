@@ -10,11 +10,13 @@ import javax.swing.ListSelectionModel;
 
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class RepositoryViewer extends JList {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5736151002744175310L;
 
 	public RepositoryViewer() {

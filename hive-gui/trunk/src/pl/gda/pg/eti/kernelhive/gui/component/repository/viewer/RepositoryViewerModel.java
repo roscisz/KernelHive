@@ -8,7 +8,11 @@ import javax.swing.event.ListDataListener;
 
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 
-
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class RepositoryViewerModel implements ListModel {
 
 	private List<KernelRepositoryEntry> list;

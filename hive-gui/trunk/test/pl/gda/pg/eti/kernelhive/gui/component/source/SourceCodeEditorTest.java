@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.component;
+package pl.gda.pg.eti.kernelhive.gui.component.source;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
 import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor;
 import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor.SyntaxStyle;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;

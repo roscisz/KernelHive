@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.gui.component;
+package pl.gda.pg.eti.kernelhive.gui.component.source;
 
 import static org.junit.Assert.*;
 
