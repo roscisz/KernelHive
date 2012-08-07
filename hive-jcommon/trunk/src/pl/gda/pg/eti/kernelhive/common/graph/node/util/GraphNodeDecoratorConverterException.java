@@ -1,4 +1,6 @@
-package pl.gda.pg.eti.kernelhive.common.graph.node;
+package pl.gda.pg.eti.kernelhive.common.graph.node.util;
+
+import pl.gda.pg.eti.kernelhive.common.graph.node.AbstractGraphNodeDecorator;
 
 public class GraphNodeDecoratorConverterException extends Exception {
 

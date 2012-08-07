@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
+import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverter;
+import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverterException;
 
 public class GraphNodeDecoratorConverterTest {
 

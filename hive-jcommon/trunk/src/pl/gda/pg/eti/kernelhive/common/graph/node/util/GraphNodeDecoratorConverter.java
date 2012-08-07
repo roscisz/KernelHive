@@ -1,10 +1,12 @@
-package pl.gda.pg.eti.kernelhive.common.graph.node;
+package pl.gda.pg.eti.kernelhive.common.graph.node.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
+import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.common.source.KernelString;

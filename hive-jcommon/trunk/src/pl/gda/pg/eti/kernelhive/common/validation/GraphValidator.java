@@ -3,21 +3,47 @@ package pl.gda.pg.eti.kernelhive.common.validation;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeExtractor;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 /**
  * @author mschally
- *
+ * 
  */
 public class GraphValidator {
 
 	/**
-	 * 
-	 * @param graphNodes - list of graph nodes to validate
+	 * validates graph
+	 * @param graph - list of graph node decorators
 	 * @return list of {@link ValidationResult} objects
 	 */
-	public static List<ValidationResult> validateGraph(
+	public static List<ValidationResult> validateGraphForGUI(
+			List<GUIGraphNodeDecorator> graph) {
+		List<ValidationResult> result = new ArrayList<ValidationResult>();
+		List<IGraphNode> graphNodes = GraphNodeExtractor
+				.extractGraphNodesForGUI(graph);
+		result.addAll(validateGraphNodes(graphNodes));
+		for (GUIGraphNodeDecorator a : graph) {
+			result.addAll(a.validate());
+		}
+		return result;
+	}
+	
+	public static List<ValidationResult> validateGraphForEngine(List<EngineGraphNodeDecorator> graph){
+		List<ValidationResult> result = new ArrayList<ValidationResult>();
+		List<IGraphNode> graphNodes = GraphNodeExtractor
+				.extractGraphNodesForEngine(graph);
+		result.addAll(validateGraphNodes(graphNodes));
+		for (EngineGraphNodeDecorator a : graph) {
+			result.addAll(a.validate());
+		}
+		return result;
+	}
+
+	private static List<ValidationResult> validateGraphNodes(
 			List<IGraphNode> graphNodes) {
 		List<ValidationResult> results = new ArrayList<ValidationResult>();
 		results.addAll(validateStartGraphNodes(graphNodes));
