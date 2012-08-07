@@ -2,11 +2,9 @@ package pl.gda.pg.eti.kernelhive.gui.workflow.wizard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.validation.GraphValidator;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
@@ -46,11 +44,7 @@ public class GraphValidationPanelDescriptor extends WizardPanelDescriptor implem
 
 	private List<ValidationResult> executeGraphValidation(){
 		List<GUIGraphNodeDecorator> guiGraphNodes = project.getProjectNodes();
-		List<IGraphNode> graphNodes = new ArrayList<IGraphNode>();
-		for(GUIGraphNodeDecorator g : guiGraphNodes){
-			graphNodes.add(g.getGraphNode());
-		}
-		List<ValidationResult> validationResults = GraphValidator.validateGraph(graphNodes);
+		List<ValidationResult> validationResults = GraphValidator.validateGraphForGUI(guiGraphNodes);
 		return validationResults;	
 	}
 
@@ -76,5 +70,4 @@ public class GraphValidationPanelDescriptor extends WizardPanelDescriptor implem
 		}
 		getWizard().setNextFinishButtonEnabled(passed);
 	}
-
 }
