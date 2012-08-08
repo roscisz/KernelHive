@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.gui.workflow.execution;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.gui.networking.IWorkflowService;
@@ -26,6 +27,7 @@ public class WorkflowExecution implements IWorkflowExecution {
 	}
 	
 	private void initListeners(){
+		listeners = new ArrayList<WorkflowExecutionListener>();
 		serviceAdapter = new WorkflowServiceListenerAdapter() {
 			@Override
 			public void submitWorkflowCompleted(Integer workflowId) {

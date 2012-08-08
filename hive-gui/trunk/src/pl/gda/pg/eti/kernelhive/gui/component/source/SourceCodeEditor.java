@@ -26,7 +26,7 @@ import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
@@ -39,7 +39,8 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 				SyntaxConstants.SYNTAX_STYLE_C, "c"), XML(
 				SyntaxConstants.SYNTAX_STYLE_XML, "xml"), PROPERTIES(
 				SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE, "properties"), NONE(
-				SyntaxConstants.SYNTAX_STYLE_NONE, "");
+				SyntaxConstants.SYNTAX_STYLE_NONE, ""), OPENCL(
+				SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cl");
 
 		private final String style;
 		private final String filetype;
@@ -101,6 +102,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * gets text
+	 * 
 	 * @return text
 	 */
 	public String getText() {
@@ -109,7 +111,9 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * sets text
-	 * @param text String
+	 * 
+	 * @param text
+	 *            String
 	 */
 	public void setText(String text) {
 		textarea.setText(text);
@@ -117,6 +121,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * gets file name
+	 * 
 	 * @return file name
 	 */
 	public String getFileName() {
@@ -125,7 +130,9 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * sets file name
-	 * @param name String
+	 * 
+	 * @param name
+	 *            String
 	 */
 	public void setFileName(String name) {
 		this.fileName = name;
@@ -133,7 +140,9 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * sets syntax style
-	 * @param style {@link SyntaxStyle}
+	 * 
+	 * @param style
+	 *            {@link SyntaxStyle}
 	 */
 	public void setSyntaxStyle(SyntaxStyle style) {
 		textarea.setSyntaxEditingStyle(style.getStyle());
@@ -142,6 +151,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * gets syntax style
+	 * 
 	 * @return {@link SyntaxStyle}
 	 */
 	public SyntaxStyle getSyntaxStyle() {
@@ -263,7 +273,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	@Override
 	public void refresh() {
-		if(getFile()!=null){
+		if (getFile() != null) {
 			loadContent(getFile());
 		}
 		setDirty(false);
