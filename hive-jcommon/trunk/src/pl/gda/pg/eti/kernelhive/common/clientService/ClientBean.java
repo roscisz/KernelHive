@@ -32,8 +32,8 @@ public interface ClientBean {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getResults", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.GetResults")
-    @ResponseWrapper(localName = "getResultsResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.GetResultsResponse")
+    @RequestWrapper(localName = "getWorkflowResults", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.GetWorkflowResults")
+    @ResponseWrapper(localName = "getWorkflowResultsResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.GetWorkflowResultsResponse")
     public String getWorkflowResults(
         @WebParam(name = "arg0", targetNamespace = "")
         Integer arg0);
@@ -57,8 +57,8 @@ public interface ClientBean {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "runWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunWorkflow")
-    @ResponseWrapper(localName = "runWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.RunWorkflowResponse")
+    @RequestWrapper(localName = "submitWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.SubmitWorkflow")
+    @ResponseWrapper(localName = "submitWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.SubmitWorkflowResponse")
     public Integer submitWorkflow(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0);
@@ -79,8 +79,8 @@ public interface ClientBean {
      * @param arg0
      */
     @WebMethod
-    @RequestWrapper(localName = "deleteWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteWorkflow")
-    @ResponseWrapper(localName = "deleteWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.DeleteWorkflowResponse")
+    @RequestWrapper(localName = "terminateWorkflow", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.TerminateWorkflow")
+    @ResponseWrapper(localName = "terminateWorkflowResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clientService.TerminateWorkflowResponse")
     public void terminateWorkflow(
         @WebParam(name = "arg0", targetNamespace = "")
         Integer arg0);

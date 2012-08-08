@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getResults complex type.
+ * <p>Java class for terminateWorkflow complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getResults">
+ * &lt;complexType name="terminateWorkflow">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getResults", propOrder = {
+@XmlType(name = "terminateWorkflow", propOrder = {
     "arg0"
 })
-public class GetResults {
+public class TerminateWorkflow {
 
     protected Integer arg0;
 

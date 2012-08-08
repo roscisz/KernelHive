@@ -7,16 +7,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteWorkflow complex type.
+ * <p>Java class for submitWorkflow complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="deleteWorkflow">
+ * &lt;complexType name="submitWorkflow">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="arg0" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -26,22 +26,22 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteWorkflow", propOrder = {
+@XmlType(name = "submitWorkflow", propOrder = {
     "arg0"
 })
-public class DeleteWorkflow {
+public class SubmitWorkflow {
 
-    protected Integer arg0;
+    protected String arg0;
 
     /**
      * Gets the value of the arg0 property.
      * 
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public Integer getArg0() {
+    public String getArg0() {
         return arg0;
     }
 
@@ -50,10 +50,10 @@ public class DeleteWorkflow {
      * 
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public void setArg0(Integer value) {
+    public void setArg0(String value) {
         this.arg0 = value;
     }
 

@@ -25,15 +25,15 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private final static QName _BrowseWorkflows_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseWorkflows");
-    private final static QName _DeleteWorkflowResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "deleteWorkflowResponse");
-    private final static QName _GetResults_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getResults");
+    private final static QName _TerminateWorkflowResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "terminateWorkflowResponse");
+    private final static QName _GetWorkflowResults_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getWorkflowResults");
     private final static QName _BrowseWorkflowsResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseWorkflowsResponse");
-    private final static QName _GetResultsResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getResultsResponse");
-    private final static QName _DeleteWorkflow_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "deleteWorkflow");
+    private final static QName _GetWorkflowResultsResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "getWorkflowResultsResponse");
+    private final static QName _TerminateWorkflow_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "terminateWorkflow");
     private final static QName _BrowseInfrastructureResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseInfrastructureResponse");
-    private final static QName _RunWorkflowResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "runWorkflowResponse");
+    private final static QName _SubmitWorkflowResponse_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "submitWorkflowResponse");
     private final static QName _BrowseInfrastructure_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "browseInfrastructure");
-    private final static QName _RunWorkflow_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "runWorkflow");
+    private final static QName _SubmitWorkflow_QNAME = new QName("http://engine.kernelhive.eti.pg.gda.pl/", "submitWorkflow");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: pl.gda.pg.eti.kernelhive.common.clientService
@@ -43,19 +43,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RunWorkflow }
+     * Create an instance of {@link SubmitWorkflow }
      * 
      */
-    public RunWorkflow createRunWorkflow() {
-        return new RunWorkflow();
+    public SubmitWorkflow createSubmitWorkflow() {
+        return new SubmitWorkflow();
     }
 
     /**
-     * Create an instance of {@link RunWorkflowResponse }
+     * Create an instance of {@link SubmitWorkflowResponse }
      * 
      */
-    public RunWorkflowResponse createRunWorkflowResponse() {
-        return new RunWorkflowResponse();
+    public SubmitWorkflowResponse createSubmitWorkflowResponse() {
+        return new SubmitWorkflowResponse();
     }
 
     /**
@@ -83,19 +83,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DeleteWorkflow }
+     * Create an instance of {@link TerminateWorkflow }
      * 
      */
-    public DeleteWorkflow createDeleteWorkflow() {
-        return new DeleteWorkflow();
+    public TerminateWorkflow createTerminateWorkflow() {
+        return new TerminateWorkflow();
     }
 
     /**
-     * Create an instance of {@link GetResultsResponse }
+     * Create an instance of {@link GetWorkflowResultsResponse }
      * 
      */
-    public GetResultsResponse createGetResultsResponse() {
-        return new GetResultsResponse();
+    public GetWorkflowResultsResponse createGetWorkflowResultsResponse() {
+        return new GetWorkflowResultsResponse();
     }
 
     /**
@@ -115,19 +115,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DeleteWorkflowResponse }
+     * Create an instance of {@link TerminateWorkflowResponse }
      * 
      */
-    public DeleteWorkflowResponse createDeleteWorkflowResponse() {
-        return new DeleteWorkflowResponse();
+    public TerminateWorkflowResponse createTerminateWorkflowResponse() {
+        return new TerminateWorkflowResponse();
     }
 
     /**
-     * Create an instance of {@link GetResults }
+     * Create an instance of {@link GetWorkflowResults }
      * 
      */
-    public GetResults createGetResults() {
-        return new GetResults();
+    public GetWorkflowResults createGetWorkflowResults() {
+        return new GetWorkflowResults();
     }
 
     /**
@@ -148,21 +148,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteWorkflowResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link TerminateWorkflowResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "deleteWorkflowResponse")
-    public JAXBElement<DeleteWorkflowResponse> createDeleteWorkflowResponse(DeleteWorkflowResponse value) {
-        return new JAXBElement<DeleteWorkflowResponse>(_DeleteWorkflowResponse_QNAME, DeleteWorkflowResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "terminateWorkflowResponse")
+    public JAXBElement<TerminateWorkflowResponse> createTerminateWorkflowResponse(TerminateWorkflowResponse value) {
+        return new JAXBElement<TerminateWorkflowResponse>(_TerminateWorkflowResponse_QNAME, TerminateWorkflowResponse.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetResults }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetWorkflowResults }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "getResults")
-    public JAXBElement<GetResults> createGetResults(GetResults value) {
-        return new JAXBElement<GetResults>(_GetResults_QNAME, GetResults.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "getWorkflowResults")
+    public JAXBElement<GetWorkflowResults> createGetWorkflowResults(GetWorkflowResults value) {
+        return new JAXBElement<GetWorkflowResults>(_GetWorkflowResults_QNAME, GetWorkflowResults.class, null, value);
     }
 
     /**
@@ -175,21 +175,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetResultsResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetWorkflowResultsResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "getResultsResponse")
-    public JAXBElement<GetResultsResponse> createGetResultsResponse(GetResultsResponse value) {
-        return new JAXBElement<GetResultsResponse>(_GetResultsResponse_QNAME, GetResultsResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "getWorkflowResultsResponse")
+    public JAXBElement<GetWorkflowResultsResponse> createGetWorkflowResultsResponse(GetWorkflowResultsResponse value) {
+        return new JAXBElement<GetWorkflowResultsResponse>(_GetWorkflowResultsResponse_QNAME, GetWorkflowResultsResponse.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteWorkflow }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link TerminateWorkflow }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "deleteWorkflow")
-    public JAXBElement<DeleteWorkflow> createDeleteWorkflow(DeleteWorkflow value) {
-        return new JAXBElement<DeleteWorkflow>(_DeleteWorkflow_QNAME, DeleteWorkflow.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "terminateWorkflow")
+    public JAXBElement<TerminateWorkflow> createTerminateWorkflow(TerminateWorkflow value) {
+        return new JAXBElement<TerminateWorkflow>(_TerminateWorkflow_QNAME, TerminateWorkflow.class, null, value);
     }
 
     /**
@@ -202,12 +202,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RunWorkflowResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link SubmitWorkflowResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "runWorkflowResponse")
-    public JAXBElement<RunWorkflowResponse> createRunWorkflowResponse(RunWorkflowResponse value) {
-        return new JAXBElement<RunWorkflowResponse>(_RunWorkflowResponse_QNAME, RunWorkflowResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "submitWorkflowResponse")
+    public JAXBElement<SubmitWorkflowResponse> createSubmitWorkflowResponse(SubmitWorkflowResponse value) {
+        return new JAXBElement<SubmitWorkflowResponse>(_SubmitWorkflowResponse_QNAME, SubmitWorkflowResponse.class, null, value);
     }
 
     /**
@@ -220,12 +220,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RunWorkflow }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link SubmitWorkflow }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "runWorkflow")
-    public JAXBElement<RunWorkflow> createRunWorkflow(RunWorkflow value) {
-        return new JAXBElement<RunWorkflow>(_RunWorkflow_QNAME, RunWorkflow.class, null, value);
+    @XmlElementDecl(namespace = "http://engine.kernelhive.eti.pg.gda.pl/", name = "submitWorkflow")
+    public JAXBElement<SubmitWorkflow> createSubmitWorkflow(SubmitWorkflow value) {
+        return new JAXBElement<SubmitWorkflow>(_SubmitWorkflow_QNAME, SubmitWorkflow.class, null, value);
     }
 
 }

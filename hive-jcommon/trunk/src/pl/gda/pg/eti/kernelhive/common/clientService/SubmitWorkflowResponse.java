@@ -8,16 +8,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getResultsResponse complex type.
+ * <p>Java class for submitWorkflowResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getResultsResponse">
+ * &lt;complexType name="submitWorkflowResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,23 +27,23 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getResultsResponse", propOrder = {
+@XmlType(name = "submitWorkflowResponse", propOrder = {
     "_return"
 })
-public class GetResultsResponse {
+public class SubmitWorkflowResponse {
 
     @XmlElement(name = "return")
-    protected String _return;
+    protected Integer _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Integer }
      *     
      */
-    public String getReturn() {
+    public Integer getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetResultsResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Integer }
      *     
      */
-    public void setReturn(String value) {
+    public void setReturn(Integer value) {
         this._return = value;
     }
 
