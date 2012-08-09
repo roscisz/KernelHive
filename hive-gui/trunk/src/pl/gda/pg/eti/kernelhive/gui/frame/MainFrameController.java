@@ -3,8 +3,10 @@ package pl.gda.pg.eti.kernelhive.gui.frame;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -19,6 +21,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IEngineGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfiguration;
+import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverter;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverterException;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
