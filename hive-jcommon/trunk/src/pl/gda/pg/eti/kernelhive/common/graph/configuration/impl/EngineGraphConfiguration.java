@@ -46,9 +46,9 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 
 	public EngineGraphConfiguration(String serializedConf) {
 		super();
-		File inputFile = putStringIntoFile(serializedConf);		
-		readFromFile(inputFile);
-		inputFile.delete();
+		//File inputFile = putStringIntoFile(serializedConf);		
+		//readFromFile(inputFile);
+		//inputFile.delete();
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 				keyNode.setValue(key);
 				Node valNode = new Node(KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE);
 				valNode.setAttribute(true);
-				keyNode.setValue(val);
+				valNode.setValue(val);
 				propNode.addAttribute(keyNode);
 				propNode.addAttribute(valNode);
 				sourceNode.addChild(propNode);
