@@ -34,11 +34,15 @@ public class Workflow extends HasID {
 		super();
 				
 		for(EngineGraphNodeDecorator node : graph) {
-			Job newJob = new Job(node, this);
+			Job newJob = new Job(node, this);			
+			System.out.println("Job has " + node.getGraphNode().getChildrenNodes().size() + " ");
 			if(node.getGraphNode().getChildrenNodes().size() == 0) {
 				newJob.state = JobState.READY;
 				readyJobs.add(newJob);
 			}
+			// TODO: if many kernels in one job, assign each kernel to individual job
+			newJob.assignedKernel = node.getKernels().get(0);
+			
 			jobs.put(newJob.ID, newJob);
 			// TODO: wrzucić kernele joba na serwer i ustawić jobowi adres kernela
 		}

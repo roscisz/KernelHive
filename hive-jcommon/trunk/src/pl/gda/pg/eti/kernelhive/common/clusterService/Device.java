@@ -44,5 +44,10 @@ public class Device {
 				+ ", clock=" + clock + ", globalMemoryBytes="
 				+ globalMemoryBytes + ", localMemoryBytes=" + localMemoryBytes
 				+ ", workGroupSize=" + workGroupSize + "]";
+	}
+
+	// TODO: scheduling constraints
+	public boolean canBeScheduledOn(Device device) {
+		return true;
 	}	
 }

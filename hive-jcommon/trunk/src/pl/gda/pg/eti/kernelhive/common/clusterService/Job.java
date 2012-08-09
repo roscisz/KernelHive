@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
 
 public class Job extends HasID {
 	
@@ -16,20 +17,13 @@ public class Job extends HasID {
 		FINISHED
 	}
 	
-	public Job() {
-		
-	}
-
-	// TODO: forward properties to the node
-	public List<Integer> offsets;
-	public List<Integer> globalSizes;
-	public List<Integer> localSizes;
 	public String kernelHost;
 	public int kernelPort;
 	public int kernelId;
 	public List<String> dataHosts;
 	public List<Integer> dataPorts;
 	public List<Integer> dataIds;	
+	public IKernelString assignedKernel;
 	
 	public Device device;
 	
@@ -38,7 +32,14 @@ public class Job extends HasID {
 	public EngineGraphNodeDecorator node;
 	public JobState state = JobState.PENDING;
 	public int progress = -1;
+	
+	private String unassignedString = "UNASSIGNED";
+	private int unassignedInt = 0;
+
+	public Job() {
 		
+	}
+	
 	public Job(EngineGraphNodeDecorator node, Workflow task) {
 		this.node = node;
 		this.task = task;	
@@ -53,13 +54,9 @@ public class Job extends HasID {
 		ret.append(" " + getClusterTCPPort());
 		ret.append(" " + getClusterUdpPort());
 		ret.append(" " + getDeviceId());
-		ret.append(" " + getNumDimensions());
-		for(Integer offset : offsets)
-			ret.append(" " + offset);
-		for(Integer globalSize : globalSizes)
-			ret.append(" " + globalSize);
-		for(Integer localSize : localSizes)
-			ret.append(" " + localSize);
+		ret.append(" " + getOffsets());
+		ret.append(" " + getGlobalSizes());
+		ret.append(" " + getLocalSizes());
 		ret.append(" " + kernelHost);
 		ret.append(" " + kernelId);
 		ret.append(" " + getNumData());
@@ -76,21 +73,44 @@ public class Job extends HasID {
 				" " + dataPort +
 				" localhost 31340 " + deviceID +
 				" 1 0 4096 64 456 " + dataID;*/
-	}	
+	}		
+
+	private String getOffsets() {
+		int[] offsets = assignedKernel.getOffset();
+		return concatKernelAttrs(offsets);
+	}
+
+	private String getGlobalSizes() {
+		int[] globalSizes = assignedKernel.getGlobalSize();
+		return concatKernelAttrs(globalSizes);
+	}
 	
+	private String getLocalSizes() {
+		int[] localSizes = assignedKernel.getLocalSize();
+		return concatKernelAttrs(localSizes);
+	}
+	
+	private String concatKernelAttrs(int[] attrs) {
+		return attrs[0] + " " + attrs[1] + " " + attrs[2];
+	}
+
 	private String getClusterHost() {
+		if(device == null) return unassignedString;
 		return device.unit.cluster.hostname;		
 	}
 
 	private int getClusterTCPPort() {
+		if(device == null) return unassignedInt;
 		return device.unit.cluster.TCPPort;
 	}
 	
 	private int getClusterUdpPort() {
+		if(device == null) return unassignedInt;
 		return device.unit.cluster.UDPPort;
 	}
 
 	private String getDeviceId() {
+		if(device == null) return unassignedString;
 		return device.name;
 	}
 
@@ -101,17 +121,19 @@ public class Job extends HasID {
 		this.dataHost = dataAddress[0];
 		this.dataPort = dataAddress[1];
 		this.dataID = dataAddress[2];		
-	}*/
-	
-	public int getNumDimensions() {
-		return offsets.size();
-	}
+	}*/	
 	
 	public int getNumData() {
 		return dataHosts.size();
 	}
 
 	public void run() {
+		System.out.println("RUN");
 		this.device.unit.cluster.runJob(this);		
-	}		
+	}
+
+	public void schedule(Device device) {
+		this.device = device;
+		this.state = JobState.SCHEDULED;		
+	}	
 }

@@ -1,3 +1,4 @@
+
 package pl.gda.pg.eti.kernelhive.common.kernel.repository;
 
 import static org.junit.Assert.assertEquals;
