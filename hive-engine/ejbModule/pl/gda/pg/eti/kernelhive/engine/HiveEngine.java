@@ -18,7 +18,7 @@ public class HiveEngine {
 	private static HiveEngine instance;
 	
 	private Map<String, Cluster> clusters = new HashMap<String, Cluster>();
-	private Map<Integer, Workflow> tasks = new HashMap<Integer, Workflow>();
+	private Map<Integer, Workflow> workflows = new HashMap<Integer, Workflow>();
 		
 	private HiveEngine() {
 		
@@ -38,17 +38,21 @@ public class HiveEngine {
 	
 	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes) {
 		Workflow newWorkflow = initializeTask(nodes);
-		tasks.put(newWorkflow.ID, newWorkflow);
-
-		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(newWorkflow);
-		 
-		for(Job job : readyJobs) {
-			job.run();
-		}	
+		workflows.put(newWorkflow.ID, newWorkflow);
+		
+		processWorkflow(newWorkflow);			
 		
 		return newWorkflow.ID;
 	}
 	
+	private void processWorkflow(Workflow newWorkflow) {
+		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(newWorkflow, clusters.values());	
+		
+		for(Job job : readyJobs) {
+			job.run();
+		}	
+	}
+
 	private Workflow initializeTask(List<EngineGraphNodeDecorator> nodes) {
 		Workflow newTask = new Workflow(nodes);
 
@@ -59,7 +63,9 @@ public class HiveEngine {
 	
 	public void cleanup() {
 		// jeżeli któryś job za długo nie odpowiada to najpierw włącz mu tryb nie odpowiada, a potem wywal
-		// wyodrębnij wolne zadania i spróbuj odpalić optimizerem aż się znulluje		
+		// wyodrębnij wolne zadania i spróbuj odpalić optimizerem aż się znulluje
+		for(Workflow workflow : workflows.values())
+			processWorkflow(workflow);
 	}
 						
 	@Override

@@ -18,7 +18,7 @@ public class TimerBean {
     	
     }
     
-    @Schedule(second="*/5")
+    @Schedule(second="*/5", minute="*", hour="*", persistent=false)
     public void cleanup() {
     	HiveEngine.getInstance().cleanup();    	
     }  
