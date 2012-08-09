@@ -81,7 +81,9 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	@Override
 	public void refresh() {
-		service.browseWorkflows(adapter);
+		if(service!=null){
+			service.browseWorkflows(adapter);
+		}
 	}
 
 	@Override
