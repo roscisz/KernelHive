@@ -7,6 +7,10 @@ import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 
 public interface IKernelString {
 
+	public static final String GLOBAL_SIZES = "globalSizes";
+	public static final String LOCAL_SIZES = "localSizes";
+	public static final String OFFSETS = "offsets";
+	
 	String getKernel();
 	Map<String, Object> getProperties();
 	String getId();

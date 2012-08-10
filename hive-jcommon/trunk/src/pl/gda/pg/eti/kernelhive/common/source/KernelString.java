@@ -48,7 +48,7 @@ public class KernelString implements IKernelString {
 	@Override
 	public int[] getGlobalSize() {
 		try{
-			String s = (String) properties.get("globalSize");
+			String s = (String) properties.get(GLOBAL_SIZES);
 			String[] sizesStr = s.trim().split(" ");
 			if(sizesStr.length<=3){
 				int[] globalSize = new int[3];
@@ -66,7 +66,7 @@ public class KernelString implements IKernelString {
 	@Override
 	public int[] getLocalSize() {
 		try{
-			String s = (String) properties.get("localSize");
+			String s = (String) properties.get(LOCAL_SIZES);
 			String[] sizesStr = s.trim().split(" ");
 			if(sizesStr.length<=3){
 				int[] localSize = new int[3];
@@ -84,7 +84,7 @@ public class KernelString implements IKernelString {
 	@Override
 	public int[] getOffset() {
 		try{
-			String s = (String) properties.get("offset");
+			String s = (String) properties.get(OFFSETS);
 			String[] sizesStr = s.trim().split(" ");
 			if(sizesStr.length<=3){
 				int[] offset = new int[3];
