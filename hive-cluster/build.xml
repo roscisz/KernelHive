@@ -1,77 +1,51 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project hive-cluster">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="/home/roy/mgr/KernelHive/KernelHive/src/hive-cluster/hive-cluster.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="pl.gda.pg.eti.kernelhive.cluster.HiveCluster"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="/home/roy/mgr/KernelHive/KernelHive/src/hive-cluster/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="/usr/lib/eclipse/dropins/jdt/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/usr/lib/eclipse/dropins/jdt/plugins/org.hamcrest.core_1.1.0.jar"/>
-            <fileset dir="/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/lib/commons-configuration-1.8/commons-configuration-1.8.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/lib/commons-lang-2.6/commons-lang-2.6.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/lib/commons-logging-1.1.1/commons-logging-adapters-1.1.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/lib/commons-logging-1.1.1/commons-logging-api-1.1.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/glassfish-api.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/bean-validator.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/endorsed/javax.annotation.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/endorsed/jaxb-api-osgi.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/endorsed/webservices-api-osgi.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/grizzly-comet.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/grizzly-websockets.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/ha-api.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.ejb.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.el-api.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.el.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.enterprise.deploy.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.faces.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.jms.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.mail.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.management.j2ee.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.persistence.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.resource.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.security.auth.message.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.security.jacc.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.servlet-api.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.servlet.jsp-api.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.servlet.jsp.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.servlet.jsp.jstl-api.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.servlet.jsp.jstl.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/javax.transaction.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-client.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-core.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-gf-server.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-gf-servlet.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-gf-statsproviders.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-grizzly.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-json.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-moxy.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jersey-multipart.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/weld-osgi-bundle.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/org.eclipse.persistence.antlr.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/org.eclipse.persistence.asm.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/org.eclipse.persistence.core.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/org.eclipse.persistence.jpa.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/org.eclipse.persistence.jpa.modelgen.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/org.eclipse.persistence.moxy.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/org.eclipse.persistence.oracle.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/jaxb-osgi.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/webservices-connector.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/webservices-extra-jdk-packages.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/webservices-osgi.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/glassfish/modules/webservices.security.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/oracle.eclipse.runtime.glassfish.build312_1.0.0/glassfish3/mq/lib/jaxm-api.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/lib/commons-daemon-1.0.10/commons-daemon-1.0.10.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/org.apache.commons.discovery_0.2.0.v201004190315/lib/commons-discovery-0.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/javax.xml.soap_1.2.0.v201005080501/lib/saaj.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/javax.wsdl_1.6.2.v201012040545.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/.eclipse/org.eclipse.platform_3.7.0_155965261/plugins/org.apache.commons.logging_1.0.4.v201101211617.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/roy/mgr/KernelHive/KernelHive/src/hive-cluster/gmbal-api-only.jar"/>
-        </jar>
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hive-cluster" default="jar"	basedir=".">
+	
+	<!-- set global properties for this build -->
+	<property name="project.name" value="hive-cluster" />
+	
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="bin" />
+	<property name="dist.dir" value="dist" />
+	<property name="lib.dir" value="lib" />
+	<property name="jcommon.dir" value="../hive-jcommon/trunk" />	
+	
+	<path id="project.classpath">
+		<fileset dir="${lib.dir}" includes="*/*.jar" />
+		<fileset dir="${jcommon.dir}/${dist.dir}" includes="*.jar" />
+	</path>
+	
+	<target name="init" description="initialize the build">
+	    <!-- Create the time stamp -->
+	    <tstamp />
+	    <!-- Create the build directory structure used by compile -->
+	    <mkdir dir="${build.dir}" />
+	    <!-- Build the hive-jcommon lib. -->
+	    <ant dir="${jcommon.dir}" />
     </target>
+	
+    <target name="compile" depends="init" description="compile the source">
+        <!-- Compile the java code from ${src.dir} into ${build.dir} -->        
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+            <classpath refid="project.classpath" />
+        </javac>        
+    </target>
+	
+	<target name="jar" depends="compile" description="generate the distribution">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist.dir}" />		
+		<!-- Put everything in ${build.dir} into the MyProject-${DSTAMP}.jar file -->
+		<jar destfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}">
+		    <zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+		    <zipgroupfileset dir="${jcommon.dir}/${dist.dir}" includes="*.jar"/>
+		</jar>
+    </target>
+	
+	<target name="clean" description="clean up" >
+		<!-- Delete the ${build.dir} and ${dist.dir} directory trees -->
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+	
 </project>
+

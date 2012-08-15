@@ -32,7 +32,7 @@
 		<mkdir dir="${dist.dir}" />		
 		<!-- Put everything in ${build.dir} into the MyProject-${DSTAMP}.jar file -->
 		<jar destfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}">
-		    <zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+		    <zipgroupfileset dir="${lib.dir}" includes="*/*.jar"/>
 		</jar>
     </target>
 	
