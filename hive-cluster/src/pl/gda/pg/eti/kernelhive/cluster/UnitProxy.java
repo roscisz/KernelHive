@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.cluster;
 import java.nio.channels.SocketChannel;
 
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
+import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
 
@@ -28,8 +29,8 @@ public class UnitProxy {
 		return unit.devices;
 	}*/
 	
-	public void runJob(Job job) {
-		sendMessage(job.toString());
+	public void runJob(JobInfo jobInfo) {
+		sendMessage(jobInfo.runString);
 	}
 	
 	private void sendMessage(String message) {

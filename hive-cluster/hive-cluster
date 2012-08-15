@@ -6,7 +6,7 @@ DAEMON=/usr/bin/jsvc
 DAEMON_JAR=hive-cluster.jar
 PIDFILE=/var/run/$NAME.pid
 LOGFILE=hive-cluster.log
-BOOTSTRAP_CLASS=org.kernelhive.cluster.HiveCluster
+BOOTSTRAP_CLASS=pl.gda.pg.eti.kernelhive.cluster.HiveCluster
 
 JAVA_HOME=/usr/lib/jvm/java-6-openjdk-i386/
 

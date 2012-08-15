@@ -9,7 +9,7 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBeanService;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
+import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.CommunicationException;
 import pl.gda.pg.eti.kernelhive.common.communication.DataPublisher;
@@ -22,26 +22,63 @@ import pl.gda.pg.eti.kernelhive.common.communication.UDPServerListener;
 public class ClusterManager implements TCPServerListener, UDPServerListener {
 	
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
-	private List<Job> currentJobs = new ArrayList<Job>();
 	
 	private Cluster cluster = new Cluster();
-	
-	// OBSOLETE
-	private static String processDataKernel = "__kernel void processData(__global const int* input, unsigned int dataSize, __global int* output) { int i = get_global_id(0); output[i] = input[i]; }";
+	private ClusterBean clusterBean;
 		
 	public ClusterManager() {
 		try {
 			TCPServer unitServer = new TCPServer(new NetworkAddress("localhost", 31338), this);
 			DataPublisher dp = new DataPublisher(new NetworkAddress("localhost", 31340));
-			dp.publish(123, "DANE PRZYKLADOWE JAVA");
-			dp.publish(456, processDataKernel);
 			UDPServer runnerServer = new UDPServer(31339, this);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
 			e.printStackTrace();
 		}
+			
+		ClusterBeanService cbs = new ClusterBeanService();
+		clusterBean = cbs.getClusterBeanPort();	
+		
+		//new Thread(this).start();
+		
+		while(true) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			tryProcessJob();
+		}
 	}
 	
+	private void tryProcessJob() {
+		JobInfo jobInfo = tryUpdateAndGetJob(cluster, clusterBean);
+		if(jobInfo != null)
+			runJob(jobInfo);
+		else System.out.println("Got null job, nvm.");
+	}
+
+	private void runJob(JobInfo jobInfo) {
+		System.out.println("Run job " + jobInfo.runString);
+		UnitProxy proxy = getProxyById(jobInfo.unitID);
+		proxy.runJob(jobInfo);		
+	}
+
+	private UnitProxy getProxyById(int unitID) {
+		for(UnitProxy proxy : unitsMap.values())
+			if(proxy.unit.ID == unitID)
+				return proxy;
+		return null;
+	}
+
+	private JobInfo tryUpdateAndGetJob(Cluster cluster, ClusterBean clusterBean) {
+		if(clusterBean != null) {
+			updateClusterInEngine(cluster, clusterBean);
+			return clusterBean.getJob();
+		}
+		return null;
+	}
+
 	@Override
 	public void onConnection(SocketChannel channel) {
 		
@@ -67,23 +104,21 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	private void commandUpdate(SocketChannel channel, String data) {
 		UnitProxy proxy = unitsMap.get(channel);
 		if(proxy == null) {
-			Unit unit = new Unit();
+			Unit unit = new Unit(cluster);
 			cluster.unitList.add(unit);
 			proxy = new UnitProxy(channel, unit);
 			unitsMap.put(channel,  proxy);
-			updateClusterInEngine(cluster);
+			//tryUpdateAndGetJob(cluster, clusterBean);
 		}
 		proxy.unit.update(data);
 		System.out.println("Now we have " + unitsMap.size() + " clients");
 	}
 	
-	private void updateClusterInEngine(Cluster cluster) {
-		ClusterBeanService cbs = new ClusterBeanService();
-		ClusterBean cb = cbs.getClusterBeanPort();
-		cb.update(cluster);
-		/*ClusterBeanProxy cbp = new ClusterBeanProxy();
-		ClusterBean engine = cbp.getClusterBean();
-		engine.update(cluster);*/		
+	private void updateClusterInEngine(Cluster cluster, ClusterBean clusterBean) {
+		System.out.println("Updating cluster in engine");
+		clusterBean.update(cluster);
+		System.out.println("Updated cluster in engine");
+		
 	}
 
 	private void commandOver(String message) {
@@ -130,5 +165,4 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 				return proxy;
 		return null;
 	}
-
 }
