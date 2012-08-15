@@ -21,7 +21,7 @@
 	    <!-- Create the build directory structure used by compile -->
 	    <mkdir dir="${build.dir}" />
 	    <!-- Build the hive-jcommon lib. -->
-	    <ant dir="${jcommon.dir}" />
+	    <ant dir="${jcommon.dir}" inheritAll="false" />
     </target>
 	
     <target name="compile" depends="init" description="compile the source">
