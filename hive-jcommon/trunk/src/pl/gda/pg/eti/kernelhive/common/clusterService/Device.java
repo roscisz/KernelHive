@@ -1,5 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 public class Device {
 	private static String parameterSeparator = ":";
 	
@@ -14,14 +16,16 @@ public class Device {
 	
 	public boolean busy = false;
 	
+	@XmlTransient
 	public Unit unit;
 
 	public Device() {
 		
 	}
 	
-	public Device(String serializedInfo) {
+	public Device(String serializedInfo, Unit myUnit) {
 		unserialize(serializedInfo);
+		this.unit = myUnit;
 	}
 
 	private void unserialize(String serializedInfo) {
@@ -49,5 +53,9 @@ public class Device {
 	// TODO: scheduling constraints
 	public boolean canBeScheduledOn(Device device) {
 		return true;
+	}
+
+	public void updateReverseReferences(Unit unit) {
+		this.unit = unit;		
 	}	
 }

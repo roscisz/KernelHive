@@ -11,7 +11,6 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 public class Workflow extends HasID {
 	
 	private Map<Integer, Job> jobs = new Hashtable<Integer, Job>();
-	private List<Job> readyJobs = new ArrayList<Job>();
 	
 	public enum WorkflowState {
 		PENDING("pending"), COMPLETED("completed"), 
@@ -35,11 +34,8 @@ public class Workflow extends HasID {
 				
 		for(EngineGraphNodeDecorator node : graph) {
 			Job newJob = new Job(node, this);			
-			System.out.println("Job has " + node.getGraphNode().getChildrenNodes().size() + " ");
-			if(node.getGraphNode().getChildrenNodes().size() == 0) {
+			if(node.getGraphNode().getChildrenNodes().size() == 0)
 				newJob.state = JobState.READY;
-				readyJobs.add(newJob);
-			}
 			// TODO: if many kernels in one job, assign each kernel to individual job
 			newJob.assignedKernel = node.getKernels().get(0);
 			
@@ -49,14 +45,11 @@ public class Workflow extends HasID {
 	}
 	
 	public List<Job> getReadyJobs() {
-		return readyJobs;
-	}
-	
-	public void updateReadyJobs() {
-		readyJobs.clear();
+		List<Job> ret = new ArrayList<Job>();
 		for(Job job : jobs.values())
 			if(job.state == JobState.READY)
-				readyJobs.add(job);
+				ret.add(job);		
+		return ret;
 	}
 
 	public boolean checkFinished() {

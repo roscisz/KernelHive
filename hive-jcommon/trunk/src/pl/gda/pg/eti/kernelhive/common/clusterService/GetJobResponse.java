@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://engine.kernelhive.eti.pg.gda.pl/}job" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://engine.kernelhive.eti.pg.gda.pl/}jobInfo" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class GetJobResponse {
 
     @XmlElement(name = "return")
-    protected Job _return;
+    protected JobInfo _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link Job }
+     *     {@link JobInfo }
      *     
      */
-    public Job getReturn() {
+    public JobInfo getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetJobResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link Job }
+     *     {@link JobInfo }
      *     
      */
-    public void setReturn(Job value) {
+    public void setReturn(JobInfo value) {
         this._return = value;
     }
 

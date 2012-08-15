@@ -22,7 +22,7 @@ public class UDPServer implements Runnable {
 		
 		System.out.println("UDP server starts listening on port " + port + ".");
 		
-		(new Thread(this)).run();
+		new Thread(this).start();
 	}
 
 	@Override

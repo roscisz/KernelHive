@@ -37,43 +37,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Device }
+     * Create an instance of {@link GetJobResponse }
      * 
      */
-    public Device createDevice() {
-        return new Device();
+    public GetJobResponse createGetJobResponse() {
+        return new GetJobResponse();
     }
 
     /**
-     * Create an instance of {@link GetJob }
+     * Create an instance of {@link JobInfo }
      * 
      */
-    public GetJob createGetJob() {
-        return new GetJob();
-    }
-
-    /**
-     * Create an instance of {@link HasID }
-     * 
-     */
-    public HasID createHasID() {
-        return new HasID();
-    }
-
-    /**
-     * Create an instance of {@link Update }
-     * 
-     */
-    public Update createUpdate() {
-        return new Update();
-    }
-
-    /**
-     * Create an instance of {@link UpdateResponse }
-     * 
-     */
-    public UpdateResponse createUpdateResponse() {
-        return new UpdateResponse();
+    public JobInfo createJobInfo() {
+        return new JobInfo();
     }
 
     /**
@@ -85,11 +61,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetJobResponse }
+     * Create an instance of {@link GetJob }
      * 
      */
-    public GetJobResponse createGetJobResponse() {
-        return new GetJobResponse();
+    public GetJob createGetJob() {
+        return new GetJob();
+    }
+
+    /**
+     * Create an instance of {@link Update }
+     * 
+     */
+    public Update createUpdate() {
+        return new Update();
     }
 
     /**
@@ -101,11 +85,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Job }
+     * Create an instance of {@link HasID }
      * 
      */
-    public Job createJob() {
-        return new Job();
+    public HasID createHasID() {
+        return new HasID();
+    }
+
+    /**
+     * Create an instance of {@link Device }
+     * 
+     */
+    public Device createDevice() {
+        return new Device();
+    }
+
+    /**
+     * Create an instance of {@link UpdateResponse }
+     * 
+     */
+    public UpdateResponse createUpdateResponse() {
+        return new UpdateResponse();
     }
 
     /**

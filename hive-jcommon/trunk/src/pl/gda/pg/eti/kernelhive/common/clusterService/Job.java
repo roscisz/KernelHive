@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -20,15 +21,14 @@ public class Job extends HasID {
 	public String kernelHost;
 	public int kernelPort;
 	public int kernelId;
-	public List<String> dataHosts;
-	public List<Integer> dataPorts;
-	public List<Integer> dataIds;	
+	public List<String> dataHosts = new ArrayList<String>();
+	public List<Integer> dataPorts = new ArrayList<Integer>();
+	public List<Integer> dataIds = new ArrayList<Integer>();	
 	public IKernelString assignedKernel;
 	
 	public Device device;
 	
 	private Workflow task;
-	@XmlTransient
 	public EngineGraphNodeDecorator node;
 	public JobState state = JobState.PENDING;
 	public int progress = -1;
@@ -129,11 +129,23 @@ public class Job extends HasID {
 
 	public void run() {
 		System.out.println("RUN");
-		this.device.unit.cluster.runJob(this);		
+		this.device.unit.cluster.runJob(this);	
+		this.state = JobState.PROCESSING;
 	}
 
 	public void schedule(Device device) {
 		this.device = device;
 		this.state = JobState.SCHEDULED;		
+	}
+
+	public JobInfo getJobInfo() {
+		// TODO: assert state
+		
+		JobInfo ret = new JobInfo();
+		
+		ret.runString = this.toString();
+		ret.unitID = this.device.unit.ID;
+		
+		return ret;
 	}	
 }

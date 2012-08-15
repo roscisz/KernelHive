@@ -37,12 +37,12 @@ public interface ClusterBean {
     /**
      * 
      * @return
-     *     returns pl.gda.pg.eti.kernelhive.common.clusterService.Job
+     *     returns pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "getJob", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.GetJob")
     @ResponseWrapper(localName = "getJobResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.GetJobResponse")
-    public Job getJob();
+    public JobInfo getJob();
 
 }
