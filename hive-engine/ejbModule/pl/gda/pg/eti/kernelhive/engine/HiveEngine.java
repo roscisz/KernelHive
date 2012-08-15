@@ -27,6 +27,7 @@ public class HiveEngine {
 	public static synchronized HiveEngine getInstance() {
 		if(instance == null) {
 			instance = new HiveEngine();
+			System.out.println("Creating HiveEngine singleton " + instance);
 		}
 		return instance;		
 	}

@@ -26,18 +26,16 @@ public class SimpleOptimizer implements IOptimizer {
 				; // coś się zablokowało
 		}
 		
-		System.out.println("scheduling: ");
 		for(Job readyJob : readyJobs) {
-			System.out.println("Job: " + readyJob);
 			for(Cluster cluster : infrastructure) {
-				for(Unit unit : cluster.unitList)
+				for(Unit unit : cluster.unitList) {
 					for(Device device : unit.devices) {
-						System.out.println("Trying device " + device);
 						if(!device.busy && device.canBeScheduledOn(device)) {
 							readyJob.schedule(device);
 							scheduledJobs.add(readyJob);
 						}
 					}
+				}				
 				if(readyJob.state == JobState.SCHEDULED) {
 					System.out.println("Scheduled job.");
 					break;
