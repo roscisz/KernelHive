@@ -37,38 +37,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetJobResponse }
-     * 
-     */
-    public GetJobResponse createGetJobResponse() {
-        return new GetJobResponse();
-    }
-
-    /**
-     * Create an instance of {@link JobInfo }
-     * 
-     */
-    public JobInfo createJobInfo() {
-        return new JobInfo();
-    }
-
-    /**
-     * Create an instance of {@link Unit }
-     * 
-     */
-    public Unit createUnit() {
-        return new Unit();
-    }
-
-    /**
-     * Create an instance of {@link GetJob }
-     * 
-     */
-    public GetJob createGetJob() {
-        return new GetJob();
-    }
-
-    /**
      * Create an instance of {@link Update }
      * 
      */
@@ -77,19 +45,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Cluster }
+     * Create an instance of {@link UpdateResponse }
      * 
      */
-    public Cluster createCluster() {
-        return new Cluster();
-    }
-
-    /**
-     * Create an instance of {@link HasID }
-     * 
-     */
-    public HasID createHasID() {
-        return new HasID();
+    public UpdateResponse createUpdateResponse() {
+        return new UpdateResponse();
     }
 
     /**
@@ -101,11 +61,51 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link UpdateResponse }
+     * Create an instance of {@link JobInfo }
      * 
      */
-    public UpdateResponse createUpdateResponse() {
-        return new UpdateResponse();
+    public JobInfo createJobInfo() {
+        return new JobInfo();
+    }
+
+    /**
+     * Create an instance of {@link GetJobResponse }
+     * 
+     */
+    public GetJobResponse createGetJobResponse() {
+        return new GetJobResponse();
+    }
+
+    /**
+     * Create an instance of {@link Cluster }
+     * 
+     */
+    public Cluster createCluster() {
+        return new Cluster();
+    }
+
+    /**
+     * Create an instance of {@link GetJob }
+     * 
+     */
+    public GetJob createGetJob() {
+        return new GetJob();
+    }
+
+    /**
+     * Create an instance of {@link Unit }
+     * 
+     */
+    public Unit createUnit() {
+        return new Unit();
+    }
+
+    /**
+     * Create an instance of {@link HasID }
+     * 
+     */
+    public HasID createHasID() {
+        return new HasID();
     }
 
     /**

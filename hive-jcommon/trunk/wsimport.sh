@@ -1,11 +1,13 @@
 TMPDIR=wsimport
-CLUSTER_WSDL=http://localhost:8080/ClusterBeanService/ClusterBean?wsdl
+#CLUSTER_WSDL=http://localhost:8080/ClusterBeanService/ClusterBean?wsdl
+CLUSTER_WSDL=cluster.wsdl
 CLUSTER_PACKAGE=pl.gda.pg.eti.kernelhive.common.clusterService
 CLUSTER_PKGDIR=pl/gda/pg/eti/kernelhive/common/clusterService
-CLIENT_WSDL=http://localhost:8080/ClientBeanService/ClientBean?wsdl
+#CLIENT_WSDL=http://localhost:8080/ClientBeanService/ClientBean?wsdl
+CLIENT_WSDL=client.wsdl
 CLIENT_PACKAGE=pl.gda.pg.eti.kernelhive.common.clientService
 CLIENT_PKGDIR=pl/gda/pg/eti/kernelhive/common/clientService
-DESTDIR=trunk/src/
+DESTDIR=src/
 
 mkdir $TMPDIR
 wsimport -verbose -s $TMPDIR -p $CLUSTER_PACKAGE -keep -Xnocompile $CLUSTER_WSDL 

@@ -43,22 +43,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BrowseWorkflowsResponse }
-     * 
-     */
-    public BrowseWorkflowsResponse createBrowseWorkflowsResponse() {
-        return new BrowseWorkflowsResponse();
-    }
-
-    /**
-     * Create an instance of {@link WorkflowInfo }
-     * 
-     */
-    public WorkflowInfo createWorkflowInfo() {
-        return new WorkflowInfo();
-    }
-
-    /**
      * Create an instance of {@link SubmitWorkflow }
      * 
      */
@@ -67,43 +51,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BrowseInfrastructure }
+     * Create an instance of {@link BrowseWorkflowsResponse }
      * 
      */
-    public BrowseInfrastructure createBrowseInfrastructure() {
-        return new BrowseInfrastructure();
-    }
-
-    /**
-     * Create an instance of {@link BrowseWorkflows }
-     * 
-     */
-    public BrowseWorkflows createBrowseWorkflows() {
-        return new BrowseWorkflows();
-    }
-
-    /**
-     * Create an instance of {@link TerminateWorkflowResponse }
-     * 
-     */
-    public TerminateWorkflowResponse createTerminateWorkflowResponse() {
-        return new TerminateWorkflowResponse();
-    }
-
-    /**
-     * Create an instance of {@link BrowseInfrastructureResponse }
-     * 
-     */
-    public BrowseInfrastructureResponse createBrowseInfrastructureResponse() {
-        return new BrowseInfrastructureResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetWorkflowResults }
-     * 
-     */
-    public GetWorkflowResults createGetWorkflowResults() {
-        return new GetWorkflowResults();
+    public BrowseWorkflowsResponse createBrowseWorkflowsResponse() {
+        return new BrowseWorkflowsResponse();
     }
 
     /**
@@ -115,11 +67,59 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SubmitWorkflowResponse }
+     * 
+     */
+    public SubmitWorkflowResponse createSubmitWorkflowResponse() {
+        return new SubmitWorkflowResponse();
+    }
+
+    /**
      * Create an instance of {@link GetWorkflowResultsResponse }
      * 
      */
     public GetWorkflowResultsResponse createGetWorkflowResultsResponse() {
         return new GetWorkflowResultsResponse();
+    }
+
+    /**
+     * Create an instance of {@link BrowseInfrastructureResponse }
+     * 
+     */
+    public BrowseInfrastructureResponse createBrowseInfrastructureResponse() {
+        return new BrowseInfrastructureResponse();
+    }
+
+    /**
+     * Create an instance of {@link WorkflowInfo }
+     * 
+     */
+    public WorkflowInfo createWorkflowInfo() {
+        return new WorkflowInfo();
+    }
+
+    /**
+     * Create an instance of {@link BrowseWorkflows }
+     * 
+     */
+    public BrowseWorkflows createBrowseWorkflows() {
+        return new BrowseWorkflows();
+    }
+
+    /**
+     * Create an instance of {@link GetWorkflowResults }
+     * 
+     */
+    public GetWorkflowResults createGetWorkflowResults() {
+        return new GetWorkflowResults();
+    }
+
+    /**
+     * Create an instance of {@link BrowseInfrastructure }
+     * 
+     */
+    public BrowseInfrastructure createBrowseInfrastructure() {
+        return new BrowseInfrastructure();
     }
 
     /**
@@ -131,11 +131,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SubmitWorkflowResponse }
+     * Create an instance of {@link TerminateWorkflowResponse }
      * 
      */
-    public SubmitWorkflowResponse createSubmitWorkflowResponse() {
-        return new SubmitWorkflowResponse();
+    public TerminateWorkflowResponse createTerminateWorkflowResponse() {
+        return new TerminateWorkflowResponse();
     }
 
     /**

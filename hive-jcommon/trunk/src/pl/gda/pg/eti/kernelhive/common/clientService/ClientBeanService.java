@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "ClientBeanService", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", wsdlLocation = "http://localhost:8080/ClientBeanService/ClientBean?wsdl")
+@WebServiceClient(name = "ClientBeanService", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", wsdlLocation = "file:/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/client.wsdl")
 public class ClientBeanService
     extends Service
 {
@@ -30,9 +30,9 @@ public class ClientBeanService
         try {
             URL baseUrl;
             baseUrl = pl.gda.pg.eti.kernelhive.common.clientService.ClientBeanService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/ClientBeanService/ClientBean?wsdl");
+            url = new URL(baseUrl, "file:/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/client.wsdl");
         } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/ClientBeanService/ClientBean?wsdl', retrying as a local file");
+            logger.warning("Failed to create URL for the wsdl Location: 'file:/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/client.wsdl', retrying as a local file");
             logger.warning(e.getMessage());
         }
         CLIENTBEANSERVICE_WSDL_LOCATION = url;

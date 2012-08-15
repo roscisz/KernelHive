@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "ClusterBeanService", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", wsdlLocation = "http://hive-engine:8080/ClusterBeanService/ClusterBean?wsdl")
+@WebServiceClient(name = "ClusterBeanService", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", wsdlLocation = "file:/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/cluster.wsdl")
 public class ClusterBeanService
     extends Service
 {
@@ -30,9 +30,9 @@ public class ClusterBeanService
         try {
             URL baseUrl;
             baseUrl = pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBeanService.class.getResource(".");
-            url = new URL(baseUrl, "http://hive-engine:8080/ClusterBeanService/ClusterBean?wsdl");
+            url = new URL(baseUrl, "file:/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/cluster.wsdl");
         } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: 'http://hive-engine:8080/ClusterBeanService/ClusterBean?wsdl', retrying as a local file");
+            logger.warning("Failed to create URL for the wsdl Location: 'file:/home/roy/mgr/KernelHive/KernelHive/src/hive-jcommon/trunk/cluster.wsdl', retrying as a local file");
             logger.warning(e.getMessage());
         }
         CLUSTERBEANSERVICE_WSDL_LOCATION = url;
