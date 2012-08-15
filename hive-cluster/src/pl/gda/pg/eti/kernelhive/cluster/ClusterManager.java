@@ -1,9 +1,13 @@
 package pl.gda.pg.eti.kernelhive.cluster;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
@@ -36,8 +40,13 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			e.printStackTrace();
 		}
 			
-		ClusterBeanService cbs = new ClusterBeanService();
-		clusterBean = cbs.getClusterBeanPort();	
+		ClusterBeanService cbs;
+		try {
+			cbs = new ClusterBeanService(new URL("http://hive-engine:8080/ClusterBeanService/ClusterBean?wsdl"), new QName("http://engine.kernelhive.eti.pg.gda.pl/", "ClusterBeanService"));
+			clusterBean = cbs.getClusterBeanPort();
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+		}	
 		
 		//new Thread(this).start();
 		
