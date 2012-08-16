@@ -3,7 +3,7 @@
 NAME=hive-cluster
 DESC="KernelHive cluster subsystem"
 DAEMON=/usr/bin/jsvc
-DAEMON_JAR=hive-cluster.jar
+DAEMON_JAR=./dist/hive-cluster.jar
 PIDFILE=/var/run/$NAME.pid
 LOGFILE=hive-cluster.log
 BOOTSTRAP_CLASS=pl.gda.pg.eti.kernelhive.cluster.HiveCluster
