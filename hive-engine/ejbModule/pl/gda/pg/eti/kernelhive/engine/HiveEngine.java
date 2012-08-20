@@ -37,8 +37,8 @@ public class HiveEngine {
 		System.out.println("Engine knows about clusters: " + clusters);
 	}
 	
-	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes) {
-		Workflow newWorkflow = initializeTask(nodes);
+	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes, String inputDataURL) {
+		Workflow newWorkflow = initializeTask(nodes, inputDataURL);
 		workflows.put(newWorkflow.ID, newWorkflow);
 		
 		processWorkflow(newWorkflow);			
@@ -54,9 +54,9 @@ public class HiveEngine {
 		}	
 	}
 
-	private Workflow initializeTask(List<EngineGraphNodeDecorator> nodes) {
-		Workflow newTask = new Workflow(nodes);
-
+	private Workflow initializeTask(List<EngineGraphNodeDecorator> nodes, String inputDataURL) {
+		Workflow newTask = new Workflow(nodes, inputDataURL);
+		
 		// TODO: coś jeszcze? Jeśli nie, to ta metoda jest niepotrzebna :P
 		
 		return newTask;
