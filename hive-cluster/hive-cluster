@@ -16,7 +16,7 @@ set -e
 case "$1" in
     start)
         echo -n "Starting $DESC: "
-	if "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "$DAEMON_JAR" "$BOOTSTRAP_CLASS"; then
+	if "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "./dist/hive-cluster" "$BOOTSTRAP_CLASS"; then
         	echo "$NAME."
 	else
                 echo "(already running)."

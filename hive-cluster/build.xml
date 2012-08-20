@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="hive-cluster" default="jar"	basedir=".">
+<project name="hive-cluster" default="perm"	basedir=".">
 	
 	<!-- set global properties for this build -->
 	<property name="project.name" value="hive-cluster" />
@@ -43,16 +43,20 @@
     </target>
     
     <target name="perm" depends="jar" description="elevate file permissions (jsvc/commons deamon bug workaround)">
-        <unzip src="${dist.dir}/${project.name}.jar" dest="${tmp.dir}" />
+		<unzip src="${dist.dir}/${project.name}.jar" dest="${dist.dir}/${project.name}" />
         <chmod perm="777" type="both">
-            <fileset dir="${tmp.dir}">
+            <fileset dir="${dist.dir}/${project.name}">
                 <include name="**/*" />
             </fileset>
-        </chmod>        
-        <zip dest="${dist.dir}/${project.name}.jar" update="true" preserve0permissions="true">
-            <zipfileset dir="${tmp.dir}" filemode="777" dirmode="777" />
+		</chmod>       
+		<!--
+        <zip destfile="${dist.dir}/${project.name}.jar" update="true">
+			<zipfileset dir="${tmp.dir}" filemode="755">
+				<include name="**/**" />
+			</zipfileset>
         </zip>
-        <!--<delete dir="${tmp.dir}" />-->
+		<delete dir="${tmp.dir}" />
+		-->
     </target>
 	
 	<target name="clean" description="clean up" >
