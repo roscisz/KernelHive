@@ -30,7 +30,8 @@ public class UnitProxy {
 	}*/
 	
 	public void runJob(JobInfo jobInfo) {
-		sendMessage(jobInfo.runString);
+		System.out.println("Sending job: " + jobInfo.toString());
+		sendMessage(jobInfo.toString());
 	}
 	
 	private void sendMessage(String message) {

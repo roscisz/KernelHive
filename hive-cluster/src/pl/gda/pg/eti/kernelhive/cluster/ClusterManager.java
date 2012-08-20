@@ -1,5 +1,10 @@
 package pl.gda.pg.eti.kernelhive.cluster;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.SocketChannel;
@@ -23,18 +28,25 @@ import pl.gda.pg.eti.kernelhive.common.communication.TCPServerListener;
 import pl.gda.pg.eti.kernelhive.common.communication.UDPServer;
 import pl.gda.pg.eti.kernelhive.common.communication.UDPServerListener;
 
-public class ClusterManager implements TCPServerListener, UDPServerListener {
+public class ClusterManager implements TCPServerListener, UDPServerListener {	
+	
+	private final String clusterDataHostname = "localhost";
+	private final String clusterTcpHostname = "localhost";	
+	private final int clusterTCPPort = 31338;
+	private final int clusterDataPort = 31339;
+	private final int clusterUDPPort = 31340;	
 	
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
 	
-	private Cluster cluster = new Cluster();
+	private Cluster cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort);
 	private ClusterBean clusterBean;
+	private DataPublisher dataPublisher;
 		
 	public ClusterManager() {
 		try {
-			TCPServer unitServer = new TCPServer(new NetworkAddress("localhost", 31338), this);
-			DataPublisher dp = new DataPublisher(new NetworkAddress("localhost", 31340));
-			UDPServer runnerServer = new UDPServer(31339, this);
+			TCPServer unitServer = new TCPServer(new NetworkAddress(clusterTcpHostname, clusterTCPPort), this);
+			dataPublisher = new DataPublisher(new NetworkAddress(clusterDataHostname, clusterUDPPort));
+			UDPServer runnerServer = new UDPServer(clusterDataPort, this);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
 			e.printStackTrace();
@@ -68,9 +80,27 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	}
 
 	private void runJob(JobInfo jobInfo) {
-		System.out.println("Run job " + jobInfo.runString);
+		System.out.println("Kernel: " + jobInfo.kernelString);
 		UnitProxy proxy = getProxyById(jobInfo.unitID);
+		deployKernel(jobInfo);
+		deployDataIfURL(jobInfo);
 		proxy.runJob(jobInfo);		
+	}
+
+	private void deployKernel(JobInfo jobInfo) {
+		jobInfo.kernelHost = clusterDataHostname;
+		jobInfo.kernelPort = clusterDataPort;
+		jobInfo.kernelID = dataPublisher.publish(jobInfo.kernelString);		
+	}
+	
+	private void deployDataIfURL(JobInfo jobInfo) {
+		if(jobInfo.inputDataUrl != null) {
+			String data = downloadURL(jobInfo.inputDataUrl);
+			jobInfo.dataHost = clusterDataHostname;
+			jobInfo.dataPort = clusterDataPort;
+			jobInfo.dataID = dataPublisher.publish(data);
+			
+		}		
 	}
 
 	private UnitProxy getProxyById(int unitID) {
@@ -91,7 +121,11 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	@Override
 	public void onConnection(SocketChannel channel) {
 		
-		System.out.println("Got connection from channel " + channel);		
+		System.out.println("Got connection from channel " + channel);
+		
+		
+		// FIXME: this is only a communication test
+		TCPServer.sendMessage(channel, "O HAI");
 		
 	}
 
@@ -117,6 +151,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			cluster.unitList.add(unit);
 			proxy = new UnitProxy(channel, unit);
 			unitsMap.put(channel,  proxy);
+			tryProcessJob();
 			//tryUpdateAndGetJob(cluster, clusterBean);
 		}
 		proxy.unit.update(data);
@@ -174,4 +209,29 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 				return proxy;
 		return null;
 	}
+	
+	private String downloadURL(String urlString)
+	{
+	    StringBuffer ret = new StringBuffer();
+
+	    URL url;
+		try {
+			url = new URL(urlString);
+			InputStream is = url.openStream();
+			DataInputStream dis = new DataInputStream(new BufferedInputStream(is));
+			char c;
+			while(true) {
+				c = dis.readChar();
+				ret.append(c);
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (EOFException eoe) {
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+	    	
+	    return ret.toString();
+	  }
+
 }
