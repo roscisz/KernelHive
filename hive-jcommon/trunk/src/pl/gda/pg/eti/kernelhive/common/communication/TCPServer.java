@@ -39,7 +39,7 @@ public class TCPServer implements Runnable {
 	public static void sendMessage(SocketChannel socketChannel, String message) {
 		if(message.equals(null)) System.out.println("NULL MESSAGE??");
 		try {
-			socketChannel.write(Decoder.encode(message));
+			socketChannel.write(Decoder.encode(message + "\n"));
 		} catch (CommunicationException ce) {
 			ce.printStackTrace();
 		} catch (IOException e) {

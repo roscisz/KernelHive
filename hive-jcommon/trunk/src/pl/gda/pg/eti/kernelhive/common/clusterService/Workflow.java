@@ -29,17 +29,21 @@ public class Workflow extends HasID {
 		}		
 	}
 	
-	public Workflow(List<EngineGraphNodeDecorator> graph) {
+	public Workflow(List<EngineGraphNodeDecorator> graph, String inputDataURL) {
 		super();
 				
 		for(EngineGraphNodeDecorator node : graph) {
 			Job newJob = new Job(node, this);			
-			if(node.getGraphNode().getChildrenNodes().size() == 0)
+			if(node.getGraphNode().getChildrenNodes().size() == 0) {
+				
 				newJob.state = JobState.READY;
+				newJob.inputDataUrl = inputDataURL; 
+			}
 			// TODO: if many kernels in one job, assign each kernel to individual job
 			newJob.assignedKernel = node.getKernels().get(0);
 			
 			jobs.put(newJob.ID, newJob);
+			
 			// TODO: wrzucić kernele joba na serwer i ustawić jobowi adres kernela
 		}
 	}

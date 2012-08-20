@@ -11,13 +11,22 @@ public class Cluster extends HasID {
 	
 	private Object monitor = new Object(); 
 	
-	public String hostname;
+	public String hostname = "hive-cluster";
 	public int TCPPort;
 	public int UDPPort;
 	public List<Unit> unitList = new ArrayList<Unit>();
 	@XmlTransient
 	public List<Job> jobsToRun = new ArrayList<Job>();
 	
+	public Cluster() {
+		
+	}
+	
+	public Cluster(int clusterTCPPort, int clusterDataPort, int clusterUDPPort) {
+		this.TCPPort = clusterTCPPort;
+		this.UDPPort = clusterUDPPort;
+	}
+
 	public void runJob(Job jobToRun) {
 		jobsToRun.add(jobToRun);
 		System.out.println("Kaszalot");

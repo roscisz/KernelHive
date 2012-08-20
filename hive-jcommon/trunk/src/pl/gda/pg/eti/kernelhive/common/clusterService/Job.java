@@ -18,23 +18,23 @@ public class Job extends HasID {
 		FINISHED
 	}
 	
-	public String kernelHost;
-	public int kernelPort;
-	public int kernelId;
-	public List<String> dataHosts = new ArrayList<String>();
+	/*public List<String> dataHosts = new ArrayList<String>();
 	public List<Integer> dataPorts = new ArrayList<Integer>();
-	public List<Integer> dataIds = new ArrayList<Integer>();	
+	public List<Integer> dataIds = new ArrayList<Integer>();
+	*/
+	private Workflow task;
+	
+	public EngineGraphNodeDecorator node;
 	public IKernelString assignedKernel;
 	
 	public Device device;
 	
-	private Workflow task;
-	public EngineGraphNodeDecorator node;
 	public JobState state = JobState.PENDING;
 	public int progress = -1;
-	
-	private String unassignedString = "UNASSIGNED";
+		
 	private int unassignedInt = 0;
+
+	public String inputDataUrl;
 
 	public Job() {
 		
@@ -43,37 +43,7 @@ public class Job extends HasID {
 	public Job(EngineGraphNodeDecorator node, Workflow task) {
 		this.node = node;
 		this.task = task;	
-	}		
-
-	@Override
-	public String toString() {
-		StringBuilder ret = new StringBuilder("bin");	
-				
-		ret.append(" " + ID);
-		ret.append(" " + getClusterHost());
-		ret.append(" " + getClusterTCPPort());
-		ret.append(" " + getClusterUdpPort());
-		ret.append(" " + getDeviceId());
-		ret.append(" " + getOffsets());
-		ret.append(" " + getGlobalSizes());
-		ret.append(" " + getLocalSizes());
-		ret.append(" " + kernelHost);
-		ret.append(" " + kernelId);
-		ret.append(" " + getNumData());
-		for(String dataHost : dataHosts)
-			ret.append(" " + dataHost);
-		for(Integer dataPort : dataPorts)
-			ret.append(" " + dataPort);
-		for(Integer dataId : dataIds)
-			ret.append(" " + dataId);
-		
-		return ret.toString();
-		
-		/*return "bin " + ID + " localhost 31339 localhost 31338 " + dataHost + 
-				" " + dataPort +
-				" localhost 31340 " + deviceID +
-				" 1 0 4096 64 456 " + dataID;*/
-	}		
+	}				
 
 	private String getOffsets() {
 		int[] offsets = assignedKernel.getOffset();
@@ -95,7 +65,7 @@ public class Job extends HasID {
 	}
 
 	private String getClusterHost() {
-		if(device == null) return unassignedString;
+		if(device == null) return "hive-cluster";
 		return device.unit.cluster.hostname;		
 	}
 
@@ -104,13 +74,18 @@ public class Job extends HasID {
 		return device.unit.cluster.TCPPort;
 	}
 	
-	private int getClusterUdpPort() {
+	private int getClusterUDPPort() {
 		if(device == null) return unassignedInt;
 		return device.unit.cluster.UDPPort;
 	}
+	
+	private int getUnitId() {
+		if(this.device == null) return unassignedInt;
+		return this.device.unit.ID;
+	}	
 
 	private String getDeviceId() {
-		if(device == null) return unassignedString;
+		if(device == null) return "UNASSIGNED";
 		return device.name;
 	}
 
@@ -122,10 +97,6 @@ public class Job extends HasID {
 		this.dataPort = dataAddress[1];
 		this.dataID = dataAddress[2];		
 	}*/	
-	
-	public int getNumData() {
-		return dataHosts.size();
-	}
 
 	public void run() {
 		System.out.println("RUN");
@@ -143,9 +114,19 @@ public class Job extends HasID {
 		
 		JobInfo ret = new JobInfo();
 		
-		ret.runString = this.toString();
-		ret.unitID = this.device.unit.ID;
+		ret.unitID = getUnitId();
+		ret.kernelString = this.assignedKernel.getKernel();
+		
+		ret.ID = ID;
+		ret.clusterHost = getClusterHost();
+		ret.clusterTCPPort = getClusterTCPPort();
+		ret.clusterUDPPort = getClusterUDPPort();
+		ret.deviceID = getDeviceId();
+		ret.offsets = getOffsets();
+		ret.globalSizes = getGlobalSizes();
+		ret.localSizes = getLocalSizes();
+		ret.inputDataUrl = inputDataUrl;
 		
 		return ret;
-	}	
+	}
 }
