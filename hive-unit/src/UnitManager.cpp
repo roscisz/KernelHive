@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <strings.h>
+#include <string.h>
 #include "UnitManager.h"
 #include "commons/Logger.h"
 #include "commons/OpenClPlatform.h"
@@ -45,13 +46,26 @@ UnitManager::~UnitManager() {
 }
 
 void UnitManager::listen() {
-	while(true);
+	while(true) {
+		sleep(10000);
+	}
 }
 
 void UnitManager::onMessage(TCPMessage *message) {
-	printf("O HAI");
+	// FIXME: extract a constant
+	char *type;
+	type = (char *) calloc(30, sizeof(char));
+
 	printf("Got command: %s", message->data);
-	WorkerProxy *proxy = WorkerProxy::create(/* type ,*/message->data);
+
+	sscanf(message->data, "%s ", type);
+
+	printf("Type: %s", type);
+
+	//char *args = strstr(message->data, " ") + 1; // + 1 ?
+
+	printf("Args: %s\n", message->data);
+	WorkerProxy *proxy = WorkerProxy::create(type, message->data);
 }
 
 void UnitManager::onConnected() {
