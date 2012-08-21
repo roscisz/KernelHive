@@ -55,7 +55,6 @@ public class Cluster extends HasID {
 	public Job getJob() {		
 		try
 		{
-			// wait until there is a task for this Cluster, then return it
 			synchronized (monitor) {
 				while(true) {				
 					System.out.println("Wait on cluster" + this);

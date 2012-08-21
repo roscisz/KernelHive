@@ -36,10 +36,18 @@ public class JobInfo {
 		ret.append(" " + clusterHost);
 		ret.append(" " + clusterTCPPort);
 		ret.append(" " + clusterUDPPort);
-		ret.append(" " + deviceID);
-		ret.append(" " + offsets);
-		ret.append(" " + globalSizes);
-		ret.append(" " + localSizes);
+		ret.append(" " + deviceID);		
+		// TODO: different NUM_DIMENSIONS
+		ret.append(" 3");
+		// FIXME: change kernel parameters structure in GUI and jcommon
+		String[] offset_tab = offsets.split(" ");
+		String[] globalSize_tab = globalSizes.split(" ");
+		String[] localSize_tab = localSizes.split(" ");
+		for(int i = 0; i != 3; i++) {
+			ret.append(" " + offset_tab[i]);
+			ret.append(" " + globalSize_tab[i]);
+			ret.append(" " + localSize_tab[i]);			
+		}
 		ret.append(" " + kernelHost);
 		ret.append(" " + kernelPort);
 		ret.append(" " + kernelID);
