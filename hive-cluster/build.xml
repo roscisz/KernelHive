@@ -65,6 +65,14 @@
 		<delete dir="${dist.dir}" />
 		<delete dir="${tmp.dir}" />
 	</target>
-	
+
+	<target name="allClean" description="clean up, including dependency modules" >
+		<!-- Delete the ${build.dir} and ${dist.dir} directory trees -->
+		<ant dir="${jcommon.dir}" inheritAll="false" target="clean" />
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+		<delete dir="${tmp.dir}" />
+	</target>
+
 </project>
 
