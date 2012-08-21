@@ -36,6 +36,8 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	private final int clusterDataPort = 31339;
 	private final int clusterUDPPort = 31340;	
 	
+	private boolean gettingJob = false;
+	
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
 	
 	private Cluster cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort);
@@ -62,7 +64,10 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		
 		//new Thread(this).start();
 		
+		tryUpdateInEngine();
+				
 		while(true) {
+			// TUTAJ TYLKO GET JOB, a update raz na początku oraz zawsze gdy coś się zmieni :)
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
@@ -72,11 +77,20 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		}
 	}
 	
+	private void tryUpdateInEngine() {
+		while(clusterBean == null)
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		updateClusterInEngine(cluster, clusterBean);		
+	}
+
 	private void tryProcessJob() {
-		JobInfo jobInfo = tryUpdateAndGetJob(cluster, clusterBean);
+		JobInfo jobInfo = tryGetJob(cluster, clusterBean);
 		if(jobInfo != null)
 			runJob(jobInfo);
-		else System.out.println("Got null job, nvm.");
 	}
 
 	private void runJob(JobInfo jobInfo) {
@@ -110,10 +124,15 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		return null;
 	}
 
-	private JobInfo tryUpdateAndGetJob(Cluster cluster, ClusterBean clusterBean) {
+	private JobInfo tryGetJob(Cluster cluster, ClusterBean clusterBean) {
 		if(clusterBean != null) {
-			updateClusterInEngine(cluster, clusterBean);
-			return clusterBean.getJob();
+			if(!gettingJob) {
+				gettingJob = true;
+				JobInfo ret = clusterBean.getJob();
+				gettingJob = false;
+				return ret;
+			}
+			else return null;
 		}
 		return null;
 	}
@@ -121,11 +140,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	@Override
 	public void onConnection(SocketChannel channel) {
 		
-		System.out.println("Got connection from channel " + channel);
-		
-		
-		// FIXME: this is only a communication test
-		TCPServer.sendMessage(channel, "O HAI");
+		System.out.println("Got connection from channel " + channel);	
 		
 	}
 
@@ -145,17 +160,21 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	}
 
 	private void commandUpdate(SocketChannel channel, String data) {
+		System.out.println("Command update...");
 		UnitProxy proxy = unitsMap.get(channel);
 		if(proxy == null) {
 			Unit unit = new Unit(cluster);
 			cluster.unitList.add(unit);
 			proxy = new UnitProxy(channel, unit);
 			unitsMap.put(channel,  proxy);
-			tryProcessJob();
-			//tryUpdateAndGetJob(cluster, clusterBean);
 		}
+		System.out.println("Proxy update...");
 		proxy.unit.update(data);
 		System.out.println("Now we have " + unitsMap.size() + " clients");
+		for(UnitProxy up : unitsMap.values())
+			System.out.println(up.unit);		
+		tryUpdateInEngine();
+		tryProcessJob();
 	}
 	
 	private void updateClusterInEngine(Cluster cluster, ClusterBean clusterBean) {
@@ -175,6 +194,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	public void onDisconnection(SocketChannel channel) {
 		
 		System.out.println("Channel " + channel + " disconnected.");
+		cluster.unitList.remove(unitsMap.get(channel).unit);
 		unitsMap.remove(channel);
 		System.out.println("Now we have " + unitsMap.size() + " clients");		
 		
