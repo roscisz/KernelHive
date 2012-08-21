@@ -84,7 +84,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		updateClusterInEngine(cluster, clusterBean);		
+		updateClusterInEngine(cluster, clusterBean);
 	}
 
 	private void tryProcessJob() {
@@ -112,8 +112,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			String data = downloadURL(jobInfo.inputDataUrl);
 			jobInfo.dataHost = clusterDataHostname;
 			jobInfo.dataPort = clusterDataPort;
-			jobInfo.dataID = dataPublisher.publish(data);
-			
+			jobInfo.dataID = dataPublisher.publish(data);			
 		}		
 	}
 
@@ -129,6 +128,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			if(!gettingJob) {
 				gettingJob = true;
 				JobInfo ret = clusterBean.getJob();
+				System.out.println("Got job: " + ret);
 				gettingJob = false;
 				return ret;
 			}
@@ -181,7 +181,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		System.out.println("Updating cluster in engine");
 		clusterBean.update(cluster);
 		System.out.println("Updated cluster in engine");
-		
+		gettingJob = false;		
 	}
 
 	private void commandOver(String message) {
