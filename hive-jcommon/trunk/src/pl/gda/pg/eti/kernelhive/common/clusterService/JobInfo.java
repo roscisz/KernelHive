@@ -1,5 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
+import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
+
 public class JobInfo {
 	
 	public int unitID;
@@ -7,6 +9,8 @@ public class JobInfo {
 	private String resultDataHost = "hive-cluster";
 	private int resultDataPort = 31339;
 	public String kernelString;
+	public GraphNodeType jobType;
+	public String inputDataUrl;
 	
 	public String kernelHost;
 	public int kernelPort;
@@ -21,14 +25,13 @@ public class JobInfo {
 	public String localSizes;
 	public String dataHost;
 	public int dataPort;
-	public int dataID;
-	
-	public String inputDataUrl;
+	public int dataID;	
 	
 	@Override
-	public String toString() {
-		StringBuilder ret = new StringBuilder("bin");	
+	public String toString() {	
+		StringBuilder ret = new StringBuilder();
 		
+		ret.append(" " + jobType.toString());
 		ret.append(" " + ID);
 		ret.append(" " + clusterHost);
 		ret.append(" " + clusterTCPPort);

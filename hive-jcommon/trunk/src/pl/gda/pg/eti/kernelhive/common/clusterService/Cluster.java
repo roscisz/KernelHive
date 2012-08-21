@@ -29,7 +29,6 @@ public class Cluster extends HasID {
 
 	public void runJob(Job jobToRun) {
 		jobsToRun.add(jobToRun);
-		System.out.println("Kaszalot");
 		synchronized(monitor) {
 			System.out.println("Notify on cluster " + this);
 			monitor.notifyAll();
@@ -53,7 +52,7 @@ public class Cluster extends HasID {
 		
 	}
 
-	public Job getJob() {
+	public Job getJob() {		
 		try
 		{
 			// wait until there is a task for this Cluster, then return it
@@ -71,7 +70,7 @@ public class Cluster extends HasID {
 			}
 		}
 		catch (InterruptedException e) {
-			e.printStackTrace();
+			System.out.println("getJob interrupted");
 			return null;
 		}
 	}

@@ -7,9 +7,9 @@ package pl.gda.pg.eti.kernelhive.common.graph.node;
  */
 public enum GraphNodeType {
 	GENERIC("generic"), 
-	MERGER("merger"), 
-	PARTITIONER("partitioner"), 
-	PROCESSOR("processor"), 
+	MERGER("DataMerger"), 
+	PARTITIONER("DataPartitioner"), 
+	PROCESSOR("DataProcessor"), 
 	COMPOSITE("composite"), 
 	MASTERSLAVE("masterslave"), 
 	DAC("dac");

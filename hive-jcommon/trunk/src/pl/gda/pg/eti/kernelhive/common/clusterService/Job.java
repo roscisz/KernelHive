@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
 
 public class Job extends HasID {
@@ -88,6 +89,10 @@ public class Job extends HasID {
 		if(device == null) return "UNASSIGNED";
 		return device.name;
 	}
+	
+	private GraphNodeType getJobType() {
+		return node.getGraphNode().getType();
+	}
 
 	/*
 	public void setDataAddress(String status) {
@@ -99,7 +104,6 @@ public class Job extends HasID {
 	}*/	
 
 	public void run() {
-		System.out.println("RUN");
 		this.device.unit.cluster.runJob(this);	
 		this.state = JobState.PROCESSING;
 	}
@@ -125,6 +129,8 @@ public class Job extends HasID {
 		ret.offsets = getOffsets();
 		ret.globalSizes = getGlobalSizes();
 		ret.localSizes = getLocalSizes();
+		ret.jobType = getJobType();
+		
 		ret.inputDataUrl = inputDataUrl;
 		
 		return ret;
