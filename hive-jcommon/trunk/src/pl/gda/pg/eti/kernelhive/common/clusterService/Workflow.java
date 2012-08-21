@@ -34,10 +34,10 @@ public class Workflow extends HasID {
 				
 		for(EngineGraphNodeDecorator node : graph) {
 			Job newJob = new Job(node, this);			
-			if(node.getGraphNode().getChildrenNodes().size() == 0) {
-				
+			if(node.getGraphNode().getChildrenNodes().size() == 0) {				
 				newJob.state = JobState.READY;
-				newJob.inputDataUrl = inputDataURL; 
+				// FIXME:
+				newJob.inputDataUrl = "http://gracik.mine.nu/data";//inputDataURL; 
 			}
 			// TODO: if many kernels in one job, assign each kernel to individual job
 			newJob.assignedKernel = node.getKernels().get(0);

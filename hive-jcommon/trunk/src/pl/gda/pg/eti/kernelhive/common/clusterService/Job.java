@@ -138,6 +138,7 @@ public class Job extends HasID {
 		ret.outputSize = getOutputSize();
 		ret.jobType = getJobType();
 		
+		System.out.println("Setting inputDataUrl " + inputDataUrl);
 		ret.inputDataUrl = inputDataUrl;
 		
 		return ret;

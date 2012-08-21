@@ -47,8 +47,6 @@ public class JobInfo {
 		ret.append(" " + kernelHost);
 		ret.append(" " + kernelPort);
 		ret.append(" " + kernelID);
-		// TODO: many input data entities
-		ret.append(" 1");
 		ret.append(" " + dataHost);
 		ret.append(" " + dataPort);
 		ret.append(" " + dataID);
