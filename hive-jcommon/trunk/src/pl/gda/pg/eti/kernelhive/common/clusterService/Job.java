@@ -61,6 +61,12 @@ public class Job extends HasID {
 		return concatKernelAttrs(localSizes);
 	}
 	
+	private String getOutputSize() {
+		// FIXME:
+		//return this.node.getGraphNode().getOutputSize();
+		return "4096";
+	}
+	
 	private String concatKernelAttrs(int[] attrs) {
 		return attrs[0] + " " + attrs[1] + " " + attrs[2];
 	}
@@ -129,6 +135,7 @@ public class Job extends HasID {
 		ret.offsets = getOffsets();
 		ret.globalSizes = getGlobalSizes();
 		ret.localSizes = getLocalSizes();
+		ret.outputSize = getOutputSize();
 		ret.jobType = getJobType();
 		
 		ret.inputDataUrl = inputDataUrl;

@@ -23,6 +23,7 @@ public class JobInfo {
 	public String offsets;
 	public String globalSizes;
 	public String localSizes;
+	public String outputSize;
 	public String dataHost;
 	public int dataPort;
 	public int dataID;	
@@ -39,15 +40,10 @@ public class JobInfo {
 		ret.append(" " + deviceID);		
 		// TODO: different NUM_DIMENSIONS
 		ret.append(" 3");
-		// FIXME: change kernel parameters structure in GUI and jcommon
-		String[] offset_tab = offsets.split(" ");
-		String[] globalSize_tab = globalSizes.split(" ");
-		String[] localSize_tab = localSizes.split(" ");
-		for(int i = 0; i != 3; i++) {
-			ret.append(" " + offset_tab[i]);
-			ret.append(" " + globalSize_tab[i]);
-			ret.append(" " + localSize_tab[i]);			
-		}
+		ret.append(" " + offsets);
+		ret.append(" " + globalSizes);
+		ret.append(" " + localSizes);
+		ret.append(" " + outputSize);
 		ret.append(" " + kernelHost);
 		ret.append(" " + kernelPort);
 		ret.append(" " + kernelID);
