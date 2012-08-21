@@ -10,7 +10,7 @@ public class Device {
 	public boolean isAvailable;
 	public int computeUnitsNumber;
 	public int clock;
-	public int globalMemoryBytes;
+	public Long globalMemoryBytes;
 	public int localMemoryBytes;
 	public int workGroupSize;
 	
@@ -36,7 +36,7 @@ public class Device {
 		isAvailable = !parameters[2].equals("0");
 		computeUnitsNumber = Integer.parseInt(parameters[3]);
 		clock = Integer.parseInt(parameters[4]);
-		globalMemoryBytes = Integer.parseInt(parameters[5]);
+		globalMemoryBytes = Long.parseLong(parameters[5]);
 		localMemoryBytes = Integer.parseInt(parameters[6]);
 		workGroupSize = Integer.parseInt(parameters[7]);
 	}
