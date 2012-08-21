@@ -45,7 +45,8 @@ void WorkerProxy::forkAndExec(const char *binaryPath, char *const argv[]) {
 }
 
 WorkerProxy *WorkerProxy::create(char *type, char *params) {
-	std::string path = "../build/hive-worker/";
+	// FIXME: Worker binary path from configuration
+	std::string path = "../hive-worker/";
 	path.append(type);
 	return new WorkerProxy(path.c_str(), params);
 }
