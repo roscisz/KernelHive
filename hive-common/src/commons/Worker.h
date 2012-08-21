@@ -8,7 +8,7 @@
 #ifndef WORKER_H_
 #define WORKER_H_
 
-#define WORKER_STD_ARGS		6
+#define WORKER_STD_ARGS		5
 
 #include "../threading/ThreadManager.h"
 #include "../network/NetworkAddress.h"

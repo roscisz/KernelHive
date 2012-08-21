@@ -17,7 +17,7 @@ Worker::Worker(char **argv) {
 	jobID = KhUtils::atoi(argv[1]);
 
 	NetworkAddress *clusterAddress = new NetworkAddress(argv[2], argv[3]);
-	this->clusterTCPAddress = new NetworkAddress(argv[4], argv[5]);
+	this->clusterTCPAddress = new NetworkAddress(argv[2], argv[4]);
 	this->reporter = new UDPReporter(jobID, clusterAddress, this);
 
 	this->percentDone = -1;
