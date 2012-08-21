@@ -65,7 +65,7 @@ private:
 	int dataIdInt;
 
 	/** The network addresses to which outputs will be uploaded. */
-	NetworkAddress** outputDataAddresses;
+	NetworkAddress* outputDataAddress;
 
 	/** Buffers array for storing data parts. */
 	SynchronizedBuffer** resultBuffers;

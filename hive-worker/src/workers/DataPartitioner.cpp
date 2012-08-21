@@ -17,7 +17,7 @@ const char* DataPartitioner::KERNEL = "partitionData";
 DataPartitioner::DataPartitioner(char **argv) : BasicWorker(argv) {
 	partsCount = 0;
 	totalDataSize = 0;
-	outputDataAddresses = NULL;
+	outputDataAddress = NULL;
 	resultBuffers = NULL;
 }
 
@@ -85,7 +85,7 @@ void DataPartitioner::workSpecific() {
 		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, readOffset,
 				outputPartDataSize*sizeof(byte), (void*)resultBuffers[i]->getRawData());
 		copyEvents[i] = &dataCopy;
-		uploaders.push_back(new DataUploader(outputDataAddresses[i], resultBuffers[i]));
+		uploaders.push_back(new DataUploader(outputDataAddress, resultBuffers[i]));
 		readOffset += outputPartDataSize;
 	}
 	context->waitForEvents(partsCount, copyEvents);
@@ -106,11 +106,10 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 
 	partsCount = KhUtils::atoi(nextParam(argv));
 	resultBuffers = new SynchronizedBuffer*[partsCount];
-	outputDataAddresses = new NetworkAddress*[partsCount];
 	for (int i = 0; i < partsCount; i++) {
 		resultBuffers[i] = new SynchronizedBuffer();
-		outputDataAddresses[i] = new NetworkAddress(nextParam(argv), nextParam(argv));
 	}
+	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 
 	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
@@ -124,14 +123,7 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 // ========================================================================= //
 
 void DataPartitioner::cleanupResources() {
-	if (outputDataAddresses != NULL) {
-			for (int i = 0; i < partsCount; i++) {
-				if (outputDataAddresses[i] != NULL) {
-					delete outputDataAddresses[i];
-				}
-			}
-			delete [] outputDataAddresses;
-		}
+	delete outputDataAddress;
 	if (resultBuffers != NULL) {
 		for (int i = 0; i < partsCount; i++) {
 			if (resultBuffers[i] != NULL) {
