@@ -47,8 +47,8 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	public ClusterManager() {
 		try {
 			TCPServer unitServer = new TCPServer(new NetworkAddress(clusterTcpHostname, clusterTCPPort), this);
-			dataPublisher = new DataPublisher(new NetworkAddress(clusterDataHostname, clusterUDPPort));
-			UDPServer runnerServer = new UDPServer(clusterDataPort, this);
+			dataPublisher = new DataPublisher(new NetworkAddress(clusterDataHostname, clusterDataPort));
+			UDPServer runnerServer = new UDPServer(clusterUDPPort, this);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
 			e.printStackTrace();
@@ -109,6 +109,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	
 	private void deployDataIfURL(JobInfo jobInfo) {
 		if(jobInfo.inputDataUrl != null) {
+			System.out.println("Deploying data from " + jobInfo.inputDataUrl);
 			String data = downloadURL(jobInfo.inputDataUrl);
 			jobInfo.dataHost = clusterDataHostname;
 			jobInfo.dataPort = clusterDataPort;
