@@ -14,10 +14,11 @@
 #include <string>
 #include <sstream>
 #include "WorkerProxy.h"
+#include "Logger.h"
 
 namespace KernelHive {
 
-WorkerProxy::WorkerProxy(char *binaryPath, char *params) {
+WorkerProxy::WorkerProxy(const char *binaryPath, char *params) {
 	std::vector<char *> args;
 	std::istringstream iss(params);
 
@@ -36,16 +37,17 @@ WorkerProxy::WorkerProxy(char *binaryPath, char *params) {
 	  delete[] args[i];
 }
 
-void WorkerProxy::forkAndExec(char *binaryPath, char *const argv[]) {
+void WorkerProxy::forkAndExec(const char *binaryPath, char *const argv[]) {
 	if(fork()) return;
 
 	if(execv(binaryPath, argv))
-		printf("Execv error: %s", strerror(errno));
+		Logger::log(FATAL, "Execv error: %s", strerror(errno));
 }
 
-WorkerProxy *WorkerProxy::create(char *params) {
-	// TODO: worker factory
-	return new WorkerProxy("../build/hive-worker/DataProcessor", params);
+WorkerProxy *WorkerProxy::create(char *type, char *params) {
+	std::string path = "../build/hive-worker/";
+	path.append(type);
+	return new WorkerProxy(path.c_str(), params);
 }
 
 WorkerProxy::~WorkerProxy() {

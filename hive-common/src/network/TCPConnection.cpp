@@ -55,9 +55,9 @@ void TCPConnection::sendMessage(const char *msg)
 }
 
 void TCPConnection::sendMessage(const char *msg, int size) {
+	Logger::log(INFO, "Seding message: %s", msg);
 	if(write(sockfd, msg, size) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
-	printf("Sent TCP message %s\n");
 }
 
 void TCPConnection::disconnect()

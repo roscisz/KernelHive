@@ -15,10 +15,10 @@ namespace KernelHive {
 class WorkerProxy {
 public:
 	virtual ~WorkerProxy();
-	static WorkerProxy *create(/* argument for factory method , */char *params);
+	static WorkerProxy *create(char *type, char *params);
 private:
-	WorkerProxy(char *binaryPath, char *params);
-	void forkAndExec(char *binaryPath, char *const argv[]);
+	WorkerProxy(const char *binaryPath, char *params);
+	void forkAndExec(const char *binaryPath, char *const argv[]);
 };
 
 }

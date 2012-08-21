@@ -28,7 +28,7 @@ void UDPClient::sendMessage(char *message) {
 	if (sendto(this->sockfd, message, strlen(message), 0,
 			   (struct sockaddr *)&this->serverAddress, sizeof(this->serverAddress)) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
-	printf("Sent UDP message %s\n", message);
+	Logger::log(INFO, "Sent UDP message %s\n", message);
 }
 
 UDPClient::~UDPClient() {
