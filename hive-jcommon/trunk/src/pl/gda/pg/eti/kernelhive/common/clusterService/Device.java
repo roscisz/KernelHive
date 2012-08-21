@@ -11,7 +11,7 @@ public class Device {
 	public int computeUnitsNumber;
 	public int clock;
 	public Long globalMemoryBytes;
-	public int localMemoryBytes;
+	public Long localMemoryBytes;
 	public int workGroupSize;
 	
 	public boolean busy = false;
@@ -37,7 +37,7 @@ public class Device {
 		computeUnitsNumber = Integer.parseInt(parameters[3]);
 		clock = Integer.parseInt(parameters[4]);
 		globalMemoryBytes = Long.parseLong(parameters[5]);
-		localMemoryBytes = Integer.parseInt(parameters[6]);
+		localMemoryBytes = Long.parseLong(parameters[6]);
 		workGroupSize = Integer.parseInt(parameters[7]);
 	}
 
