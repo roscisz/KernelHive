@@ -3,10 +3,8 @@ package pl.gda.pg.eti.kernelhive.gui.frame;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
