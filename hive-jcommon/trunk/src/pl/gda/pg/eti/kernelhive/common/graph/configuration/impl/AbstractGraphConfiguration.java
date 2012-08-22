@@ -397,5 +397,6 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 			attr.setValue(name);
 			config.getRoot().addAttribute(attr);
 		}
+		config.save(configFile);
 	}
 }
