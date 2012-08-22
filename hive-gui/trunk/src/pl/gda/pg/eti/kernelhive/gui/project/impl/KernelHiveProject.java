@@ -81,6 +81,7 @@ public class KernelHiveProject implements Serializable, IProject {
 	public void load(File file) throws ConfigurationException {
 		config.setConfigurationFile(file);
 		nodes = config.loadGraphForGUI();
+		projectName = config.getProjectName();
 	}
 
 	@Override
@@ -118,9 +119,9 @@ public class KernelHiveProject implements Serializable, IProject {
 				throw new ConfigurationException(e);
 			}
 		}
-		
 		config.setConfigurationFile(file);
 		config.saveGraphForGUI(this.nodes);
+		config.setProjectName(projectName);
 	}
 
 	@Override

@@ -513,9 +513,10 @@ public class MainFrameController {
 
 			@Override
 			public void workflowSubmissionCompleted(Integer workflowId) {
-				MessageDialog.showErrorDialog(frame, "Success",
+				JOptionPane.showMessageDialog(frame,
 						"Workflow sent to execution. Workflow ID is "
-								+ workflowId);
+								+ workflowId, "Success",
+						JOptionPane.INFORMATION_MESSAGE, null);
 			}
 		});
 
@@ -529,6 +530,7 @@ public class MainFrameController {
 							.toExternalForm());
 					engConfig.saveGraphForEngine(GraphNodeDecoratorConverter
 							.convertGuiToEngine(project.getProjectNodes()), w);
+					System.out.println(engConfig.getProjectName());
 					byte[] graphStream = w.getBuffer().toString()
 							.getBytes("utf-8");
 					execution.setUsername(wizardDisplay.getUsername());
