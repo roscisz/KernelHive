@@ -514,7 +514,7 @@ public class MainFrameController {
 			@Override
 			public void workflowSubmissionCompleted(Integer workflowId) {
 				MessageDialog.showErrorDialog(frame, "Success",
-						"Workflow send to execution. Workflow ID is "
+						"Workflow sent to execution. Workflow ID is "
 								+ workflowId);
 			}
 		});
