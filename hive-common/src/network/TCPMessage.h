@@ -8,14 +8,16 @@
 #ifndef TCPMESSAGE_H_
 #define TCPMESSAGE_H_
 
+#include "../commons/byte.h"
+
 namespace KernelHive {
 
 class TCPMessage {
 public:
-	TCPMessage(char *data, int nBytes);
+	TCPMessage(byte *data, int nBytes);
 	virtual ~TCPMessage();
 
-	char *data;
+	byte *data;
 	int nBytes;
 };
 

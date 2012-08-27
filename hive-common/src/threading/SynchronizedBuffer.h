@@ -3,11 +3,9 @@
 
 #include <cstdlib>
 #include <pthread.h>
+#include "../commons/byte.h"
 
 namespace KernelHive {
-
-/** A data type alias. */
-typedef char byte;
 
 /**
  * A thread-safe buffer.

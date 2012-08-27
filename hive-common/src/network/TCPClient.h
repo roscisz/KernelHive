@@ -38,7 +38,7 @@ public:
 	void onDisconnected(int sockfd);
 	void onMessage(int sockfd, TCPMessage *message);
 
-	void sendMessage(const char *message);
+	//void sendMessage(byte *message);
 	void sendMessage(TCPMessage *message);
 
 	void pleaseStop();

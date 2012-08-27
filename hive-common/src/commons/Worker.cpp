@@ -47,7 +47,8 @@ void Worker::reportOver(const char* uploadIDs) {
 	report.append(uploadIDs);
 
 	TCPClient *client = new TCPClient(clusterTCPAddress, NULL);
-	client->sendMessage(report.c_str());
+	TCPMessage *message = new TCPMessage((byte *)report.c_str(), report.length());
+	client->sendMessage(message);
 }
 
 Worker::~Worker() {

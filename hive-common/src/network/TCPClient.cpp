@@ -33,12 +33,14 @@ void TCPClient::onMessage(int sockfd, TCPMessage *message) {
 		listener->onMessage(message);
 }
 
-void TCPClient::sendMessage(const char *message) {
+/*
+void TCPClient::sendMessage(byte *message) {
 	connection->sendMessage(message);
 }
+*/
 
 void TCPClient::sendMessage(TCPMessage *message) {
-	connection->sendMessage(message->data, message->nBytes);
+	connection->sendMessage(message);
 }
 
 void TCPClient::executeLoopCycle() {

@@ -9,7 +9,7 @@
 
 namespace KernelHive {
 
-TCPMessage::TCPMessage(char *data, int nBytes) {
+TCPMessage::TCPMessage(byte *data, int nBytes) {
 	this->data = data;
 	this->nBytes = nBytes;
 }

@@ -37,7 +37,7 @@ void TCPConnection::executeLoopCycle() {
 }
 
 TCPMessage* TCPConnection::readMessage() {
-	char *message = (char *)(calloc(MAX_MESSAGE_BYTES, sizeof (char)));
+	byte *message = (byte *)(calloc(MAX_MESSAGE_BYTES, sizeof (byte)));
         bzero(message, MAX_MESSAGE_BYTES);
         int n = read(sockfd, message, MAX_MESSAGE_BYTES);
         if(n < 0)
@@ -49,14 +49,15 @@ TCPMessage* TCPConnection::readMessage() {
         return new TCPMessage(message, n);
 }
 
-void TCPConnection::sendMessage(const char *msg)
+/*
+void TCPConnection::sendMessage(byte *msg)
 {
 	sendMessage(msg, strlen(msg));
-}
+}*/
 
-void TCPConnection::sendMessage(const char *msg, int size) {
-	Logger::log(INFO, "Seding message: %s", msg);
-	if(write(sockfd, msg, size) < 0)
+void TCPConnection::sendMessage(TCPMessage *message) {
+	Logger::log(INFO, "Seding message: %s", message->data);
+	if(write(sockfd, message->data, message->nBytes) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
 }
 

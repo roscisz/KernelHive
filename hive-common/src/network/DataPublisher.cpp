@@ -34,6 +34,7 @@ void DataPublisher::publish(int id, char *data) {
 }
 
 void DataPublisher::onMessage(int sockfd, TCPMessage *message) {
+	/*
 	const char *answer;
 
 	try {
@@ -44,12 +45,16 @@ void DataPublisher::onMessage(int sockfd, TCPMessage *message) {
 	}
 
 	this->server->sendMessage(sockfd, answer);
+	*/
 }
 
 const char *DataPublisher::processMessage(TCPMessage *message) {
-	int command, arg;
-	sscanf(message->data, "%d %d", &command, &arg);
+	//int command, arg;
 
+
+
+	//sscanf(message->data, "%d %d", &command, &arg);
+/*
 	switch(command) {
 	case CMD_PUT: return putData(arg, message);
 	case CMD_GETSIZE: return getSize(arg);
@@ -57,39 +62,49 @@ const char *DataPublisher::processMessage(TCPMessage *message) {
 	case CMD_DELETE: return deleteData(arg);
 	default: return "No such command";
 	}
+		*/
 }
 
 const char *DataPublisher::putData(int size, TCPMessage *message) {
 	int cmd, arg, id;
-	char *buffer = (char *) malloc(size);
+	/*char *buffer = (char *) malloc(size);
 
 	sscanf(message->data, "%d %d %s", &cmd, &arg, buffer);
 	id = publish(buffer);
 
 	return KhUtils::itoa(id);
+	*/
 }
 
 const char *DataPublisher::getSize(int id) {
+	/*
 	throwIfIdOutOfRange(id);
 	int size = strlen(dataMap[id]);
 	return KhUtils::itoa(size);
+	*/
 }
 
 const char *DataPublisher::getData(int id) {
+	/*
 	throwIfIdOutOfRange(id);
 	return dataMap[id];
+	*/
 }
 
 const char *DataPublisher::deleteData(int id) {
+	/*
 	throwIfIdOutOfRange(id);
 	free(dataMap[id]);
 	dataMap.erase(id);
 	return "OK";
+	*/
 }
 
 void DataPublisher::throwIfIdOutOfRange(int id) {
+	/*
 	DataMap::iterator iterator = dataMap.find(id);
 	if(iterator == dataMap.end()) throw std::out_of_range("");
+	*/
 }
 
 int DataPublisher::generateID() {

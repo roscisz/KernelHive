@@ -11,6 +11,7 @@
 #include "../threading/LoopedThread.h"
 #include "TCPConnectionListener.h"
 #include "TCPMessage.h"
+#include "../commons/byte.h"
 
 #define MAX_MESSAGE_BYTES 1024
 
@@ -20,8 +21,8 @@ class TCPConnection : public LoopedThread {
 public:
 	TCPConnection(int sockfd, TCPConnectionListener *listener);
 	void executeLoopCycle();
-	void sendMessage(const char *msg); // FIXME: Should be protected?
-	void sendMessage(const char *msg, int length);
+	//void sendMessage(byte *msg); // FIXME: Should be protected?
+	void sendMessage(TCPMessage *message);
 	void disconnect();
 	virtual ~TCPConnection();
 private:
