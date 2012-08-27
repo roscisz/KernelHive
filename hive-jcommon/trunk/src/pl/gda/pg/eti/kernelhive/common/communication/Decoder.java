@@ -13,19 +13,24 @@ public class Decoder {
 	private static CharsetDecoder decoder = charset.newDecoder();
 	private static CharsetEncoder encoder = charset.newEncoder();
 	
-	public static String decode(ByteBuffer buffer) throws CommunicationException {		
-		buffer.flip();		
+	public static String decode(ByteBuffer buffer) {		
+		//buffer.flip();		
 		// FIXME: Setting the charset somewhere
 		
 		CharsetDecoder decoder = charset.newDecoder();
 		CharBuffer charBuffer;
 		try {
 			charBuffer = decoder.decode(buffer);
+			String message = charBuffer.toString();
+			message = message.split("\n")[0];
+			message = message.split("\r")[0];
+			return message;
 		}
 		catch(CharacterCodingException cce) {
-			throw new CommunicationException(cce);
+			cce.printStackTrace();
 		}
-		return charBuffer.toString();
+		
+		return "";
 	}
 	
 	public static ByteBuffer encode(String message) throws CommunicationException {

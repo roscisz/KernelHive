@@ -98,10 +98,7 @@ public class TCPServer implements Runnable {
 		
 		try {
 			ByteBuffer buffer = readBuffer(client);
-			String message = Decoder.decode(buffer);
-			message = message.split("\n")[0];
-			message = message.split("\r")[0];
-			listener.onTCPMessage(client, message);
+			listener.onTCPMessage(client, buffer);
 		}
 		catch(CommunicationException ce) {
 			return;
@@ -116,6 +113,8 @@ public class TCPServer implements Runnable {
 			listener.onDisconnection(client);
 			throw new CommunicationException(null);
 		}
+		
+		buffer.rewind();
 		
 		return buffer;
 	}

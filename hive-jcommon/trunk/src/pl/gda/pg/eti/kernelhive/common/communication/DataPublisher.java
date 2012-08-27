@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.communication;
 
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 
@@ -46,8 +47,8 @@ public class DataPublisher implements TCPServerListener {
 	}
 
 	@Override
-	public void onTCPMessage(SocketChannel channel, String message) {
-		System.out.println("Publisher got message: " + message);
+	public void onTCPMessage(SocketChannel channel, ByteBuffer buffer) {
+		/*System.out.println("Publisher got message: " + message);
 		message = message.split("\r")[0];
 		message = message.split("\n")[0];
 		String[] command = message.split(commandSeparator, 2);
@@ -68,6 +69,7 @@ public class DataPublisher implements TCPServerListener {
 		}
 		
 		TCPServer.sendMessage(channel, answer);
+		*/
 	}
 	
 	@Override
