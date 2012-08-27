@@ -21,9 +21,10 @@ ClusterProxy::ClusterProxy(NetworkAddress *clusterAddress, TCPClientListener *li
 }
 
 void ClusterProxy::sendUpdate() {
-	char message[MAX_MESSAGE_BYTES];
+	char data[MAX_MESSAGE_BYTES];
 	const char *devices = OpenClHost::getDevicesInfo().c_str();
-	sprintf(message, "UPDATE %s", devices);
+	sprintf(data, "UPDATE %s", devices);
+	TCPMessage *message = new TCPMessage((byte *) data, strlen(data));
 	sendMessage(message);
 }
 

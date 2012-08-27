@@ -58,14 +58,14 @@ void UnitManager::onMessage(TCPMessage *message) {
 
 	printf("Got command: %s", message->data);
 
-	sscanf(message->data, "%s ", type);
+	sscanf((const char *)message->data, "%s ", type);
 
 	printf("Type: %s", type);
 
 	//char *args = strstr(message->data, " ") + 1; // + 1 ?
 
 	printf("Args: %s\n", message->data);
-	WorkerProxy *proxy = WorkerProxy::create(type, message->data);
+	WorkerProxy *proxy = WorkerProxy::create(type, (char *)message->data);
 }
 
 void UnitManager::onConnected() {
