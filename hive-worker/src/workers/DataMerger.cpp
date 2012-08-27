@@ -64,7 +64,7 @@ void DataMerger::workSpecific() {
 	}
 
 	// Compile and prepare the kernel for execution
-	context->buildProgramFromSource(buffers[kernelDataIdInt]->getRawData(),
+	context->buildProgramFromSource((char *)buffers[kernelDataIdInt]->getRawData(),
 			buffers[kernelDataIdInt]->getSize());
 	context->prepareKernel(getKernelName());
 
