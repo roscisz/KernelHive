@@ -9,19 +9,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import com.ibm.wsdl.util.IOUtils;
-
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBeanService;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.CommunicationException;
