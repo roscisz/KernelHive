@@ -7,23 +7,16 @@
 #include "network/TCPMessage.h"
 #include "commons/Logger.h"
 #include "commons/KhUtils.h"
+#include "commons/KernelHiveException.h"
 
 namespace KernelHive {
-
-// ========================================================================= //
-// 							Constants Init									 //
-// ========================================================================= //
-
-const char* DataUploader::PUBLISH_DATA = "0";
-
-const char* DataUploader::APPEND_DATA = "4";
 
 // ========================================================================= //
 // 							Public Members									 //
 // ========================================================================= //
 
-DataUploader::DataUploader(NetworkAddress* address, SynchronizedBuffer* buffer)
-	: TCPClient(address, this) {
+DataUploader::DataUploader(NetworkAddress* address, SynchronizedBuffer* buffer) :
+		TCPClient(address, this) {
 	this->address = address;
 	this->buffer = buffer;
 	this->currentState = STATE_INITIAL;
@@ -34,13 +27,14 @@ DataUploader::~DataUploader() {
 }
 
 void DataUploader::onMessage(TCPMessage* message) {
-	switch(currentState) {
+	switch (currentState) {
 	case STATE_INITIAL:
-		dataIdentifier = message->data;
-		buffer->seek(0);
-		currentState = STATE_IDENTIFIER_ACQUIRED;
-		uploadData();
-		pleaseStop();
+		if (acquireDataIdentifier(message) == true) {
+			buffer->seek(0);
+			currentState = STATE_IDENTIFIER_ACQUIRED;
+			uploadData();
+			pleaseStop();
+		}
 		break;
 
 	case STATE_IDENTIFIER_ACQUIRED:
@@ -51,10 +45,10 @@ void DataUploader::onMessage(TCPMessage* message) {
 }
 
 void DataUploader::onConnected() {
-	Logger::log(INFO, "Uploader connection established\n" );
-	switch(currentState) {
+	Logger::log(INFO, "Uploader connection established\n");
+	switch (currentState) {
 	case STATE_INITIAL:
-		sendMessage(dataPublish.c_str());
+		sendMessage(dataPublish);
 		break;
 
 	case STATE_IDENTIFIER_ACQUIRED:
@@ -64,20 +58,20 @@ void DataUploader::onConnected() {
 	}
 }
 
-std::string* DataUploader::getDataIdentifier() {
-	return &dataIdentifier;
+int DataUploader::getDataIdentifier() {
+	return dataIdentifier;
 }
 
 const char* DataUploader::getDataURL() {
-	std::string ret;
+	std::stringstream ret;
 
-	ret.append(address->host);
-	ret.append(" ");
-	ret.append(KhUtils::itoa(address->port));
-	ret.append(" ");
-	ret.append(dataIdentifier.c_str());
+	ret << address->host;
+	ret << " ";
+	ret << KhUtils::itoa(address->port);
+	ret << " ";
+	ret << dataIdentifier;
 
-	return ret.c_str();
+	return ret.str().c_str();
 }
 
 // ========================================================================= //
@@ -88,13 +82,16 @@ void DataUploader::uploadData() {
 	byte* uploadBuffer = NULL;
 	while (!buffer->isAtEnd()) {
 		size_t amount = buffer->getSize() - buffer->getOffset();
-		size_t uploadPackageSize = amount < UPLOAD_BATCH ? amount : UPLOAD_BATCH;
-		std::string uploadCmd = formatDataAppend(dataIdentifier, uploadPackageSize);
-		size_t cmdSize = uploadCmd.size();
+		size_t uploadPackageSize =
+				amount < UPLOAD_BATCH ? amount : UPLOAD_BATCH;
+		int *uploadCmd = new int[2];
+		prepareDataAppend(uploadCmd, uploadPackageSize);
+		size_t cmdSize = TCP_COMMAND_SIZE;
 		size_t msgSize = cmdSize + uploadPackageSize;
 
 		uploadBuffer = new byte[msgSize];
-		strcpy(uploadBuffer, uploadCmd.c_str());
+		//strcpy(uploadBuffer, uploadCmd.c_str());
+		copyCommand(uploadBuffer, uploadCmd);
 		buffer->read(uploadBuffer + cmdSize, uploadPackageSize);
 		TCPMessage message(uploadBuffer, msgSize);
 		sendMessage(&message);
@@ -103,24 +100,39 @@ void DataUploader::uploadData() {
 		// TODO Find out why this is necessary
 		sleep(1);
 
-		delete [] uploadBuffer;
+		delete[] uploadBuffer;
 	}
 }
 
 void DataUploader::prepareCommands() {
-	std::stringstream ss;
-	ss << PUBLISH_DATA << ' ' << buffer->getSize();
-	dataPublish = ss.str();
+	dataPublishData = new int[2];
+	dataPublishData[0] = PUBLISH_DATA;
+	dataPublishData[1] = buffer->getSize();
+	dataPublish = new TCPMessage((byte *)dataPublishData, 2*sizeof(int));
 }
 
-std::string DataUploader::formatDataAppend(std::string dataId, size_t packageSize) {
-	std::stringstream dataAppend;
+void DataUploader::prepareDataAppend(int *command, size_t packageSize) {
+	command[0] = APPEND_DATA;
+	command[1] = packageSize;
+}
 
-	dataAppend << APPEND_DATA << ' ';
-	dataAppend << dataId << ' ';
-	dataAppend << packageSize << ' ';
+void DataUploader::copyCommand(byte *buffer, int *command) {
+	byte *tmp = (byte *)command;
+	for (int i = 0; i < TCP_COMMAND_SIZE; i++) {
+		buffer[i] = tmp[i];
+	}
+}
 
-	return dataAppend.str();
+bool DataUploader::acquireDataIdentifier(TCPMessage* message) {
+	bool outcome = false;
+	if (message->nBytes == sizeof(int)) {
+		int* tmp = new int;
+		tmp = (int *)message->data;
+		dataIdentifier = *tmp;
+		outcome = true;
+		delete tmp;
+	}
+	return outcome;
 }
 
 } /* namespace KernelHive */

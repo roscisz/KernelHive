@@ -12,24 +12,20 @@
 namespace KernelHive {
 
 // ========================================================================= //
-// 							Constants Init									 //
-// ========================================================================= //
-
-const char* DataDownloader::GET_SIZE = "1";
-
-const char* DataDownloader::GET_DATA = "2";
-
-// ========================================================================= //
 // 							Public Members									 //
 // ========================================================================= //
 
 DataDownloader::DataDownloader(NetworkAddress* address, const char* dataId, SynchronizedBuffer* buffer)
 	: TCPClient(address, this)
 {
-	this->dataId = dataId;
+	this->dataId = KhUtils::atoi(dataId);
 	this->buffer = buffer;
 	progressSize = 0;
 	currentState = STATE_INITIAL;
+	sizeQuery = NULL;
+	dataQuery = NULL;
+	sizeQueryData = NULL;
+	dataQueryData = NULL;
 	prepareQueries();
 }
 
@@ -37,13 +33,13 @@ void DataDownloader::onMessage(TCPMessage* message) {
 	// TODO Remove development logging
 	switch (currentState) {
 	case STATE_INITIAL:
-		if (acquireDataSize(message->data)) {
+		if (acquireDataSize(message)) {
 			Logger::log(INFO, "Data size has been acquired: %u\n", totalDataSize);
 			buffer->allocate(totalDataSize);
 			currentState = STATE_SIZE_ACQUIRED;
-			sendMessage(dataQuery.c_str());
+			sendMessage(dataQuery);
 		} else {
-			sendMessage(sizeQuery.c_str());
+			sendMessage(sizeQuery);
 		}
 		break;
 
@@ -66,36 +62,49 @@ void DataDownloader::onMessage(TCPMessage* message) {
 
 void DataDownloader::onConnected() {
 	Logger::log(INFO, "Connection established\n");
-	sendMessage(sizeQuery.c_str());
+	sendMessage(sizeQuery);
 }
 
 DataDownloader::~DataDownloader() {
-	// TODO Auto-generated destructor stub
+	if (sizeQuery != NULL) {
+		delete sizeQuery;
+	}
+	if (dataQuery != NULL) {
+		delete dataQuery;
+	}
+	if (sizeQueryData != NULL) {
+		delete [] sizeQueryData;
+	}
+	if (dataQueryData != NULL) {
+		delete [] dataQueryData;
+	}
 }
 
 // ========================================================================= //
 // 							Private Members									 //
 // ========================================================================= //
 
-bool DataDownloader::acquireDataSize(const char* sizeString) {
+bool DataDownloader::acquireDataSize(TCPMessage *sizeMessage) {
 	bool outcome = false;
-	try {
-		totalDataSize = KhUtils::atoi(sizeString);
-		outcome =  true;
-	} catch (KernelHiveException& e) {
-		Logger::log(ERROR, e.getMessage().data());
+	if (sizeMessage->nBytes == sizeof(int)) {
+		int* tmp = new int;
+		tmp = (int *)sizeMessage->data;
+		totalDataSize = *tmp;
+		outcome = true;
+		delete tmp;
 	}
 	return outcome;
 }
 
 void DataDownloader::prepareQueries() {
-	std::stringstream ss;
-	ss << GET_SIZE << ' ' << dataId;
-	sizeQuery = ss.str();
-	ss.str("");
-	ss.clear();
-	ss << GET_DATA << ' ' << dataId;
-	dataQuery = ss.str();
+	sizeQueryData = new int[2];
+	sizeQueryData[0] = GET_SIZE;
+	sizeQueryData[1] = dataId;
+	sizeQuery = new TCPMessage((byte *)sizeQueryData, TCP_COMMAND_SIZE);
+	dataQueryData = new int[2];
+	dataQueryData[0] = GET_DATA;
+	dataQueryData[1] = dataId;
+	dataQuery = new TCPMessage((byte *)dataQueryData, TCP_COMMAND_SIZE);
 }
 
 } /* namespace KernelHive */

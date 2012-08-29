@@ -4,6 +4,7 @@
 #include <string>
 
 #include "network/TCPClient.h"
+#include "network/TCPMessage.h"
 #include "network/TCPClientListener.h"
 #include "threading/SynchronizedBuffer.h"
 
@@ -38,7 +39,7 @@ public:
 	 */
 	void onConnected();
 
-	std::string* getDataIdentifier();
+	int getDataIdentifier();
 
 	const char* getDataURL();
 
@@ -53,10 +54,10 @@ private:
 	static const size_t UPLOAD_BATCH = 1024;
 
 	/** The command which allows to publish data in the repository. */
-	static const char* PUBLISH_DATA;
+	static const int PUBLISH_DATA = 0;
 
 	/** A command which allows to append data to existing storage. */
-	static const char* APPEND_DATA;
+	static const int APPEND_DATA = 4;
 
 	/** The current state of this data uploader. */
 	int currentState;
@@ -68,10 +69,12 @@ private:
 	SynchronizedBuffer* buffer;
 
 	/** The command which tells the repository that data will be uploaded to it. */
-	std::string dataPublish;
+	TCPMessage* dataPublish;
+
+	int *dataPublishData;
 
 	/** The identifier of uploaded data - returned by the repository after uploading. */
-	std::string dataIdentifier;
+	int dataIdentifier;
 
 	/**
 	 * Pre-compiles the commands which will be sent to the data repository.
@@ -85,7 +88,11 @@ private:
 	 * @param packageSize the size of the package to send
 	 * @return the formatted prefix of the data append command
 	 */
-	std::string formatDataAppend(std::string dataId, size_t packageSize);
+	void prepareDataAppend(int *command, size_t packageSize);
+
+	void copyCommand(byte *buffer, int *command);
+
+	bool acquireDataIdentifier(TCPMessage* message);
 
 	/**
 	 * Performs uploading of data.

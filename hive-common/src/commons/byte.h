@@ -10,4 +10,6 @@
 
 typedef unsigned char byte;
 
+#define TCP_COMMAND_SIZE 2*sizeof(int)
+
 #endif /* BYTE_H_ */

@@ -5,6 +5,7 @@
 
 #include "network/TCPClient.h"
 #include "network/TCPClientListener.h"
+#include "network/TCPMessage.h"
 #include "threading/Thread.h"
 #include "threading/SynchronizedBuffer.h"
 
@@ -51,10 +52,10 @@ private:
 	static const int STATE_DATA_ACQUIRED = 2;
 
 	/** The command which allows to query for data size. */
-	static const char* GET_SIZE;
+	static const int GET_SIZE = 1;
 
 	/** The command which to query for data. */
-	static const char* GET_DATA;
+	static const int GET_DATA = 2;
 
 	/** Defines the current state of this data downloader. */
 	int currentState;
@@ -66,13 +67,17 @@ private:
 	size_t progressSize;
 
 	/** The identifier which can be used to query the data repository. */
-	const char* dataId;
+	int dataId;
 
 	/** The query which can be sent to data repository in order to acquire data size. */
-	std::string sizeQuery;
+	TCPMessage* sizeQuery;
+
+	int *sizeQueryData;
 
 	/** The query which can be sent to data repository in order to acquire data. */
-	std::string dataQuery;
+	TCPMessage* dataQuery;
+
+	int *dataQueryData;
 
 	/** A pointer to the buffer in which the downloaded data should be stored. */
 	SynchronizedBuffer* buffer;
@@ -82,7 +87,7 @@ private:
 	 *
 	 * @return true if size has been parsed successfully, false otherwise
 	 */
-	bool acquireDataSize(const char* sizeString);
+	bool acquireDataSize(TCPMessage *sizeMessage);
 
 	/**
 	 * Pre-compiles the queries which will be sent to the data repository.
