@@ -86,13 +86,14 @@ DataDownloader::~DataDownloader() {
 
 bool DataDownloader::acquireDataSize(TCPMessage *sizeMessage) {
 	bool outcome = false;
-	if (sizeMessage->nBytes == sizeof(int)) {
+	Logger::log(INFO, "DATA_SIZE: %d/\n", sizeMessage->nBytes );
+	//if (sizeMessage->nBytes == sizeof(int)) {
 		int* tmp = new int;
 		tmp = (int *)sizeMessage->data;
 		totalDataSize = *tmp;
 		outcome = true;
 		delete tmp;
-	}
+	//}
 	return outcome;
 }
 
