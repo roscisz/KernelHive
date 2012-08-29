@@ -2,14 +2,13 @@ package pl.gda.pg.eti.kernelhive.common.communication;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class DataPublisher implements TCPServerListener {
-	private static String commandSeparator = " ";
-	
 	private TCPServer server;
 	private Integer prevId = 0;
-	private HashMap<Integer, String> data = new HashMap<Integer, String>();
+	private HashMap<Integer, byte[]> data = new HashMap<Integer, byte[]>();
 	
 	private enum Command {
 		ALLOCATE, // 0		
@@ -28,16 +27,22 @@ public class DataPublisher implements TCPServerListener {
 		}
 	}
 	
-	public int publish(String entity) {
+	public int publish(byte[] entity) {
 		int id = generateId();
 		publish(id, entity);
 		return id;
 	}
 	
-	public void publish(int id, String entity) {
+	public void publish(int id, byte[] entity) {
 		if(data.containsKey(id))
-			data.put(id, data.get(id) + entity);
+			data.put(id, concatArrays(data.get(id), entity));
 		else data.put(id, entity);		
+	}
+
+	private byte[] concatArrays(byte[] first, byte[] second) {
+		byte[] ret = Arrays.copyOf(first, first.length + second.length);
+		System.arraycopy(second, 0, ret, first.length, second.length);
+		return ret;
 	}
 
 	@Override
@@ -47,29 +52,32 @@ public class DataPublisher implements TCPServerListener {
 	}
 
 	@Override
-	public void onTCPMessage(SocketChannel channel, ByteBuffer buffer) {
-		/*System.out.println("Publisher got message: " + message);
-		message = message.split("\r")[0];
-		message = message.split("\n")[0];
-		String[] command = message.split(commandSeparator, 2);
+	public void onTCPMessage(SocketChannel channel, ByteBuffer input) {		
+		ByteBuffer output = TCPServer.prepareEmptyBuffer();		
+		int command = input.getInt();
 		
-		String answer = "UNDEFINED ERROR";
+		System.out.println("Publisher got command: " + command);
+		
+		String error = null;
 
 		try {
-			answer = processMessage(Integer.parseInt(command[0]), command[1]);				
+			processMessage(command, input, output);				
 		}
 		catch(NumberFormatException nfe) {
-			answer = "Bad command or argument: " + nfe.getLocalizedMessage();
+			error = "Bad command or argument: " + nfe.getLocalizedMessage();
 		}
 		catch(ArrayIndexOutOfBoundsException ex) {
-			answer = "No such command: " + ex.getLocalizedMessage();
+			error = "No such command: " + ex.getLocalizedMessage();
 		}
 		catch(NullPointerException npe) {
-			answer = "No such ID";
+			error = "No such ID";
 		}
 		
-		TCPServer.sendMessage(channel, answer);
-		*/
+		if(error == null)
+			TCPServer.sendMessage(channel, output);
+		else
+			TCPServer.sendMessage(channel, Decoder.encode(error));
+		
 	}
 	
 	@Override
@@ -78,46 +86,47 @@ public class DataPublisher implements TCPServerListener {
 
 	}
 
-	private String processMessage(int command, String params) {		
+	private void processMessage(int command, ByteBuffer input, ByteBuffer output) {	
 		switch(Command.values()[command]) {
-		case ALLOCATE: return allocateData(params);
-		case PUT: return putData(params);
-		case GETSIZE: return getSize(params);
-		case GET: return getData(params);
-		case DELETE: return deleteData(params);
-		default: return "No such command";
+		case ALLOCATE: allocateData(input, output); break;
+		case PUT: putData(input, output); break;
+		case GETSIZE: getSize(input, output); break;
+		case GET: getData(input, output); break;
+		case DELETE: deleteData(input, output); break;
 		}		
 	}
 	
-	private String allocateData(String params) {
-		return generateId() + "";
+	private void allocateData(ByteBuffer input, ByteBuffer output) {
+		output.putInt(generateId());
 	}
 
-	private String putData(String params) {
-		String[] paramsArray = params.split(commandSeparator, 3);
-		int id = Integer.parseInt(paramsArray[0]);
-		publish(id, paramsArray[2]);
-		return "OK";
+	private void putData(ByteBuffer input, ByteBuffer output) {		
+		int id = input.getInt();
+		int size = input.getInt();		
+		byte[] entity = new byte[size];
+		
+		input.get(entity);		
+		publish(id, entity);
 	}
 	
-	private String getSize(String params) {
-		Integer id = Integer.parseInt(params);
-		return data.get(id).getBytes().length + "";
+	private void getSize(ByteBuffer input, ByteBuffer output) {
+		int id = input.getInt();
+		int length = data.get(id).length;
+		output.putInt(length);
 	}
 
 	private Integer generateId() {
 		return ++prevId;
 	}
 
-	private String getData(String params) {
-		Integer index = Integer.parseInt(params);
-		return data.get(index);
+	private void getData(ByteBuffer input, ByteBuffer output) {
+		int id = input.getInt();		
+		output.put(data.get(id));
 	}
 
-	private String deleteData(String params) {
-		Integer index = Integer.parseInt(params);
-		data.remove(index);
-		return "OK";
+	private void deleteData(ByteBuffer input, ByteBuffer output) {
+		int id = input.getInt();
+		data.remove(id);
 	}
 
 }

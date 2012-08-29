@@ -33,12 +33,13 @@ public class Decoder {
 		return "";
 	}
 	
-	public static ByteBuffer encode(String message) throws CommunicationException {
+	public static ByteBuffer encode(String message) {
 		try {
 			return encoder.encode(CharBuffer.wrap(message));		
 		}
 		catch(CharacterCodingException cce) {
-			throw new CommunicationException(cce);
+			cce.printStackTrace();
+			return null;
 		}
 	}
 				

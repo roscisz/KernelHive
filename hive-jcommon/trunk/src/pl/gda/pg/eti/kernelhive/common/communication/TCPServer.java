@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.common.communication;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -20,7 +21,7 @@ public class TCPServer implements Runnable {
 	private TCPServerListener listener;
 	private ServerSocketChannel server;
 	private Selector selector;
-	
+		
 	public TCPServer(NetworkAddress address, TCPServerListener listener) throws CommunicationException {
 		this.listener = listener;
 		
@@ -34,14 +35,11 @@ public class TCPServer implements Runnable {
 		
 		// FIXME: Who's responsible for thread management?
 		new Thread(this).start();
-	}
-	
-	public static void sendMessage(SocketChannel socketChannel, String message) {
-		if(message.equals(null)) System.out.println("NULL MESSAGE??");
+	}	
+
+	public static void sendMessage(SocketChannel socketChannel, ByteBuffer message) {
 		try {
-			socketChannel.write(Decoder.encode(message + "\n"));
-		} catch (CommunicationException ce) {
-			ce.printStackTrace();
+			socketChannel.write(message);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -106,7 +104,7 @@ public class TCPServer implements Runnable {
 	}
 	
 	private ByteBuffer readBuffer(SocketChannel client) throws CommunicationException, IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(MAX_MESSAGE_BYTES);
+		ByteBuffer buffer = prepareEmptyBuffer();
 
 		if(client.read(buffer) <= 0) {
 			client.close();
@@ -116,6 +114,12 @@ public class TCPServer implements Runnable {
 		
 		buffer.rewind();
 		
+		return buffer;
+	}
+
+	public static ByteBuffer prepareEmptyBuffer() {
+		ByteBuffer buffer = ByteBuffer.allocate(MAX_MESSAGE_BYTES);
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		return buffer;
 	}
 }

@@ -37,19 +37,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Update }
+     * Create an instance of {@link JobInfo }
      * 
      */
-    public Update createUpdate() {
-        return new Update();
-    }
-
-    /**
-     * Create an instance of {@link UpdateResponse }
-     * 
-     */
-    public UpdateResponse createUpdateResponse() {
-        return new UpdateResponse();
+    public JobInfo createJobInfo() {
+        return new JobInfo();
     }
 
     /**
@@ -61,19 +53,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JobInfo }
+     * Create an instance of {@link Unit }
      * 
      */
-    public JobInfo createJobInfo() {
-        return new JobInfo();
-    }
-
-    /**
-     * Create an instance of {@link GetJobResponse }
-     * 
-     */
-    public GetJobResponse createGetJobResponse() {
-        return new GetJobResponse();
+    public Unit createUnit() {
+        return new Unit();
     }
 
     /**
@@ -85,6 +69,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link UpdateResponse }
+     * 
+     */
+    public UpdateResponse createUpdateResponse() {
+        return new UpdateResponse();
+    }
+
+    /**
      * Create an instance of {@link GetJob }
      * 
      */
@@ -93,11 +85,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Unit }
+     * Create an instance of {@link Update }
      * 
      */
-    public Unit createUnit() {
-        return new Unit();
+    public Update createUpdate() {
+        return new Update();
     }
 
     /**
@@ -106,6 +98,14 @@ public class ObjectFactory {
      */
     public HasID createHasID() {
         return new HasID();
+    }
+
+    /**
+     * Create an instance of {@link GetJobResponse }
+     * 
+     */
+    public GetJobResponse createGetJobResponse() {
+        return new GetJobResponse();
     }
 
     /**

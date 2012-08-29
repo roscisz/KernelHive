@@ -43,46 +43,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SubmitWorkflow }
-     * 
-     */
-    public SubmitWorkflow createSubmitWorkflow() {
-        return new SubmitWorkflow();
-    }
-
-    /**
-     * Create an instance of {@link BrowseWorkflowsResponse }
-     * 
-     */
-    public BrowseWorkflowsResponse createBrowseWorkflowsResponse() {
-        return new BrowseWorkflowsResponse();
-    }
-
-    /**
-     * Create an instance of {@link ClusterInfo }
-     * 
-     */
-    public ClusterInfo createClusterInfo() {
-        return new ClusterInfo();
-    }
-
-    /**
-     * Create an instance of {@link SubmitWorkflowResponse }
-     * 
-     */
-    public SubmitWorkflowResponse createSubmitWorkflowResponse() {
-        return new SubmitWorkflowResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetWorkflowResultsResponse }
-     * 
-     */
-    public GetWorkflowResultsResponse createGetWorkflowResultsResponse() {
-        return new GetWorkflowResultsResponse();
-    }
-
-    /**
      * Create an instance of {@link BrowseInfrastructureResponse }
      * 
      */
@@ -99,19 +59,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BrowseWorkflows }
+     * Create an instance of {@link SubmitWorkflow }
      * 
      */
-    public BrowseWorkflows createBrowseWorkflows() {
-        return new BrowseWorkflows();
+    public SubmitWorkflow createSubmitWorkflow() {
+        return new SubmitWorkflow();
     }
 
     /**
-     * Create an instance of {@link GetWorkflowResults }
+     * Create an instance of {@link ClusterInfo }
      * 
      */
-    public GetWorkflowResults createGetWorkflowResults() {
-        return new GetWorkflowResults();
+    public ClusterInfo createClusterInfo() {
+        return new ClusterInfo();
+    }
+
+    /**
+     * Create an instance of {@link GetWorkflowResultsResponse }
+     * 
+     */
+    public GetWorkflowResultsResponse createGetWorkflowResultsResponse() {
+        return new GetWorkflowResultsResponse();
+    }
+
+    /**
+     * Create an instance of {@link SubmitWorkflowResponse }
+     * 
+     */
+    public SubmitWorkflowResponse createSubmitWorkflowResponse() {
+        return new SubmitWorkflowResponse();
     }
 
     /**
@@ -123,11 +99,35 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetWorkflowResults }
+     * 
+     */
+    public GetWorkflowResults createGetWorkflowResults() {
+        return new GetWorkflowResults();
+    }
+
+    /**
      * Create an instance of {@link TerminateWorkflow }
      * 
      */
     public TerminateWorkflow createTerminateWorkflow() {
         return new TerminateWorkflow();
+    }
+
+    /**
+     * Create an instance of {@link BrowseWorkflows }
+     * 
+     */
+    public BrowseWorkflows createBrowseWorkflows() {
+        return new BrowseWorkflows();
+    }
+
+    /**
+     * Create an instance of {@link BrowseWorkflowsResponse }
+     * 
+     */
+    public BrowseWorkflowsResponse createBrowseWorkflowsResponse() {
+        return new BrowseWorkflowsResponse();
     }
 
     /**

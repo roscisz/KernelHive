@@ -6,7 +6,7 @@ import java.nio.channels.SocketChannel;
 public interface TCPServerListener {
 	
 	public void onConnection(SocketChannel channel);
-	public void onTCPMessage(SocketChannel channel, ByteBuffer message);
+	public void onTCPMessage(SocketChannel channel, ByteBuffer buffer);
 	public void onDisconnection(SocketChannel channel);
 
 }
