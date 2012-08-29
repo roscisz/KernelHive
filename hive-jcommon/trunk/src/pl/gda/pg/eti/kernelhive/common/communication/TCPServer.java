@@ -122,4 +122,10 @@ public class TCPServer implements Runnable {
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		return buffer;
 	}
+	
+	public static byte[] byteBufferToArray(ByteBuffer buffer) {
+		byte[] ret = new byte[buffer.remaining()];
+		buffer.get(ret, 0, ret.length);
+		return ret;
+	}
 }
