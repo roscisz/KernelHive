@@ -38,11 +38,12 @@ public class JobInfo {
 		ret.append(" " + clusterTCPPort);
 		ret.append(" " + clusterUDPPort);
 		ret.append(" " + deviceID);		
-		// TODO: different NUM_DIMENSIONS
-		ret.append(" 3");
-		ret.append(" " + offsets);
-		ret.append(" " + globalSizes);
-		ret.append(" " + localSizes);
+		// FIXME:
+		//ret.append(" 3");
+		//ret.append(" " + offsets);
+		//ret.append(" " + globalSizes);
+		//ret.append(" " + localSizes);
+		ret.append(" 3 0 0 0 512 1 1 64 1 1");
 		ret.append(" " + outputSize);
 		ret.append(" " + kernelHost);
 		ret.append(" " + kernelPort);
@@ -50,6 +51,11 @@ public class JobInfo {
 		ret.append(" " + dataHost);
 		ret.append(" " + dataPort);
 		ret.append(" " + dataID);
+		
+		// FIXME:
+		if(jobType == GraphNodeType.PARTITIONER)
+			ret.append(" 2");
+		
 		ret.append(" " + resultDataHost);
 		ret.append(" " + resultDataPort);
 		

@@ -42,7 +42,7 @@ public class Workflow extends HasID {
 			if (node.getGraphNode().getPreviousNodes().size() == 0) {
 				newJob.state = JobState.READY;
 				// FIXME:
-				newJob.inputDataUrl = inputDataURL; // "http://gracik.mine.nu/data";
+				newJob.inputDataUrl = "http://gracik.mine.nu/data"; // inputDataUrl
 			}
 			// TODO: if many kernels in one job, assign each kernel to
 			// individual job
