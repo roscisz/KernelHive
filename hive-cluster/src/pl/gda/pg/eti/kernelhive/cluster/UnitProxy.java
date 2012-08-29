@@ -5,6 +5,7 @@ import java.nio.channels.SocketChannel;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
 import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
+import pl.gda.pg.eti.kernelhive.common.communication.Decoder;
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
 
 public class UnitProxy {
@@ -36,7 +37,7 @@ public class UnitProxy {
 	
 	private void sendMessage(String message) {
 		System.out.println("Sending to socketChannel " + socketChannel);
-		TCPServer.sendMessage(socketChannel, message);
+		TCPServer.sendMessage(socketChannel, Decoder.encode(message));
 	}
 
 }

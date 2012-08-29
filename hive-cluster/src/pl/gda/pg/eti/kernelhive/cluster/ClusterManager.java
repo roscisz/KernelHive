@@ -7,12 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+
+import com.ibm.wsdl.util.IOUtils;
 
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
@@ -22,6 +26,7 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.CommunicationException;
 import pl.gda.pg.eti.kernelhive.common.communication.DataPublisher;
+import pl.gda.pg.eti.kernelhive.common.communication.Decoder;
 import pl.gda.pg.eti.kernelhive.common.communication.NetworkAddress;
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServerListener;
@@ -53,7 +58,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			// TODO: Exit gracefully
 			e.printStackTrace();
 		}
-			
+		
 		ClusterBeanService cbs;
 		try {
 			cbs = new ClusterBeanService(new URL("http://hive-engine:8080/ClusterBeanService/ClusterBean?wsdl"), new QName("http://engine.kernelhive.eti.pg.gda.pl/", "ClusterBeanService"));
@@ -63,11 +68,10 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		}	
 		
 		//new Thread(this).start();
-		
+
 		tryUpdateInEngine();
 				
 		while(true) {
-			// TUTAJ TYLKO GET JOB, a update raz na początku oraz zawsze gdy coś się zmieni :)
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
@@ -104,13 +108,13 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	private void deployKernel(JobInfo jobInfo) {
 		jobInfo.kernelHost = clusterDataHostname;
 		jobInfo.kernelPort = clusterDataPort;
-		jobInfo.kernelID = dataPublisher.publish(jobInfo.kernelString);		
+		jobInfo.kernelID = dataPublisher.publish(TCPServer.byteBufferToArray(Decoder.encode(jobInfo.kernelString)));		
 	}
 	
 	private void deployDataIfURL(JobInfo jobInfo) {
 		if(jobInfo.inputDataUrl != null) {
 			System.out.println("Deploying data from " + jobInfo.inputDataUrl);
-			String data = downloadURL(jobInfo.inputDataUrl);
+			byte[] data = downloadURL(jobInfo.inputDataUrl);
 			jobInfo.dataHost = clusterDataHostname;
 			jobInfo.dataPort = clusterDataPort;
 			jobInfo.dataID = dataPublisher.publish(data);			
@@ -146,8 +150,11 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	}
 
 	@Override
-	public void onTCPMessage(SocketChannel channel, String message) {			
-		System.out.println("Message " + message + " from channel " + channel);
+	public void onTCPMessage(SocketChannel channel, ByteBuffer messageBuffer) {
+		String message = Decoder.decode(messageBuffer);	
+		
+		System.out.println("Message " + message + " from channel " + channel);		
+		
 		// FIXME: define separators in one place
 		String[] command = message.split(" ", 2);
 		
@@ -231,19 +238,20 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		return null;
 	}
 	
-	private String downloadURL(String urlString)
+	private byte[] downloadURL(String urlString)
 	{
-	    StringBuffer ret = new StringBuffer();
+		List<Byte> bytes = new LinkedList<Byte>();
 
 	    URL url;
 		try {
-			url = new URL(urlString);
+			url = new URL(urlString);			
 			InputStream is = url.openStream();
 			DataInputStream dis = new DataInputStream(new BufferedInputStream(is));
-			char c;
+			int i = 0;
+			Byte c;
 			while(true) {
-				c = dis.readChar();
-				ret.append(c);
+				c = dis.readByte();
+				bytes.add(c);
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -252,7 +260,22 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			ioe.printStackTrace();
 		}
 	    	
-	    return ret.toString();
+		System.out.println("Bytes: " + bytes);
+		
+	    return byteListToByteArray(bytes);
 	  }
+
+	private byte[] byteListToByteArray(List<Byte> bytes) {
+		System.out.println("Bytes: " + bytes.size());		
+		byte[] ret = new byte[bytes.size()];
+		
+		int i = 0;
+		for(Byte b : bytes) {
+			ret[i] = b;
+			i++;
+		}
+		
+		return ret;
+	}
 
 }
