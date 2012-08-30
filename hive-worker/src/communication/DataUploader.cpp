@@ -84,9 +84,9 @@ void DataUploader::uploadData() {
 		size_t amount = buffer->getSize() - buffer->getOffset();
 		size_t uploadPackageSize =
 				amount < UPLOAD_BATCH ? amount : UPLOAD_BATCH;
-		int *uploadCmd = new int[2];
+		int *uploadCmd = new int[3];
 		prepareDataAppend(uploadCmd, uploadPackageSize);
-		size_t cmdSize = TCP_COMMAND_SIZE;
+		size_t cmdSize = 3 * sizeof(int); // Pawel tu był (TCP_COMMAND_SIZE sie nie nadawał)
 		size_t msgSize = cmdSize + uploadPackageSize;
 
 		uploadBuffer = new byte[msgSize];
@@ -113,7 +113,8 @@ void DataUploader::prepareCommands() {
 
 void DataUploader::prepareDataAppend(int *command, size_t packageSize) {
 	command[0] = APPEND_DATA;
-	command[1] = packageSize;
+	command[1] = dataIdentifier;
+	command[2] = packageSize;
 }
 
 void DataUploader::copyCommand(byte *buffer, int *command) {
@@ -125,13 +126,13 @@ void DataUploader::copyCommand(byte *buffer, int *command) {
 
 bool DataUploader::acquireDataIdentifier(TCPMessage* message) {
 	bool outcome = false;
-	if (message->nBytes == sizeof(int)) {
+	//if (message->nBytes == sizeof(int)) {
 		int* tmp = new int;
 		tmp = (int *)message->data;
 		dataIdentifier = *tmp;
 		outcome = true;
 		delete tmp;
-	}
+	//}
 	return outcome;
 }
 
