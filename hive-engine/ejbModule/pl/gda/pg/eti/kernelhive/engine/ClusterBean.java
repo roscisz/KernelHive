@@ -9,6 +9,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
 import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IClusterBeanRemote;
 
@@ -35,15 +36,24 @@ public class ClusterBean implements IClusterBeanRemote {
 		String ip = getIPFromContext(this.context);
 		data.updateReverseReferences();
 		HiveEngine.getInstance().updateCluster(ip, data);
+		System.out.println("Updated cluster: " + data + ", units: " + data.unitList.size());
 	}
-	
+
 	@Override
 	@WebMethod
 	public JobInfo getJob() {
 		String ip = getIPFromContext(this.context);
 		Cluster cluster = HiveEngine.getInstance().getCluster(ip);
-		if(cluster == null) return null;
-		return cluster.getJob().getJobInfo();		
+		if(cluster == null) {
+			System.out.println("getJob() returning null because no such cluster");
+			return null;
+		}
+		Job job = cluster.getJob();
+		if(job == null) {
+			System.out.println("getJob() returning null because getJob returned null");
+			return null;
+		}
+		return job.getJobInfo();		
 	}
 	
 	

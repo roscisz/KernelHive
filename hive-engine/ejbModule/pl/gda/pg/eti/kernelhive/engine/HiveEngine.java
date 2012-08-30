@@ -2,10 +2,12 @@ package pl.gda.pg.eti.kernelhive.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
@@ -37,34 +39,26 @@ public class HiveEngine {
 		System.out.println("Engine knows about clusters: " + clusters);
 	}
 	
-	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes, String inputDataURL) {
-		Workflow newWorkflow = initializeTask(nodes, inputDataURL);
+	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes, String projectName, String inputDataURL) {
+		Workflow newWorkflow = new Workflow(nodes, projectName, inputDataURL);
 		workflows.put(newWorkflow.ID, newWorkflow);
 		
 		processWorkflow(newWorkflow);			
 		
 		return newWorkflow.ID;
 	}
-	
-	private void processWorkflow(Workflow newWorkflow) {
-		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(newWorkflow, clusters.values());	
+
+	private void processWorkflow(Workflow workflow) {
+		System.out.println("Processing workflow: " + workflow.ID);
+		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(workflow, clusters.values());	
 		
 		for(Job job : readyJobs) {
 			job.run();
 		}	
 	}
-
-	private Workflow initializeTask(List<EngineGraphNodeDecorator> nodes, String inputDataURL) {
-		Workflow newTask = new Workflow(nodes, inputDataURL);
-		
-		// TODO: coś jeszcze? Jeśli nie, to ta metoda jest niepotrzebna :P
-		
-		return newTask;
-	}
 	
 	public void cleanup() {
 		// jeżeli któryś job za długo nie odpowiada to najpierw włącz mu tryb nie odpowiada, a potem wywal
-		// wyodrębnij wolne zadania i spróbuj odpalić optimizerem aż się znulluje
 		for(Workflow workflow : workflows.values())
 			processWorkflow(workflow);
 	}
@@ -89,6 +83,15 @@ public class HiveEngine {
 			ret.add(cluster.getClusterInfo());
 		
 		return ret;
+	}
+
+	public List<WorkflowInfo> browseWorkflows() {
+		List<WorkflowInfo> ret = new LinkedList<WorkflowInfo>();
+		
+		for(Workflow workflow : workflows.values())
+			ret.add(workflow.getWorkflowInfo());
+		
+		return ret;			
 	}
 
 }
