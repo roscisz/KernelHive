@@ -38,6 +38,7 @@ public class TCPServer implements Runnable {
 	}	
 
 	public static void sendMessage(SocketChannel socketChannel, ByteBuffer message) {
+		message.rewind();
 		try {
 			socketChannel.write(message);
 		} catch (IOException e) {
