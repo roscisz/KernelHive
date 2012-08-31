@@ -56,7 +56,9 @@ void TCPConnection::sendMessage(byte *msg)
 }*/
 
 void TCPConnection::sendMessage(TCPMessage *message) {
-	Logger::log(INFO, "Seding message: %s", message->data);
+	//Logger::log(INFO, "Seding message: %s", message->data);
+	if(write(sockfd, &message->nBytes, sizeof(int)) < 0)
+		Logger::log(ERROR, "Error writing to socket.\n");
 	if(write(sockfd, message->data, message->nBytes) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
 }
