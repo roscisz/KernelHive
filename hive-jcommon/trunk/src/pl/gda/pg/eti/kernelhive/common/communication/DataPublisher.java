@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.common.communication;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
@@ -73,8 +74,10 @@ public class DataPublisher implements TCPServerListener {
 			error = "No such ID";
 		}
 		
-		if(error == null)
-			TCPServer.sendMessage(channel, output);
+		if(error == null) {
+			if(output.position() > 0)
+				TCPServer.sendMessage(channel, output);
+		}
 		else
 			TCPServer.sendMessage(channel, Decoder.encode(error));
 		
@@ -97,6 +100,7 @@ public class DataPublisher implements TCPServerListener {
 	}
 	
 	private void allocateData(ByteBuffer input, ByteBuffer output) {
+		int size = input.getInt();
 		output.putInt(generateId());
 	}
 
@@ -105,7 +109,11 @@ public class DataPublisher implements TCPServerListener {
 		int size = input.getInt();		
 		byte[] entity = new byte[size];
 		
-		input.get(entity);		
+		try {
+			input.get(entity);			
+		}		
+		catch(BufferUnderflowException bue) {			
+		}
 		publish(id, entity);
 	}
 	

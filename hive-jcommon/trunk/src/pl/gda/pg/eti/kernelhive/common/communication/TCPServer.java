@@ -2,13 +2,16 @@ package pl.gda.pg.eti.kernelhive.common.communication;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /*
@@ -21,6 +24,8 @@ public class TCPServer implements Runnable {
 	private TCPServerListener listener;
 	private ServerSocketChannel server;
 	private Selector selector;
+	
+	private Map<SocketChannel, ByteBuffer> buffers = new HashMap<SocketChannel, ByteBuffer>();
 		
 	public TCPServer(NetworkAddress address, TCPServerListener listener) throws CommunicationException {
 		this.listener = listener;
@@ -96,23 +101,71 @@ public class TCPServer implements Runnable {
 		SocketChannel client = (SocketChannel) key.channel();
 		
 		try {
-			ByteBuffer buffer = readBuffer(client);
-			listener.onTCPMessage(client, buffer);
+			ByteBuffer incomingBuffer = readBuffer(client);
+			
+			if(buffers.containsKey(client)) {
+				ByteBuffer existingBuffer = buffers.get(client);
+				if(completeBuffer(existingBuffer, incomingBuffer)) {
+					existingBuffer.rewind();
+					listener.onTCPMessage(client, existingBuffer);
+					buffers.remove(client);
+				}
+				else return;
+			}
+						
+			while(incomingBuffer.hasRemaining()) {
+				int commandSize = incomingBuffer.getInt();
+				if(incomingBuffer.remaining() >= commandSize) {
+					listener.onTCPMessage(client, incomingBuffer);
+				}
+				else {
+					ByteBuffer incompleteBuffer = ByteBuffer.allocate(commandSize);
+					incompleteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+					incompleteBuffer.put(incomingBuffer);
+					buffers.put(client, incompleteBuffer);
+				}
+			}			
 		}
 		catch(CommunicationException ce) {
 			return;
 		}
 	}
 	
+	/**
+	 * 
+	 * @param toComplete - the Buffer that needs to be completed with position at limit
+	 * @param supplement - the complementary buffer
+	 * @return boolean - true if the complementary buffer was sufficient to complete the toComplete buffer
+	 */
+	boolean completeBuffer(ByteBuffer toComplete, ByteBuffer supplement) {
+		int remaining = toComplete.capacity() - toComplete.position();
+		byte[] bytes = new byte[remaining];
+		
+		try {
+			supplement.get(bytes);
+		}
+		catch(BufferUnderflowException bue) {
+			toComplete.put(supplement);
+			return false;
+		}
+		
+		toComplete.put(bytes);
+		
+		return true;
+	}
+	
 	private ByteBuffer readBuffer(SocketChannel client) throws CommunicationException, IOException {
 		ByteBuffer buffer = prepareEmptyBuffer();
 
-		if(client.read(buffer) <= 0) {
+		int bytesRead = client.read(buffer);
+		
+		if(bytesRead <= 0) {
 			client.close();
 			listener.onDisconnection(client);
 			throw new CommunicationException(null);
 		}
 		
+		buffer.limit(bytesRead);
 		buffer.rewind();
 		
 		return buffer;
