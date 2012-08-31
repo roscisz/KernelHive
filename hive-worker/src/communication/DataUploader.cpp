@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstring>
 #include <sstream>
 
@@ -91,7 +92,13 @@ void DataUploader::uploadData() {
 
 		uploadBuffer = new byte[msgSize];
 		//strcpy(uploadBuffer, uploadCmd.c_str());
-		copyCommand(uploadBuffer, uploadCmd);
+		// FIXME:
+		//copyCommand(uploadBuffer, uploadCmd);
+		byte *tmp = (byte *)uploadCmd;
+		for (int i = 0; i < cmdSize; i++) {
+			uploadBuffer[i] = tmp[i];
+		}
+
 		buffer->read(uploadBuffer + cmdSize, uploadPackageSize);
 		TCPMessage message(uploadBuffer, msgSize);
 		sendMessage(&message);

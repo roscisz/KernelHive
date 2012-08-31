@@ -51,7 +51,8 @@ private:
 	static const int STATE_IDENTIFIER_ACQUIRED = 1;
 
 	/** The size to use for the upload buffer. */
-	static const size_t UPLOAD_BATCH = 1024;
+	// MTU 1492 for PPPoE - 3 * 4 bytes for protocol overhead
+	static const size_t UPLOAD_BATCH = 1480;
 
 	/** The command which allows to publish data in the repository. */
 	static const int PUBLISH_DATA = 0;
