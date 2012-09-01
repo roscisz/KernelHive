@@ -123,7 +123,7 @@ public class NodePropertiesDialog extends JDialog {
 		getContentPane().add(btnSave);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(115, 107, 193, 96);
+		scrollPane.setBounds(115, 97, 193, 106);
 		getContentPane().add(scrollPane);
 
 		list = new JList();
@@ -181,6 +181,18 @@ public class NodePropertiesDialog extends JDialog {
 			}
 		});
 		getContentPane().add(btnDetails);
+		
+		JButton btnEdit = new JButton("Edit");
+		btnEdit.setBounds(320, 134, 94, 25);
+		btnEdit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ISourceFile file = (ISourceFile) list.getSelectedValue();
+				NodePropertiesDialog.this.frame.getController().openTab(file.getFile());
+			}
+		});
+		getContentPane().add(btnEdit);
 		
 		fillSourceFilesList(node.getSourceFiles());
 		fillPropertiesTable(node.getGraphNode().getProperties());

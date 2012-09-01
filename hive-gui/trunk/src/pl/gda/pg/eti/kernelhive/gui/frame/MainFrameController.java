@@ -19,7 +19,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IEngineGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfiguration;
-import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverter;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverterException;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
@@ -238,6 +237,7 @@ public class MainFrameController {
 				frame.getRepositoryScrollPane().setViewportView(
 						frame.getRepositoryList());
 
+				openWorkflowEditor();
 			} catch (ConfigurationException e) {
 				LOG.warning("KH: cannot create new project");
 				MessageDialog
@@ -528,7 +528,6 @@ public class MainFrameController {
 							.toExternalForm());
 					engConfig.saveGraphForEngine(GraphNodeDecoratorConverter
 							.convertGuiToEngine(project.getProjectNodes()), w);
-					System.out.println(engConfig.getProjectName());
 					byte[] graphStream = w.getBuffer().toString()
 							.getBytes("utf-8");
 					execution.setUsername(wizardDisplay.getUsername());
