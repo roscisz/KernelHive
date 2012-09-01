@@ -8,10 +8,10 @@ import java.util.List;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
-import pl.gda.pg.eti.kernelhive.gui.networking.IWorkflowService;
-import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowService;
-import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceException;
-import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceListenerAdapter;
+import pl.gda.pg.eti.kernelhive.gui.networking.IExecutionEngineService;
+import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineService;
+import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceException;
+import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceListenerAdapter;
 
 public class WorkflowViewer extends JTabContent implements ActionListener {
 
@@ -19,8 +19,8 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	
 	private WorkflowViewerPanel panel;
-	private IWorkflowService service;
-	private WorkflowServiceListenerAdapter adapter;
+	private IExecutionEngineService service;
+	private ExecutionEngineServiceListenerAdapter adapter;
 		
 	public WorkflowViewer(MainFrame frame, String title) {
 		super(frame);
@@ -29,14 +29,14 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 		panel.addRefreshBtnActionListener(this);
 		add(panel);
 		try {
-			service = new WorkflowService();
-			adapter = new WorkflowServiceListenerAdapter() {
+			service = new ExecutionEngineService();
+			adapter = new ExecutionEngineServiceListenerAdapter() {
 				@Override
 				public void workflowBrowseCompleted(List<WorkflowInfo> workflowInfo) {
 					panel.reloadTableContents(workflowInfo);
 				}
 			};
-		} catch (WorkflowServiceException e) {
+		} catch (ExecutionEngineServiceException e) {
 			e.printStackTrace();
 		}		
 	}

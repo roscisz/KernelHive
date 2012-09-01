@@ -5,33 +5,33 @@ package pl.gda.pg.eti.kernelhive.gui.networking;
  * @author mschally
  *
  */
-public interface IWorkflowService {
+public interface IExecutionEngineService {
 	/**
 	 * invokes browse infrastructure action 
 	 * @param listener, listener implementing callback method for this action
 	 */
-	void browseInfrastructure(WorkflowServiceListener listener);
+	void browseInfrastructure(ExecutionEngineServiceListener listener);
 	/**
 	 * invokes get workflow results action
 	 * @param workflowId, id of the specific workflow we want to retrieve results
 	 * @param listener, listener implementing callback method for this action
 	 */
-	void getWorkflowResults(Integer workflowId, WorkflowServiceListener listener);
+	void getWorkflowResults(Integer workflowId, ExecutionEngineServiceListener listener);
 	/**
 	 * invokes terminate workflow action
 	 * @param workflowId, id of the workflow to terminate
 	 * @param listener, listener implementing callback method for this action
 	 */
-	void terminateWorkflow(Integer workflowId, WorkflowServiceListener listener);
+	void terminateWorkflow(Integer workflowId, ExecutionEngineServiceListener listener);
 	/**
 	 * invokes browse workflows action
 	 * @param listener, listener implementing callback method for this action
 	 */
-	void browseWorkflows(WorkflowServiceListener listener);
+	void browseWorkflows(ExecutionEngineServiceListener listener);
 	/**
 	 * invokes submit workflow for execution action
 	 * @param workflowStream, workflow description serialized to xml format
 	 * @param listener, listener implementing callback method for this action
 	 */
-	void submitWorkflow(String workflowStream, WorkflowServiceListener listener);
+	void submitWorkflow(String workflowStream, ExecutionEngineServiceListener listener);
 }

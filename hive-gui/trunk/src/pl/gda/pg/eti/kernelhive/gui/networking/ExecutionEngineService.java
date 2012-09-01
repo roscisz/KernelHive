@@ -15,22 +15,22 @@ import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
  * @author mschally
  *
  */
-public class WorkflowService implements IWorkflowService {
+public class ExecutionEngineService implements IExecutionEngineService {
 
 	private ExecutorService executorService;
 	private ClientBeanService clientService;	
 	
-	public WorkflowService() throws WorkflowServiceException{
+	public ExecutionEngineService() throws ExecutionEngineServiceException{
 		executorService = Executors.newFixedThreadPool(5);
 		try{
 		clientService = new ClientBeanService();
 		} catch(WebServiceException e){
-			throw new WorkflowServiceException(e);
+			throw new ExecutionEngineServiceException(e);
 		}
 	}
 
 	@Override
-	public void browseInfrastructure(final WorkflowServiceListener listener) {
+	public void browseInfrastructure(final ExecutionEngineServiceListener listener) {
 		Runnable r = new Runnable() {
 			
 			@Override
@@ -45,7 +45,7 @@ public class WorkflowService implements IWorkflowService {
 
 	@Override
 	public void getWorkflowResults(final Integer workflowId,
-			final WorkflowServiceListener listener) {
+			final ExecutionEngineServiceListener listener) {
 		Runnable r = new Runnable() {
 			
 			@Override
@@ -60,7 +60,7 @@ public class WorkflowService implements IWorkflowService {
 
 	@Override
 	public void terminateWorkflow(final Integer workflowId,
-			final WorkflowServiceListener listener) {
+			final ExecutionEngineServiceListener listener) {
 		Runnable r = new Runnable() {
 			
 			@Override
@@ -74,7 +74,7 @@ public class WorkflowService implements IWorkflowService {
 
 
 	@Override
-	public void browseWorkflows(final WorkflowServiceListener listener) {
+	public void browseWorkflows(final ExecutionEngineServiceListener listener) {
 		Runnable r = new Runnable() {
 			
 			@Override
@@ -89,7 +89,7 @@ public class WorkflowService implements IWorkflowService {
 
 	@Override
 	public void submitWorkflow(final String workflowStream,
-			final WorkflowServiceListener listener) {
+			final ExecutionEngineServiceListener listener) {
 		Runnable r = new Runnable() {
 			
 			@Override

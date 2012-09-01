@@ -5,7 +5,7 @@ import java.util.List;
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 
-public abstract class WorkflowServiceListenerAdapter implements WorkflowServiceListener {
+public abstract class ExecutionEngineServiceListenerAdapter implements ExecutionEngineServiceListener {
 
 	@Override
 	public void infrastractureBrowseCompleted(List<ClusterInfo> clusterInfo) {

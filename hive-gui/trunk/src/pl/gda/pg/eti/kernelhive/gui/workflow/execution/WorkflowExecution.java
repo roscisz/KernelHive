@@ -3,24 +3,24 @@ package pl.gda.pg.eti.kernelhive.gui.workflow.execution;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.gda.pg.eti.kernelhive.gui.networking.IWorkflowService;
-import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowService;
-import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceException;
-import pl.gda.pg.eti.kernelhive.gui.networking.WorkflowServiceListenerAdapter;
+import pl.gda.pg.eti.kernelhive.gui.networking.IExecutionEngineService;
+import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineService;
+import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceException;
+import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceListenerAdapter;
 
 public class WorkflowExecution implements IWorkflowExecution {
 	
 	private byte[] graphStream = null;
 	private String username = null;
 	private char[] password = null;
-	private IWorkflowService service = null;
-	private WorkflowServiceListenerAdapter serviceAdapter = null;
+	private IExecutionEngineService service = null;
+	private ExecutionEngineServiceListenerAdapter serviceAdapter = null;
 	private List<WorkflowExecutionListener> listeners;
 	
 	public WorkflowExecution(){
 		try {
-			service = new WorkflowService();
-		} catch (WorkflowServiceException e) {
+			service = new ExecutionEngineService();
+		} catch (ExecutionEngineServiceException e) {
 			e.printStackTrace();
 		}
 		initListeners();
@@ -28,7 +28,7 @@ public class WorkflowExecution implements IWorkflowExecution {
 	
 	private void initListeners(){
 		listeners = new ArrayList<WorkflowExecutionListener>();
-		serviceAdapter = new WorkflowServiceListenerAdapter() {
+		serviceAdapter = new ExecutionEngineServiceListenerAdapter() {
 			@Override
 			public void submitWorkflowCompleted(Integer workflowId) {
 				for(WorkflowExecutionListener l : listeners){
