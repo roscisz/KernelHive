@@ -300,6 +300,7 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		XMLConfiguration tempConfig = (XMLConfiguration) config.clone();
 		try {
 			config.clear();
+			config.setRootNode(tempConfig.getRootNode());
 			for (EngineGraphNodeDecorator engineNode : graphNodes) {
 				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
 			}
@@ -319,6 +320,7 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		File tempFile = config.getFile();
 		try{
 			config.clear();
+			config.setRootNode(tempConfig.getRootNode());
 			for (EngineGraphNodeDecorator engineNode : graphNodes) {
 				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
 			}

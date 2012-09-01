@@ -6,6 +6,11 @@ import java.util.List;
 import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 
+/**
+ * 
+ * @author mschally
+ *
+ */
 public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 
 	List<ISourceFile> sourceFiles;
@@ -39,23 +44,50 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getX(){
 		return x;		
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getY() {
 		return y;
 	}
+	
+	/**
+	 * 
+	 * @param x
+	 */
 	public void setX(int x) {
 		this.x = x;
 	}
+	
+	/**
+	 * 
+	 * @param y
+	 */
 	public void setY(int y) {
 		this.y = y;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public List<ISourceFile> getSourceFiles() {
 		return sourceFiles;
 	}
 	
+	/**
+	 * 
+	 * @param sourceFiles
+	 */
 	public void setSourceFiles(List<ISourceFile> sourceFiles){
 		this.sourceFiles = sourceFiles;
 	}

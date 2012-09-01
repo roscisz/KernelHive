@@ -50,6 +50,17 @@ public interface IGraphConfiguration {
 	 */
 	List<IGraphNode> loadGraph() throws ConfigurationException;
 	/**
+	 * 
+	 * @throws ConfigurationException
+	 */
+	void save() throws ConfigurationException;
+	/**
+	 * 
+	 * @param file
+	 * @throws ConfigurationException
+	 */
+	void save(File file) throws ConfigurationException;
+	/**
 	 * loads graph form the xml configuration fils
 	 * @param file {@link File}
 	 * @return {@link List} of {@link IGraphNode} objects

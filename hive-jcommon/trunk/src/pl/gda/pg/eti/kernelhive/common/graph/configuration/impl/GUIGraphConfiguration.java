@@ -291,6 +291,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		XMLConfiguration tempConfig = (XMLConfiguration) config.clone();
 		try {
 			config.clear();
+			config.setRootNode(tempConfig.getRootNode());
 			for (GUIGraphNodeDecorator guiNode : guiGraphNodes) {
 				config.getRoot().addChild(createGraphNodeForGUI(guiNode, file));
 			}

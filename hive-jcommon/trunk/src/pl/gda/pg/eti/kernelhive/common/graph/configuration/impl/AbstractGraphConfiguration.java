@@ -357,6 +357,16 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 		}
 		return nodes;
 	}
+	
+	@Override
+	public void save() throws ConfigurationException{
+		save(configFile);
+	}
+	
+	@Override
+	public void save(File file) throws ConfigurationException{
+		config.save(file);
+	}
 
 	@Override
 	public void saveGraph(List<IGraphNode> nodes) throws ConfigurationException {
@@ -397,6 +407,5 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 			attr.setValue(name);
 			config.getRoot().addAttribute(attr);
 		}
-		config.save(configFile);
 	}
 }
