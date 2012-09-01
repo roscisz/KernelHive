@@ -102,8 +102,6 @@ void DataProcessor::workSpecific() {
 	runAllUploads();
 	waitForAllUploads();
 	setPercentDone(100);
-
-	reportOver(getAllUploadIDStrings());
 }
 
 // ========================================================================= //

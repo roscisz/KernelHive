@@ -34,6 +34,7 @@ BasicWorker::~BasicWorker() {
 void BasicWorker::work(char *const argv[]) {
 	init(argv);
 	workSpecific();
+	reportOver(getAllUploadIDStrings());
 }
 
 UploaderList* BasicWorker::getUploaders() {
@@ -81,7 +82,7 @@ const char* BasicWorker::getAllUploadIDStrings() {
 
 	for(UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++) {
 		if(*it != NULL) {
-			//ret.append((*it)->getDataURL());
+			ret.append((*it)->getDataURL());
 			ret.append(" ");
 		}
 	}
