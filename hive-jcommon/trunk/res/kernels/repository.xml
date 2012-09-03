@@ -8,6 +8,7 @@
 			<kh:property key="globalSizes" value="1"/>
 			<kh:property key="localSizes" value="1"/>
 			<kh:property key="offsets" value="0"/>
+			<kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="DataProcessor" description="Processor Graph Node">
@@ -18,6 +19,7 @@
             <kh:property key="globalSizes" value="1"/>
             <kh:property key="localSizes" value="1"/>
             <kh:property key="offsets" value="0"/>
+            <kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="DataMerger" description="Merger Graph Node">
@@ -28,6 +30,7 @@
             <kh:property key="globalSizes" value="1"/>
             <kh:property key="localSizes" value="1"/>
             <kh:property key="offsets" value="0"/>
+            <kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="DataPartitioner" description="Partitioner Graph Node">
@@ -38,6 +41,7 @@
             <kh:property key="globalSizes" value="1"/>
             <kh:property key="localSizes" value="1"/>
             <kh:property key="offsets" value="0"/>
+            <kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
 	</kh:entry>
 	<kh:entry type="composite" description="Composite Graph Node">
@@ -48,6 +52,7 @@
             <kh:property key="globalSizes" value="1"/>
             <kh:property key="localSizes" value="1"/>
             <kh:property key="offsets" value="0"/>
+            <kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
 	</kh:entry>
 </kh:repository>
