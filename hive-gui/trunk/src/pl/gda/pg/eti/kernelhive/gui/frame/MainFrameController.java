@@ -25,6 +25,7 @@ import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.impl.KernelRepository;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
+import pl.gda.pg.eti.kernelhive.gui.component.infrastructure.InfrastructureBrowser;
 import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.RepositoryViewer;
 import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.RepositoryViewerModel;
 import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor;
@@ -574,5 +575,15 @@ public class MainFrameController {
 		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.undoAction();
+	}
+
+	public void openInfrastructureBrowser() {
+		InfrastructureBrowser ib = new InfrastructureBrowser(frame, "Infrastructure Browser");
+		addTabToWorkspacePane(ib);
+		
+	}
+
+	public void openResourceMonitor() {
+		// TODO Auto-generated method stub		
 	}
 }

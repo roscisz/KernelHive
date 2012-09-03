@@ -114,6 +114,8 @@ public class MainFrame extends JFrame {
 	private JScrollPane repositoryScrollPane;
 	
 	private MainFrameController controller;
+	private JMenuItem mntmInfrastructureBrowser;
+	private JMenuItem mntmResourceMonitor;
 	
 
 	private void initUI() {
@@ -514,6 +516,26 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnTools.add(mntmWorkflowExecutions);
+		
+		mntmInfrastructureBrowser = new JMenuItem("Infrastructure Browser");
+		mntmInfrastructureBrowser.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.openInfrastructureBrowser();
+			}
+		});
+		mnTools.add(mntmInfrastructureBrowser);
+		
+		mntmResourceMonitor = new JMenuItem("Resource Monitor");
+		mntmResourceMonitor.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.openResourceMonitor();
+			}
+		});
+		mnTools.add(mntmResourceMonitor);
 	}
 	
 	private void initHelpMenu(){

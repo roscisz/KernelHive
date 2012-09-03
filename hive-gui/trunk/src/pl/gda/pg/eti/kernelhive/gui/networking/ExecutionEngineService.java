@@ -17,10 +17,18 @@ import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
  */
 public class ExecutionEngineService implements IExecutionEngineService {
 
+	private static ExecutionEngineService _service;
 	private ExecutorService executorService;
-	private ClientBeanService clientService;	
+	private ClientBeanService clientService;
 	
-	public ExecutionEngineService() throws ExecutionEngineServiceException{
+	public static ExecutionEngineService getInstance() throws ExecutionEngineServiceException{
+		if(_service==null){
+			_service = new ExecutionEngineService();
+		}
+		return _service;
+	}
+	
+	private ExecutionEngineService() throws ExecutionEngineServiceException{
 		executorService = Executors.newFixedThreadPool(5);
 		try{
 		clientService = new ClientBeanService();

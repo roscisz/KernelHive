@@ -19,7 +19,7 @@ public class WorkflowExecution implements IWorkflowExecution {
 	
 	public WorkflowExecution(){
 		try {
-			service = new ExecutionEngineService();
+			service = ExecutionEngineService.getInstance();
 		} catch (ExecutionEngineServiceException e) {
 			e.printStackTrace();
 		}
