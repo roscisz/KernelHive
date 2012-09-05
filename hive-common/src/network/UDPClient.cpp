@@ -21,6 +21,7 @@ namespace KernelHive {
 UDPClient::UDPClient(NetworkAddress *serverAddress) : NetworkEndpoint(serverAddress) {
 
 	this->sockfd = openSocket(SOCK_DGRAM);
+	printf("UDP PORT %d", serverAddress->port);
 
 }
 
