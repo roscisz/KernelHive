@@ -81,4 +81,10 @@ public class JTabContentStub extends JTabContent {
 		return false;
 	}
 
+	@Override
+	public void clearSelection() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

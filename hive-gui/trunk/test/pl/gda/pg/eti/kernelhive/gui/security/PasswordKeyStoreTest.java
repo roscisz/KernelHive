@@ -24,11 +24,13 @@ public class PasswordKeyStoreTest {
 	}
 
 	@Test
-	public void testSetNewPassword() {
+	public void testSetNewCredentials() {
 		byte[] salt = new byte[1];
 		byte[] pass = new byte[1];
-		PasswordKeyStore.getInstance().setNewPassword(salt, pass);
+		String username = "test";
+		PasswordKeyStore.getInstance().setNewCredentials(username, salt, pass);
 		assertNotNull(PasswordKeyStore.getInstance().getSalt());
 		assertNotNull(PasswordKeyStore.getInstance().getPassword());
+		assertNotNull(PasswordKeyStore.getInstance().getUsername());
 	}
 }

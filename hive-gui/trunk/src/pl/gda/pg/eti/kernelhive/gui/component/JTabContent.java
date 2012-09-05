@@ -9,7 +9,7 @@ import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public abstract class JTabContent extends JPanel {
 
@@ -18,109 +18,165 @@ public abstract class JTabContent extends JPanel {
 	protected MainFrame frame;
 	protected boolean dirty;
 	protected File file;
-	
-	public JTabContent(MainFrame frame){
+
+	public JTabContent(MainFrame frame) {
 		this.frame = frame;
 		dirty = false;
 	}
+
 	/**
 	 * Saves the contents to specified File
-	 * @param file File
+	 * 
+	 * @param file
+	 *            File
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean saveContent(File file);
+
 	/**
 	 * saves content
+	 * 
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean saveContent();
+
 	/**
 	 * Loads the content from specified file
-	 * @param file File
+	 * 
+	 * @param file
+	 *            File
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean loadContent(File file);
+
 	/**
 	 * loads content
+	 * 
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean loadContent();
+
 	/**
 	 * redo the last action
 	 */
 	public abstract void redoAction();
+
 	/**
 	 * undo the last action
 	 */
 	public abstract void undoAction();
+
 	/**
 	 * cut the selected content
 	 */
 	public abstract void cut();
+
 	/**
 	 * copy the selected content
 	 */
 	public abstract void copy();
+
 	/**
 	 * paste the copied/cut content
 	 */
 	public abstract void paste();
+
 	/**
 	 * select all content
 	 */
 	public abstract void selectAll();
+	
+	public abstract void clearSelection();
+
 	/**
 	 * refresh the content
 	 */
 	public abstract void refresh();
+
+	public boolean find(String toFind, boolean matchCase, boolean wholeWord,
+			boolean isRegex, boolean searchBack) {
+		return true;
+	}
+
+	public boolean replace(String toFind, String toReplace, boolean matchCase,
+			boolean wholeWord, boolean isRegex, boolean searchBack) {
+		return true;
+	}
+
+	public int replaceAll(String toFind, String toReplace, boolean matchCase,
+			boolean wholeWord, boolean isRegex, boolean searchBack) {
+		return 0;
+	}
+
 	/**
 	 * sets the corresponding JTabPanel
-	 * @param panel JTabPanel
+	 * 
+	 * @param panel
+	 *            JTabPanel
 	 */
-	public void setTabPanel(JTabPanel panel){
+	public void setTabPanel(JTabPanel panel) {
 		tabPanel = panel;
 		tabPanel.setTabContent(this);
 	}
+
 	/**
 	 * gets the corresponding JTabPanel
+	 * 
 	 * @return
 	 */
-	public JTabPanel getTabPanel(){
+	public JTabPanel getTabPanel() {
 		return tabPanel;
 	}
+
 	/**
 	 * gets the MainFrame object
+	 * 
 	 * @return MainFrame object
 	 */
-	protected MainFrame getFrame(){
+	protected MainFrame getFrame() {
 		return frame;
 	}
+
 	/**
 	 * checks if the content is dirty (unsaved)
+	 * 
 	 * @return true if the content is dirty, otherwise false
 	 */
-	public boolean isDirty(){
+	public boolean isDirty() {
 		return dirty;
 	}
+
 	/**
 	 * sets the content state (if it's dirty)
-	 * @param dirty boolean
+	 * 
+	 * @param dirty
+	 *            boolean
 	 */
-	protected void setDirty(boolean dirty){
+	protected void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
+
 	/**
 	 * gets file
+	 * 
 	 * @return File
 	 */
 	public File getFile() {
 		return file;
 	}
+
 	/**
 	 * sets file
-	 * @param file File
+	 * 
+	 * @param file
+	 *            File
 	 */
 	public void setFile(File file) {
 		this.file = file;
+	}
+
+	public void goToLine(int line) {
+		// TODO Auto-generated method stub
+		
 	}
 }

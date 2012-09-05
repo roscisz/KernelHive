@@ -10,10 +10,12 @@ public class PasswordKeyStore {
 	private static PasswordKeyStore keyStore = null;
 	private byte[] salt;
 	private byte[] password;
+	private String username;
 	
 	private PasswordKeyStore(){
 		salt = null;
 		password = null;
+		username = null;
 	}
 	
 	/**
@@ -44,11 +46,19 @@ public class PasswordKeyStore {
 	}
 	
 	/**
+	 * gets username
+	 * @return String
+	 */
+	public String getUsername(){
+		return username;
+	}
+	
+	/**
 	 * sets new encrypted password and salt used to generate it
 	 * @param password byte[]
 	 * @param salt byte[]
 	 */
-	public void setNewPassword(byte[] password, byte[] salt){
+	public void setNewCredentials(String username, byte[] password, byte[] salt){
 		this.password = password;
 		this.salt = salt;
 	}	

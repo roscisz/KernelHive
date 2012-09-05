@@ -101,4 +101,9 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 		return true;
 	}
 
+	@Override
+	public void clearSelection() {
+		panel.clearSelection();
+	}
+
 }

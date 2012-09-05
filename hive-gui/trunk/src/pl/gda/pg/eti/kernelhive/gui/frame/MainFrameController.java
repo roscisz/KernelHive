@@ -36,9 +36,13 @@ import pl.gda.pg.eti.kernelhive.gui.component.tree.FileTreeModel;
 import pl.gda.pg.eti.kernelhive.gui.component.workflow.editor.WorkflowEditor;
 import pl.gda.pg.eti.kernelhive.gui.component.workflow.viewer.WorkflowViewer;
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
+import pl.gda.pg.eti.kernelhive.gui.dialog.FindReplaceDialog;
+import pl.gda.pg.eti.kernelhive.gui.dialog.GoToLineDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NewProjectDialog;
+import pl.gda.pg.eti.kernelhive.gui.dialog.PreferencesDialog;
+import pl.gda.pg.eti.kernelhive.gui.dialog.ProjectPropertiesDialog;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.impl.KernelHiveProject;
 import pl.gda.pg.eti.kernelhive.gui.workflow.execution.WorkflowExecution;
@@ -111,10 +115,18 @@ public class MainFrameController {
 	 */
 	public void closeTab(JTabPanel tab) {
 		JTabContent content;
-		int index = frame.getWorkspacePane().getSelectedIndex();
+		int index = -1;
 		if (tab != null) {
 			content = tab.getTabContent();
+			for(int i=0; i<frame.getWorkspacePane().getTabCount(); i++){
+				Component c = frame.getWorkspacePane().getTabComponentAt(i);
+				if(c.equals(tab)){
+					index = i;
+					break;
+				}
+			}
 		} else {
+			index = frame.getWorkspacePane().getSelectedIndex();
 			if (index != -1) {
 				content = (JTabContent) frame.getWorkspacePane()
 						.getComponentAt(index);
@@ -490,14 +502,20 @@ public class MainFrameController {
 	 * show application preferences window
 	 */
 	public void showPreferences() {
-
+		PreferencesDialog dialog = new PreferencesDialog(frame);
+		dialog.setModal(true);
+		dialog.setVisible(true);
 	}
 
 	/**
 	 * shows the project properties window
 	 */
 	public void showProjectProperties() {
-
+		if(project!=null){
+			ProjectPropertiesDialog dialog = new ProjectPropertiesDialog(frame, project);
+			dialog.setModal(true);
+			dialog.setVisible(true);
+		}
 	}
 
 	/**
@@ -585,5 +603,43 @@ public class MainFrameController {
 
 	public void openResourceMonitor() {
 		// TODO Auto-generated method stub		
+	}
+
+	public void loginUser() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void clearHighlight() {
+		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+				.getSelectedComponent();
+		tabContent.clearSelection();
+	}
+
+	public void openGoToLineDialog() {
+		GoToLineDialog dialog = new GoToLineDialog(frame);
+		dialog.setModal(false);
+		dialog.setVisible(true);
+	}
+
+	public void openAboutDialog() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void logoutUser() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void deleteSelected() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void openFindReplaceDialog() {
+		FindReplaceDialog dialog = new FindReplaceDialog(frame);
+		dialog.setModal(false);
+		dialog.setVisible(true);
 	}
 }

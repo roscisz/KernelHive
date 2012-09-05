@@ -68,6 +68,10 @@ public class WorkflowViewerPanel extends JPanel {
 	public void selectAllTableContents(){
 		table.selectAll();
 	}
+	
+	public void clearSelection(){
+		table.clearSelection();
+	}
 
 	private class WorkflowExecutionsTableModel extends AbstractTableModel {
 

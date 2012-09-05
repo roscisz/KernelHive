@@ -15,10 +15,13 @@ import java.util.logging.Logger;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.TextEditorPane;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
@@ -79,7 +82,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		}
 	}
 
-	private RSyntaxTextArea textarea;
+	private TextEditorPane textarea;
 	private String fileName;
 
 	public SourceCodeEditor(MainFrame frame, String name) {
@@ -87,7 +90,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		this.fileName = name;
 		setName(name);
 		setLayout(new BorderLayout());
-		textarea = new RSyntaxTextArea();
+		textarea = new TextEditorPane();
 		textarea.setCodeFoldingEnabled(true);
 		textarea.setAnimateBracketMatching(true);
 		textarea.setAutoIndentEnabled(true);
@@ -288,5 +291,72 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	@Override
 	public boolean loadContent() {
 		return loadContent(getFile());
+	}
+	
+	@Override
+	public boolean find(String toFind, boolean matchCase, boolean wholeWorld,
+			boolean isRegex, boolean searchBack){
+		if(toFind.length()==0){
+			return false;
+		}
+		SearchContext context = new SearchContext();
+		context.setSearchFor(toFind);
+		context.setMatchCase(matchCase);
+		context.setRegularExpression(isRegex);
+		context.setWholeWord(wholeWorld);
+		context.setSearchForward(!searchBack);
+		
+		return SearchEngine.find(textarea, context);
+	}
+	
+	@Override
+	public boolean replace(String toFind, String toReplace, boolean matchCase,
+			boolean wholeWorld, boolean isRegex, boolean searchBack) {
+		if(toFind.length()==0){
+			return false;
+		}
+		SearchContext context = new SearchContext();
+		context.setSearchFor(toFind);
+		context.setReplaceWith(toReplace);
+		context.setMatchCase(matchCase);
+		context.setRegularExpression(isRegex);
+		context.setWholeWord(wholeWorld);
+		context.setSearchForward(!searchBack);
+		
+		return SearchEngine.replace(textarea, context);
+	}
+
+	@Override
+	public int replaceAll(String toFind, String toReplace, boolean matchCase,
+			boolean wholeWorld, boolean isRegex, boolean searchBack) {
+		if(toFind.length()==0){
+			return -1;
+		}
+		SearchContext context = new SearchContext();
+		context.setSearchFor(toFind);
+		context.setReplaceWith(toReplace);
+		context.setMatchCase(matchCase);
+		context.setRegularExpression(isRegex);
+		context.setWholeWord(wholeWorld);
+		context.setSearchForward(!searchBack);
+		
+		return SearchEngine.replaceAll(textarea, context);
+	}
+
+	@Override
+	public void clearSelection() {
+		textarea.setSelectionStart(textarea.getCaretPosition());
+		textarea.setSelectionEnd(textarea.getCaretPosition());
+	}
+	
+	@Override
+	public void goToLine(int line) {
+		try {
+			textarea.scrollRectToVisible(textarea.modelToView(textarea.getLineStartOffset(line-1)));
+			textarea.setCaretPosition(textarea.getLineStartOffset(line-1));
+			textarea.setActiveLineRange(line, line);
+		} catch (BadLocationException e) {
+			LOG.warning("KH: bad line number: "+line);
+		}		
 	}
 }

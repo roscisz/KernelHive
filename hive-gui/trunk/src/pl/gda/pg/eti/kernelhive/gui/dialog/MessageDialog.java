@@ -21,7 +21,15 @@ public class MessageDialog {
 	}
 	
 	public static void showMessageDialog(Component parent, String title, String message){
-		
+		JOptionPane
+		.showMessageDialog(
+				parent,
+				message,
+				title,
+				JOptionPane.INFORMATION_MESSAGE,
+				new ImageIcon(
+						MessageDialog.class
+								.getResource("/com/sun/java/swing/plaf/windows/icons/Inform.gif")));
 	}
 	
 	public static void showSuccessDialog(Component parent, String title, String message){
@@ -30,9 +38,6 @@ public class MessageDialog {
 				parent,
 				message,
 				title,
-				JOptionPane.ERROR_MESSAGE,
-				new ImageIcon(
-						MessageDialog.class
-								.getResource("/com/sun/java/swing/plaf/windows/icons/Success.gif")));
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 }

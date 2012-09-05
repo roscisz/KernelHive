@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -65,7 +64,6 @@ public class MainFrame extends JFrame {
 	private JMenuItem mntmPaste;
 	private JMenuItem mntmDelete;
 	private JMenuItem mntmSelectAll;
-	private JMenuItem mntmSetEncoding;
 	private JMenu mnView;
 	private JCheckBoxMenuItem chckbxmntmToolbox;
 	private JCheckBoxMenuItem chckbxmntmStatusbar;
@@ -250,24 +248,24 @@ public class MainFrame extends JFrame {
 		separator_3 = new JSeparator();
 		mnFile.add(separator_3);
 
-		mntmLogin = new JMenuItem(BUNDLE.getString("MainFrame.mntmImport.text"));  
+		mntmLogin = new JMenuItem(BUNDLE.getString("MainFrame.mntmLogin.text"));  
 		mntmLogin.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Import16.gif")));
 		mntmLogin.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO Auto-generated method stub
+				controller.loginUser();
 			}
 		});
 		mnFile.add(mntmLogin);
 
-		mntmLogout = new JMenuItem(BUNDLE.getString("MainFrame.mntmExport.text"));  
+		mntmLogout = new JMenuItem(BUNDLE.getString("MainFrame.mntmLogout.text"));  
 		mntmLogout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Export16.gif")));
 		mntmLogout.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				controller.logoutUser();
 			}
 		});
 		mnFile.add(mntmLogout);
@@ -362,6 +360,13 @@ public class MainFrame extends JFrame {
 
 		mntmDelete = new JMenuItem(BUNDLE.getString("MainFrame.mntmDelete.text"));  
 		mntmDelete.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Delete16.gif")));
+		mntmDelete.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.deleteSelected();
+			}
+		});
 		mnEdit.add(mntmDelete);
 		
 		separator_7 = new JSeparator();
@@ -381,9 +386,6 @@ public class MainFrame extends JFrame {
 		separator_8 = new JSeparator();
 		mnEdit.add(separator_8);
 
-		mntmSetEncoding = new JMenuItem(BUNDLE.getString("MainFrame.mntmSetEncoding.text"));  
-		mnEdit.add(mntmSetEncoding);
-		
 		mntmPreferences = new JMenuItem(BUNDLE.getString("MainFrame.mntmPreferences.text")); //$NON-NLS-1$
 		mntmPreferences.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Preferences16.gif")));
 		mntmPreferences.addActionListener(new ActionListener() {
@@ -450,21 +452,35 @@ public class MainFrame extends JFrame {
 		mntmFindreplace = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindreplace.text"));  
 		mntmFindreplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
 		mntmFindreplace.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Find16.gif")));
+		mntmFindreplace.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.openFindReplaceDialog();
+			}
+		});
 		mnSearch.add(mntmFindreplace);
 
-		mntmFindNext = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindNext.text"));  
-		mntmFindNext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
-		mnSearch.add(mntmFindNext);
-
-		mntmFindPrevious = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindPrevious.text"));  
-		mntmFindPrevious.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
-		mnSearch.add(mntmFindPrevious);
+//		mntmFindNext = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindNext.text"));  
+//		mntmFindNext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
+//		mnSearch.add(mntmFindNext);
+//
+//		mntmFindPrevious = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindPrevious.text"));  
+//		mntmFindPrevious.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+//		mnSearch.add(mntmFindPrevious);
 		
 		separator_10 = new JSeparator();
 		mnSearch.add(separator_10);
 		
 		mntmClearHighlight = new JMenuItem(BUNDLE.getString("MainFrame.mntmClearHighlight.text"));  
 		mntmClearHighlight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		mntmClearHighlight.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.clearHighlight();
+			}
+		});
 		mnSearch.add(mntmClearHighlight);
 		
 		separator_11 = new JSeparator();
@@ -472,6 +488,13 @@ public class MainFrame extends JFrame {
 
 		mntmGoToLine = new JMenuItem(BUNDLE.getString("MainFrame.mntmGoToLine.text"));  
 		mntmGoToLine.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
+		mntmGoToLine.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.openGoToLineDialog();
+			}
+		});
 		mnSearch.add(mntmGoToLine);
 	}
 	
@@ -480,7 +503,7 @@ public class MainFrame extends JFrame {
 		mnProject.setMnemonic(KeyEvent.VK_P);
 		mainMenuBar.add(mnProject);
 		
-		mntmProperties = new JMenuItem(BUNDLE.getString("MainFrame.mntmProperties.text")); //$NON-NLS-1$
+		mntmProperties = new JMenuItem(BUNDLE.getString("MainFrame.mntmProperties.text"));
 		mntmProperties.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Properties16.gif")));
 		mntmProperties.addActionListener(new ActionListener() {
 			
@@ -543,18 +566,18 @@ public class MainFrame extends JFrame {
 		mnHelp.setMnemonic(KeyEvent.VK_H);
 		mainMenuBar.add(mnHelp);
 
-		mntmContents = new JMenuItem(BUNDLE.getString("MainFrame.mntmContents.text"));  
-		mntmContents.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-		mntmContents.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/About16.gif")));
-		mntmContents.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		mnHelp.add(mntmContents);
+//		mntmContents = new JMenuItem(BUNDLE.getString("MainFrame.mntmContents.text"));  
+//		mntmContents.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+//		mntmContents.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/About16.gif")));
+//		mntmContents.addActionListener(new ActionListener() {
+//			
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+//		mnHelp.add(mntmContents);
 
 		mntmAbout = new JMenuItem(BUNDLE.getString("MainFrame.mntmAbout.text"));  
 		mntmAbout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Information16.gif")));
@@ -562,8 +585,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				controller.openAboutDialog();
 			}
 		});
 		mnHelp.add(mntmAbout);
@@ -632,17 +654,17 @@ public class MainFrame extends JFrame {
 		statusbar.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		// TODO XXX what info in statusbar?
-		JLabel label = new JLabel("New label");
-		statusbar.add(label);
-
-		JLabel label_1 = new JLabel("New label");
-		statusbar.add(label_1);
-
-		JLabel label_2 = new JLabel("New label");
-		statusbar.add(label_2);
-
-		JLabel label_3 = new JLabel("New label");
-		statusbar.add(label_3);
+//		JLabel label = new JLabel("New label");
+//		statusbar.add(label);
+//
+//		JLabel label_1 = new JLabel("New label");
+//		statusbar.add(label_1);
+//
+//		JLabel label_2 = new JLabel("New label");
+//		statusbar.add(label_2);
+//
+//		JLabel label_3 = new JLabel("New label");
+//		statusbar.add(label_3);
 		//
 	}
 	
@@ -845,14 +867,6 @@ public class MainFrame extends JFrame {
 
 	public void setMntmSelectAll(JMenuItem mntmSelectAll) {
 		this.mntmSelectAll = mntmSelectAll;
-	}
-
-	public JMenuItem getMntmSetEncoding() {
-		return mntmSetEncoding;
-	}
-
-	public void setMntmSetEncoding(JMenuItem mntmSetEncoding) {
-		this.mntmSetEncoding = mntmSetEncoding;
 	}
 
 	public JMenu getMnView() {
@@ -1125,8 +1139,5 @@ public class MainFrame extends JFrame {
 
 	public void setRepositoryScrollPane(JScrollPane repositoryScrollPane) {
 		this.repositoryScrollPane = repositoryScrollPane;
-	}
-	
-	
-	
+	}	
 }

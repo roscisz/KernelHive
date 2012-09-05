@@ -103,4 +103,11 @@ public class InfrastructureBrowser extends JTabContent implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		refresh();
 	}
+
+
+	@Override
+	public void clearSelection() {
+		// TODO Auto-generated method stub
+		
+	}
 }

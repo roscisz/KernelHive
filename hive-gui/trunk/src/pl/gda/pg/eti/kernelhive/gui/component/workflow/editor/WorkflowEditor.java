@@ -830,4 +830,9 @@ public class WorkflowEditor extends JTabContent {
 			}
 		}
 	}
+
+	@Override
+	public void clearSelection() {
+		graphComponent.getGraph().clearSelection();
+	}
 }
