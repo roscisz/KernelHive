@@ -43,11 +43,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BrowseInfrastructureResponse }
+     * Create an instance of {@link SubmitWorkflowResponse }
      * 
      */
-    public BrowseInfrastructureResponse createBrowseInfrastructureResponse() {
-        return new BrowseInfrastructureResponse();
+    public SubmitWorkflowResponse createSubmitWorkflowResponse() {
+        return new SubmitWorkflowResponse();
     }
 
     /**
@@ -56,6 +56,22 @@ public class ObjectFactory {
      */
     public WorkflowInfo createWorkflowInfo() {
         return new WorkflowInfo();
+    }
+
+    /**
+     * Create an instance of {@link TerminateWorkflow }
+     * 
+     */
+    public TerminateWorkflow createTerminateWorkflow() {
+        return new TerminateWorkflow();
+    }
+
+    /**
+     * Create an instance of {@link BrowseInfrastructure }
+     * 
+     */
+    public BrowseInfrastructure createBrowseInfrastructure() {
+        return new BrowseInfrastructure();
     }
 
     /**
@@ -83,19 +99,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SubmitWorkflowResponse }
+     * Create an instance of {@link BrowseWorkflowsResponse }
      * 
      */
-    public SubmitWorkflowResponse createSubmitWorkflowResponse() {
-        return new SubmitWorkflowResponse();
-    }
-
-    /**
-     * Create an instance of {@link BrowseInfrastructure }
-     * 
-     */
-    public BrowseInfrastructure createBrowseInfrastructure() {
-        return new BrowseInfrastructure();
+    public BrowseWorkflowsResponse createBrowseWorkflowsResponse() {
+        return new BrowseWorkflowsResponse();
     }
 
     /**
@@ -107,14 +115,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TerminateWorkflow }
-     * 
-     */
-    public TerminateWorkflow createTerminateWorkflow() {
-        return new TerminateWorkflow();
-    }
-
-    /**
      * Create an instance of {@link BrowseWorkflows }
      * 
      */
@@ -123,11 +123,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BrowseWorkflowsResponse }
+     * Create an instance of {@link BrowseInfrastructureResponse }
      * 
      */
-    public BrowseWorkflowsResponse createBrowseWorkflowsResponse() {
-        return new BrowseWorkflowsResponse();
+    public BrowseInfrastructureResponse createBrowseInfrastructureResponse() {
+        return new BrowseInfrastructureResponse();
     }
 
     /**

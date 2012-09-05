@@ -45,4 +45,32 @@ public interface ClusterBean {
     @ResponseWrapper(localName = "getJobResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.GetJobResponse")
     public JobInfo getJob();
 
+    /**
+     * 
+     * @param arg1
+     * @param arg0
+     */
+    @WebMethod
+    @RequestWrapper(localName = "reportProgress", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.ReportProgress")
+    @ResponseWrapper(localName = "reportProgressResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.ReportProgressResponse")
+    public void reportProgress(
+        @WebParam(name = "arg0", targetNamespace = "")
+        int arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        int arg1);
+
+    /**
+     * 
+     * @param arg1
+     * @param arg0
+     */
+    @WebMethod
+    @RequestWrapper(localName = "reportOver", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.ReportOver")
+    @ResponseWrapper(localName = "reportOverResponse", targetNamespace = "http://engine.kernelhive.eti.pg.gda.pl/", className = "pl.gda.pg.eti.kernelhive.common.clusterService.ReportOverResponse")
+    public void reportOver(
+        @WebParam(name = "arg0", targetNamespace = "")
+        int arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1);
+
 }

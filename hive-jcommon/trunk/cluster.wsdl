@@ -16,6 +16,18 @@
 <message name="getJobResponse">
 <part name="parameters" element="tns:getJobResponse"/>
 </message>
+<message name="reportProgress">
+<part name="parameters" element="tns:reportProgress"/>
+</message>
+<message name="reportProgressResponse">
+<part name="parameters" element="tns:reportProgressResponse"/>
+</message>
+<message name="reportOver">
+<part name="parameters" element="tns:reportOver"/>
+</message>
+<message name="reportOverResponse">
+<part name="parameters" element="tns:reportOverResponse"/>
+</message>
 <portType name="ClusterBean">
 <operation name="update">
 <input wsam:Action="http://engine.kernelhive.eti.pg.gda.pl/ClusterBean/updateRequest" message="tns:update"/>
@@ -24,6 +36,14 @@
 <operation name="getJob">
 <input wsam:Action="http://engine.kernelhive.eti.pg.gda.pl/ClusterBean/getJobRequest" message="tns:getJob"/>
 <output wsam:Action="http://engine.kernelhive.eti.pg.gda.pl/ClusterBean/getJobResponse" message="tns:getJobResponse"/>
+</operation>
+<operation name="reportProgress">
+<input wsam:Action="http://engine.kernelhive.eti.pg.gda.pl/ClusterBean/reportProgressRequest" message="tns:reportProgress"/>
+<output wsam:Action="http://engine.kernelhive.eti.pg.gda.pl/ClusterBean/reportProgressResponse" message="tns:reportProgressResponse"/>
+</operation>
+<operation name="reportOver">
+<input wsam:Action="http://engine.kernelhive.eti.pg.gda.pl/ClusterBean/reportOverRequest" message="tns:reportOver"/>
+<output wsam:Action="http://engine.kernelhive.eti.pg.gda.pl/ClusterBean/reportOverResponse" message="tns:reportOverResponse"/>
 </operation>
 </portType>
 <binding name="ClusterBeanPortBinding" type="tns:ClusterBean">
@@ -38,6 +58,24 @@
 </output>
 </operation>
 <operation name="getJob">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="reportProgress">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="reportOver">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
