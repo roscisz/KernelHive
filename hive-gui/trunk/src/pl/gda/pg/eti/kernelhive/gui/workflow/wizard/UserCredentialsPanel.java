@@ -19,8 +19,8 @@ public class UserCredentialsPanel extends JPanel {
 	private JPasswordField passwordField;
 	
 	public UserCredentialsPanel(){
-		setSize(new Dimension(450, 300));
-		setPreferredSize(new Dimension(450, 300));
+		setSize(new Dimension(900, 300));
+		setPreferredSize(new Dimension(900, 300));
 		setMinimumSize(new Dimension(450, 300));
 		setLayout(null);
 		

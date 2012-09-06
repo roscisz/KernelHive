@@ -21,8 +21,8 @@ public class GraphValidationPanel extends JPanel {
 	//private JButton btnRevalidate;
 	
 	public GraphValidationPanel() {
-		setSize(new Dimension(450, 300));
-		setPreferredSize(new Dimension(450, 300));
+		setSize(new Dimension(900, 300));
+		setPreferredSize(new Dimension(900, 300));
 		setMinimumSize(new Dimension(450, 300));
 		setLayout(null);
 		
@@ -31,10 +31,11 @@ public class GraphValidationPanel extends JPanel {
 		add(lblValidationResults);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 39, 395, 212);
+		scrollPane.setBounds(12, 39, 876, 212);
 		add(scrollPane);
 		
 		table = new JTable();
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		scrollPane.setViewportView(table);
 		
 //		btnRevalidate = new JButton("Revalidate");

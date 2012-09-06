@@ -26,7 +26,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import java.awt.Rectangle;
 import java.awt.Dimension;
@@ -188,7 +188,7 @@ public class NodePropertiesDialog extends JDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ISourceFile file = (ISourceFile) list.getSelectedValue();
+				IKernelFile file = (IKernelFile) list.getSelectedValue();
 				NodePropertiesDialog.this.frame.getController().openTab(file.getFile());
 			}
 		});
@@ -199,7 +199,7 @@ public class NodePropertiesDialog extends JDialog {
 	}
 	
 	private void displaySourceFileProperties(){
-		ISourceFile file = (ISourceFile) list.getSelectedValue();
+		IKernelFile file = (IKernelFile) list.getSelectedValue();
 		if(file!=null){
 			SourceFilePropertiesDialog dialog = new SourceFilePropertiesDialog(this, file);
 			dialog.setVisible(true);
@@ -236,7 +236,7 @@ public class NodePropertiesDialog extends JDialog {
 		this.dispose();
 	}
 
-	private void fillSourceFilesList(List<ISourceFile> sourceFiles) {
+	private void fillSourceFilesList(List<IKernelFile> sourceFiles) {
 		ListModel model = new SourceFilesListModel(sourceFiles);
 		list.setModel(model);
 		list.addMouseListener(new MouseAdapter() {
@@ -244,7 +244,7 @@ public class NodePropertiesDialog extends JDialog {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					e.consume();
-					ISourceFile file = (ISourceFile) list.getSelectedValue();
+					IKernelFile file = (IKernelFile) list.getSelectedValue();
 					frame.getController().openTab(file.getFile());
 				}
 			}
@@ -338,10 +338,10 @@ public class NodePropertiesDialog extends JDialog {
 
 	private class SourceFilesListModel implements ListModel {
 
-		List<ISourceFile> list;
+		List<IKernelFile> list;
 		List<ListDataListener> listDataListeners;
 
-		public SourceFilesListModel(List<ISourceFile> list) {
+		public SourceFilesListModel(List<IKernelFile> list) {
 			this.list = list;
 			listDataListeners = new ArrayList<ListDataListener>();
 		}
@@ -356,7 +356,7 @@ public class NodePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public ISourceFile getElementAt(int index) {
+		public IKernelFile getElementAt(int index) {
 			if (list != null) {
 				return list.get(index);
 			} else {

@@ -13,7 +13,7 @@ import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGUIGraphConfiguratio
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.GUIGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 
 /**
@@ -89,8 +89,8 @@ public class KernelHiveProject implements Serializable, IProject {
 		if (nodes.contains(node)) {
 			nodes.remove(node);
 			if (removeFromDisc) {
-				List<ISourceFile> srcFiles = node.getSourceFiles();
-				for (ISourceFile f : srcFiles) {
+				List<IKernelFile> srcFiles = node.getSourceFiles();
+				for (IKernelFile f : srcFiles) {
 					f.getFile().delete();
 				}
 			}

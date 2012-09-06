@@ -10,7 +10,7 @@ import java.util.Set;
 
 import javax.swing.JDialog;
 
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -31,11 +31,11 @@ public class SourceFilePropertiesDialog extends JDialog {
 
 	private static final long serialVersionUID = 1825937840391440307L;
 	
-	private ISourceFile sourceFile;
+	private IKernelFile sourceFile;
 	private JTextField textField;
 	private JTable table;
 	
-	public SourceFilePropertiesDialog(Dialog dialog, ISourceFile sourceFile){
+	public SourceFilePropertiesDialog(Dialog dialog, IKernelFile sourceFile){
 		super(dialog);
 		this.sourceFile = sourceFile;
 		init();
@@ -128,7 +128,7 @@ public class SourceFilePropertiesDialog extends JDialog {
 		fillPropertiesTable(sourceFile.getProperties());
 	}
 	
-	public SourceFilePropertiesDialog(Frame frame, ISourceFile sourceFile){
+	public SourceFilePropertiesDialog(Frame frame, IKernelFile sourceFile){
 		super(frame);
 		this.sourceFile = sourceFile;
 		

@@ -25,8 +25,8 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelPathEntry;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
-import pl.gda.pg.eti.kernelhive.common.source.SourceFile;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
+import pl.gda.pg.eti.kernelhive.common.source.KernelFile;
 import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.TransferableKernelRepositoryEntry;
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
@@ -76,7 +76,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 
 					// 2. get input streams to the kernel templates, save the
 					// content to new files
-					List<ISourceFile> sourceFiles = copyKernelsFromTemplates(
+					List<IKernelFile> sourceFiles = copyKernelsFromTemplates(
 							kre, dir);
 
 					// 3. create appropriate graph node
@@ -108,7 +108,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 		} catch (Exception e) {
 			LOG.severe("KH: " + e.getMessage());
 			if (guiNode != null && dir != null) {
-				for (ISourceFile s : guiNode.getSourceFiles()) {
+				for (IKernelFile s : guiNode.getSourceFiles()) {
 					s.getFile().delete();
 				}
 				dir.delete();
@@ -117,10 +117,10 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 		}
 	}
 
-	private List<ISourceFile> copyKernelsFromTemplates(
+	private List<IKernelFile> copyKernelsFromTemplates(
 			KernelRepositoryEntry kre, File rootDir) throws SecurityException,
 			IOException {
-		List<ISourceFile> sourceFiles = new ArrayList<ISourceFile>(kre
+		List<IKernelFile> sourceFiles = new ArrayList<IKernelFile>(kre
 				.getKernelPaths().size());
 		for (KernelPathEntry kpe : kre.getKernelPaths()) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(kpe
@@ -141,7 +141,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			bw.close();
 			br.close();
 
-			sourceFiles.add(new SourceFile(file, kpe.getId(), kpe
+			sourceFiles.add(new KernelFile(file, kpe.getId(), kpe
 					.getProperties()));
 		}
 		return sourceFiles;
