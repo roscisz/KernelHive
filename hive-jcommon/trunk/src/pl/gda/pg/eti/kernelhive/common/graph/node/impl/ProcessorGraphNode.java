@@ -47,9 +47,34 @@ public class ProcessorGraphNode extends GenericGraphNode {
 
 	@Override
 	public List<ValidationResult> validate() {
-		//FIXME
 		List<ValidationResult> results = new ArrayList<ValidationResult>();
-		results.add(new ValidationResult("OK", ValidationResultType.VALID));
+		//children nodes? (must be 0)
+		if (getChildrenNodes() != null && getChildrenNodes().size() > 0) {
+			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
+					+ name + ") of type '" + type
+					+ "' cannot has children nodes",
+					ValidationResultType.INVALID));
+		}
+		//previous nodes? (must be 1 or 0)
+		if(getPreviousNodes()!=null&&getPreviousNodes().size()>1){
+			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
+					+ name + ") of type '" + type
+					+ "' cannot has more then 1 previous node",
+					ValidationResultType.INVALID));
+		}
+		//following nodes? (must be 1 or 0)
+		if(getFollowingNodes()!=null&&getFollowingNodes().size()>1){
+			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
+					+ name + ") of type '" + type
+					+ "' cannot has more than 1 following node",
+					ValidationResultType.INVALID));
+		}
+		
+		//previous validations ok?
+		if(results.size()==0){
+			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
+					+ name + ") validated correctly", ValidationResultType.VALID));
+		}		
 		return results;
 	}
 }

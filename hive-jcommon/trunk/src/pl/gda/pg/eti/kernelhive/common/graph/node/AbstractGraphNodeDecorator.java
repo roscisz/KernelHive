@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.common.graph.node;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 /**
  * 
@@ -22,4 +23,13 @@ public abstract class AbstractGraphNodeDecorator {
 	}
 	
 	public abstract List<ValidationResult>  validate();
+	
+	protected boolean isValidationSuccess(List<ValidationResult> results) {
+		for (ValidationResult r : results) {
+			if (r.getType().equals(ValidationResultType.INVALID)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

@@ -31,9 +31,23 @@ public class EngineGraphNodeDecorator extends AbstractGraphNodeDecorator {
 
 	@Override
 	public List<ValidationResult> validate() {
-		List<ValidationResult> result = new ArrayList<ValidationResult>();
-		result.add(new ValidationResult("ok", ValidationResultType.VALID));
-		return result;
+		//validate node
+		List<ValidationResult> result = node.validate();
+		// validate kernels
+		for (IKernelString ks : kernels) {
+			result.addAll(ks.validate());
+		}
+
+		if (isValidationSuccess(result)) {
+			List<ValidationResult> finalResult = new ArrayList<ValidationResult>();
+			finalResult.add(new ValidationResult("Graph node (id: "
+					+ node.getNodeId() + ", name: " + node.getName()
+					+ ") and its kernels validated successfully",
+					ValidationResultType.VALID));
+			return finalResult;
+		} else {
+			return result;
+		}
 	}
 
 	@Override
@@ -59,10 +73,10 @@ public class EngineGraphNodeDecorator extends AbstractGraphNodeDecorator {
 				return false;
 		} else if (!kernels.equals(other.kernels))
 			return false;
-		if(node == null){
-			if(other.getGraphNode()!=null)
+		if (node == null) {
+			if (other.getGraphNode() != null)
 				return false;
-		} else if(!node.equals(other.getGraphNode()))
+		} else if (!node.equals(other.getGraphNode()))
 			return false;
 		return true;
 	}

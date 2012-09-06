@@ -17,8 +17,8 @@ import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGUIGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
-import pl.gda.pg.eti.kernelhive.common.source.SourceFile;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
+import pl.gda.pg.eti.kernelhive.common.source.KernelFile;
 
 /**
  * {@link GUIGraphConfiguration} object is responsible for persisting project
@@ -83,7 +83,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 	private Node createSourceFilesSubNode(GUIGraphNodeDecorator node, File file)
 			throws ConfigurationException {
 		Node sourcesNode = new Node(NODE_SOURCE_FILES);
-		for (ISourceFile f : node.getSourceFiles()) {
+		for (IKernelFile f : node.getSourceFiles()) {
 			Node sourceNode = new Node(SOURCE_FILE);
 			Node srcAttr = new Node(
 					SOURCE_FILE_SRC_ATTRIBUTE,
@@ -178,7 +178,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		List<GUIGraphNodeDecorator> nodes = new ArrayList<GUIGraphNodeDecorator>();
 		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
 			GUIGraphNodeDecorator guiNode = loadGraphNodeForGUI(node);
-			List<ISourceFile> sourceFiles = loadSourceFiles(node);
+			List<IKernelFile> sourceFiles = loadSourceFiles(node);
 			guiNode.setSourceFiles(sourceFiles);
 			Map<String, Object> nodeProperties = loadGraphNodeProperties(node);
 			guiNode.getGraphNode().setProperties(nodeProperties);
@@ -187,7 +187,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		return nodes;
 	}
 
-	private ISourceFile loadSourceFile(ConfigurationNode src)
+	private IKernelFile loadSourceFile(ConfigurationNode src)
 			throws ConfigurationException {
 		File file;
 		String srcId;
@@ -228,7 +228,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 
 		Map<String, Object> properties = loadSourceFileProperties(src);
 
-		return new SourceFile(file, srcId, properties);
+		return new KernelFile(file, srcId, properties);
 	}
 
 	private Map<String, Object> loadSourceFileProperties(ConfigurationNode node)
@@ -263,9 +263,9 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		return properties;
 	}
 
-	private List<ISourceFile> loadSourceFiles(ConfigurationNode node)
+	private List<IKernelFile> loadSourceFiles(ConfigurationNode node)
 			throws ConfigurationException {
-		List<ISourceFile> sourceFiles = new ArrayList<ISourceFile>();
+		List<IKernelFile> sourceFiles = new ArrayList<IKernelFile>();
 
 		List<ConfigurationNode> sourceFilesList = node
 				.getChildren(NODE_SOURCE_FILES);

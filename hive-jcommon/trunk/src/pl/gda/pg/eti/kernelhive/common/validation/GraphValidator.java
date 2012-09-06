@@ -23,15 +23,17 @@ public class GraphValidator {
 	public static List<ValidationResult> validateGraphForGUI(
 			List<GUIGraphNodeDecorator> graph) {
 		List<ValidationResult> result = new ArrayList<ValidationResult>();
-		List<IGraphNode> graphNodes = GraphNodeExtractor
-				.extractGraphNodesForGUI(graph);
-		result.addAll(validateGraphNodes(graphNodes));
-		for (GUIGraphNodeDecorator a : graph) {
-			result.addAll(a.validate());
+		for (GUIGraphNodeDecorator node : graph) {
+			result.addAll(node.validate());
 		}
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param graph
+	 * @return
+	 */
 	public static List<ValidationResult> validateGraphForEngine(List<EngineGraphNodeDecorator> graph){
 		List<ValidationResult> result = new ArrayList<ValidationResult>();
 		List<IGraphNode> graphNodes = GraphNodeExtractor

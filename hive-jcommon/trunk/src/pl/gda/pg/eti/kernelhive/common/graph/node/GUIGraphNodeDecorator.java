@@ -3,55 +3,59 @@ package pl.gda.pg.eti.kernelhive.common.graph.node;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.gda.pg.eti.kernelhive.common.source.ISourceFile;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 
-	List<ISourceFile> sourceFiles;
+	List<IKernelFile> sourceFiles;
 	int x, y;
-	
-	public GUIGraphNodeDecorator(IGraphNode node){
+
+	public GUIGraphNodeDecorator(IGraphNode node) {
 		super(node);
-		this.sourceFiles = new ArrayList<ISourceFile>();
+		this.sourceFiles = new ArrayList<IKernelFile>();
 	}
-	
-	public GUIGraphNodeDecorator(IGraphNode node, List<ISourceFile> sourceFiles){
+
+	public GUIGraphNodeDecorator(IGraphNode node, List<IKernelFile> sourceFiles) {
 		super(node);
 		this.sourceFiles = sourceFiles;
 	}
 
 	@Override
 	public List<ValidationResult> validate() {
+		//validate node
 		List<ValidationResult> result = node.validate();
-//		List<String> sourceIds = node.getRequiredSourceFilesIds();
-//		int count = 0;
-//		for(ISourceFile s : sourceFiles){
-//			if(sourceIds.contains(s.getId())){
-//				count++;
-//			}
-//		}
-//		if(count==sourceIds.size()){
-//			result.add(new ValidationResult("Source Files ok", ValidationResultType.VALID));
-//		} else{
-//			result.add(new ValidationResult("Missing some source files", ValidationResultType.INVALID));
-//		}
-		return result;
+		//validate source files
+		for (IKernelFile s : sourceFiles) {
+			result.addAll(s.validate());
+		}
+
+		if (isValidationSuccess(result)) {
+			List<ValidationResult> finalResult = new ArrayList<ValidationResult>();
+			finalResult.add(new ValidationResult("Graph node (id: "
+					+ node.getNodeId() + ", name: " + node.getName()
+					+ ") and its kernels validated successfully",
+					ValidationResultType.VALID));
+			return finalResult;
+		} else {
+			return result;
+		}
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	public int getX(){
-		return x;		
+	public int getX() {
+		return x;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -59,7 +63,7 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 	public int getY() {
 		return y;
 	}
-	
+
 	/**
 	 * 
 	 * @param x
@@ -67,7 +71,7 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 	public void setX(int x) {
 		this.x = x;
 	}
-	
+
 	/**
 	 * 
 	 * @param y
@@ -75,23 +79,23 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	public List<ISourceFile> getSourceFiles() {
+	public List<IKernelFile> getSourceFiles() {
 		return sourceFiles;
 	}
-	
+
 	/**
 	 * 
 	 * @param sourceFiles
 	 */
-	public void setSourceFiles(List<ISourceFile> sourceFiles){
+	public void setSourceFiles(List<IKernelFile> sourceFiles) {
 		this.sourceFiles = sourceFiles;
 	}
-	
+
 	@Override
 	public String toString() {
 		return node.toString();
@@ -102,7 +106,8 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((sourceFiles == null) ? 0 : sourceFiles.hashCode()) + ((node == null) ? 0 : node.hashCode());
+				+ ((sourceFiles == null) ? 0 : sourceFiles.hashCode())
+				+ ((node == null) ? 0 : node.hashCode());
 		result = prime * result + x;
 		result = prime * result + y;
 		return result;
@@ -126,10 +131,10 @@ public class GUIGraphNodeDecorator extends AbstractGraphNodeDecorator {
 			return false;
 		if (y != other.y)
 			return false;
-		if(node == null){
-			if(other.getGraphNode()!=null)
+		if (node == null) {
+			if (other.getGraphNode() != null)
 				return false;
-		} else if(!node.equals(other.getGraphNode()))
+		} else if (!node.equals(other.getGraphNode()))
 			return false;
 		return true;
 	}

@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class SourceFileTest {
 	
-	private static ISourceFile sf;
+	private static IKernelFile sf;
 	private static File file;
 	private static String id;
 
@@ -18,7 +18,7 @@ public class SourceFileTest {
 	public void setUp() throws Exception {
 		file = File.createTempFile("test", ".test");
 		id = "test";
-		sf = new SourceFile(file, id);
+		sf = new KernelFile(file, id);
 	}
 
 	@Test

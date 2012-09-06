@@ -1,5 +1,7 @@
 package pl.gda.pg.eti.kernelhive.common.source;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,24 +9,44 @@ import java.util.Map;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
-public class KernelString extends KernelSource implements IKernelString {
+/**
+ * 
+ * @author mschally
+ *
+ */
+public class KernelFile extends KernelSource implements IKernelFile, Serializable {
 
-	private String kernel;
+	private static final long serialVersionUID = 192995314148788181L;
+	protected File file;
 	
-	
-	public KernelString(String id, String kernel){
+	public KernelFile(File file, String id){
 		super(id, null);
-		this.kernel = kernel;
+		this.file = file;
 	}
 	
-	public KernelString(String id, String kernel, Map<String, Object> properties){
+	public KernelFile(File file, String id, Map<String, Object> properties){
 		super(id, properties);
-		this.kernel = kernel;
+		this.file = file;
 	}
 	
 	@Override
-	public String getKernel() {
-		return kernel;
+	public File getFile() {
+		return file;
+	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public String toString(){
+		return this.file.getAbsolutePath();
+	}
+
+	@Override
+	public Map<String, Object> getProperties() {
+		return properties;
 	}
 
 	@Override
@@ -42,9 +64,17 @@ public class KernelString extends KernelSource implements IKernelString {
 		if(getOutputSize()==-1){
 			result.add(new ValidationResult("Kernel with id: "+id+" has no output size defined", ValidationResultType.INVALID));
 		}
+		if(!file.exists()||!file.canRead()||!file.isFile()){
+			result.add(new ValidationResult("Kernel with id: "+id+" has no valid file attached", ValidationResultType.INVALID));
+		}
 		if(result.size()==0){//everything ok
 			result.add(new ValidationResult("Kernel with id: "+id+" validated correctly", ValidationResultType.VALID));
 		}
-		return result;
-	}	
+		return result;	
+	}
+
+	@Override
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
+	}
 }
