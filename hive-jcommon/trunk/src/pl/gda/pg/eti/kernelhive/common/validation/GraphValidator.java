@@ -17,45 +17,55 @@ public class GraphValidator {
 
 	/**
 	 * validates graph
-	 * @param graph - list of graph node decorators
+	 * 
+	 * @param graph
+	 *            - list of graph node decorators
 	 * @return list of {@link ValidationResult} objects
 	 */
 	public static List<ValidationResult> validateGraphForGUI(
 			List<GUIGraphNodeDecorator> graph) {
 		List<ValidationResult> result = new ArrayList<ValidationResult>();
+		List<IGraphNode> graphNodes = GraphNodeExtractor
+				.extractGraphNodesForGUI(graph);
+		result.addAll(validateStartGraphNodes(graphNodes));
+		result.addAll(validateEndGraphNodes(graphNodes));
+		result.addAll(validateChildrenGraphNodes(graphNodes));
 		for (GUIGraphNodeDecorator node : graph) {
 			result.addAll(node.validate());
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 
 	 * @param graph
 	 * @return
 	 */
-	public static List<ValidationResult> validateGraphForEngine(List<EngineGraphNodeDecorator> graph){
+	public static List<ValidationResult> validateGraphForEngine(
+			List<EngineGraphNodeDecorator> graph) {
 		List<ValidationResult> result = new ArrayList<ValidationResult>();
 		List<IGraphNode> graphNodes = GraphNodeExtractor
 				.extractGraphNodesForEngine(graph);
-		result.addAll(validateGraphNodes(graphNodes));
+		result.addAll(validateStartGraphNodes(graphNodes));
+		result.addAll(validateEndGraphNodes(graphNodes));
+		result.addAll(validateChildrenGraphNodes(graphNodes));
 		for (EngineGraphNodeDecorator a : graph) {
 			result.addAll(a.validate());
 		}
 		return result;
 	}
 
-	private static List<ValidationResult> validateGraphNodes(
-			List<IGraphNode> graphNodes) {
-		List<ValidationResult> results = new ArrayList<ValidationResult>();
-		results.addAll(validateStartGraphNodes(graphNodes));
-		results.addAll(validateEndGraphNodes(graphNodes));
-		for (IGraphNode node : graphNodes) {
-			results.addAll(node.validate());
-		}
-		results.addAll(validateChildrenGraphNodes(graphNodes));
-		return results;
-	}
+	// private static List<ValidationResult> validateGraphNodes(
+	// List<IGraphNode> graphNodes) {
+	// List<ValidationResult> results = new ArrayList<ValidationResult>();
+	// results.addAll(validateStartGraphNodes(graphNodes));
+	// results.addAll(validateEndGraphNodes(graphNodes));
+	// for (IGraphNode node : graphNodes) {
+	// results.addAll(node.validate());
+	// }
+	// results.addAll(validateChildrenGraphNodes(graphNodes));
+	// return results;
+	// }
 
 	private static List<ValidationResult> validateStartGraphNodes(
 			List<IGraphNode> graphNodes) {
