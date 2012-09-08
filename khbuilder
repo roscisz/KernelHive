@@ -1,14 +1,18 @@
 #!/bin/bash
 
 ###
-# Data and variables:
+# Data and variables
 CMDS=( gcc make cmake java ant )
+TARGET="build"
+if [ $# -gt 0 ]; then
+	TARGET="$1"
+fi
 
 ###
-# Utility functions:
+# Checks if commands given as parameters are available
 function check_dependencies() {
-	echo "Will now perform a check for tools necessary to build KernelHive"
-	for CMD in ${CMDS[*]}
+	echo "Will now check for required tools"
+	for CMD in $@
 	do
 		echo -ne " Checking for $CMD.. "
 		command -v $CMD >/dev/null 2>&1
@@ -20,4 +24,30 @@ function check_dependencies() {
 		echo "OK"
 	done
 }
+
+function build_kh() {
+	check_dependencies gcc make cmake java ant
+	echo "Will now build KernelHive modules"
+}
+
+function deploy_kh() {
+	echo "Will now deploy KernelHive modules"
+}
+
+function clean_kh() {
+	check_dependencies make ant
+	echo "Will now clean build output"
+}
+
+function purge_kh() {
+	echo "Will now remove all build output"
+}
+
+case "$TARGET" in
+	"build") build_kh ;;
+	"deploy") deploy_kh ;;
+	"clean") clean_kh ;;
+	"purge") purge_kh ;;
+	*) echo "Unsupported target: $TARGET"
+esac
 
