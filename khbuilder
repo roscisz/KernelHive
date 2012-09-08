@@ -1,0 +1,23 @@
+#!/bin/bash
+
+###
+# Data and variables:
+CMDS=( gcc make cmake java ant )
+
+###
+# Utility functions:
+function check_dependencies() {
+	echo "Will now perform a check for tools necessary to build KernelHive"
+	for CMD in ${CMDS[*]}
+	do
+		echo -ne " Checking for $CMD.. "
+		command -v $CMD >/dev/null 2>&1
+		if [ $? -gt 0 ]; then
+			echo "FAILED"
+			echo -e " Command $CMD is not available. Please make sure it is installed and available on the path."
+			exit 1
+		fi
+		echo "OK"
+	done
+}
+
