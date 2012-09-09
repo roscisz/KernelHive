@@ -1,14 +1,11 @@
 #!/bin/bash
 
-###
-# Data and variables
-CMDS=( gcc make cmake java ant )
+# Setup necessary data
 TARGET="build"
 if [ $# -gt 0 ]; then
 	TARGET="$1"
 fi
 
-###
 # Checks if commands given as parameters are available
 function check_dependencies() {
 	echo "Will now check for required tools"
