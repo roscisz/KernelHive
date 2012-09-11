@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="jar" name="kernelhive-gui">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+	
+	<property environment="env"/>
+	<property file="build.properties"/>
+	<property file="build.${user.name}.properties"/>
+	
+	<property name="kh-gui-jar.path" location="dist/kernelhive-gui.jar"/>
+	<property name="src.dir" location="src"/>
+	<property name="res.dir" location="res"/>
+	<property name="test.dir" location="test"/>
+	<property name="dist.dir" location="dist"/>
+	<property name="build.dir" location="bin"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="common-src.dir" location="${kh-common.dir}/src"/>
+	<property name="common-res.dir" location="${kh-common.dir}/res"/>
+	<property name="common-test.dir" location="${kh-common.dir}/test"/>
+	<property name="common-dist.dir" location="${kh-common.dir}/dist"/>
+	<property name="common-build.dir" location="${kh-common.dir}/bin"/>
+	<property name="common-lib.dir" location="${kh-common.dir}/lib"/>
+	<path id="classpath">
+		<fileset dir="${common-build.dir}" includes="**/*.class"/>
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<fileset dir="${common-lib.dir}" includes="**/*.jar"/>
+	</path>
+	
+	<target name="compile" depends="init">
+		<javac destdir="${build.dir}" classpathref="classpath">
+			<src path="${src.dir}"/>
+			<src path="${common-src.dir}"/>
+			<src path="${common-res.dir}"/>
+		</javac>
+		<copy todir="${build.dir}">
+			<fileset dir="${res.dir}">
+				<include name="**"/>
+				<exclude name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${common-res.dir}">
+				<include name="**"/>
+				<exclude name="**/*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="jar" depends="compile">
+        <jar destfile="${kh-gui-jar.path}">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="pl.gda.pg.eti.kernelhive.gui.KernelHiveMain"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ jlfgr-1_0.jar jgraphx.jar rsyntaxtextarea.jar commons-configuration-1.8.jar commons-lang-2.6.jar commons-logging-1.1.1.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="${build.dir}"/>
+            <zipfileset dir="${res.dir}" includes="jlfgr-1_0.jar"/>
+            <zipfileset dir="${lib.dir}/jgraphx-1.10" includes="jgraphx.jar"/>
+            <zipfileset dir="${lib.dir}/rsyntaxtextarea_2.0.2" includes="rsyntaxtextarea.jar"/>
+            <fileset dir="${common-build.dir}"/>
+            <zipfileset dir="${common-lib.dir}/commons-configuration-1.8" includes="commons-configuration-1.8.jar"/>
+            <zipfileset dir="${common-lib.dir}/commons-lang-2.6" includes="commons-lang-2.6.jar"/>
+            <zipfileset dir="${common-lib.dir}/commons-logging-1.1.1" includes="commons-logging-1.1.1.jar"/>
+        </jar>
+    </target>
+	
+	<target name="run" depends="jar">
+		<exec executable="java">
+			<arg line="-jar ${kh-gui-jar.path}"/>
+		</exec>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<delete dir="${common-build.dir}"/>
+		<mkdir dir="${common-build.dir}"/>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+	
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${common-build.dir}"/>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+</project>

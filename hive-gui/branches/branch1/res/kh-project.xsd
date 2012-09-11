@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/kh-project"
+	xmlns:tns="http://www.example.org/kh-project" elementFormDefault="qualified">
+	<xs:element name="configuration">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="kh:node" maxOccurs="unbounded"
+					minOccurs="unbounded">
+					<xs:complexType>
+						<xs:all>
+							<xs:attributeGroup name="attributes">
+								<xs:attribute name="hash" type="xs:string" use="required" />
+								<xs:attribute name="id" type="xs:string" use="required" />
+								<xs:attribute name="parent-id" type="xs:string" />
+								<xs:attribute name="x" type="xs:integer" />
+								<xs:attribute name="y" type="xs:integer" />
+								<xs:attribute name="type" type="xs:string" use="required"/>
+							</xs:attributeGroup>
+
+							<xs:element name="kh:send-to">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="kh:following-node" maxOccurs="unbounded"
+											minOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="id" type="xs:string" use="required" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:group name="nodeTypes">
+								<xs:choice>
+									<xs:group name="dataNodes">
+										<xs:all>
+											<xs:element name="kh:data">
+												<xs:complexType>
+													<xs:all>
+														<xs:attribute name="url" type="xs:string"
+															use="required" />
+													</xs:all>
+												</xs:complexType>
+											</xs:element>
+										</xs:all>
+									</xs:group>
+									<xs:group name="computationNodes">
+										<xs:all>
+											<xs:element name="kh:first-children-nodes">
+												<xs:compexType>
+													<xs:sequence>
+														<xs:element name="kh:child-node" maxOccurs="unbounded"
+															minOccurs="unbounded">
+															<xs:complexType>
+																<xs:attribute name="id" type="xs:string"
+																	use="required" />
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+												</xs:compexType>
+											</xs:element>
+											<xs:element name="kh:node-source-files">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="kh:source-file" maxOccurs="unbounded"
+															minOccurs="unbounded">
+															<xs:complexType>
+																<xs:all>
+																	<xs:attributeGroup name="srcAttributes">
+																		<xs:attribute name="id" type="xs:string" use="required"/>
+																		<xs:attribute name="src" type="xs:string"
+																	use="required" />	
+																	</xs:attributeGroup>
+																</xs:all>																
+															</xs:complexContent>
+														</xs:element>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+										</xs:all>
+									</xs:group>
+								</xs:choice>
+							</xs:group>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</schema>
+-->
