@@ -9,10 +9,7 @@ import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeTypeFactory;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeType;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeTypeFactory;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 
 /**
  * 
@@ -25,12 +22,12 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	protected IGraphNode parentNode;
 	protected final String nodeId;
 	protected String name;
-	protected IGraphNodeType type;
+	protected GraphNodeType type;
 	protected List<IGraphNode> followingNodes;
 	protected List<IGraphNode> previousNodes;
 	protected List<IGraphNode> childrenNodes;
 	protected Map<String, Object> properties;
-	
+
 	public GenericGraphNode(String id) {
 		followingNodes = new ArrayList<IGraphNode>();
 		previousNodes = new ArrayList<IGraphNode>();
@@ -39,8 +36,8 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		properties = new HashMap<String, Object>();
 		parentNode = null;
 	}
-	
-	public GenericGraphNode(String id, String name){
+
+	public GenericGraphNode(String id, String name) {
 		followingNodes = new ArrayList<IGraphNode>();
 		previousNodes = new ArrayList<IGraphNode>();
 		childrenNodes = new ArrayList<IGraphNode>();
@@ -50,8 +47,9 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		parentNode = null;
 	}
 
-	public GenericGraphNode(String id, String name, List<IGraphNode> followingNodes,
-			List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes, Map<String, Object> properties) {
+	public GenericGraphNode(String id, String name,
+			List<IGraphNode> followingNodes, List<IGraphNode> childrenNodes,
+			List<IGraphNode> previousNodes, Map<String, Object> properties) {
 		nodeId = id;
 		this.name = name;
 		parentNode = null;
@@ -70,9 +68,9 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		} else {
 			this.previousNodes = new ArrayList<IGraphNode>();
 		}
-		if(properties!=null){
+		if (properties != null) {
 			this.properties = properties;
-		} else{
+		} else {
 			this.properties = new HashMap<String, Object>();
 		}
 	}
@@ -134,7 +132,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public boolean removeFollowingNode(IGraphNode node) {
-		if (node!=null && followingNodes.contains(node)) {
+		if (node != null && followingNodes.contains(node)) {
 			boolean result = followingNodes.remove(node);
 			result &= node.removePreviousNode(this);
 			return result;
@@ -156,7 +154,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public boolean removePreviousNode(IGraphNode node) {
-		if (node!=null && previousNodes.contains(node)) {
+		if (node != null && previousNodes.contains(node)) {
 			boolean result = previousNodes.remove(node);
 			result &= node.removeFollowingNode(this);
 			return result;
@@ -190,24 +188,25 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 			return true;
 		}
 	}
-	
-	private void disconnectPreviousNodes(IGraphNode node){
-		List<IGraphNode> list = new ArrayList<IGraphNode>(node.getPreviousNodes());
+
+	private void disconnectPreviousNodes(IGraphNode node) {
+		List<IGraphNode> list = new ArrayList<IGraphNode>(
+				node.getPreviousNodes());
 		Collections.copy(list, node.getPreviousNodes());
-		for(IGraphNode pNode : list){
+		for (IGraphNode pNode : list) {
 			node.removePreviousNode(pNode);
 		}
 	}
-	
-	private void disconnectFollowingNodes(IGraphNode node){
-		List<IGraphNode> list = new ArrayList<IGraphNode>(node.getFollowingNodes());
+
+	private void disconnectFollowingNodes(IGraphNode node) {
+		List<IGraphNode> list = new ArrayList<IGraphNode>(
+				node.getFollowingNodes());
 		Collections.copy(list, node.getFollowingNodes());
-		for(IGraphNode fNode : list){
+		for (IGraphNode fNode : list) {
 			node.removeFollowingNode(fNode);
 		}
 	}
 
-	
 	@Override
 	public boolean canAddFollowingNode(IGraphNode node) {
 		return true;
@@ -266,19 +265,19 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public String toString() {
-		return name+" ("+type.toString()+")";
+		return name + " (" + type.toString() + ")";
 	}
 
 	@Override
 	public List<ValidationResult> validate() {
-		//FIXME
+		// FIXME
 		List<ValidationResult> results = new ArrayList<ValidationResult>();
 		results.add(new ValidationResult("OK", ValidationResultType.VALID));
 		return results;
 	}
 
 	@Override
-	public IGraphNodeType getType() {
+	public GraphNodeType getType() {
 		return type;
 	}
 

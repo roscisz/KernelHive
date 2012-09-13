@@ -11,15 +11,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.repository.configuration.RepositoryConfiguration;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeTypeFactory;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeType;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeTypeFactory;
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelPathEntry;
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepository;
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelPathEntry;
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRepositoryEntry;
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRepositoryException;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 
 /**
  * 
@@ -44,7 +36,8 @@ public class KernelRepository implements IKernelRepository {
 	private URL resource;
 
 	public KernelRepository() {
-		this.resource = RepositoryConfiguration.getInstance().getKernelRepositoryDescriptorFileURL();
+		this.resource = RepositoryConfiguration.getInstance()
+				.getKernelRepositoryDescriptorFileURL();
 		config = new XMLConfiguration();
 	}
 
@@ -68,11 +61,10 @@ public class KernelRepository implements IKernelRepository {
 	}
 
 	@Override
-	public IKernelRepositoryEntry getEntryForGraphNodeType(IGraphNodeType type)
+	public IKernelRepositoryEntry getEntryForGraphNodeType(GraphNodeType type)
 			throws KernelRepositoryException {
 		try {
 			config.load(resource);
-			IGraphNodeTypeFactory factory = new GraphNodeTypeFactory();
 			List<ConfigurationNode> entryNodes = config.getRootNode()
 					.getChildren(ENTRY_NODE);
 			for (ConfigurationNode node : entryNodes) {
@@ -82,7 +74,7 @@ public class KernelRepository implements IKernelRepository {
 				if (typeAttrList.size() > 0) {
 					String val = (String) typeAttrList.get(0).getValue();
 
-					if (type.equals(factory.createGraphNodeType(val))) {
+					if (type.equals(GraphNodeType.getType(val))) {
 						return getEntryFromConfigurationNode(node);
 					}
 				} else {
@@ -120,10 +112,7 @@ public class KernelRepository implements IKernelRepository {
 
 		List<IKernelPathEntry> kernelPathEntries = getKernelPathEntries(node);
 
-		IGraphNodeTypeFactory graphNodeTypeFactory = new GraphNodeTypeFactory();
-
-		return new KernelRepositoryEntry(
-				graphNodeTypeFactory.createGraphNodeType(typeStr), desc,
+		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc,
 				kernelPathEntries);
 	}
 

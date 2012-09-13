@@ -2,33 +2,28 @@ package pl.gda.pg.eti.kernelhive.repository.graph.node;
 
 import java.util.Map;
 
-import pl.gda.pg.eti.kernelhive.repository.graph.node.CompositeGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.GraphNodeBuilderException;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNodeBuilder;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.MergerGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.PartitionerGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.ProcessorGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeTypeFactory;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeType;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.repository.graph.node.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.repository.graph.node.util.NodeNameGenerator;
+
 /**
  * Graph Node Builder Implementation
+ * 
  * @author mschally
- *
+ * 
  */
 public class GraphNodeBuilder implements IGraphNodeBuilder {
-	
-	IGraphNodeType type;
+
+	GraphNodeType type;
 	String id = null;
 	String name = null;
 	Map<String, Object> properties = null;
-		
-	public GraphNodeBuilder(){	}
+
+	public GraphNodeBuilder() {
+	}
 
 	@Override
-	public IGraphNodeBuilder setType(IGraphNodeType type) {
+	public IGraphNodeBuilder setType(GraphNodeType type) {
 		this.type = type;
 		return this;
 	}
@@ -50,39 +45,38 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 		this.properties = properties;
 		return this;
 	}
-	
-	
+
 	@Override
 	public IGraphNode build() throws GraphNodeBuilderException {
 		IGraphNode node = null;
-		if(id==null){
+		if (id == null) {
 			id = NodeIdGenerator.generateId();
 		}
-		try{
-			if(type.toString().equals(GraphNodeTypeFactory.COMPOSITE_TYPE)){
+		try {
+			if (type.toString().equals(GraphNodeType.COMPOSITE)) {
 				node = new CompositeGraphNode(id);
-			} else if(type.toString().equals(GraphNodeTypeFactory.DATA_MERGER_TYPE)){
+			} else if (type.toString().equals(GraphNodeType.MERGER)) {
 				node = new MergerGraphNode(id);
-			} else if(type.toString().equals(GraphNodeTypeFactory.DATA_PARTITIONER_TYPE)){
+			} else if (type.toString().equals(GraphNodeType.PARTITIONER)) {
 				node = new PartitionerGraphNode(id);
-			} else if(type.toString().equals(GraphNodeTypeFactory.DATA_PROCESSOR_TYPE)){
+			} else if (type.toString().equals(GraphNodeType.PROCESSOR)) {
 				node = new ProcessorGraphNode(id);
-			} else{
-				throw new GraphNodeBuilderException("KH: unrecognised graph node type: "+type.toString());
+			} else {
+				throw new GraphNodeBuilderException(
+						"KH: unrecognised graph node type: " + type.toString());
 			}
-			
-			
-			if(name!=null){
+
+			if (name != null) {
 				node.setName(name);
-			} else{
+			} else {
 				node.setName(NodeNameGenerator.generateName());
 			}
-			if(properties!=null){
+			if (properties != null) {
 				node.setProperties(properties);
 			}
 			return node;
-		} catch(NullPointerException e){
+		} catch (NullPointerException e) {
 			throw new GraphNodeBuilderException(e);
 		}
-	}	
+	}
 }

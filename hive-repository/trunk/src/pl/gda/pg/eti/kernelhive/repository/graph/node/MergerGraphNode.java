@@ -5,24 +5,20 @@ import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeTypeFactory;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeTypeFactory;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 
 public class MergerGraphNode extends GenericGraphNode {
 
 	private static final long serialVersionUID = 3335110581355051053L;
-	
+
 	public MergerGraphNode(String id) {
 		super(id);
-		IGraphNodeTypeFactory factory = new GraphNodeTypeFactory();
-		type = factory.createGraphNodeType(GraphNodeTypeFactory.DATA_MERGER_TYPE);
+		type = GraphNodeType.MERGER;
 	}
 
 	public MergerGraphNode(String id, String name) {
 		super(id, name);
-		IGraphNodeTypeFactory factory = new GraphNodeTypeFactory();
-		type = factory.createGraphNodeType(GraphNodeTypeFactory.DATA_MERGER_TYPE);
+		type = GraphNodeType.MERGER;
 	}
 
 	@Override
@@ -47,33 +43,34 @@ public class MergerGraphNode extends GenericGraphNode {
 	@Override
 	public List<ValidationResult> validate() {
 		List<ValidationResult> results = new ArrayList<ValidationResult>();
-		//children nodes? (must be 0)
+		// children nodes? (must be 0)
 		if (getChildrenNodes() != null && getChildrenNodes().size() > 0) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
 					+ "' cannot has children nodes",
 					ValidationResultType.INVALID));
 		}
-		//previous nodes? (must be at least 1)
-		if(getPreviousNodes()==null||getPreviousNodes().size()<1){
+		// previous nodes? (must be at least 1)
+		if (getPreviousNodes() == null || getPreviousNodes().size() < 1) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
 					+ "' cannot has less then 1 previous node",
 					ValidationResultType.INVALID));
 		}
-		//following nodes? (must be 1 or 0)
-		if(getFollowingNodes()!=null&&getFollowingNodes().size()>1){
+		// following nodes? (must be 1 or 0)
+		if (getFollowingNodes() != null && getFollowingNodes().size() > 1) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
 					+ "' cannot has more than 1 following node",
 					ValidationResultType.INVALID));
 		}
-		
-		//previous validations ok?
-		if(results.size()==0){
+
+		// previous validations ok?
+		if (results.size() == 0) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
-					+ name + ") validated correctly", ValidationResultType.VALID));
-		}		
+					+ name + ") validated correctly",
+					ValidationResultType.VALID));
+		}
 		return results;
 	}
 }

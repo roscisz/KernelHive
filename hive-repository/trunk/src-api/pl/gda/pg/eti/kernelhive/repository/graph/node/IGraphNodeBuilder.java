@@ -2,44 +2,57 @@ package pl.gda.pg.eti.kernelhive.repository.graph.node;
 
 import java.util.Map;
 
-import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeType;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 
 /**
  * Graph Node Builder
+ * 
  * @author mschally
- *
+ * 
  */
 public interface IGraphNodeBuilder {
 
 	/**
 	 * sets graph node type
-	 * @param type {@link GraphNodeType}
+	 * 
+	 * @param type
+	 *            {@link GraphNodeType}
 	 * @return {@link IGraphNodeBuilder}
 	 */
-	IGraphNodeBuilder setType(IGraphNodeType type);
+	IGraphNodeBuilder setType(GraphNodeType type);
+
 	/**
 	 * sets graph node id
-	 * @param id {@link String}
+	 * 
+	 * @param id
+	 *            {@link String}
 	 * @return {@link IGraphNodeBuilder}
 	 */
 	IGraphNodeBuilder setId(String id);
+
 	/**
 	 * sets graph node name
-	 * @param name {@link String}
+	 * 
+	 * @param name
+	 *            {@link String}
 	 * @return {@link IGraphNodeBuilder}
 	 */
 	IGraphNodeBuilder setName(String name);
+
 	/**
 	 * sets graph node properties
-	 * @param properties {@link Map}
+	 * 
+	 * @param properties
+	 *            {@link Map}
 	 * @return {@link IGraphNodeBuilder}
 	 */
 	IGraphNodeBuilder setProperties(Map<String, Object> properties);
+
 	/**
 	 * builds the graph node according to the previously set properties
+	 * 
 	 * @return {@link IGraphNode}
 	 * @throws GraphNodeBuilderException
 	 */
-	IGraphNode build() throws GraphNodeBuilderException;	
+	IGraphNode build() throws GraphNodeBuilderException;
 }

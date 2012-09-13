@@ -5,9 +5,7 @@ import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeTypeFactory;
-import pl.gda.pg.eti.kernelhive.repository.graph.node.type.IGraphNodeTypeFactory;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 
 public class ProcessorGraphNode extends GenericGraphNode {
 
@@ -15,30 +13,28 @@ public class ProcessorGraphNode extends GenericGraphNode {
 
 	public ProcessorGraphNode(String id) {
 		super(id);
-		IGraphNodeTypeFactory factory = new GraphNodeTypeFactory();
-		type = factory.createGraphNodeType(GraphNodeTypeFactory.DATA_PROCESSOR_TYPE);
+		type = GraphNodeType.PROCESSOR;
 	}
-	
-	public ProcessorGraphNode(String id, String name){
+
+	public ProcessorGraphNode(String id, String name) {
 		super(id, name);
-		IGraphNodeTypeFactory factory = new GraphNodeTypeFactory();
-		type = factory.createGraphNodeType(GraphNodeTypeFactory.DATA_PROCESSOR_TYPE);
+		type = GraphNodeType.PROCESSOR;
 	}
-	
+
 	@Override
 	public boolean canAddFollowingNode(IGraphNode node) {
-		if(followingNodes.size()==0){
+		if (followingNodes.size() == 0) {
 			return true;
-		} else{
+		} else {
 			return false;
 		}
 	}
 
 	@Override
 	public boolean canAddPreviousNode(IGraphNode node) {
-		if(previousNodes.size()==0){
+		if (previousNodes.size() == 0) {
 			return true;
-		} else{
+		} else {
 			return false;
 		}
 	}
@@ -51,33 +47,34 @@ public class ProcessorGraphNode extends GenericGraphNode {
 	@Override
 	public List<ValidationResult> validate() {
 		List<ValidationResult> results = new ArrayList<ValidationResult>();
-		//children nodes? (must be 0)
+		// children nodes? (must be 0)
 		if (getChildrenNodes() != null && getChildrenNodes().size() > 0) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
 					+ "' cannot has children nodes",
 					ValidationResultType.INVALID));
 		}
-		//previous nodes? (must be 1 or 0)
-		if(getPreviousNodes()!=null&&getPreviousNodes().size()>1){
+		// previous nodes? (must be 1 or 0)
+		if (getPreviousNodes() != null && getPreviousNodes().size() > 1) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
 					+ "' cannot has more then 1 previous node",
 					ValidationResultType.INVALID));
 		}
-		//following nodes? (must be 1 or 0)
-		if(getFollowingNodes()!=null&&getFollowingNodes().size()>1){
+		// following nodes? (must be 1 or 0)
+		if (getFollowingNodes() != null && getFollowingNodes().size() > 1) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
 					+ "' cannot has more than 1 following node",
 					ValidationResultType.INVALID));
 		}
-		
-		//previous validations ok?
-		if(results.size()==0){
+
+		// previous validations ok?
+		if (results.size() == 0) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
-					+ name + ") validated correctly", ValidationResultType.VALID));
-		}		
+					+ name + ") validated correctly",
+					ValidationResultType.VALID));
+		}
 		return results;
 	}
 }
