@@ -21,8 +21,9 @@ import pl.gda.pg.eti.kernelhive.common.graph.configuration.IEngineGraphConfigura
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverter;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverterException;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.impl.KernelRepository;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepository;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRepositoryException;
+import pl.gda.pg.eti.kernelhive.repository.loader.RepositoryLoaderService;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
 import pl.gda.pg.eti.kernelhive.gui.component.infrastructure.InfrastructureBrowser;
@@ -242,8 +243,7 @@ public class MainFrameController {
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
 
-				IKernelRepository repository = new KernelRepository(
-						AppConfiguration.getInstance().getKernelRepositoryURL());
+				IKernelRepository repository = RepositoryLoaderService.getInstance().getRepository();
 				ListModel repoModel = new RepositoryViewerModel(
 						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
@@ -252,6 +252,14 @@ public class MainFrameController {
 
 				openWorkflowEditor();
 			} catch (ConfigurationException e) {
+				LOG.warning("KH: cannot create new project");
+				MessageDialog
+						.showErrorDialog(
+								frame,
+								BUNDLE.getString("MainFrameController.newProject.cannotCreate.title"),
+								BUNDLE.getString("MainFrameController.newProject.cannotCreate.text"));
+				e.printStackTrace();
+			} catch (KernelRepositoryException e) {
 				LOG.warning("KH: cannot create new project");
 				MessageDialog
 						.showErrorDialog(
@@ -289,8 +297,7 @@ public class MainFrameController {
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
 
-				IKernelRepository repository = new KernelRepository(
-						AppConfiguration.getInstance().getKernelRepositoryURL());
+				IKernelRepository repository = RepositoryLoaderService.getInstance().getRepository();
 				ListModel repoModel = new RepositoryViewerModel(
 						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
@@ -300,6 +307,13 @@ public class MainFrameController {
 				openWorkflowEditor();
 
 			} catch (ConfigurationException e) {
+				MessageDialog.showErrorDialog(
+						frame,
+						"Error",
+						"Could not open the project file: "
+								+ file.getAbsolutePath() + " Reason: "
+								+ e.getMessage());
+			} catch (KernelRepositoryException e) {
 				MessageDialog.showErrorDialog(
 						frame,
 						"Error",

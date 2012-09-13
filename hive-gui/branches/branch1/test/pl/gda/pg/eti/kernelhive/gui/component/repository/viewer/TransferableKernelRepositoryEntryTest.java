@@ -1,6 +1,8 @@
 package pl.gda.pg.eti.kernelhive.gui.component.repository.viewer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -10,19 +12,20 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelPathEntry;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelPathEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRepositoryEntry;
 
 public class TransferableKernelRepositoryEntryTest {
 
 	private TransferableKernelRepositoryEntry tkre;
-	private KernelRepositoryEntry entry;
+	private IKernelRepositoryEntry entry;
 
 	@Before
 	public void setUp() throws Exception {
 		entry = new KernelRepositoryEntry(GraphNodeType.GENERIC, "",
-				new ArrayList<KernelPathEntry>());
+				new ArrayList<IKernelPathEntry>());
 		tkre = new TransferableKernelRepositoryEntry(entry);
 	}
 

@@ -26,7 +26,7 @@ import javax.swing.JPopupMenu;
 import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NodePropertiesDialog;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;

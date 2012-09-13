@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
 
 /**
  * 
@@ -15,11 +15,11 @@ import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
  */
 public class RepositoryViewerModel implements ListModel {
 
-	private List<KernelRepositoryEntry> list;
+	private List<IKernelRepositoryEntry> list;
 	private List<ListDataListener> listenersList;
 	
 	
-	public RepositoryViewerModel(List<KernelRepositoryEntry> dataList) {
+	public RepositoryViewerModel(List<IKernelRepositoryEntry> dataList) {
 		this.list = dataList;
 		listenersList = new ArrayList<ListDataListener>();
 	}
@@ -30,7 +30,7 @@ public class RepositoryViewerModel implements ListModel {
 	}
 
 	@Override
-	public KernelRepositoryEntry getElementAt(int index) {
+	public IKernelRepositoryEntry getElementAt(int index) {
 		return list.get(index);
 	}
 

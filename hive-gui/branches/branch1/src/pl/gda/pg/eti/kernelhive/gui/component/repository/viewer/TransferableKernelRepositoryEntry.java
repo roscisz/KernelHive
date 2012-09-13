@@ -5,7 +5,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
 
 /**
  * 
@@ -15,13 +15,13 @@ import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
 public class TransferableKernelRepositoryEntry implements Transferable {
 
 	public static DataFlavor entryFlavour = new DataFlavor(
-			KernelRepositoryEntry.class, "Kernel Repository Entry");
+			IKernelRepositoryEntry.class, "Kernel Repository Entry");
 
 	protected static DataFlavor[] supportedFlavors = {entryFlavour};
 	
-	protected KernelRepositoryEntry entry;
+	protected IKernelRepositoryEntry entry;
 	
-	public TransferableKernelRepositoryEntry(KernelRepositoryEntry entry){
+	public TransferableKernelRepositoryEntry(IKernelRepositoryEntry entry){
 		this.entry = entry;
 	}
 	

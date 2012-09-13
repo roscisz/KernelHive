@@ -17,14 +17,14 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
-import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
-import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelPathEntry;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.util.NodeIdGenerator;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.util.NodeNameGenerator;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelPathEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.loader.RepositoryLoaderService;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import pl.gda.pg.eti.kernelhive.common.source.KernelFile;
 import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.TransferableKernelRepositoryEntry;
@@ -54,7 +54,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 		File dir = null;
 		GUIGraphNodeDecorator guiNode = null;
 		try {
-			KernelRepositoryEntry kre = (KernelRepositoryEntry) dtde
+			IKernelRepositoryEntry kre = (IKernelRepositoryEntry) dtde
 					.getTransferable().getTransferData(
 							TransferableKernelRepositoryEntry.entryFlavour);
 
@@ -80,7 +80,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 							kre, dir);
 
 					// 3. create appropriate graph node
-					IGraphNodeBuilder graphNodeBuilder = new GraphNodeBuilder();
+					IGraphNodeBuilder graphNodeBuilder = RepositoryLoaderService.getInstance().createGraphNodeBuilder();
 					IGraphNode node = graphNodeBuilder
 							.setType(kre.getGraphNodeType()).setId(nodeId)
 							.setName(NodeNameGenerator.generateName()).build();
@@ -118,11 +118,11 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 	}
 
 	private List<IKernelFile> copyKernelsFromTemplates(
-			KernelRepositoryEntry kre, File rootDir) throws SecurityException,
+			IKernelRepositoryEntry kre, File rootDir) throws SecurityException,
 			IOException {
 		List<IKernelFile> sourceFiles = new ArrayList<IKernelFile>(kre
 				.getKernelPaths().size());
-		for (KernelPathEntry kpe : kre.getKernelPaths()) {
+		for (IKernelPathEntry kpe : kre.getKernelPaths()) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(kpe
 					.getPath().openConnection().getInputStream()));
 

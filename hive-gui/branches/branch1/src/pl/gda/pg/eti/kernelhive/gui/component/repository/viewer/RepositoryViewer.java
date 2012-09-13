@@ -8,7 +8,7 @@ import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
 
 /**
  * 
@@ -24,7 +24,7 @@ public class RepositoryViewer extends JList {
 		initRepositoryViewer();
 	}
 
-	public RepositoryViewer(KernelRepositoryEntry[] array) {
+	public RepositoryViewer(IKernelRepositoryEntry[] array) {
 		super(array);
 		initRepositoryViewer();
 	}
@@ -34,7 +34,7 @@ public class RepositoryViewer extends JList {
 		initRepositoryViewer();
 	}
 
-	public RepositoryViewer(Vector<KernelRepositoryEntry> vector) {
+	public RepositoryViewer(Vector<IKernelRepositoryEntry> vector) {
 		super(vector);
 		initRepositoryViewer();
 	}

@@ -1,6 +1,6 @@
 package pl.gda.pg.eti.kernelhive.gui.component.repository.viewer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,19 +8,21 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelPathEntry;
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelPathEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRepositoryEntry;
 
 public class RepositoryViewerModelTest {
 
 	private RepositoryViewerModel model;
-	private List<KernelRepositoryEntry> dataList;
-	
+	private List<IKernelRepositoryEntry> dataList;
+
 	@Before
 	public void setUp() throws Exception {
-		dataList = new ArrayList<KernelRepositoryEntry>();
-		dataList.add(new KernelRepositoryEntry(GraphNodeType.GENERIC, "", new ArrayList<KernelPathEntry>()));
+		dataList = new ArrayList<IKernelRepositoryEntry>();
+		dataList.add(new KernelRepositoryEntry(GraphNodeType.GENERIC, "",
+				new ArrayList<IKernelPathEntry>()));
 		model = new RepositoryViewerModel(dataList);
 	}
 
@@ -32,7 +34,7 @@ public class RepositoryViewerModelTest {
 
 	@Test
 	public void testGetElementAt() {
-		KernelRepositoryEntry kre = model.getElementAt(0);
+		IKernelRepositoryEntry kre = model.getElementAt(0);
 		assertEquals(dataList.get(0), kre);
 	}
 

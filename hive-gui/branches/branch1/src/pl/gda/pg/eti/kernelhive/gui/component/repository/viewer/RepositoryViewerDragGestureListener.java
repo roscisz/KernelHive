@@ -6,7 +6,7 @@ import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 
-import pl.gda.pg.eti.kernelhive.common.kernel.repository.KernelRepositoryEntry;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepositoryEntry;
 
 /**
  * 
@@ -20,7 +20,7 @@ public class RepositoryViewerDragGestureListener implements DragGestureListener 
 		Cursor cursor = null;
 		if(dge.getComponent() instanceof RepositoryViewer){
 			RepositoryViewer rv = (RepositoryViewer) dge.getComponent();
-			KernelRepositoryEntry kre = (KernelRepositoryEntry) rv.getSelectedValue();
+			IKernelRepositoryEntry kre = (IKernelRepositoryEntry) rv.getSelectedValue();
 			
 			if(dge.getDragAction()==DnDConstants.ACTION_COPY){
 				cursor = DragSource.DefaultCopyDrop;
