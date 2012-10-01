@@ -112,6 +112,8 @@ void DataMerger::initSpecific(char *const argv[]) {
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 
+	// TODO For merger only - skip the number of outputs:
+	nextParam(argv);
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	resultBuffer = new SynchronizedBuffer(outputSize);
 }

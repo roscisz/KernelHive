@@ -39,10 +39,14 @@ const char* DataProcessor::getKernelName() {
 }
 
 void DataProcessor::initSpecific(char *const argv[]) {
+	// TODO For processor only - skip the number of inputs:
+	nextParam(argv);
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	dataId = nextParam(argv);
 	dataIdInt = KhUtils::atoi(dataId.c_str());
 
+	// TODO For processor only - skip the number of outputs:
+	nextParam(argv);
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 
 	buffers[dataIdInt] = new SynchronizedBuffer();

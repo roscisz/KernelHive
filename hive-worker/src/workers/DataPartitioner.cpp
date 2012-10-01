@@ -107,7 +107,6 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 
 	buffers[dataIdInt] = new SynchronizedBuffer();
 
-
 	partsCount = KhUtils::atoi(nextParam(argv));
 	resultBuffers = new SynchronizedBuffer*[partsCount];
 	for (int i = 0; i < partsCount; i++) {
