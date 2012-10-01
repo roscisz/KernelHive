@@ -99,6 +99,8 @@ void DataPartitioner::workSpecific() {
 }
 
 void DataPartitioner::initSpecific(char *const argv[]) {
+	// TODO For partitioner only:
+	nextParam(argv);
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	dataId = nextParam(argv);
 	dataIdInt = KhUtils::atoi(dataId.c_str());
