@@ -36,7 +36,7 @@ BasicWorker::~BasicWorker() {
 void BasicWorker::work(char *const argv[]) {
 	init(argv);
 	workSpecific();
-	std::string uploadStrings;
+	std::string uploadStrings = "";
 	getAllUploadIDStrings(&uploadStrings);
 	const char* rawString = uploadStrings.c_str();
 	std::cout << ">>> OBJECT UPLOAD ID STRING: { " << uploadStrings << " } " << std::endl;
