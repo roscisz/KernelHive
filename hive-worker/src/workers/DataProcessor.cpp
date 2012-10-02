@@ -39,6 +39,7 @@ const char* DataProcessor::getKernelName() {
 }
 
 void DataProcessor::initSpecific(char *const argv[]) {
+	std::cout << ">>> PROCESSOR INIT BEGIN" << std::endl;
 	// TODO For processor only - skip the number of inputs:
 	nextParam(argv);
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
@@ -56,14 +57,18 @@ void DataProcessor::initSpecific(char *const argv[]) {
 			dataId.c_str(), buffers[dataIdInt]);
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
-
+	std::cout << ">>> PROCESSOR INIT END" << std::endl;
 }
 
 void DataProcessor::workSpecific() {
+	std::cout << ">>> PROCESSOR WORK BEGIN" << std::endl;
 	runAllDownloads(); // Download data and the kernel
 
 	// Wait for the data to be ready
 	waitForAllDownloads();
+
+	std::cout << ">>> PROCESSOR DOWNLOADS FINISHED" << std::endl;
+
 	setPercentDone(40);
 
 	size_t size = buffers[dataIdInt]->getSize();
