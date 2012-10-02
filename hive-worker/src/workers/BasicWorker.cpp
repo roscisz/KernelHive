@@ -27,6 +27,7 @@ BasicWorker::BasicWorker(char **argv) : Worker(argv) {
 	dimensionOffsets = NULL;
 	globalSizes = NULL;
 	localSizes = NULL;
+	outputIdsString = "";
 }
 
 BasicWorker::~BasicWorker() {
@@ -36,10 +37,9 @@ BasicWorker::~BasicWorker() {
 void BasicWorker::work(char *const argv[]) {
 	init(argv);
 	workSpecific();
-	std::string uploadStrings = "";
-	getAllUploadIDStrings(&uploadStrings);
-	const char* rawString = uploadStrings.c_str();
-	std::cout << ">>> OBJECT UPLOAD ID STRING: { " << uploadStrings << " } " << std::endl;
+	getAllUploadIDStrings(&outputIdsString);
+	const char* rawString = outputIdsString.c_str();
+	std::cout << ">>> OBJECT UPLOAD ID STRING: { " << outputIdsString << " } " << std::endl;
 	std::cout << ">>> RAW UPLOAD ID STRING: { " << rawString << " } " << std::endl;
 	reportOver(rawString);
 }

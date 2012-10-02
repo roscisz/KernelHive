@@ -115,6 +115,8 @@ protected:
 	/** Kernel data identifier as an integer number. */
 	int kernelDataIdInt;
 
+	std::string outputIdsString;
+
 	/**
 	 * Performs initialization specific to a worker subclassing this.
 	 *
