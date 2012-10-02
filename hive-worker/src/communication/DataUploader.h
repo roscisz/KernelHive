@@ -41,7 +41,7 @@ public:
 
 	int getDataIdentifier();
 
-	const char* getDataURL();
+	void getDataURL(std::string *param);
 
 private:
 	/** The initial state. */

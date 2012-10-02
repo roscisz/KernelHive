@@ -63,7 +63,7 @@ int DataUploader::getDataIdentifier() {
 	return dataIdentifier;
 }
 
-const char* DataUploader::getDataURL() {
+void DataUploader::getDataURL(std::string *param) {
 	std::stringstream ret;
 
 	ret << address->host;
@@ -72,7 +72,7 @@ const char* DataUploader::getDataURL() {
 	ret << " ";
 	ret << dataIdentifier;
 
-	return ret.str().c_str();
+	param->append(ret.str());
 }
 
 // ========================================================================= //

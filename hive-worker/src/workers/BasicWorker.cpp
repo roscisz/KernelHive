@@ -27,7 +27,6 @@ BasicWorker::BasicWorker(char **argv) : Worker(argv) {
 	dimensionOffsets = NULL;
 	globalSizes = NULL;
 	localSizes = NULL;
-	outputIdsString = "";
 }
 
 BasicWorker::~BasicWorker() {
@@ -37,9 +36,10 @@ BasicWorker::~BasicWorker() {
 void BasicWorker::work(char *const argv[]) {
 	init(argv);
 	workSpecific();
-	getAllUploadIDStrings(&outputIdsString);
-	const char* rawString = outputIdsString.c_str();
-	std::cout << ">>> OBJECT UPLOAD ID STRING: { " << outputIdsString << " } " << std::endl;
+	std::string uploadStrings = "";
+	getAllUploadIDStrings(&uploadStrings);
+	const char* rawString = uploadStrings.c_str();
+	std::cout << ">>> OBJECT UPLOAD ID STRING: { " << uploadStrings << " } " << std::endl;
 	std::cout << ">>> RAW UPLOAD ID STRING: { " << rawString << " } " << std::endl;
 	reportOver(rawString);
 }
@@ -90,9 +90,12 @@ const void BasicWorker::getAllUploadIDStrings(std::string* param) {
 
 	for(UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++) {
 		if(*it != NULL) {
-			std::cout << ">>> WILL APPEND { " << (*it)->getDataURL() << " }" << std::endl;
-			param->append((*it)->getDataURL());
+			std::string *tmp = new std::string("");
+			(*it)->getDataURL(tmp);
+			std::cout << ">>> WILL APPEND { " << *tmp << " }" << std::endl;
+			param->append(*tmp);
 			param->append(" ");
+			delete tmp;
 		}
 	}
 
