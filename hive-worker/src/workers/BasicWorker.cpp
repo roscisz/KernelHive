@@ -1,5 +1,7 @@
 #include "BasicWorker.h"
 
+#include <iostream>
+
 #include "commons/OpenClHost.h"
 #include "commons/KhUtils.h"
 #include "commons/KernelHiveException.h"
@@ -80,12 +82,18 @@ void BasicWorker::waitForAllUploads() {
 const char* BasicWorker::getAllUploadIDStrings() {
 	std::string ret;
 
+	// TODO Debug logging..
+	std::cout << ">>> GET UPLOAD ID STRING BEGIN" << std::endl;
+
 	for(UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++) {
 		if(*it != NULL) {
+			std::cout << ">>> WILL APPEND { " << (*it)->getDataURL() << " }" << std::endl;
 			ret.append((*it)->getDataURL());
 			ret.append(" ");
 		}
 	}
+
+	std::cout << ">>> GET UPLOAD ID STRING END" << std::endl;
 
 	return ret.c_str();
 }
