@@ -158,7 +158,7 @@ protected:
 	/**
 	 * Returns concatenated list of uploaded data ID's
 	 */
-	const char* getAllUploadIDStrings();
+	const void getAllUploadIDStrings(std::string* param);
 
 
 private:

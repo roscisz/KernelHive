@@ -36,7 +36,9 @@ BasicWorker::~BasicWorker() {
 void BasicWorker::work(char *const argv[]) {
 	init(argv);
 	workSpecific();
-	reportOver(getAllUploadIDStrings());
+	std::string uploadStrings;
+	getAllUploadIDStrings(&uploadStrings);
+	reportOver(uploadStrings.c_str());
 }
 
 UploaderList* BasicWorker::getUploaders() {
@@ -79,23 +81,19 @@ void BasicWorker::waitForAllUploads() {
 	}
 }
 
-const char* BasicWorker::getAllUploadIDStrings() {
-	std::string ret;
-
+const void BasicWorker::getAllUploadIDStrings(std::string* param) {
 	// TODO Debug logging..
 	std::cout << ">>> GET UPLOAD ID STRING BEGIN" << std::endl;
 
 	for(UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++) {
 		if(*it != NULL) {
 			std::cout << ">>> WILL APPEND { " << (*it)->getDataURL() << " }" << std::endl;
-			ret.append((*it)->getDataURL());
-			ret.append(" ");
+			param->append((*it)->getDataURL());
+			param->append(" ");
 		}
 	}
 
 	std::cout << ">>> GET UPLOAD ID STRING END" << std::endl;
-
-	return ret.c_str();
 }
 
 // ========================================================================= //
