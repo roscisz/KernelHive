@@ -38,7 +38,9 @@ void BasicWorker::work(char *const argv[]) {
 	workSpecific();
 	std::string uploadStrings;
 	getAllUploadIDStrings(&uploadStrings);
-	reportOver(uploadStrings.c_str());
+	const char* rawString = uploadStrings.c_str();
+	std::cout << ">>> RAW UPLOAD ID STRING: { " << rawString << " } " << std::endl;
+	reportOver(rawString);
 }
 
 UploaderList* BasicWorker::getUploaders() {
