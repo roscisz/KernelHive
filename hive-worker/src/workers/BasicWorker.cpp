@@ -39,6 +39,7 @@ void BasicWorker::work(char *const argv[]) {
 	std::string uploadStrings;
 	getAllUploadIDStrings(&uploadStrings);
 	const char* rawString = uploadStrings.c_str();
+	std::cout << ">>> OBJECT UPLOAD ID STRING: { " << uploadStrings << " } " << std::endl;
 	std::cout << ">>> RAW UPLOAD ID STRING: { " << rawString << " } " << std::endl;
 	reportOver(rawString);
 }
