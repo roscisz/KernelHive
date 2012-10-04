@@ -57,13 +57,14 @@ public class Cluster extends HasID {
 		{
 			synchronized (monitor) {
 				while(true) {				
-					System.out.println("Wait on cluster" + this);
-					monitor.wait();
-					System.out.println("Get job released");
 					if(jobsToRun.size() > 0) {
 						Job jobToRun = jobsToRun.get(0);
 						jobsToRun.remove(0);
 						return jobToRun;
+					} else {
+						System.out.println("Wait on cluster" + this);
+						monitor.wait();
+						System.out.println("Get job released");						
 					}
 				}
 			}

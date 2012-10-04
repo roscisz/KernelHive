@@ -24,9 +24,7 @@ public class JobInfo {
 	public String globalSizes;
 	public String localSizes;
 	public String outputSize;
-	public String dataHost;
-	public int dataPort;
-	public int dataID;	
+	public String dataString;
 	
 	@Override
 	public String toString() {	
@@ -48,13 +46,12 @@ public class JobInfo {
 		ret.append(" " + kernelHost);
 		ret.append(" " + kernelPort);
 		ret.append(" " + kernelID);
-		ret.append(" " + dataHost);
-		ret.append(" " + dataPort);
-		ret.append(" " + dataID);
+		ret.append(" " + dataString);
 		
-		// FIXME:
+		// TODO: dynamic output number assignment
 		if(jobType == GraphNodeType.PARTITIONER)
 			ret.append(" 2");
+		else ret.append(" 1");
 		
 		ret.append(" " + resultDataHost);
 		ret.append(" " + resultDataPort);

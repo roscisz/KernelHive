@@ -19,7 +19,8 @@ import java.util.Set;
  */
 public class TCPServer implements Runnable {
 	
-	private static int MAX_MESSAGE_BYTES = 1024;
+	// TODO: explain :)
+	public static int MAX_MESSAGE_BYTES = 1492;
 	
 	private TCPServerListener listener;
 	private ServerSocketChannel server;
@@ -43,6 +44,7 @@ public class TCPServer implements Runnable {
 	}	
 
 	public static void sendMessage(SocketChannel socketChannel, ByteBuffer message) {
+		System.out.println("Send message");
 		message.rewind();
 		try {
 			socketChannel.write(message);

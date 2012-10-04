@@ -8,6 +8,7 @@ import java.util.Map;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 
 public class Workflow extends HasID {
 
@@ -41,8 +42,7 @@ public class Workflow extends HasID {
 			Job newJob = new Job(node, this);
 			if (node.getGraphNode().getPreviousNodes().size() == 0) {
 				newJob.state = JobState.READY;
-				// FIXME:
-				newJob.inputDataUrl = "http://gracik.mine.nu/data"; // inputDataUrl
+				newJob.inputDataUrl = inputDataURL;
 			}
 			// TODO: if many kernels in one job, assign each kernel to
 			// individual job
@@ -80,5 +80,20 @@ public class Workflow extends HasID {
 		this.myInfo.state = this.myState;
 		this.myInfo.result = this.result;
 		return this.myInfo;
+	}
+
+	public Job getJobByID(int jobID) {
+		return jobs.get(jobID);
+	}
+
+	public Job getJobByGraphNode(IGraphNode graphNode) {
+		for(Job job : jobs.values())
+			if(job.node.getGraphNode().equals(graphNode))
+				return job;
+		return null;
+	}
+
+	public boolean containsJob(Job jobOver) {
+		return jobs.containsValue(jobOver);
 	}
 }

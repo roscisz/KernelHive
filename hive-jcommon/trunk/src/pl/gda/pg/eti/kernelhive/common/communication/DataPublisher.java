@@ -62,7 +62,7 @@ public class DataPublisher implements TCPServerListener {
 		String error = null;
 
 		try {
-			processMessage(command, input, output);				
+			processMessage(command, input, output, channel);				
 		}
 		catch(NumberFormatException nfe) {
 			error = "Bad command or argument: " + nfe.getLocalizedMessage();
@@ -75,8 +75,11 @@ public class DataPublisher implements TCPServerListener {
 		}
 		
 		if(error == null) {
-			if(output.position() > 0)
+			if(output.position() > 0) {
+				System.out.println("onTCPMessage output...");
 				TCPServer.sendMessage(channel, output);
+			}
+			else System.out.println("Null output in onTCPMessage");
 		}
 		else
 			TCPServer.sendMessage(channel, Decoder.encode(error));
@@ -89,12 +92,12 @@ public class DataPublisher implements TCPServerListener {
 
 	}
 
-	private void processMessage(int command, ByteBuffer input, ByteBuffer output) {	
+	private void processMessage(int command, ByteBuffer input, ByteBuffer output, SocketChannel channel) {	
 		switch(Command.values()[command]) {
 		case ALLOCATE: allocateData(input, output); break;
 		case PUT: putData(input, output); break;
 		case GETSIZE: getSize(input, output); break;
-		case GET: getData(input, output); break;
+		case GET: getData(input, channel); break;
 		case DELETE: deleteData(input, output); break;
 		}		
 	}
@@ -127,9 +130,27 @@ public class DataPublisher implements TCPServerListener {
 		return ++prevId;
 	}
 
-	private void getData(ByteBuffer input, ByteBuffer output) {
-		int id = input.getInt();		
-		output.put(data.get(id));
+	private void getData(ByteBuffer input, SocketChannel channel) {
+		int id = input.getInt();
+		byte[] entity = data.get(id);
+		
+		ByteBuffer outputBuffer = TCPServer.prepareEmptyBuffer();
+		int entityOffset = 0;
+
+		System.out.println("Entity length: " + entity.length);
+		while((entity.length - entityOffset) >= TCPServer.MAX_MESSAGE_BYTES) {
+			System.out.println("Entity offset: " + entityOffset);
+			outputBuffer.rewind();
+			outputBuffer.put(entity, entityOffset, TCPServer.MAX_MESSAGE_BYTES);
+			System.out.println("Copying " + TCPServer.MAX_MESSAGE_BYTES + " bytes");
+			TCPServer.sendMessage(channel, outputBuffer);
+			entityOffset += TCPServer.MAX_MESSAGE_BYTES;
+		}
+		outputBuffer.put(entity, entityOffset, entity.length - entityOffset);
+		outputBuffer.rewind();
+		outputBuffer.limit(entity.length - entityOffset);
+		System.out.println("On offset " + entityOffset + " copying " + (entity.length - entityOffset) + " bytes.");
+		TCPServer.sendMessage(channel, outputBuffer);
 	}
 
 	private void deleteData(ByteBuffer input, ByteBuffer output) {

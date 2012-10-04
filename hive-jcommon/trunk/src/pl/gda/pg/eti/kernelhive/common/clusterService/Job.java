@@ -1,5 +1,9 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
@@ -14,10 +18,8 @@ public class Job extends HasID {
 		FINISHED
 	}
 	
-	/*public List<String> dataHosts = new ArrayList<String>();
-	public List<Integer> dataPorts = new ArrayList<Integer>();
-	public List<Integer> dataIds = new ArrayList<Integer>();
-	*/
+	private int numData;
+	private List<DataAddress> dataAddresses = new ArrayList<DataAddress>();
 	private Workflow task;
 	
 	public EngineGraphNodeDecorator node;
@@ -32,14 +34,20 @@ public class Job extends HasID {
 
 	public String inputDataUrl;
 
-	public Job() {
-		
+	public Job() {				
 	}
 	
 	public Job(EngineGraphNodeDecorator node, Workflow task) {
 		this.node = node;
-		this.task = task;	
+		this.task = task;
+		prepareNumData();
 	}				
+
+	private void prepareNumData() {
+		if(this.node.getGraphNode().getType() == GraphNodeType.MERGER)
+			this.numData = 2;
+		else this.numData = 1;		
+	}
 
 	private String getOffsets() {
 		int[] offsets = assignedKernel.getOffset();
@@ -57,9 +65,21 @@ public class Job extends HasID {
 	}
 	
 	private String getOutputSize() {
-		// FIXME:
-		//return this.node.getGraphNode().getOutputSize();
-		return "4096";
+		return "" + this.assignedKernel.getOutputSize();
+	}
+	
+	private String getDataString() {
+		StringBuilder ret = new StringBuilder();
+		
+		ret.append("" + numData);
+		
+		for(DataAddress da : dataAddresses) {
+			ret.append(" " + da.hostname);
+			ret.append(" " + da.port);
+			ret.append(" " + da.ID);
+		}
+		
+		return ret.toString();
 	}
 	
 	private String concatKernelAttrs(int[] attrs) {
@@ -95,15 +115,6 @@ public class Job extends HasID {
 		return node.getGraphNode().getType();
 	}
 
-	/*
-	public void setDataAddress(String status) {
-		System.out.println(status);
-		String[] dataAddress = status.split(" ");
-		this.dataHost = dataAddress[0];
-		this.dataPort = dataAddress[1];
-		this.dataID = dataAddress[2];		
-	}*/	
-
 	public void run() {
 		this.device.unit.cluster.runJob(this);	
 		this.state = JobState.PROCESSING;
@@ -111,7 +122,8 @@ public class Job extends HasID {
 
 	public void schedule(Device device) {
 		this.device = device;
-		this.state = JobState.SCHEDULED;		
+		this.state = JobState.SCHEDULED;
+		this.device.busy = true;
 	}
 
 	public JobInfo getJobInfo() {
@@ -131,11 +143,27 @@ public class Job extends HasID {
 		ret.globalSizes = getGlobalSizes();
 		ret.localSizes = getLocalSizes();
 		ret.outputSize = getOutputSize();
+		ret.dataString = getDataString();
+		System.out.println("Setting data string " + ret.dataString);
 		ret.jobType = getJobType();
 		
 		System.out.println("Setting inputDataUrl " + inputDataUrl);
 		ret.inputDataUrl = inputDataUrl;
 		
 		return ret;
+	}
+
+	public void collectDataAddresses(Iterator<DataAddress> dataIterator) {	
+		System.out.println("Job " + ID + " trying to collect " + numData + " addresses.");
+		dataAddresses.clear();
+		for(int i = 0; i != numData; i++) {
+			dataAddresses.add(dataIterator.next());			
+		}			
+		System.out.println("Job " + this.ID + " collected dataAddresses.");
+	}
+
+	public void finish() {
+		this.state = JobState.FINISHED;
+		this.device.busy = false;		
 	}
 }
