@@ -89,11 +89,10 @@ void DataMerger::workSpecific() {
 	setPercentDone(90);
 
 	// Upload data to repository
-	DataUploader* uploader = new DataUploader(outputDataAddress, resultBuffer);
-	threadManager->runThread(uploader);
-	threadManager->waitForThread(uploader);
+	uploaders.push_back(new DataUploader(outputDataAddress, resultBuffer));
+	runAllUploads();
+	waitForAllUploads();
 	setPercentDone(100);
-	delete uploader;
 }
 
 void DataMerger::initSpecific(char *const argv[]) {
