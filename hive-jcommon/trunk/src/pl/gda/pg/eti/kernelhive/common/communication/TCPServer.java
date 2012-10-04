@@ -44,7 +44,6 @@ public class TCPServer implements Runnable {
 	}	
 
 	public static void sendMessage(SocketChannel socketChannel, ByteBuffer message) {
-		System.out.println("Send message");
 		message.rewind();
 		try {
 			socketChannel.write(message);

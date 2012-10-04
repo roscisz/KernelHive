@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.common.clusterService;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
@@ -19,6 +20,7 @@ public class Job extends HasID {
 	}
 	
 	private int numData;
+	private int collectedAddresses = 0;
 	private List<DataAddress> dataAddresses = new ArrayList<DataAddress>();
 	private Workflow task;
 	
@@ -153,13 +155,21 @@ public class Job extends HasID {
 		return ret;
 	}
 
-	public void collectDataAddresses(Iterator<DataAddress> dataIterator) {	
+	public void tryToCollectDataAddresses(Iterator<DataAddress> dataIterator) {	
 		System.out.println("Job " + ID + " trying to collect " + numData + " addresses.");
-		dataAddresses.clear();
-		for(int i = 0; i != numData; i++) {
-			dataAddresses.add(dataIterator.next());			
-		}			
-		System.out.println("Job " + this.ID + " collected dataAddresses.");
+		
+		while(collectedAddresses != numData) {
+			try {
+				dataAddresses.add(dataIterator.next());
+				collectedAddresses++;
+			}
+			catch(NoSuchElementException nsee) {
+				break;
+			}			
+		}
+		System.out.println("Job " + this.ID + " collected " + collectedAddresses + " dataAddresses.");
+		if(collectedAddresses == numData)
+			this.state = JobState.READY;
 	}
 
 	public void finish() {

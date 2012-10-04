@@ -75,11 +75,8 @@ public class DataPublisher implements TCPServerListener {
 		}
 		
 		if(error == null) {
-			if(output.position() > 0) {
-				System.out.println("onTCPMessage output...");
+			if(output.position() > 0)
 				TCPServer.sendMessage(channel, output);
-			}
-			else System.out.println("Null output in onTCPMessage");
 		}
 		else
 			TCPServer.sendMessage(channel, Decoder.encode(error));
@@ -137,19 +134,14 @@ public class DataPublisher implements TCPServerListener {
 		ByteBuffer outputBuffer = TCPServer.prepareEmptyBuffer();
 		int entityOffset = 0;
 
-		System.out.println("Entity length: " + entity.length);
 		while((entity.length - entityOffset) >= TCPServer.MAX_MESSAGE_BYTES) {
-			System.out.println("Entity offset: " + entityOffset);
 			outputBuffer.rewind();
 			outputBuffer.put(entity, entityOffset, TCPServer.MAX_MESSAGE_BYTES);
-			System.out.println("Copying " + TCPServer.MAX_MESSAGE_BYTES + " bytes");
 			TCPServer.sendMessage(channel, outputBuffer);
 			entityOffset += TCPServer.MAX_MESSAGE_BYTES;
 		}
-		outputBuffer.put(entity, entityOffset, entity.length - entityOffset);
 		outputBuffer.rewind();
-		outputBuffer.limit(entity.length - entityOffset);
-		System.out.println("On offset " + entityOffset + " copying " + (entity.length - entityOffset) + " bytes.");
+		outputBuffer.put(entity, entityOffset, entity.length - entityOffset);
 		TCPServer.sendMessage(channel, outputBuffer);
 	}
 
