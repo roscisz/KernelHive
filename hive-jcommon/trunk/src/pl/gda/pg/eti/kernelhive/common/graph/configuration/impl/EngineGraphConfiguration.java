@@ -325,9 +325,15 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		File tempFile = config.getFile();
 		try {
 			config.clear();
+			List<ConfigurationNode> rootAttrs = tempConfig.getRootNode()
+					.getAttributes();
 			config.setRootNode((ConfigurationNode) tempConfig.getRootNode()
 					.clone());
 			config.getRootNode().removeChildren();
+			for (ConfigurationNode n : rootAttrs) {
+				config.getRootNode()
+						.addAttribute((ConfigurationNode) n.clone());
+			}
 			List<ConfigurationNode> inputDataURLNodes = tempConfig.getRoot()
 					.getChildren(INPUT_DATA_NODE);
 			for (ConfigurationNode node : inputDataURLNodes) {
