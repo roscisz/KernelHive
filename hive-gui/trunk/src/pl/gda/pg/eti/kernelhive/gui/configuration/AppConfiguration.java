@@ -20,7 +20,8 @@ public class AppConfiguration {
 
 	private static final String AVAILABLE_LANG_PACKS = "available.language.packs";
 	private static final String LANGUAGE = "language.bundle";
-	
+	private static final String PREVIOUS_INPUT_DATA_URLS = "previous.input.data.urls";
+
 	private static Logger LOG = Logger.getLogger(AppConfiguration.class
 			.getName());
 	private static AppConfiguration _appconfig = null;
@@ -57,7 +58,7 @@ public class AppConfiguration {
 	 * @throws ConfigurationException
 	 */
 	public void reloadConfiguration() throws ConfigurationException {
-		this.config = new PropertiesConfiguration("config.properties");
+		config = new PropertiesConfiguration("config.properties");
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class AppConfiguration {
 	 * @return {@link ResourceBundle}
 	 */
 	public ResourceBundle getLanguageResourceBundle() {
-		String prop = this.config.getString(LANGUAGE);
+		String prop = config.getString(LANGUAGE);
 		if (prop != null) {
 			String[] locale = prop.split("_");
 			if (locale.length >= 2) {
@@ -76,26 +77,38 @@ public class AppConfiguration {
 		}
 		return null;
 	}
-	
-	public String getSelectedLanguage(){
-		String prop = this.config.getString(LANGUAGE);
+
+	public String getSelectedLanguage() {
+		String prop = config.getString(LANGUAGE);
 		return prop;
 	}
-	
-	public void setLanguage(String language){
-		this.config.setProperty(LANGUAGE, language);
+
+	public void setLanguage(String language) {
+		config.setProperty(LANGUAGE, language);
 	}
+
 	/**
 	 * 
 	 * @return
 	 */
 	public List<String> getAvailableLanguageResourceBundles() {
-		this.config.setListDelimiter(',');
-		List<Object> languages = this.config
-				.getList(AVAILABLE_LANG_PACKS);
+		config.setListDelimiter(',');
+		List<Object> languages = config.getList(AVAILABLE_LANG_PACKS);
 		List<String> result = new ArrayList<String>();
 		for (Object o : languages) {
 			result.add((String) o);
+		}
+		return result;
+	}
+
+	public List<String> getPreviousInputDataURLs() {
+		config.setListDelimiter(',');
+		List<Object> urls = config.getList(PREVIOUS_INPUT_DATA_URLS);
+		List<String> result = new ArrayList<String>();
+		for (Object o : urls) {
+			if (!((String) o).equalsIgnoreCase("")) {
+				result.add((String) o);
+			}
 		}
 		return result;
 	}
@@ -106,7 +119,7 @@ public class AppConfiguration {
 	 * @return {@link URL}
 	 */
 	public URL getKernelRepositoryURL() {
-		String prop = this.config.getString("kernel.repository.file.path");
+		String prop = config.getString("kernel.repository.file.path");
 		if (prop != null) {
 			return AppConfiguration.class.getResource(prop);
 		} else {
@@ -123,5 +136,31 @@ public class AppConfiguration {
 	 */
 	public String getProperty(String key) {
 		return this.config.getString(key);
+	}
+
+	public void addURLToPreviousURLs(String url) {
+		boolean isNew = true;
+		config.setListDelimiter(',');
+		List<Object> list = config.getList(PREVIOUS_INPUT_DATA_URLS);
+		List<String> urls = new ArrayList<String>();
+		for (Object o : list) {
+			urls.add((String) o);
+		}
+		for (String u : urls) {
+			if (u.equalsIgnoreCase(url)) {
+				isNew = false;
+				break;
+			}
+		}
+		if (isNew) {
+			list.add(url);
+			config.clearProperty(PREVIOUS_INPUT_DATA_URLS);
+			config.addProperty(PREVIOUS_INPUT_DATA_URLS, list);
+			try {
+				config.save();
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
