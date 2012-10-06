@@ -34,6 +34,7 @@ BasicWorker::~BasicWorker() {
 }
 
 void BasicWorker::work(char *const argv[]) {
+	std::cout << ">>> " << std::endl;
 	init(argv);
 	workSpecific();
 	std::string uploadStrings = "";

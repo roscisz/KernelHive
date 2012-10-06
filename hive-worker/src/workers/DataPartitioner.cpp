@@ -36,6 +36,7 @@ const char* DataPartitioner::getKernelName() {
 }
 
 void DataPartitioner::workSpecific() {
+	std::cout << ">>> DataPartitioner work BEGIN" << std::endl;
 	runAllDownloads(); // Download data and the kernel
 
 	// Wait for the data to be ready
@@ -99,6 +100,7 @@ void DataPartitioner::workSpecific() {
 }
 
 void DataPartitioner::initSpecific(char *const argv[]) {
+	std::cout << ">>> DataPartitioner init BEGIN" << std::endl;
 	// TODO For partitioner only:
 	nextParam(argv);
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
