@@ -42,16 +42,17 @@ char* Worker::nextParam(char *const argv[]) {
 }
 
 void Worker::reportOver(const char* uploadIDs) {
-	printf("Reporting over\n");
+	printf("Reporting over: %s\n", uploadIDs);
 	std::string report = "OVER ";
 	report.append(KhUtils::itoa(jobID));
 	report.append(" ");
 	report.append(uploadIDs);
 
-	TCPClient *client = new TCPClient(clusterTCPAddress, NULL);
+	//TCPClient *client = new TCPClient(clusterTCPAddress, NULL);
 
 	TCPMessage *message = new TCPMessage((byte *)report.c_str(), report.length());
 	TCPReporter *tcpReporter = new TCPReporter(clusterTCPAddress, message);
+	printf("Port %d", clusterTCPAddress->port);
 	ThreadManager::Get()->runThread(tcpReporter);
 	ThreadManager::Get()->waitForThread(tcpReporter);
 }

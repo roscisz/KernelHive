@@ -64,7 +64,8 @@ void TCPConnection::sendMessage(byte *msg)
 }*/
 
 void TCPConnection::sendMessage(TCPMessage *message) {
-	//Logger::log(INFO, "Seding message: %s", message->data);
+	if(this->sockfd == 0)
+		printf("Trying to send message without connection");
 	if(write(sockfd, &message->nBytes, sizeof(int)) < 0)
 		Logger::log(ERROR, "Error writing to socket.\n");
 	if(write(sockfd, message->data, message->nBytes) < 0)
@@ -76,6 +77,7 @@ void TCPConnection::disconnect()
 	if(shutdown(sockfd, SHUT_RDWR) < 0) {
 		Logger::log(FATAL, "Error disconnecting socket: %s\n", strerror(errno));
 	}
+	this->sockfd = 0;
 }
 
 TCPConnection::~TCPConnection() {

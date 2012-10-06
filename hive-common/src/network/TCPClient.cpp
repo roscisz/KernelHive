@@ -53,7 +53,7 @@ void TCPClient::executeLoopCycle() {
 				listener->onConnected();
 		}
 		catch(const char *msg) {
-			Logger::log(ERROR, "Couldn't connect to the cluster: %s.\n", msg);
+			Logger::log(ERROR, "Couldn't connect the TCP client: %s, port %d\n", msg, this->serverAddress.sin_port);
 			disconnectFromSocket();
 		}
 	}
