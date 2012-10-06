@@ -48,7 +48,7 @@ TCPMessage* TCPConnection::readMessage() {
 
         for (int i = 0; i < n || i < 8; i++)
         {
-        	printf("RAW BYTE LOG: %c\n", message[i]);
+        	printf("RAW BYTE LOG: %d\n", (int)message[i]);
         }
 
         return new TCPMessage(message, n);
