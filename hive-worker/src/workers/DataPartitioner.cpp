@@ -103,18 +103,23 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 	std::cout << ">>> DataPartitioner init BEGIN" << std::endl;
 	// TODO For partitioner only:
 	nextParam(argv);
+	std::cout << ">>> param skip" << std::endl;
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
+	std::cout << ">>> input address ready" << std::endl;
 	dataId = nextParam(argv);
 	dataIdInt = KhUtils::atoi(dataId.c_str());
+	std::cout << ">>> dataId ready" << std::endl;
 
 	buffers[dataIdInt] = new SynchronizedBuffer();
 
 	partsCount = KhUtils::atoi(nextParam(argv));
+	std::cout << ">>> partsCount ready" << std::endl;
 	resultBuffers = new SynchronizedBuffer*[partsCount];
 	for (int i = 0; i < partsCount; i++) {
 		resultBuffers[i] = new SynchronizedBuffer();
 	}
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
+	std::cout << ">>> output address ready" << std::endl;
 
 	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
