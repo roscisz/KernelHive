@@ -24,7 +24,6 @@ namespace KernelHive {
 	}
 
 	int KhUtils::atoi(const char* string) {
-		std::cout << "KhUtils::atoi got: " << string  << std::endl;
 		std::string str = string;
 		std::stringstream sstream(str);
 		int value;
