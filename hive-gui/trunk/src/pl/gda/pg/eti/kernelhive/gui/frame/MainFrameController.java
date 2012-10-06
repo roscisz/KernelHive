@@ -45,8 +45,8 @@ import pl.gda.pg.eti.kernelhive.gui.dialog.PreferencesDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.ProjectPropertiesDialog;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.impl.KernelHiveProject;
-import pl.gda.pg.eti.kernelhive.gui.workflow.execution.WorkflowExecution;
 import pl.gda.pg.eti.kernelhive.gui.workflow.execution.IWorkflowExecution;
+import pl.gda.pg.eti.kernelhive.gui.workflow.execution.WorkflowExecution;
 import pl.gda.pg.eti.kernelhive.gui.workflow.execution.WorkflowExecutionListener;
 import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.IWorkflowWizardDisplay;
 import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplay;
@@ -118,9 +118,9 @@ public class MainFrameController {
 		int index = -1;
 		if (tab != null) {
 			content = tab.getTabContent();
-			for(int i=0; i<frame.getWorkspacePane().getTabCount(); i++){
+			for (int i = 0; i < frame.getWorkspacePane().getTabCount(); i++) {
 				Component c = frame.getWorkspacePane().getTabComponentAt(i);
-				if(c.equals(tab)){
+				if (c.equals(tab)) {
 					index = i;
 					break;
 				}
@@ -511,8 +511,9 @@ public class MainFrameController {
 	 * shows the project properties window
 	 */
 	public void showProjectProperties() {
-		if(project!=null){
-			ProjectPropertiesDialog dialog = new ProjectPropertiesDialog(frame, project);
+		if (project != null) {
+			ProjectPropertiesDialog dialog = new ProjectPropertiesDialog(frame,
+					project);
 			dialog.setModal(true);
 			dialog.setVisible(true);
 		}
@@ -596,18 +597,19 @@ public class MainFrameController {
 	}
 
 	public void openInfrastructureBrowser() {
-		InfrastructureBrowser ib = new InfrastructureBrowser(frame, "Infrastructure Browser");
+		InfrastructureBrowser ib = new InfrastructureBrowser(frame,
+				"Infrastructure Browser");
 		addTabToWorkspacePane(ib);
-		
+
 	}
 
 	public void openResourceMonitor() {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 	}
 
 	public void loginUser() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void clearHighlight() {
@@ -624,17 +626,17 @@ public class MainFrameController {
 
 	public void openAboutDialog() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void logoutUser() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void deleteSelected() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void openFindReplaceDialog() {

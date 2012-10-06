@@ -301,6 +301,11 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 			config.clear();
 			config.setRootNode(tempConfig.getRootNode());
 			config.getRootNode().removeChildren();
+			List<ConfigurationNode> inputDataURLNodes = tempConfig
+					.getRootNode().getChildren(INPUT_DATA_NODE);
+			for (ConfigurationNode node : inputDataURLNodes) {
+				config.getRootNode().addChild(node);
+			}
 			for (EngineGraphNodeDecorator engineNode : graphNodes) {
 				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
 			}
@@ -320,8 +325,14 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		File tempFile = config.getFile();
 		try {
 			config.clear();
-			config.setRootNode(tempConfig.getRootNode());
+			config.setRootNode((ConfigurationNode) tempConfig.getRootNode()
+					.clone());
 			config.getRootNode().removeChildren();
+			List<ConfigurationNode> inputDataURLNodes = tempConfig.getRoot()
+					.getChildren(INPUT_DATA_NODE);
+			for (ConfigurationNode node : inputDataURLNodes) {
+				config.getRootNode().addChild(node);
+			}
 			for (EngineGraphNodeDecorator engineNode : graphNodes) {
 				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
 			}
