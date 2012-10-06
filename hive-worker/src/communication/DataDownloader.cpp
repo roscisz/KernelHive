@@ -49,9 +49,9 @@ void DataDownloader::onMessage(TCPMessage* message) {
 		Logger::log(INFO, "%d/%d bytes available\n", progressSize, totalDataSize);
 		if (!(progressSize < totalDataSize)) {
 			currentState = STATE_DATA_ACQUIRED;
-			Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) WILL LOG DATA HE GOT\n", dataId);
-			buffer->logMyFloatData();
-			Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) FINISHED LOGGING DATA HE GOT\n", dataId);
+			Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) WILL LOG the amount of DATA HE GOT: %d\n", dataId, buffer->getSize());
+			//buffer->logMyFloatData();
+			//Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) FINISHED LOGGING DATA HE GOT\n", dataId);
 			pleaseStop();
 		}
 		break;
