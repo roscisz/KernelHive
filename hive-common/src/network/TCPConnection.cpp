@@ -46,14 +46,6 @@ TCPMessage* TCPConnection::readMessage() {
         if(n == 0)
             throw ("Server disconnected.");
 
-        for (int i = 0; i < n; i++)
-        {
-        	if (i == 8) {
-        		break;
-        	}
-        	printf("RAW BYTE LOG: %d\n", (int)message[i]);
-        }
-
         return new TCPMessage(message, n);
 }
 
