@@ -1,16 +1,23 @@
 package pl.gda.pg.eti.kernelhive.gui.component.workflow.viewer;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -18,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow.WorkflowState;
+import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
 public class WorkflowViewerPanel extends JPanel {
 
@@ -45,30 +53,67 @@ public class WorkflowViewerPanel extends JPanel {
 	}
 
 	private void fillWorkflowExecutionsTable(List<WorkflowInfo> workflows) {
-		WorkflowExecutionsTableModel model = new WorkflowExecutionsTableModel(workflows);
+		WorkflowExecutionsTableModel model = new WorkflowExecutionsTableModel(
+				workflows);
 		table.setModel(model);
 		table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.SINGLE_SELECTION);
 		model.addTableModelListener(table);
+		addTableListeners();
 	}
-	
-	public void addRefreshBtnActionListener(ActionListener l){
+
+	private void addTableListeners() {
+		table.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent ev) {
+				if (ev.getClickCount() > 2) {
+					ev.consume();
+					int col = table.getSelectedColumn();
+					int row = table.getSelectedRow();
+					String val = (String) table.getValueAt(row, col);
+					try {
+						URL url = new URL(val);
+						if (Desktop.isDesktopSupported()) {
+							Desktop.getDesktop().browse(
+									new URI(url.toExternalForm()));
+						} else {
+							MessageDialog
+									.showErrorDialog(WorkflowViewerPanel.this,
+											"Error",
+											"Java Dialog API not supported - could not open web browser");
+						}
+					} catch (MalformedURLException e1) {
+						// silent exception, continue
+					} catch (IOException e) {
+						e.printStackTrace();
+						MessageDialog.showErrorDialog(WorkflowViewerPanel.this,
+								"Error", "Could not open web browser!");
+					} catch (URISyntaxException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+
+	public void addRefreshBtnActionListener(ActionListener l) {
 		btnRefresh.addActionListener(l);
 	}
-	
-	public void removeRefreshBtnActionListener(ActionListener l){
+
+	public void removeRefreshBtnActionListener(ActionListener l) {
 		btnRefresh.removeActionListener(l);
 	}
-	
-	public void reloadTableContents(List<WorkflowInfo> workflows){
+
+	public void reloadTableContents(List<WorkflowInfo> workflows) {
 		fillWorkflowExecutionsTable(workflows);
 	}
-	
-	public void selectAllTableContents(){
+
+	public void selectAllTableContents() {
 		table.selectAll();
 	}
-	
-	public void clearSelection(){
+
+	public void clearSelection() {
 		table.clearSelection();
 	}
 
@@ -85,9 +130,9 @@ public class WorkflowViewerPanel extends JPanel {
 
 		public WorkflowExecutionsTableModel(List<WorkflowInfo> workflows) {
 			super();
-			if(workflows!=null){
-				for(WorkflowInfo wi : workflows){
-					data.add(new Object[] {wi.ID, wi.name, wi.state, wi.result});
+			if (workflows != null) {
+				for (WorkflowInfo wi : workflows) {
+					data.add(new Object[] { wi.ID, wi.name, wi.state, wi.result });
 				}
 			}
 		}

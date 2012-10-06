@@ -8,20 +8,19 @@ import java.util.List;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
-import pl.gda.pg.eti.kernelhive.gui.networking.IExecutionEngineService;
 import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineService;
 import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceException;
 import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceListenerAdapter;
+import pl.gda.pg.eti.kernelhive.gui.networking.IExecutionEngineService;
 
 public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	private static final long serialVersionUID = -3495327114777372433L;
 
-	
 	private WorkflowViewerPanel panel;
 	private IExecutionEngineService service;
 	private ExecutionEngineServiceListenerAdapter adapter;
-		
+
 	public WorkflowViewer(MainFrame frame, String title) {
 		super(frame);
 		this.setName(title);
@@ -32,13 +31,14 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 			service = ExecutionEngineService.getInstance();
 			adapter = new ExecutionEngineServiceListenerAdapter() {
 				@Override
-				public void workflowBrowseCompleted(List<WorkflowInfo> workflowInfo) {
+				public void workflowBrowseCompleted(
+						List<WorkflowInfo> workflowInfo) {
 					panel.reloadTableContents(workflowInfo);
 				}
 			};
 		} catch (ExecutionEngineServiceException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	@Override
@@ -61,17 +61,17 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	@Override
 	public void cut() {
-		
+
 	}
 
 	@Override
 	public void copy() {
-		
+
 	}
 
 	@Override
 	public void paste() {
-		
+
 	}
 
 	@Override
@@ -81,14 +81,14 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	@Override
 	public void refresh() {
-		if(service!=null){
+		if (service != null) {
 			service.browseWorkflows(adapter);
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		refresh();	
+		refresh();
 	}
 
 	@Override
