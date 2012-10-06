@@ -114,12 +114,9 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 	}
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 
-	// TODO: Debug logging.
-	std::cout << "Input data address: " << inputDataAddress->host << " " << inputDataAddress->port << std::endl;
 	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
 
-	std::cout << "Kernel address: " << kernelAddress->host << " " << kernelAddress->port << std::endl;
 	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 }
