@@ -46,7 +46,7 @@ public class InputDataPanel extends JPanel {
 		comboBox = new JComboBox();
 		comboBox.setEditable(true);
 		comboBox.setBounds(12, 34, 311, 24);
-		comboBox.setModel(new URLComboBoxModel(previouslyUsedURLs));
+		// comboBox.setModel(new URLComboBoxModel(previouslyUsedURLs));
 		add(comboBox);
 	}
 
