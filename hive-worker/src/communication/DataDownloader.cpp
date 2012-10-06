@@ -55,6 +55,10 @@ void DataDownloader::onMessage(TCPMessage* message) {
 
 	case STATE_DATA_ACQUIRED:
 		Logger::log(DEBUG, "All data has been acquired..");
+
+		Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) WILL LOG DATA HE GOT", dataId);
+		buffer->logMyFloatData();
+		Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) FINISHED LOGGING DATA HE GOT", dataId);
 		pleaseStop();
 		break;
 	}

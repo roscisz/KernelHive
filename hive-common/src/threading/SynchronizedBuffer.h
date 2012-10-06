@@ -93,6 +93,11 @@ public:
 	 */
 	byte* getRawData();
 
+	/**
+	 * Logs float data to STDOUT.
+	 */
+	void logMyFloatData();
+
 private:
 	/** The number of bytes allocated by this buffer. */
 	size_t size;
