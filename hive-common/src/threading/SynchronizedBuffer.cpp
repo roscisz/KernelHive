@@ -71,7 +71,7 @@ void SynchronizedBuffer::logMyFloatData() {
 	Logger::log(DEBUG, ">>> WILL NOW LOG BUFFER DATA AS FLOATS\n");
 	float *tmp;
 	for (int i = 0; i < size; i += sizeof(float)) {
-		tmp = (float *)data[i];
+		tmp = (float *)data+i;
 		Logger::log(DEBUG, "%f\n", *tmp);
 	}
 	Logger::log(DEBUG, ">>> FINISHED LOGGING BUFFER DATA AS FLOATS\n");
