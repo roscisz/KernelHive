@@ -42,8 +42,8 @@ void DataPartitioner::workSpecific() {
 	// Wait for the data to be ready
 	waitForAllDownloads();
 
-	std::cout << ">>> data size: " << buffers[dataIdInt]->getSize() << std::endl;
-	buffers[dataIdInt]->logMyFloatData();
+//	std::cout << ">>> data size: " << buffers[dataIdInt]->getSize() << std::endl;
+//	buffers[dataIdInt]->logMyFloatData();
 
 	setPercentDone(40);
 
