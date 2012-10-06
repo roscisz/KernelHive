@@ -269,7 +269,7 @@ public class MainFrameController {
 	public void openProject() {
 		File file = null;
 		JFileChooser fc = new JFileChooser();
-		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setMultiSelectionEnabled(false);
 		FileFilter ff = new FileNameExtensionFilter("xml", "xml");
