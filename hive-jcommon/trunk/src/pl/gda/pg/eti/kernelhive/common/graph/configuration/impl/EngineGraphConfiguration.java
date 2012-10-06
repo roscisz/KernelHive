@@ -46,15 +46,14 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 
 	public EngineGraphConfiguration(String serializedConf) {
 		super();
-		//File inputFile = putStringIntoFile(serializedConf);		
-		//readFromFile(inputFile);
-		//inputFile.delete();
+		// File inputFile = putStringIntoFile(serializedConf);
+		// readFromFile(inputFile);
+		// inputFile.delete();
 	}
 
 	/**
-	 * to read/write graph from/to string, 
-	 * saveGraphForEngine/loadGraphForEngine with (respective)
-	 *  {@link Reader} and {@link Writer} as an parameter
+	 * to read/write graph from/to string, saveGraphForEngine/loadGraphForEngine
+	 * with (respective) {@link Reader} and {@link Writer} as an parameter
 	 */
 	@Deprecated
 	public static File putStringIntoFile(String serializedConf) {
@@ -301,6 +300,7 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 		try {
 			config.clear();
 			config.setRootNode(tempConfig.getRootNode());
+			config.getRootNode().removeChildren();
 			for (EngineGraphNodeDecorator engineNode : graphNodes) {
 				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
 			}
@@ -318,14 +318,15 @@ public class EngineGraphConfiguration extends AbstractGraphConfiguration
 			Writer writer) throws ConfigurationException {
 		XMLConfiguration tempConfig = (XMLConfiguration) config.clone();
 		File tempFile = config.getFile();
-		try{
+		try {
 			config.clear();
 			config.setRootNode(tempConfig.getRootNode());
+			config.getRootNode().removeChildren();
 			for (EngineGraphNodeDecorator engineNode : graphNodes) {
 				config.getRoot().addChild(createGraphNodeForEngine(engineNode));
 			}
 			config.save(writer);
-		} catch(ConfigurationException e){
+		} catch (ConfigurationException e) {
 			config = tempConfig;
 			config.save(tempFile);
 		}
