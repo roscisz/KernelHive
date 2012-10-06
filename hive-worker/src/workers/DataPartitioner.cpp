@@ -110,6 +110,9 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 	dataIdInt = KhUtils::atoi(dataId.c_str());
 	std::cout << ">>> dataId ready" << std::endl;
 
+	std::cout << ">>> dataId: " << dataId << std::endl;
+	std::cout << ">>> dataIdInt: " << dataIdInt << std::endl;
+
 	buffers[dataIdInt] = new SynchronizedBuffer();
 
 	partsCount = KhUtils::atoi(nextParam(argv));
