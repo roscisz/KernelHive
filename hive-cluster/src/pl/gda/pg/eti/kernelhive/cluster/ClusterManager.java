@@ -31,14 +31,12 @@ import pl.gda.pg.eti.kernelhive.common.communication.UDPServerListener;
 
 public class ClusterManager implements TCPServerListener, UDPServerListener {	
 	
-	private final String clusterDataHostname = "localhost";
-	private final String clusterTcpHostname = "localhost";	
+	private final String clusterDataHostname = "hive-cluster";
+	private final String clusterTcpHostname = "hive-cluster";	
 	private final int clusterTCPPort = 31338;
 	private final int clusterDataPort = 31339;
 	private final int clusterUDPPort = 31340;	
-	
-	private boolean gettingJob = false;
-	
+
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
 	
 	private Cluster cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort);
@@ -63,11 +61,10 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			e1.printStackTrace();
 		}	
 		
-		//new Thread(this).start();
-
 		tryUpdateInEngine();
 				
 		while(true) {
+			System.out.println("Cluster getJobThread cycle");
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
@@ -108,12 +105,12 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	}
 	
 	private void deployDataIfURL(JobInfo jobInfo) {
+		
+		// TODO: error if inputdataUrl and dataString are both not null
 		if(jobInfo.inputDataUrl != null) {
 			System.out.println("Deploying data from " + jobInfo.inputDataUrl);
 			byte[] data = downloadURL(jobInfo.inputDataUrl);
-			jobInfo.dataHost = clusterDataHostname;
-			jobInfo.dataPort = clusterDataPort;
-			jobInfo.dataID = dataPublisher.publish(data);			
+			jobInfo.dataString = "1 " + clusterDataHostname + " " + clusterDataPort + " " + dataPublisher.publish(data);
 		}		
 	}
 
@@ -126,15 +123,12 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 
 	private JobInfo tryGetJob(Cluster cluster, ClusterBean clusterBean) {
 		if(clusterBean != null) {
-			if(!gettingJob) {
-				gettingJob = true;
-				JobInfo ret = clusterBean.getJob();
-				System.out.println("Got job: " + ret);
-				gettingJob = false;
-				return ret;
-			}
-			else return null;
+			System.out.println("Cluster lookin for a job");
+			JobInfo ret = clusterBean.getJob();
+			System.out.println("Got job: " + ret);
+			return ret;
 		}
+		System.out.println("Cluster trying to get job but clusterBean is null");
 		return null;
 	}
 
@@ -172,20 +166,17 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 			proxy = new UnitProxy(channel, unit);
 			unitsMap.put(channel,  proxy);
 		}
-		System.out.println("Proxy update...");
 		proxy.unit.update(data);
 		System.out.println("Now we have " + unitsMap.size() + " clients");
 		for(UnitProxy up : unitsMap.values())
 			System.out.println(up.unit);		
 		tryUpdateInEngine();
-		tryProcessJob();
 	}
 	
 	private void updateClusterInEngine(Cluster cluster, ClusterBean clusterBean) {
 		System.out.println("Updating cluster in engine");
 		clusterBean.update(cluster);
 		System.out.println("Updated cluster in engine");
-		gettingJob = false;		
 	}
 
 	private void commandOver(String message) {
@@ -198,8 +189,10 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	public void onDisconnection(SocketChannel channel) {
 		
 		System.out.println("Channel " + channel + " disconnected.");
-		cluster.unitList.remove(unitsMap.get(channel).unit);
-		unitsMap.remove(channel);
+		if(cluster.unitList.contains(channel))
+			cluster.unitList.remove(unitsMap.get(channel).unit);
+		if(unitsMap.containsKey(channel))
+			unitsMap.remove(channel);
 		System.out.println("Now we have " + unitsMap.size() + " clients");		
 		
 	}
@@ -217,6 +210,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	private void onJobDone(int id, String status) {
 		System.out.println("Job " + id + " over.");				
 		
+		clusterBean.reportOver(id, status);
 		/*id++;
 		if(id < currentJobs.size()) {
 			System.out.println("Running job " + id);
