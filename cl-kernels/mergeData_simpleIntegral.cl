@@ -23,6 +23,8 @@ __kernel void mergeData(__global float* input, unsigned int dataSize, unsigned i
 
     for (int i = 0; i < itemsPerThread; i++) {
         int idx = (id*itemsPerThread)+i;
+        // TODO Logging
+        printf("[Kernel] chunk %d : %f\n", idx, input[idx]);
         result[localId] += input[idx];
     } 
     barrier(CLK_LOCAL_MEM_FENCE);
@@ -40,5 +42,8 @@ __kernel void mergeData(__global float* input, unsigned int dataSize, unsigned i
             output[0] += input[i];
         }
     }
+    // TODO Logging
+    barrier(CLK_GLOBAL_MEM_FENCE);
+    printf("[Kernel] final : %f\n", output[0]);
 }
 
