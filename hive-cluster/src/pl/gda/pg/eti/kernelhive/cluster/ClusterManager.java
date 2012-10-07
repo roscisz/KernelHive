@@ -62,7 +62,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		}	
 		
 		tryUpdateInEngine();
-				
+		
 		while(true) {
 			System.out.println("Cluster getJobThread cycle");
 			try {
@@ -123,12 +123,10 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 
 	private JobInfo tryGetJob(Cluster cluster, ClusterBean clusterBean) {
 		if(clusterBean != null) {
-			System.out.println("Cluster lookin for a job");
 			JobInfo ret = clusterBean.getJob();
 			System.out.println("Got job: " + ret);
 			return ret;
 		}
-		System.out.println("Cluster trying to get job but clusterBean is null");
 		return null;
 	}
 
