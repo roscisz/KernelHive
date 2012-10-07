@@ -29,7 +29,7 @@ UnitManager::UnitManager() {
 			"bin 1 localhost 31338 localhost 31340 localhost 31340 ION 1 0 4096 64 456 123"); */
 
 	try {
-		this->clusterProxy = new ClusterProxy(new NetworkAddress("localhost", 31338), this);
+		this->clusterProxy = new ClusterProxy(new NetworkAddress("hive-cluster", 31338), this);
 	}
 	catch(const char *msg) {
 		Logger::log(FATAL, "Couldn't open Cluster Proxy: %s\n", msg);
@@ -37,7 +37,7 @@ UnitManager::UnitManager() {
 	}
 	ThreadManager::Get()->runThread(clusterProxy);
 
-	DataPublisher *dataPublisher = new DataPublisher(new NetworkAddress("localhost", 31350));
+	DataPublisher *dataPublisher = new DataPublisher(new NetworkAddress("hive-cluster", 31350));
 	dataPublisher->publish(123, "DANE PRZYKLADOWE C++");
 }
 
@@ -56,11 +56,9 @@ void UnitManager::onMessage(TCPMessage *message) {
 	char *type;
 	type = (char *) calloc(30, sizeof(char));
 
-	printf("Got command: %s", message->data);
-
 	sscanf((const char *)message->data, "%s ", type);
 
-	printf("Type: %s", type);
+	printf("Received job to run, type: %s\n", type);
 
 	//char *args = strstr(message->data, " ") + 1; // + 1 ?
 
