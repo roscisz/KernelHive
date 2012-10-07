@@ -91,6 +91,7 @@ public class Job extends HasID {
 	}
 
 	private String getClusterHost() {
+		// FIXME: it shouldn't happen:
 		if(device == null) return "hive-cluster";
 		return device.unit.cluster.hostname;		
 	}
@@ -117,6 +118,12 @@ public class Job extends HasID {
 	
 	private GraphNodeType getJobType() {
 		return node.getGraphNode().getType();
+	}
+	
+	private String getResultDataHost() {
+		// FIXME: it shouldn't happen:
+		if(device== null) return "hive-cluster";
+		return device.unit.cluster.hostname;
 	}
 
 	public void run() {
@@ -151,6 +158,7 @@ public class Job extends HasID {
 		System.out.println("Setting data string " + ret.dataString);
 		ret.jobType = getJobType();
 		ret.nOutputs = nOutputs;
+		ret.resultDataHost = getResultDataHost();
 		
 		System.out.println("Setting inputDataUrl " + inputDataUrl);
 		ret.inputDataUrl = inputDataUrl;

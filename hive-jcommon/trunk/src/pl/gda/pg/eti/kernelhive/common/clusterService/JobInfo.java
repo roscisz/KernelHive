@@ -6,7 +6,6 @@ public class JobInfo {
 	
 	public int unitID;
 	// change to localhost? 
-	private String resultDataHost = "hive-cluster";
 	private int resultDataPort = 31339;
 	public String kernelString;
 	public GraphNodeType jobType;
@@ -26,6 +25,7 @@ public class JobInfo {
 	public String outputSize;
 	public String dataString;
 	public int nOutputs;
+	public String resultDataHost;
 	
 	@Override
 	public String toString() {	
