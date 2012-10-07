@@ -1,6 +1,9 @@
 #include "ExecutionContext.h"
 #include "KernelHiveException.h"
 
+#include <cstdio>
+#include "Logger.h"
+
 namespace KernelHive {
 
 // ========================================================================= //
@@ -244,6 +247,23 @@ namespace KernelHive {
 		errorCode = clBuildProgram(clProgram, 1, &openClDeviceId,
 				NULL, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
+			cl_int retCode;
+			size_t logSize = 0;
+			char *buildLog = NULL;
+			retCode = clGetProgramBuildInfo(clProgram, openClDeviceId,
+					CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
+			if (retCode != CL_SUCCESS) {
+				throw OpenClException("Error acquiring build log size", retCode);
+			}
+			buildLog = new char[logSize];
+			retCode = clGetProgramBuildInfo(clProgram, openClDeviceId,
+					CL_PROGRAM_BUILD_LOG, logSize, buildLog, &logSize);
+			if (retCode != CL_SUCCESS) {
+				throw OpenClException("Error acquiring build log", retCode);
+			}
+			Logger::log(ERROR, "Kernel build failure\n");
+			printf("%s\n", buildLog);
+			delete [] buildLog;
 			throw OpenClException("Error building the program", errorCode);
 		}
 	}
