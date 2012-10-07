@@ -39,7 +39,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
 	
-	private Cluster cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort);
+	private Cluster cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort, clusterTcpHostname);
 	private ClusterBean clusterBean;
 	private DataPublisher dataPublisher;
 		
