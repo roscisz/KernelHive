@@ -44,6 +44,10 @@ public class Workflow extends HasID {
 				newJob.state = JobState.READY;
 				newJob.inputDataUrl = inputDataURL;
 			}
+			int nOutputs = node.getGraphNode().getFollowingNodes().size();
+			if(nOutputs == 0)
+				newJob.nOutputs = 1;
+			else newJob.nOutputs = nOutputs;
 			// TODO: if many kernels in one job, assign each kernel to
 			// individual job
 			newJob.assignedKernel = node.getKernels().get(0);

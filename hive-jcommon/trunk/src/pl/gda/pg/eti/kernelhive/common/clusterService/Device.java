@@ -50,11 +50,6 @@ public class Device {
 				+ ", workGroupSize=" + workGroupSize + "]";
 	}
 
-	// TODO: scheduling constraints
-	public boolean canBeScheduledOn(Device device) {
-		return true;
-	}
-
 	public void updateReverseReferences(Unit unit) {
 		this.unit = unit;		
 	}	

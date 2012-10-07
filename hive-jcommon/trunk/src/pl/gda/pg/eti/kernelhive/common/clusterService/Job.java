@@ -32,9 +32,10 @@ public class Job extends HasID {
 	public JobState state = JobState.PENDING;
 	public int progress = -1;
 		
-	private int unassignedInt = 0;
+	private int unassignedInt = 0;	
 
 	public String inputDataUrl;
+	public int nOutputs;
 
 	public Job() {				
 	}
@@ -45,7 +46,8 @@ public class Job extends HasID {
 		prepareNumData();
 	}				
 
-	private void prepareNumData() {
+	private void prepareNumData() {		
+		// FIXME:
 		if(this.node.getGraphNode().getType() == GraphNodeType.MERGER)
 			this.numData = 2;
 		else this.numData = 1;		
@@ -148,6 +150,7 @@ public class Job extends HasID {
 		ret.dataString = getDataString();
 		System.out.println("Setting data string " + ret.dataString);
 		ret.jobType = getJobType();
+		ret.nOutputs = nOutputs;
 		
 		System.out.println("Setting inputDataUrl " + inputDataUrl);
 		ret.inputDataUrl = inputDataUrl;
@@ -175,5 +178,9 @@ public class Job extends HasID {
 	public void finish() {
 		this.state = JobState.FINISHED;
 		this.device.busy = false;		
+	}
+
+	public boolean canBeScheduledOn(Device device) {
+		return true;
 	}
 }

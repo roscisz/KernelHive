@@ -25,6 +25,7 @@ public class JobInfo {
 	public String localSizes;
 	public String outputSize;
 	public String dataString;
+	public int nOutputs;
 	
 	@Override
 	public String toString() {	
@@ -36,22 +37,24 @@ public class JobInfo {
 		ret.append(" " + clusterTCPPort);
 		ret.append(" " + clusterUDPPort);
 		ret.append(" " + deviceID);		
-		// FIXME:
-		//ret.append(" 3");
-		//ret.append(" " + offsets);
-		//ret.append(" " + globalSizes);
-		//ret.append(" " + localSizes);
-		ret.append(" 3 0 0 0 512 1 1 64 1 1");
+		ret.append(" 3");
+		ret.append(" " + offsets);
+		ret.append(" " + globalSizes);
+		ret.append(" " + localSizes);
+		//ret.append(" 3 0 0 0 512 1 1 64 1 1");
 		ret.append(" " + outputSize);
 		ret.append(" " + kernelHost);
 		ret.append(" " + kernelPort);
 		ret.append(" " + kernelID);
 		ret.append(" " + dataString);
 		
+		//ret.append(" " + nOutputs)
+		
 		// TODO: dynamic output number assignment
-		if(jobType == GraphNodeType.PARTITIONER)
-			ret.append(" 2");
-		else ret.append(" 1");
+		//if(jobType == GraphNodeType.PARTITIONER)
+		//	ret.append(" 2");
+		//else ret.append(" 1");
+		ret.append(" " + nOutputs);
 		
 		ret.append(" " + resultDataHost);
 		ret.append(" " + resultDataPort);
