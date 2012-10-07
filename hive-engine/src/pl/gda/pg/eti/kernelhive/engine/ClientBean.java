@@ -53,7 +53,7 @@ public class ClientBean implements IClientBeanRemote {
 
 	@Override
 	@WebMethod
-	public String getWorkflowResults(Integer taskID) {
+	public String getWorkflowResults(Integer workflowID) {
 		// TODO Auto-generated method stub
 		return null;
 	}

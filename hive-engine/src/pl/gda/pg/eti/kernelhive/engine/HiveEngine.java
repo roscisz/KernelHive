@@ -1,6 +1,7 @@
 package pl.gda.pg.eti.kernelhive.engine;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,8 +18,10 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
+import pl.gda.pg.eti.kernelhive.common.communication.DataDownloader;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.engine.http.file.utils.HttpFileUploadClient;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 
 public class HiveEngine {
@@ -118,13 +121,26 @@ public class HiveEngine {
 		
 		Iterator<DataAddress> dataIterator = resultAddresses.iterator();
 		
-		for(IGraphNode graphNode : jobOver.node.getGraphNode().getFollowingNodes()) {
-			Job followingJob = getJobByGraphNode(graphNode);
-			followingJob.tryToCollectDataAddresses(dataIterator);						
-			System.out.println("Following job: " + followingJob);
-		}		
-		
-		processWorkflow(getWorkflowByJob(jobOver));		
+		if(jobOver.node.getGraphNode().getFollowingNodes().size() == 0) {
+			DataAddress resultAddress = dataIterator.next();
+			byte[] data = new byte[4];//DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);			
+			Workflow finisingWorkflow = getWorkflowByJob(jobOver);
+			HttpFileUploadClient uploadClient = new HttpFileUploadClient();
+			try {
+				uploadClient.postFileUpload("http://localhost:8080/hive-engine/download", data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			finisingWorkflow.finish();
+		}
+		else {
+			for(IGraphNode graphNode : jobOver.node.getGraphNode().getFollowingNodes()) {
+				Job followingJob = getJobByGraphNode(graphNode);
+				followingJob.tryToCollectDataAddresses(dataIterator);
+				System.out.println("Following job: " + followingJob);
+			}		
+			processWorkflow(getWorkflowByJob(jobOver));
+		}
 	}
 	
 	private Workflow getWorkflowByJob(Job jobOver) {

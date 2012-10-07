@@ -11,5 +11,6 @@ public interface IClusterBeanRemote {
 	public JobInfo getJob();
 	public void reportOver(int jobID, String returnData);
 	public void reportProgress(int jobID, int progress);
+	//public void returnResult(byte[] result);
 
 }
