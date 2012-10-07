@@ -100,4 +100,9 @@ public class Workflow extends HasID {
 	public boolean containsJob(Job jobOver) {
 		return jobs.containsValue(jobOver);
 	}
+
+	public void finish(/*result data ID may vary*/) {
+		this.myState = WorkflowState.COMPLETED;
+		this.myInfo.result = "localhost:8080/hive-engine/download?filename=" + this.myInfo.name;		
+	}
 }

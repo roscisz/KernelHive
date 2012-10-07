@@ -115,9 +115,8 @@ public class DataPublisher implements TCPServerListener {
 		catch(BufferUnderflowException bue) {			
 		}
 		publish(id, entity);
-		
+		/*
 		ByteBuffer buf = ByteBuffer.wrap(entity);
-		System.out.println("Some data in the data server seleblą: ");
 		while(true) {
 			try {
 				System.out.println("" + buf.get() + " " + buf.get() + " " + buf.get() + " " + buf.get());
@@ -125,8 +124,7 @@ public class DataPublisher implements TCPServerListener {
 			catch(BufferUnderflowException bue) {
 				break;
 			}
-		}
-		System.out.println("KÓNIEC DANYH WYŹWIEDLANIA");
+		}*/
 	}
 	
 	private void getSize(ByteBuffer input, ByteBuffer output) {
@@ -155,9 +153,6 @@ public class DataPublisher implements TCPServerListener {
 		outputBuffer.rewind();
 		outputBuffer.put(entity, entityOffset, entity.length - entityOffset);
 		TCPServer.sendMessage(channel, outputBuffer);
-		
-		outputBuffer.rewind();
-		System.out.println("Two first floats sent by the data server: " + outputBuffer.getFloat() + " " + outputBuffer.getFloat());
 	}
 
 	private void deleteData(ByteBuffer input, ByteBuffer output) {

@@ -115,7 +115,11 @@ public class TCPServer implements Runnable {
 			}
 						
 			while(incomingBuffer.hasRemaining()) {
+				if(incomingBuffer.remaining() < 4) return;
 				int commandSize = incomingBuffer.getInt();
+				
+				if(commandSize == 0) return;
+				
 				if(incomingBuffer.remaining() >= commandSize) {
 					listener.onTCPMessage(client, incomingBuffer);
 				}
