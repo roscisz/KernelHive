@@ -11,7 +11,7 @@ public class Cluster extends HasID {
 	
 	private Object monitor = new Object(); 
 	
-	public String hostname = "hive-cluster";
+	public String hostname;
 	public int TCPPort;
 	public int UDPPort;
 	public List<Unit> unitList = new ArrayList<Unit>();
@@ -22,9 +22,10 @@ public class Cluster extends HasID {
 		
 	}
 	
-	public Cluster(int clusterTCPPort, int clusterDataPort, int clusterUDPPort) {
+	public Cluster(int clusterTCPPort, int clusterDataPort, int clusterUDPPort, String clusterTCPHostname) {
 		this.TCPPort = clusterTCPPort;
 		this.UDPPort = clusterUDPPort;
+		this.hostname = clusterTCPHostname;
 	}
 
 	public void runJob(Job jobToRun) {
