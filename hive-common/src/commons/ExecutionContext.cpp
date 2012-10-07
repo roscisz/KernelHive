@@ -247,23 +247,27 @@ namespace KernelHive {
 		errorCode = clBuildProgram(clProgram, 1, &openClDeviceId,
 				NULL, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
-			cl_int retCode;
-			size_t logSize = 0;
-			char *buildLog = NULL;
-			retCode = clGetProgramBuildInfo(clProgram, openClDeviceId,
-					CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
-			if (retCode != CL_SUCCESS) {
-				throw OpenClException("Error acquiring build log size", retCode);
+			if (errorCode == CL_BUILD_PROGRAM_FAILURE) {
+				cl_int retCode;
+				size_t logSize = 0;
+				char *buildLog = NULL;
+				retCode = clGetProgramBuildInfo(clProgram, openClDeviceId,
+						CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
+				if (retCode != CL_SUCCESS) {
+					Logger::log(ERROR, "Error acquiring build log size\n");
+				} else {
+					buildLog = new char[logSize];
+					retCode = clGetProgramBuildInfo(clProgram, openClDeviceId,
+							CL_PROGRAM_BUILD_LOG, logSize, buildLog, NULL);
+					if (retCode != CL_SUCCESS) {
+						Logger::log(ERROR, "Error acquiring build log\n");
+					} else {
+						Logger::log(ERROR, "Kernel build failure\n");
+						printf("%s\n", buildLog);
+					}
+					delete [] buildLog;
+				}
 			}
-			buildLog = new char[logSize];
-			retCode = clGetProgramBuildInfo(clProgram, openClDeviceId,
-					CL_PROGRAM_BUILD_LOG, logSize, buildLog, &logSize);
-			if (retCode != CL_SUCCESS) {
-				throw OpenClException("Error acquiring build log", retCode);
-			}
-			Logger::log(ERROR, "Kernel build failure\n");
-			printf("%s\n", buildLog);
-			delete [] buildLog;
 			throw OpenClException("Error building the program", errorCode);
 		}
 	}

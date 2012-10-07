@@ -23,8 +23,8 @@ DataUploader::DataUploader(NetworkAddress* address, SynchronizedBuffer* buffer) 
 	this->currentState = STATE_INITIAL;
 	prepareCommands();
 	Logger::log(DEBUG, ">>> UPLOADER %s:%d WILL LOG the amount of DATA HE GOT: %d\n", address->host, address->port, buffer->getSize());
-	//buffer->logMyFloatData();
-	//Logger::log(DEBUG, ">>> UPLOADER %s:%d FINISHED LOGGING DATA HE GOT\n", address->host, address->port);
+	buffer->logMyFloatData();
+	Logger::log(DEBUG, ">>> UPLOADER %s:%d FINISHED LOGGING DATA HE GOT\n", address->host, address->port);
 }
 
 DataUploader::~DataUploader() {
