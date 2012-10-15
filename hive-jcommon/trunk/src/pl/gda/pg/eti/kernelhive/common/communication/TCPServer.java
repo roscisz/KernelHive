@@ -181,6 +181,7 @@ public class TCPServer implements Runnable {
 	}
 	
 	public static byte[] byteBufferToArray(ByteBuffer buffer) {
+		buffer.rewind();
 		byte[] ret = new byte[buffer.remaining()];
 		buffer.get(ret, 0, ret.length);
 		return ret;
