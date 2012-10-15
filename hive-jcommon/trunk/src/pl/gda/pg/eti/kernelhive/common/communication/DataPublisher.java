@@ -115,7 +115,8 @@ public class DataPublisher implements TCPServerListener {
 		catch(BufferUnderflowException bue) {			
 		}
 		publish(id, entity);
-		/*
+		
+		System.out.println("Bytes sent into the data server: ");
 		ByteBuffer buf = ByteBuffer.wrap(entity);
 		while(true) {
 			try {
@@ -124,7 +125,7 @@ public class DataPublisher implements TCPServerListener {
 			catch(BufferUnderflowException bue) {
 				break;
 			}
-		}*/
+		}
 	}
 	
 	private void getSize(ByteBuffer input, ByteBuffer output) {

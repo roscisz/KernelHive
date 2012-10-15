@@ -14,8 +14,8 @@ public class Workflow extends HasID {
 
 	private Map<Integer, Job> jobs = new Hashtable<Integer, Job>();
 
-	private WorkflowInfo myInfo = new WorkflowInfo();
-	private WorkflowState myState = WorkflowState.PENDING;
+	public WorkflowInfo info = new WorkflowInfo();
+	private WorkflowState state = WorkflowState.PENDING;
 	private String result = null;
 
 	public enum WorkflowState {
@@ -59,8 +59,8 @@ public class Workflow extends HasID {
 	}
 
 	private void initWorkflowInfo(String workflowName) {		
-		this.myInfo.ID = this.ID;
-		this.myInfo.name = workflowName;		
+		this.info.ID = this.ID;
+		this.info.name = workflowName;		
 	}
 
 	public List<Job> getReadyJobs() {
@@ -81,9 +81,9 @@ public class Workflow extends HasID {
 	}
 
 	public WorkflowInfo getWorkflowInfo() {
-		this.myInfo.state = this.myState;
-		this.myInfo.result = this.result;
-		return this.myInfo;
+		this.info.state = this.state;
+		this.info.result = this.result;
+		return this.info;
 	}
 
 	public Job getJobByID(int jobID) {
@@ -101,8 +101,8 @@ public class Workflow extends HasID {
 		return jobs.containsValue(jobOver);
 	}
 
-	public void finish(/*result data ID may vary*/) {
-		this.myState = WorkflowState.COMPLETED;
-		this.myInfo.result = "localhost:8080/hive-engine/download?filename=" + this.myInfo.name;		
+	public void finish(String resultURL) {
+		this.state = WorkflowState.COMPLETED;
+		this.info.result = resultURL;		
 	}
 }
