@@ -67,6 +67,9 @@ void DataProcessor::workSpecific() {
 
 	size_t size = buffers[dataIdInt]->getSize();
 
+	Logger::log(DEBUG, "(processor) >>> PROCESSOR BEFORE COMPUTE");
+	buffers[dataIdInt]->logMyFloatData();
+
 	// Allocate input and output buffers on the device
 	context->createBuffer(INPUT_BUFFER, size*sizeof(byte), CL_MEM_READ_ONLY);
 	context->createBuffer(OUTPUT_BUFFER, outputSize*sizeof(byte), CL_MEM_WRITE_ONLY);
@@ -99,6 +102,9 @@ void DataProcessor::workSpecific() {
 	// Copy the result:
 	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffer->getRawData());
 	setPercentDone(90);
+
+	Logger::log(DEBUG, "(processor) >>> PROCESSOR AFTER COMPUTE");
+	resultBuffer->logMyFloatData();
 
 	// Upload data to repository
 	uploaders.push_back(new DataUploader(outputDataAddress, resultBuffer));
