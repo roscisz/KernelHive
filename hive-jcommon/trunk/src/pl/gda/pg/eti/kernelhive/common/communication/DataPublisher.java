@@ -145,7 +145,7 @@ public class DataPublisher implements TCPServerListener {
 		ByteBuffer outputBuffer = TCPServer.prepareEmptyBuffer();
 		int entityOffset = 0;
 
-		while((entity.length - entityOffset) >= TCPServer.MAX_MESSAGE_BYTES) {
+		while((entity.length - entityOffset) > TCPServer.MAX_MESSAGE_BYTES) {
 			outputBuffer.rewind();
 			outputBuffer.put(entity, entityOffset, TCPServer.MAX_MESSAGE_BYTES);
 			TCPServer.sendMessage(channel, outputBuffer);
@@ -153,6 +153,7 @@ public class DataPublisher implements TCPServerListener {
 		}
 		outputBuffer.rewind();
 		outputBuffer.put(entity, entityOffset, entity.length - entityOffset);
+		outputBuffer.limit(entity.length - entityOffset);
 		TCPServer.sendMessage(channel, outputBuffer);
 	}
 
