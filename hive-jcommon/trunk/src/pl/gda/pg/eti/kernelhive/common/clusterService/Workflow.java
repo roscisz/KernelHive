@@ -103,6 +103,6 @@ public class Workflow extends HasID {
 
 	public void finish(String resultURL) {
 		this.state = WorkflowState.COMPLETED;
-		this.info.result = resultURL;		
+		this.info.result = resultURL + this.info.name;		
 	}
 }
