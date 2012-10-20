@@ -50,8 +50,8 @@ void DataMerger::workSpecific() {
 	}
 
 	// Allocate input and output buffers on the device
-	context->createBuffer(INPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_READ_ONLY);
-	context->createBuffer(OUTPUT_BUFFER, outputSize*sizeof(byte), CL_MEM_WRITE_ONLY);
+	context->createBuffer(INPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_READ_WRITE);
+	context->createBuffer(OUTPUT_BUFFER, outputSize*sizeof(byte), CL_MEM_READ_WRITE);
 
 	// Begin copying data to the device
 	size_t copyOffset = 0;
