@@ -50,7 +50,6 @@ public class ClusterBean implements IClusterBeanRemote {
 		}
 		Job job = cluster.getJob();
 		if(job == null) {
-			System.out.println("getJob() returning null because getJob returned null");
 			return null;
 		}
 		return job.getJobInfo();		

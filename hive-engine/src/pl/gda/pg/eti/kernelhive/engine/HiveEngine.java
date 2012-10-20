@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.print.attribute.standard.Finishings;
+
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
@@ -27,6 +29,9 @@ import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 public class HiveEngine {
 	
 	private static HiveEngine instance;
+	
+	private static String resultUploadURL = "http://localhost:8080/hive-engine/download";
+	private static String resultDownloadURL = "http://localhost:8080/hive-engine/download?filename=";
 	
 	private Map<String, Cluster> clusters = new HashMap<String, Cluster>();
 	private Map<Integer, Workflow> workflows = new HashMap<Integer, Workflow>();
@@ -61,7 +66,7 @@ public class HiveEngine {
 	}
 
 	private void processWorkflow(Workflow workflow) {
-		System.out.println("Processing workflow: " + workflow.ID);
+		//System.out.println("Processing workflow: " + workflow.ID);
 		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(workflow, clusters.values());	
 		
 		for(Job job : readyJobs) {
@@ -113,25 +118,16 @@ public class HiveEngine {
 	public void onJobOver(int jobID, String returnData) {		
 		System.out.println("JOB OVER " + jobID + ", " + returnData);	
 		List<DataAddress> resultAddresses = parseResults(returnData);
-		Job jobOver = getJobByID(jobID);		
-		
+		Job jobOver = getJobByID(jobID);				
 		jobOver.finish();
 		
-		System.out.println("Job over: " + jobOver);
-		
-		Iterator<DataAddress> dataIterator = resultAddresses.iterator();
-		
+		Iterator<DataAddress> dataIterator = resultAddresses.iterator();		
 		if(jobOver.node.getGraphNode().getFollowingNodes().size() == 0) {
 			DataAddress resultAddress = dataIterator.next();
-			byte[] data = new byte[4];//DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);			
+			byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);
+			deployResult(result);
 			Workflow finisingWorkflow = getWorkflowByJob(jobOver);
-			HttpFileUploadClient uploadClient = new HttpFileUploadClient();
-			try {
-				uploadClient.postFileUpload("http://localhost:8080/hive-engine/download", data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			finisingWorkflow.finish();
+			finisingWorkflow.finish(resultDownloadURL);
 		}
 		else {
 			for(IGraphNode graphNode : jobOver.node.getGraphNode().getFollowingNodes()) {
@@ -143,6 +139,16 @@ public class HiveEngine {
 		}
 	}
 	
+	private void deployResult(byte[] result) {
+		HttpFileUploadClient uploadClient = new HttpFileUploadClient();
+		try {
+			uploadClient.postFileUpload(resultUploadURL, result);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+
+	}
+
 	private Workflow getWorkflowByJob(Job jobOver) {
 		for(Workflow workflow : workflows.values()) {
 			if(workflow.containsJob(jobOver))
@@ -168,7 +174,7 @@ public class HiveEngine {
 		}				
 		return null;
 	}
-	
+
 	private List<DataAddress> parseResults(String returnData) {
 		List<DataAddress> ret = new ArrayList<DataAddress>();
 		
