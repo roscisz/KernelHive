@@ -138,7 +138,7 @@ namespace KernelHive {
 // ========================================================================= //
 
 	void OpenClDevice::constructIdentifier() {
-		identifier = getDeviceName();
+		identifier = getDeviceVendor() + getDeviceName();
 		identifier.erase(std::remove_if(identifier.begin(), identifier.end(), isspace),
 				identifier.end());
 	}

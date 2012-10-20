@@ -7,6 +7,6 @@ target_link_libraries( hivecommons OpenCL )
 target_link_libraries( hivecommons pthread )
 
 # Build the tester executable, link the built library to it
-add_executable( Tester "src/Main.cpp" )
-target_link_libraries( Tester hivecommons )
+add_executable( DevicesInfo "src/Main.cpp" )
+target_link_libraries( DevicesInfo hivecommons )
 
