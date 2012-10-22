@@ -5,15 +5,27 @@ import sys
 import socket
 import os
 import struct
-import re
 import random
 
 HOST = "localhost"
-READ_BATCH = 20480
+READ_BATCH = 1496
 INT_MAX = 2147483647
 OUTPUT_FILE = 'output'
 
-DATA_ID = str(random.randint(0, 100))
+COUNTER = 0
+
+def nextNum():
+	global COUNTER
+	COUNTER = COUNTER + 1
+	return COUNTER
+
+DATA_ID = nextNum()
+
+def btoi(strn):
+	return struct.unpack("<I", strn)[0]
+
+def itob(num):
+	return struct.pack("i", num)
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -27,7 +39,7 @@ if __name__ == "__main__":
 	else:
 		sys.exit("file not provided")
 
-	ofile = OUTPUT_FILE + DATA_ID;
+	ofile = OUTPUT_FILE + str(DATA_ID);
 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -41,11 +53,13 @@ if __name__ == "__main__":
 			msg = conn.recv(READ_BATCH)
 			if not msg:
 				break
-			msg = msg.strip()
-			print 'Received message: ', msg
-			if re.match(r'1 \d+', msg):
-				conn.sendall(str(fsize))
-			elif re.match(r'2 \d+', msg):
+			msg = msg[4:] # We don't need no message sizes
+			msgSize = len(msg)
+			#print map(ord, msg)
+			print 'Received message of size ', msgSize
+			if btoi(msg[0:4]) == 1:
+				conn.sendall(itob(fsize))
+			elif btoi(msg[0:4]) == 2:
 				source = open(sys.argv[2], 'r')
 				while 1:
 					data = source.read(READ_BATCH)
@@ -53,16 +67,16 @@ if __name__ == "__main__":
 						source.close()
 						break
 					conn.sendall(data)
-			elif re.match(r'0 (\d+)', msg):
-				conn.sendall(DATA_ID)
-			elif re.match(r'4 (\d+) (\d+)', msg):
-				matcher = re.match(r'4 (\d+) (\d+) (.*)', msg, re.DOTALL)
-				print 'Received a package of size ', matcher.group(2)
+			elif btoi(msg[0:4]) == 0:
+				conn.sendall(itob(DATA_ID))
+			elif btoi(msg[0:4]) == 4:
+				datId = btoi(msg[4:8])
+				pkgSize = btoi(msg[8:12])
+				print 'Received a data package of size ', pkgSize
 				with open(ofile, 'ab') as out:
-					out.write(matcher.group(3))
+					out.write(msg[12:msgSize])
 			else:
-				with open(ofile, 'ab') as out:
-					out.write(msg)
+				print 'Unknown command'
 
 		conn.close()
 		print 'Connection closed'
