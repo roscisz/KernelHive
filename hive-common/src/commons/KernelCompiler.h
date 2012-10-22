@@ -5,8 +5,11 @@
 #include <string>
 
 #include "ExecutionContext.h"
+#include "OpenClDevice.h"
 
 namespace KernelHive {
+
+typedef std::map<int, OpenClDevice*> IdDevicesMap;
 
 /**
  * A class used for test compilation of OpenCL kernels.
@@ -31,15 +34,25 @@ public:
 	 */
 	void loadSource(char *sourceFile);
 
+	/**
+	 * List device available on this host.
+	 */
+	void printDevices();
+
 private:
 	/**	Holds the kernel source. */
 	std::string sourceCode;
 
 	/** Maps maps number to device identifier. */
-	std::map<int, std::string> idMappings;
+	IdDevicesMap idMappings;
 
 	/** An execution context, used to compile the kernel source. */
 	ExecutionContext* executionContext;
+
+	/**
+	 * Initializes the device mapping for the compiler.
+	 */
+	void initDeviceMappings();
 
 };
 
