@@ -15,6 +15,10 @@ namespace KernelHive {
 // ========================================================================= //
 
 	std::string KhUtils::readStream(std::istream& inputStream) {
+		if (inputStream.fail()) {
+			throw KernelHiveException("Invalid input file");
+		}
+
 		std::string source;
 
 		source.assign((std::istreambuf_iterator<char>(inputStream)),

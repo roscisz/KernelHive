@@ -8,5 +8,6 @@ target_link_libraries( hivecommons pthread )
 
 # Build the tester executable, link the built library to it
 add_executable( DevicesInfo "src/Main.cpp" )
+add_executable( KernelCompiler "src/Compiler.cpp" )
 target_link_libraries( DevicesInfo hivecommons )
-
+target_link_libraries( KernelCompiler hivecommons )
