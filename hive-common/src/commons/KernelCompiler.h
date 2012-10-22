@@ -39,6 +39,13 @@ public:
 	 */
 	void printDevices();
 
+	/**
+	 * Compile the source on provided device.
+	 *
+	 * @param the device to use
+	 */
+	bool compileOnDevice(int selection);
+
 private:
 	/**	Holds the kernel source. */
 	std::string sourceCode;
@@ -47,7 +54,7 @@ private:
 	IdDevicesMap idMappings;
 
 	/** An execution context, used to compile the kernel source. */
-	ExecutionContext* executionContext;
+	ExecutionContext* ctx;
 
 	/**
 	 * Initializes the device mapping for the compiler.

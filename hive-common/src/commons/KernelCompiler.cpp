@@ -5,17 +5,18 @@
 #include "KernelCompiler.h"
 #include "KhUtils.h"
 #include "OpenClHost.h"
+#include "KernelHiveException.h"
 
 namespace KernelHive {
 
 KernelCompiler::KernelCompiler() {
-	executionContext = NULL;
+	ctx = NULL;
 	initDeviceMappings();
 }
 
 KernelCompiler::~KernelCompiler() {
-	if (executionContext != NULL) {
-		delete executionContext;
+	if (ctx != NULL) {
+		delete ctx;
 	}
 }
 
@@ -51,6 +52,17 @@ void KernelCompiler::printDevices() {
 		std::cout << it->second->getDeviceName();
 		std::cout << " (" << it->second->getDeviceVendor() << ")" << std::endl;
 	}
+}
+
+bool KernelCompiler::compileOnDevice(int selection) {
+	if (idMappings.find(selection) == idMappings.end()) {
+		throw KernelHiveException("No such device");
+	}
+	OpenClDevice *device = idMappings[selection];
+	ctx = new ExecutionContext(*device);
+	ctx->buildProgramFromSource(sourceCode);
+
+	return true;
 }
 
 } /* namespace KernelHive */

@@ -3,6 +3,7 @@
 #include "commons/KernelCompiler.h"
 #include "commons/KernelHiveException.h"
 #include "commons/KhUtils.h"
+#include "commons/OpenClException.h"
 
 using namespace KernelHive;
 
@@ -21,7 +22,13 @@ int main(int argc, char** argv) {
 		std::cout << "Select a device: ";
 		std::cin >> rawInput;
 		selection = KhUtils::atoi(rawInput.c_str());
+		bool result = compiler.compileOnDevice(selection);
+		if (result == true) {
+			std::cout << "Build successful" << std::endl;
+		}
 	} catch (KernelHiveException& e) {
+		std::cout << e.getMessage() << std::endl;
+	} catch (OpenClException& e) {
 		std::cout << e.getMessage() << std::endl;
 	}
 }

@@ -248,7 +248,7 @@ namespace KernelHive {
 				NULL, NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
 			if (errorCode == CL_BUILD_PROGRAM_FAILURE) {
-				/*
+
 				cl_int retCode;
 				size_t logSize = 0;
 				char *buildLog = NULL;
@@ -268,7 +268,7 @@ namespace KernelHive {
 					}
 					delete [] buildLog;
 				}
-				*/
+
 			}
 			throw OpenClException("Error building the program", errorCode);
 		}
