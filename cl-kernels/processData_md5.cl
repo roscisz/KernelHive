@@ -34,14 +34,23 @@ __constant unsigned int k[64] = {
     0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
 };
 
+void rot(unsigned int x, unsigned int y, unsigned int *rotation) {
+
+}
+
 void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, int *outcome) {
     // Support variables
-    int i, j;
+    int i, tmp;
     // Initial values for the results
     unsigned int h0 = 0x67452301;
     unsigned int h1 = 0xefcdab89;
     unsigned int h2 = 0x98badcfe;
     unsigned int h3 = 0x10325476;
+    // Temporary results holders
+    unsigned int a, b, c, d, e, f, g;
+    unsigned int *rotation = { 0 };
+    
+    unsigned int *ptr;
     
     // Append the "1" bit to the msg
     msg[msgLen] = ONE_BIT;
@@ -51,11 +60,47 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, int 
         msg[i] = PADDING_ZEROES;
     }
     // Append the original msg length to the end of the msg
-    j = 7;
+    tmp = 7;
     for (; i < MAX_MSG_LEN; i++) {
-        msg[i] = (msgLen >> (8 * j)) & 0xFF;
-        j--;
+        msg[i] = (msgLen >> (8 * tmp)) & 0xFF;
+        tmp--;
     }
+    
+    a = h0;
+    b = h1;
+    c = h2;
+    d = h3;
+    
+    // Perform the actual calculations, process as 32-bit chunks
+    ptr = (unsigned int *)msg;
+    for (i = 0; i < 16; i++) {
+        f = (b & c) | ((~b) & d);
+        g = i;
+    }
+    for (; i < 32; i++) {
+        f = (d & b) | ((~d) & c);
+        g = (5*i + 1) % 16;
+    }
+    for (; i < 47; i++) {
+        f = b ^ c ^ d;
+        g = (3*i + 5) % 16;
+    }
+    for (; i < 64; i++) {
+        f = c ^ (b | (~d));
+        g = (7*i) % 16;
+    }
+    tmp = d;
+    d = c;
+    c = b;
+    rot((a + f + k[i] + ptr[g]), r[i], rotation);
+    b = b + *rotation;
+    a = tmp;
+    
+    // Add the subresults to the hash    
+    h0 = h0 + a;
+    h1 = h1 + b;
+    h2 = h2 + c;
+    h3 = h3 + d;
 }
 
 __kernel void processData(__global unsigned char *input, unsigned int dataSize, __global unsigned char *output, unsigned int outputSize) {
