@@ -2,6 +2,12 @@
  * A kernel used for brute force MD5 cracking.
  */
  
+#define MAX_MSG_LEN 64
+#define DIGEST_LEN 16
+
+#define ONE_BIT 0x80
+#define PADDING_ZEROES 0x00
+ 
 __constant unsigned int r[64] = {
     7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
     5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
@@ -28,14 +34,8 @@ __constant unsigned int k[64] = {
     0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
 };
 
-#define MAX_MSG_LEN 64
-#define DIGEST_LEN 16
-
-#define ONE_BIT 0x80
-#define PADDING_ZEROES 0x00
-
-void crack(unsigned char *msg, unsigned int msgLen, unsigned char *digest, int *outcome) {
-    // Iteration variables
+void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, int *outcome) {
+    // Support variables
     int i, j;
     // Initial values for the results
     unsigned int h0 = 0x67452301;
@@ -43,15 +43,15 @@ void crack(unsigned char *msg, unsigned int msgLen, unsigned char *digest, int *
     unsigned int h2 = 0x98badcfe;
     unsigned int h3 = 0x10325476;
     
-    // Append the "1" bit to the message
+    // Append the "1" bit to the msg
     msg[msgLen] = ONE_BIT;
     
-    // Padd the message with zeroes until 448 bits are reached    
+    // Padd the msg with zeroes until 448 bits are reached    
     for (i = msgLen + 1; i < MAX_MSG_LEN - 8; i++) {
         msg[i] = PADDING_ZEROES;
     }
-    // Append the original message length to the end of the message
-    j = 8;
+    // Append the original msg length to the end of the msg
+    j = 7;
     for (; i < MAX_MSG_LEN; i++) {
         msg[i] = (msgLen >> (8 * j)) & 0xFF;
         j--;
@@ -59,11 +59,11 @@ void crack(unsigned char *msg, unsigned int msgLen, unsigned char *digest, int *
 }
 
 __kernel void processData(__global unsigned char *input, unsigned int dataSize, __global unsigned char *output, unsigned int outputSize) {
-    __private unsigned char message[MAX_MSG_LEN];
+    __private unsigned char msg[MAX_MSG_LEN];
     __private unsigned char digest[DIGEST_LEN];
     __private int outcome[1];
-    crack(message, 12, digest, outcome);
+    crack(msg, 12, digest, outcome);
     // WARNING: Below will not run on all devices
-    //printf("%02x%02x\n", digest[0], digest[1]);
+    //printf("%02x%02x%02x%02x%02x%02x%02x%02x\n", msg[56], msg[57], msg[58], msg[59], msg[60], msg[61], msg[62], msg[63]);
 }
 
