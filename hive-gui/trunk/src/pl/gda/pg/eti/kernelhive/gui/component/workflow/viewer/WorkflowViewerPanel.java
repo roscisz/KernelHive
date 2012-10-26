@@ -27,23 +27,28 @@ import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow.WorkflowState;
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
+/**
+ * 
+ * @author marcel
+ * 
+ */
 public class WorkflowViewerPanel extends JPanel {
 
 	private static final long serialVersionUID = -2548380853826858288L;
-	private JTable table;
-	private JButton btnRefresh;
+	private final JTable table;
+	private final JButton btnRefresh;
 
 	public WorkflowViewerPanel() {
 		setLayout(new BorderLayout(0, 0));
 
-		JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 		add(panel, BorderLayout.SOUTH);
 
 		btnRefresh = new JButton("Refresh");
 		btnRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel.add(btnRefresh);
 
-		JScrollPane scrollPane = new JScrollPane();
+		final JScrollPane scrollPane = new JScrollPane();
 		add(scrollPane, BorderLayout.CENTER);
 
 		table = new JTable();
@@ -52,8 +57,8 @@ public class WorkflowViewerPanel extends JPanel {
 		fillWorkflowExecutionsTable(null);
 	}
 
-	private void fillWorkflowExecutionsTable(List<WorkflowInfo> workflows) {
-		WorkflowExecutionsTableModel model = new WorkflowExecutionsTableModel(
+	private void fillWorkflowExecutionsTable(final List<WorkflowInfo> workflows) {
+		final WorkflowExecutionsTableModel model = new WorkflowExecutionsTableModel(
 				workflows);
 		table.setModel(model);
 		table.getSelectionModel().setSelectionMode(
@@ -66,14 +71,14 @@ public class WorkflowViewerPanel extends JPanel {
 		table.addMouseListener(new MouseAdapter() {
 
 			@Override
-			public void mouseClicked(MouseEvent ev) {
+			public void mouseClicked(final MouseEvent ev) {
 				if (ev.getClickCount() > 2) {
 					ev.consume();
-					int col = table.getSelectedColumn();
-					int row = table.getSelectedRow();
-					String val = (String) table.getValueAt(row, col);
+					final int col = table.getSelectedColumn();
+					final int row = table.getSelectedRow();
+					final String val = (String) table.getValueAt(row, col);
 					try {
-						URL url = new URL(val);
+						final URL url = new URL(val);
 						if (Desktop.isDesktopSupported()) {
 							Desktop.getDesktop().browse(
 									new URI(url.toExternalForm()));
@@ -83,13 +88,13 @@ public class WorkflowViewerPanel extends JPanel {
 											"Error",
 											"Java Dialog API not supported - could not open web browser");
 						}
-					} catch (MalformedURLException e1) {
+					} catch (final MalformedURLException e1) {
 						// silent exception, continue
-					} catch (IOException e) {
+					} catch (final IOException e) {
 						e.printStackTrace();
 						MessageDialog.showErrorDialog(WorkflowViewerPanel.this,
 								"Error", "Could not open web browser!");
-					} catch (URISyntaxException e) {
+					} catch (final URISyntaxException e) {
 						e.printStackTrace();
 					}
 				}
@@ -97,15 +102,15 @@ public class WorkflowViewerPanel extends JPanel {
 		});
 	}
 
-	public void addRefreshBtnActionListener(ActionListener l) {
+	public void addRefreshBtnActionListener(final ActionListener l) {
 		btnRefresh.addActionListener(l);
 	}
 
-	public void removeRefreshBtnActionListener(ActionListener l) {
+	public void removeRefreshBtnActionListener(final ActionListener l) {
 		btnRefresh.removeActionListener(l);
 	}
 
-	public void reloadTableContents(List<WorkflowInfo> workflows) {
+	public void reloadTableContents(final List<WorkflowInfo> workflows) {
 		fillWorkflowExecutionsTable(workflows);
 	}
 
@@ -128,10 +133,10 @@ public class WorkflowViewerPanel extends JPanel {
 				String.class, WorkflowState.class, String.class };
 		List<Object[]> data = new ArrayList<Object[]>();
 
-		public WorkflowExecutionsTableModel(List<WorkflowInfo> workflows) {
+		public WorkflowExecutionsTableModel(final List<WorkflowInfo> workflows) {
 			super();
 			if (workflows != null) {
-				for (WorkflowInfo wi : workflows) {
+				for (final WorkflowInfo wi : workflows) {
 					data.add(new Object[] { wi.ID, wi.name, wi.state, wi.result });
 				}
 			}
@@ -148,7 +153,7 @@ public class WorkflowViewerPanel extends JPanel {
 		}
 
 		@Override
-		public Object getValueAt(int rowIndex, int columnIndex) {
+		public Object getValueAt(final int rowIndex, final int columnIndex) {
 			if (columnIndex < columnSize && rowIndex < data.size()) {
 				return data.get(rowIndex)[columnIndex];
 			} else {
@@ -157,7 +162,7 @@ public class WorkflowViewerPanel extends JPanel {
 		}
 
 		@Override
-		public String getColumnName(int columnIndex) {
+		public String getColumnName(final int columnIndex) {
 			if (columnIndex < columnSize) {
 				return columnNames[columnIndex];
 			} else {
@@ -166,7 +171,7 @@ public class WorkflowViewerPanel extends JPanel {
 		}
 
 		@Override
-		public Class<?> getColumnClass(int columnIndex) {
+		public Class<?> getColumnClass(final int columnIndex) {
 			if (columnIndex < columnSize) {
 				return columnClasses[columnIndex];
 			} else {
@@ -175,16 +180,17 @@ public class WorkflowViewerPanel extends JPanel {
 		}
 
 		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
+		public boolean isCellEditable(final int rowIndex, final int columnIndex) {
 			return false;
 		}
 
 		@Override
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		public void setValueAt(final Object aValue, final int rowIndex,
+				final int columnIndex) {
 			if (rowIndex < data.size() && columnIndex < columnSize) {
 				data.get(rowIndex)[columnIndex] = aValue;
 			}
-			for (TableModelListener l : this.getTableModelListeners()) {
+			for (final TableModelListener l : this.getTableModelListeners()) {
 				l.tableChanged(new TableModelEvent(this, rowIndex, rowIndex,
 						columnIndex, TableModelEvent.UPDATE));
 			}
