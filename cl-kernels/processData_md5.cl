@@ -34,23 +34,22 @@ __constant unsigned int k[64] = {
     0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
 };
 
-void rot(unsigned int x, unsigned int y, unsigned int *rotation) {
-
+unsigned int rot(unsigned int x, unsigned int c) {
+    return (x << c) | (x >> (32 - c));
 }
 
-void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, int *outcome) {
+void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsigned int *outcome) {
     // Support variables
-    int i, tmp;
-    // Initial values for the results
-    unsigned int h0 = 0x67452301;
-    unsigned int h1 = 0xefcdab89;
-    unsigned int h2 = 0x98badcfe;
-    unsigned int h3 = 0x10325476;
-    // Temporary results holders
-    unsigned int a, b, c, d, e, f, g;
-    unsigned int *rotation = { 0 };
-    
+    unsigned int i, tmp;
     unsigned int *ptr;
+    unsigned char *chrPtr;
+    // Initial values for the results
+    unsigned int h[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
+    // Temporary results holders
+    __private unsigned int a, b, c, d, e, f, g;
+    
+    // Reset the result:
+    *outcome = 0;
     
     // Append the "1" bit to the msg
     msg[msgLen] = ONE_BIT;
@@ -66,10 +65,10 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, int 
         tmp--;
     }
     
-    a = h0;
-    b = h1;
-    c = h2;
-    d = h3;
+    a = h[0];
+    b = h[1];
+    c = h[2];
+    d = h[3];
     
     // Perform the actual calculations, process as 32-bit chunks
     ptr = (unsigned int *)msg;
@@ -92,21 +91,30 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, int 
     tmp = d;
     d = c;
     c = b;
-    rot((a + f + k[i] + ptr[g]), r[i], rotation);
-    b = b + *rotation;
+    b = b + rot((a + f + k[i] + ptr[g]), r[i]);
     a = tmp;
     
     // Add the subresults to the hash    
-    h0 = h0 + a;
-    h1 = h1 + b;
-    h2 = h2 + c;
-    h3 = h3 + d;
+    h[0] = h[0] + a;
+    h[1] = h[1] + b;
+    h[2] = h[2] + c;
+    h[3] = h[3] + d;
+    
+    // Check the result
+    chrPtr = (unsigned char *)h;
+    tmp = 1;
+    for (i = 0; i < DIGEST_LEN; i++) {
+        tmp = tmp & (chrPtr[i] == digest[i]);
+    }
+    barrier(CLK_GLOBAL_MEM_FENCE);
+    // WTF
+    *outcome = tmp;
 }
 
 __kernel void processData(__global unsigned char *input, unsigned int dataSize, __global unsigned char *output, unsigned int outputSize) {
     __private unsigned char msg[MAX_MSG_LEN];
     __private unsigned char digest[DIGEST_LEN];
-    __private int outcome[1];
+    __private unsigned int outcome[1] = { 0 };
     crack(msg, 12, digest, outcome);
     // WARNING: Below will not run on all devices
     //printf("%02x%02x%02x%02x%02x%02x%02x%02x\n", msg[56], msg[57], msg[58], msg[59], msg[60], msg[61], msg[62], msg[63]);
