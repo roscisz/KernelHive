@@ -55,4 +55,30 @@
             <kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
 	</kh:entry>
+	<kh:entry type="expandable" description="Expandable Graph Node">
+		<kh:kernel id="2f227f1c-b8e2-414f-8439-e2237613488f" name="partition-kernel.cl" src="/kernels/expandable/partition-kernel.cl">
+			<kh:property key="numberOfDimensions" value="1"/>
+            <kh:property key="globalSizes" value="1"/>
+            <kh:property key="localSizes" value="1"/>
+            <kh:property key="offsets" value="0"/>
+            <kh:property key="outputSize" value="1024"/>
+            <kh:property key="role" value="partition"/>
+		</kh:kernel>
+		<kh:kernel id="a2a27ee8-f620-4860-9a0c-2bcb0339ab8a" name="merge-kernel.cl" src="/kernels/expandable/merge-kernel.cl">
+			<kh:property key="numberOfDimensions" value="1"/>
+            <kh:property key="globalSizes" value="1"/>
+            <kh:property key="localSizes" value="1"/>
+            <kh:property key="offsets" value="0"/>
+            <kh:property key="outputSize" value="1024"/>
+            <kh:property key="role" value="merge"/>
+		</kh:kernel>
+		<kh:kernel id="b9d587fd-ee13-4021-878e-9a2a549a5ea7" name="process-kernel.cl" src="/kernels/expandable/process-kernel.cl">
+			<kh:property key="numberOfDimensions" value="1"/>
+            <kh:property key="globalSizes" value="1"/>
+            <kh:property key="localSizes" value="1"/>
+            <kh:property key="offsets" value="0"/>
+            <kh:property key="outputSize" value="1024"/>
+            <kh:property key="role" value="process"/>
+		</kh:kernel>
+	</kh:entry>
 </kh:repository>

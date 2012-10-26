@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project name="hive-jcommon" default="jar"	basedir=".">
 	
 	<!-- set global properties for this build -->

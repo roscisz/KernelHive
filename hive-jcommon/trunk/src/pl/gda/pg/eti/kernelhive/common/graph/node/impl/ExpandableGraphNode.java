@@ -2,24 +2,43 @@ package pl.gda.pg.eti.kernelhive.common.graph.node.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
-public class MergerGraphNode extends GenericGraphNode {
+/**
+ * 
+ * @author marcel
+ * 
+ */
+public class ExpandableGraphNode extends GenericGraphNode {
 
-	private static final long serialVersionUID = 3335110581355051053L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -946871554482056013L;
 
-	public MergerGraphNode(final String id) {
+	public ExpandableGraphNode(final String id) {
 		super(id);
-		type = GraphNodeType.MERGER;
+		type = GraphNodeType.EXPANDABLE;
 	}
 
-	public MergerGraphNode(final String id, final String name) {
+	public ExpandableGraphNode(final String id, final String name) {
 		super(id, name);
-		type = GraphNodeType.MERGER;
+		type = GraphNodeType.EXPANDABLE;
+	}
+
+	public ExpandableGraphNode(final String id, final String name,
+			final List<IGraphNode> followingNodes,
+			final List<IGraphNode> childrenNodes,
+			final List<IGraphNode> previousNodes,
+			final Map<String, Object> properties) {
+		super(id, name, followingNodes, childrenNodes, previousNodes,
+				properties);
+		type = GraphNodeType.EXPANDABLE;
 	}
 
 	@Override
@@ -33,7 +52,11 @@ public class MergerGraphNode extends GenericGraphNode {
 
 	@Override
 	public boolean canAddPreviousNode(final IGraphNode node) {
-		return true;
+		if (previousNodes.size() == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -51,11 +74,11 @@ public class MergerGraphNode extends GenericGraphNode {
 					+ "' cannot has children nodes",
 					ValidationResultType.INVALID));
 		}
-		// previous nodes? (must be at least 1)
-		if (!(getPreviousNodes() == null || getPreviousNodes().size() > 1)) {
+		// previous nodes? (must be 1 or 0)
+		if (!(getPreviousNodes() != null && getPreviousNodes().size() <= 1)) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
-					+ "' cannot has less then 1 previous node",
+					+ "' cannot has more then 1 previous node",
 					ValidationResultType.INVALID));
 		}
 		// following nodes? (must be 1 or 0)
@@ -74,4 +97,5 @@ public class MergerGraphNode extends GenericGraphNode {
 		}
 		return results;
 	}
+
 }

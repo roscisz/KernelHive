@@ -3,35 +3,31 @@ package pl.gda.pg.eti.kernelhive.common.graph.node;
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public enum GraphNodeType {
-	GENERIC("generic"), 
-	MERGER("DataMerger"), 
-	PARTITIONER("DataPartitioner"), 
-	PROCESSOR("DataProcessor"), 
-	COMPOSITE("composite"), 
-	MASTERSLAVE("masterslave"), 
-	DAC("dac");
-	
+	GENERIC("generic"), MERGER("DataMerger"), PARTITIONER("DataPartitioner"), PROCESSOR(
+			"DataProcessor"), COMPOSITE("composite"), MASTERSLAVE("masterslave"), DAC(
+			"dac"), EXPANDABLE("expandable");
+
 	private String type;
-	
-	GraphNodeType(String str){
+
+	GraphNodeType(final String str) {
 		this.type = str;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return type;
 	}
-	
-	public static GraphNodeType getType(String type){
-		GraphNodeType[] types = GraphNodeType.values();
-		for(GraphNodeType t : types){
-			if(t.toString().equalsIgnoreCase(type)){
+
+	public static GraphNodeType getType(final String type) {
+		final GraphNodeType[] types = GraphNodeType.values();
+		for (final GraphNodeType t : types) {
+			if (t.toString().equalsIgnoreCase(type)) {
 				return t;
 			}
 		}
 		return null;
-	}	
+	}
 }
