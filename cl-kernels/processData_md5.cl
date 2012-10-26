@@ -46,7 +46,7 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     // Initial values for the results
     unsigned int h[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
     // Temporary results holders
-    __private unsigned int a, b, c, d, e, f, g;
+    unsigned int a, b, c, d, e, f, g;
     
     // Reset the result:
     *outcome = 0;
@@ -65,6 +65,7 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
         tmp--;
     }
     
+    // Set initial values
     a = h[0];
     b = h[1];
     c = h[2];
@@ -72,42 +73,42 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     
     // Perform the actual calculations, process as 32-bit chunks
     ptr = (unsigned int *)msg;
-    for (i = 0; i < 16; i++) {
-        f = (b & c) | ((~b) & d);
-        g = i;
+    for (i = 0; i < 63; i++) {
+        if ( i >= 0 && i <= 15) {
+            f = (b & c) | ((~b) & d);
+            g = i;
+        }
+        if ( i >= 16 && i <= 31) {
+            f = (d & b) | ((~d) & c);
+            g = (5*i + 1) % 16;
+        }
+        if ( i >= 32 && i <= 47) {
+            f = b ^ c ^ d;
+            g = (3*i + 5) % 16;
+        }
+        if ( i >= 48 && i <= 63) {
+            f = c ^ (b | (~d));
+            g = (7*i) % 16;
+        }
+        tmp = d;
+        d = c;
+        c = b;
+        b = b + rot((a + f + k[i] + ptr[g]), r[i]);
+        a = tmp;
     }
-    for (; i < 32; i++) {
-        f = (d & b) | ((~d) & c);
-        g = (5*i + 1) % 16;
-    }
-    for (; i < 47; i++) {
-        f = b ^ c ^ d;
-        g = (3*i + 5) % 16;
-    }
-    for (; i < 64; i++) {
-        f = c ^ (b | (~d));
-        g = (7*i) % 16;
-    }
-    tmp = d;
-    d = c;
-    c = b;
-    b = b + rot((a + f + k[i] + ptr[g]), r[i]);
-    a = tmp;
     
     // Add the subresults to the hash    
-    h[0] = h[0] + a;
-    h[1] = h[1] + b;
-    h[2] = h[2] + c;
-    h[3] = h[3] + d;
+    h[0] += a;
+    h[1] += b;
+    h[2] += c;
+    h[3] += d;
     
     // Check the result
     chrPtr = (unsigned char *)h;
     tmp = 1;
     for (i = 0; i < DIGEST_LEN; i++) {
-        tmp = tmp & (chrPtr[i] == digest[i]);
+        tmp &= (chrPtr[i] == digest[i]);
     }
-    barrier(CLK_GLOBAL_MEM_FENCE);
-    // WTF
     *outcome = tmp;
 }
 
