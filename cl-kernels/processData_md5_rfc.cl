@@ -82,8 +82,7 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     // Initial values for the results
     unsigned int h[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
     // Temporary results holders
-    unsigned int a, b, c, d, t;
-    
+    unsigned int a, b, c, d, t;  
     
     // Reset the result:
     *outcome = 0;
@@ -98,7 +97,7 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     // Append the original msg length to the end of the msg
     tmp = 0;
     for (; i < MAX_MSG_LEN; i++) {
-        msg[i] = (msgLen >> (8 * tmp)) & 0xFF;
+        msg[i] = ((8 * msgLen) >> (8 * tmp)) & 0xFF;
         tmp++;
     }
     
@@ -109,7 +108,7 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     d = h[3];    
     
     // Perform the actual calculations, process as 32-bit chunks
-    X = (unsigned int *)msg;
+    X = (unsigned int *)msg;    
     
 #define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32 - (n))))
 
@@ -243,6 +242,6 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     crack(msg, 3, digest, outcome);
     // WARNING: Below will not run on all devices
     //printf("%02x%02x%02x%02x%02x%02x%02x%02x\n", msg[56], msg[57], msg[58], msg[59], msg[60], msg[61], msg[62], msg[63]);
-    //printf("%d", *outcome);
+    //printf("\n\noutcome = %d\n\n", *outcome);
 }
 
