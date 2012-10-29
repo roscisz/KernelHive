@@ -19,29 +19,30 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 
-import javax.swing.JTree;
-import javax.swing.JScrollPane;
-
 /**
  * Main Frame of the Application
+ * 
  * @author mschally
  * @version 1.0
  */
 public class MainFrame extends JFrame {
-	
+
 	private static final long serialVersionUID = -2018750030834289098L;
-	private static ResourceBundle BUNDLE = AppConfiguration.getInstance().getLanguageResourceBundle();
+	private static ResourceBundle BUNDLE = AppConfiguration.getInstance()
+			.getLanguageResourceBundle();
 	private static Logger LOG = Logger.getLogger(MainFrame.class.getName());
-	
+
 	private JPanel contentPane;
 	private JMenuBar mainMenuBar;
 	private JMenu mnFile;
@@ -110,18 +111,17 @@ public class MainFrame extends JFrame {
 	private JMenuItem mntmWorkflowEditor;
 	private JMenuItem mntmWorkflowExecutions;
 	private JScrollPane repositoryScrollPane;
-	
+
 	private MainFrameController controller;
 	private JMenuItem mntmInfrastructureBrowser;
 	private JMenuItem mntmResourceMonitor;
-	
 
 	private void initUI() {
-		setTitle(BUNDLE.getString("MainFrame.this.title"));  
+		setTitle(BUNDLE.getString("MainFrame.this.title"));
 		setPreferredSize(new Dimension(800, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1024, 768);
-		
+
 		contentPane = new JPanel();
 		contentPane.setPreferredSize(new Dimension(800, 600));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -130,468 +130,533 @@ public class MainFrame extends JFrame {
 		centerPane = new JSplitPane();
 		contentPane.add(centerPane, BorderLayout.CENTER);
 		centerPane.setDividerLocation(200);
-		
+
 		initMenu();
 		initStatusbar();
 		initSidePane();
 		initToolbar();
 		initWorkspace();
 	}
-	
-	private void initFileMenu(){
+
+	private void initFileMenu() {
 		mnFile = new JMenu(BUNDLE.getString("MainFrame.mnFile.text"));
 		mnFile.setMnemonic(KeyEvent.VK_F);
 		mainMenuBar.add(mnFile);
 
-		mntmNew = new JMenuItem(BUNDLE.getString("MainFrame.mntmNew.text"));  
-		mntmNew.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/New16.gif")));
-		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+		mntmNew = new JMenuItem(BUNDLE.getString("MainFrame.mntmNew.text"));
+		mntmNew.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/New16.gif")));
+		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
+				InputEvent.CTRL_DOWN_MASK));
 		mntmNew.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.newProject();
 			}
 		});
 		mnFile.add(mntmNew);
 
-		mntmOpen = new JMenuItem(BUNDLE.getString("MainFrame.mntmOpen.text"));  
-		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-		mntmOpen.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Open16.gif")));
+		mntmOpen = new JMenuItem(BUNDLE.getString("MainFrame.mntmOpen.text"));
+		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
+				InputEvent.CTRL_MASK));
+		mntmOpen.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Open16.gif")));
 		mntmOpen.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.openProject();
 			}
 		});
 		mnFile.add(mntmOpen);
-		
+
 		separator = new JSeparator();
 		mnFile.add(separator);
 
-		mntmClose = new JMenuItem(BUNDLE.getString("MainFrame.mntmClose.text"));  
-		mntmClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
+		mntmClose = new JMenuItem(BUNDLE.getString("MainFrame.mntmClose.text"));
+		mntmClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
+				InputEvent.CTRL_MASK));
 		mntmClose.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.closeTab(null);
 			}
 		});
 		mnFile.add(mntmClose);
 
-		mntmCloseAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmCloseAll.text")); 
+		mntmCloseAll = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmCloseAll.text"));
 		mntmCloseAll.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.closeProject();				
+			public void actionPerformed(final ActionEvent arg0) {
+				controller.closeProject();
 			}
 		});
 		mnFile.add(mntmCloseAll);
-		
+
 		separator_1 = new JSeparator();
 		mnFile.add(separator_1);
 
-		mntmSave = new JMenuItem(BUNDLE.getString("MainFrame.mntmSave.text"));  
-		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-		mntmSave.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Save16.gif")));
+		mntmSave = new JMenuItem(BUNDLE.getString("MainFrame.mntmSave.text"));
+		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_MASK));
+		mntmSave.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Save16.gif")));
 		mntmSave.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.saveTab(null);
-				
+
 			}
 		});
 		mnFile.add(mntmSave);
 
-		mntmSaveAs = new JMenuItem(BUNDLE.getString("MainFrame.mntmSaveAs.text"));  
-		mntmSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
-		mntmSaveAs.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/SaveAs16.gif")));
+		mntmSaveAs = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmSaveAs.text"));
+		mntmSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		mntmSaveAs.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/SaveAs16.gif")));
 		mntmSaveAs.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.saveTabAs(null);				
+			public void actionPerformed(final ActionEvent e) {
+				controller.saveTabAs(null);
 			}
 		});
 		mnFile.add(mntmSaveAs);
 
-		mntmSaveAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmSaveAll.text"));  
-		mntmSaveAll.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/SaveAll16.gif")));
+		mntmSaveAll = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmSaveAll.text"));
+		mntmSaveAll.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/SaveAll16.gif")));
 		mntmSaveAll.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.saveAll();
 			}
 		});
 		mnFile.add(mntmSaveAll);
-		
+
 		separator_2 = new JSeparator();
 		mnFile.add(separator_2);
 
-		mntmRefresh = new JMenuItem(BUNDLE.getString("MainFrame.mntmRefresh.text"));  
-		mntmRefresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
-		mntmRefresh.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Refresh16.gif")));
+		mntmRefresh = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmRefresh.text"));
+		mntmRefresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+				InputEvent.CTRL_MASK));
+		mntmRefresh.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Refresh16.gif")));
 		mntmRefresh.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.refresh();
 			}
 		});
 		mnFile.add(mntmRefresh);
-		
+
 		separator_3 = new JSeparator();
 		mnFile.add(separator_3);
 
-		mntmLogin = new JMenuItem(BUNDLE.getString("MainFrame.mntmLogin.text"));  
-		mntmLogin.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Import16.gif")));
+		mntmLogin = new JMenuItem(BUNDLE.getString("MainFrame.mntmLogin.text"));
+		mntmLogin.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Import16.gif")));
 		mntmLogin.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.loginUser();
 			}
 		});
 		mnFile.add(mntmLogin);
 
-		mntmLogout = new JMenuItem(BUNDLE.getString("MainFrame.mntmLogout.text"));  
-		mntmLogout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Export16.gif")));
+		mntmLogout = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmLogout.text"));
+		mntmLogout.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Export16.gif")));
 		mntmLogout.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.logoutUser();
 			}
 		});
 		mnFile.add(mntmLogout);
-		
+
 		separator_4 = new JSeparator();
 		mnFile.add(separator_4);
 
-		mntmExit = new JMenuItem(BUNDLE.getString("MainFrame.mntmExit.text"));  
-		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
+		mntmExit = new JMenuItem(BUNDLE.getString("MainFrame.mntmExit.text"));
+		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+				InputEvent.CTRL_MASK));
 		mntmExit.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.exit();
 			}
 		});
 		mnFile.add(mntmExit);
 
 	}
-	
-	private void initEditMenu(){
-		mnEdit = new JMenu(BUNDLE.getString("MainFrame.mnEdit.text"));  
+
+	private void initEditMenu() {
+		mnEdit = new JMenu(BUNDLE.getString("MainFrame.mnEdit.text"));
 		mnEdit.setMnemonic(KeyEvent.VK_E);
 		mainMenuBar.add(mnEdit);
 
-		mntmUndo = new JMenuItem(BUNDLE.getString("MainFrame.mntmUndo.text"));  
-		mntmUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
-		mntmUndo.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Undo16.gif")));
+		mntmUndo = new JMenuItem(BUNDLE.getString("MainFrame.mntmUndo.text"));
+		mntmUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+				InputEvent.CTRL_MASK));
+		mntmUndo.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Undo16.gif")));
 		mntmUndo.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.undoAction();
-				
+
 			}
 		});
 		mnEdit.add(mntmUndo);
 
-		mntmRedo = new JMenuItem(BUNDLE.getString("MainFrame.mntmRedo.text"));  
-		mntmRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
-		mntmRedo.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Redo16.gif")));
+		mntmRedo = new JMenuItem(BUNDLE.getString("MainFrame.mntmRedo.text"));
+		mntmRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+				InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		mntmRedo.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Redo16.gif")));
 		mntmRedo.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.redoAction();				
+			public void actionPerformed(final ActionEvent e) {
+				controller.redoAction();
 			}
 		});
 		mnEdit.add(mntmRedo);
-		
+
 		separator_5 = new JSeparator();
 		mnEdit.add(separator_5);
 
-		mntmCut = new JMenuItem(BUNDLE.getString("MainFrame.mntmCut.text"));  
-		mntmCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-		mntmCut.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Cut16.gif")));
+		mntmCut = new JMenuItem(BUNDLE.getString("MainFrame.mntmCut.text"));
+		mntmCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
+				InputEvent.CTRL_MASK));
+		mntmCut.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Cut16.gif")));
 		mntmCut.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.cut();				
+			public void actionPerformed(final ActionEvent e) {
+				controller.cut();
 			}
 		});
 		mnEdit.add(mntmCut);
 
-		mntmCopy = new JMenuItem(BUNDLE.getString("MainFrame.mntmCopy.text"));  
-		mntmCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
-		mntmCopy.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Copy16.gif")));
+		mntmCopy = new JMenuItem(BUNDLE.getString("MainFrame.mntmCopy.text"));
+		mntmCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+				InputEvent.CTRL_MASK));
+		mntmCopy.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Copy16.gif")));
 		mntmCopy.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.copy();
 			}
 		});
 		mnEdit.add(mntmCopy);
 
-		mntmPaste = new JMenuItem(BUNDLE.getString("MainFrame.mntmPaste.text"));  
-		mntmPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
-		mntmPaste.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Paste16.gif")));
+		mntmPaste = new JMenuItem(BUNDLE.getString("MainFrame.mntmPaste.text"));
+		mntmPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+				InputEvent.CTRL_MASK));
+		mntmPaste.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Paste16.gif")));
 		mntmPaste.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.paste();
 			}
 		});
 		mnEdit.add(mntmPaste);
-		
+
 		separator_6 = new JSeparator();
 		mnEdit.add(separator_6);
 
-		mntmDelete = new JMenuItem(BUNDLE.getString("MainFrame.mntmDelete.text"));  
-		mntmDelete.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Delete16.gif")));
+		mntmDelete = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmDelete.text"));
+		mntmDelete.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Delete16.gif")));
 		mntmDelete.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.deleteSelected();
 			}
 		});
 		mnEdit.add(mntmDelete);
-		
+
 		separator_7 = new JSeparator();
 		mnEdit.add(separator_7);
 
-		mntmSelectAll = new JMenuItem(BUNDLE.getString("MainFrame.mntmSelectAll.text"));  
-		mntmSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
+		mntmSelectAll = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmSelectAll.text"));
+		mntmSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+				InputEvent.CTRL_MASK));
 		mntmSelectAll.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.selectAll();
 			}
 		});
 		mnEdit.add(mntmSelectAll);
-		
+
 		separator_8 = new JSeparator();
 		mnEdit.add(separator_8);
 
-		mntmPreferences = new JMenuItem(BUNDLE.getString("MainFrame.mntmPreferences.text")); //$NON-NLS-1$
-		mntmPreferences.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Preferences16.gif")));
+		mntmPreferences = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmPreferences.text")); //$NON-NLS-1$
+		mntmPreferences
+				.setIcon(new ImageIcon(
+						MainFrame.class
+								.getResource("/toolbarButtonGraphics/general/Preferences16.gif")));
 		mntmPreferences.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.showPreferences();
 			}
 		});
 		mnEdit.add(mntmPreferences);
 	}
 
-	private void initViewMenu(){
-		mnView = new JMenu(BUNDLE.getString("MainFrame.mnView.text"));  
+	private void initViewMenu() {
+		mnView = new JMenu(BUNDLE.getString("MainFrame.mnView.text"));
 		mnView.setMnemonic(KeyEvent.VK_V);
 		mainMenuBar.add(mnView);
 
-		chckbxmntmToolbox = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmToolbox.text"));  
+		chckbxmntmToolbox = new JCheckBoxMenuItem(
+				BUNDLE.getString("MainFrame.chckbxmntmToolbox.text"));
 		chckbxmntmToolbox.setSelected(true);
 		chckbxmntmToolbox.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.displayToolbox(chckbxmntmToolbox.getState());
 			}
 		});
 		mnView.add(chckbxmntmToolbox);
 
-		chckbxmntmStatusbar = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmStatusbar.text"));  
+		chckbxmntmStatusbar = new JCheckBoxMenuItem(
+				BUNDLE.getString("MainFrame.chckbxmntmStatusbar.text"));
 		chckbxmntmStatusbar.setSelected(true);
 		chckbxmntmStatusbar.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.displayStatusbar(chckbxmntmStatusbar.getState());				
+			public void actionPerformed(final ActionEvent e) {
+				controller.displayStatusbar(chckbxmntmStatusbar.getState());
 			}
 		});
 		mnView.add(chckbxmntmStatusbar);
 
-		chckbxmntmSidePanel = new JCheckBoxMenuItem(BUNDLE.getString("MainFrame.chckbxmntmSidePanel.text"));  
+		chckbxmntmSidePanel = new JCheckBoxMenuItem(
+				BUNDLE.getString("MainFrame.chckbxmntmSidePanel.text"));
 		chckbxmntmSidePanel.setSelected(true);
 		chckbxmntmSidePanel.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.displaySidePanel(chckbxmntmSidePanel.getState());				
+			public void actionPerformed(final ActionEvent e) {
+				controller.displaySidePanel(chckbxmntmSidePanel.getState());
 			}
 		});
 		mnView.add(chckbxmntmSidePanel);
-		
+
 		separator_9 = new JSeparator();
 		mnView.add(separator_9);
 
-		mntmFullscreen = new JMenuItem(BUNDLE.getString("MainFrame.mntmFullscreen.text"));  
-		mntmFullscreen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
+		mntmFullscreen = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmFullscreen.text"));
+		mntmFullscreen.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_F11, 0));
 		mnView.add(mntmFullscreen);
 	}
-	
-	private void initSearchMenu(){
-		mnSearch = new JMenu(BUNDLE.getString("MainFrame.mnSearch.text"));  
+
+	private void initSearchMenu() {
+		mnSearch = new JMenu(BUNDLE.getString("MainFrame.mnSearch.text"));
 		mnSearch.setMnemonic(KeyEvent.VK_S);
 		mainMenuBar.add(mnSearch);
 
-		mntmFindreplace = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindreplace.text"));  
-		mntmFindreplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
-		mntmFindreplace.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Find16.gif")));
+		mntmFindreplace = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmFindreplace.text"));
+		mntmFindreplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+				InputEvent.CTRL_MASK));
+		mntmFindreplace.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/general/Find16.gif")));
 		mntmFindreplace.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.openFindReplaceDialog();
 			}
 		});
 		mnSearch.add(mntmFindreplace);
 
-//		mntmFindNext = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindNext.text"));  
-//		mntmFindNext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
-//		mnSearch.add(mntmFindNext);
-//
-//		mntmFindPrevious = new JMenuItem(BUNDLE.getString("MainFrame.mntmFindPrevious.text"));  
-//		mntmFindPrevious.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
-//		mnSearch.add(mntmFindPrevious);
-		
+		// mntmFindNext = new
+		// JMenuItem(BUNDLE.getString("MainFrame.mntmFindNext.text"));
+		// mntmFindNext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+		// InputEvent.CTRL_MASK));
+		// mnSearch.add(mntmFindNext);
+		//
+		// mntmFindPrevious = new
+		// JMenuItem(BUNDLE.getString("MainFrame.mntmFindPrevious.text"));
+		// mntmFindPrevious.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+		// InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		// mnSearch.add(mntmFindPrevious);
+
 		separator_10 = new JSeparator();
 		mnSearch.add(separator_10);
-		
-		mntmClearHighlight = new JMenuItem(BUNDLE.getString("MainFrame.mntmClearHighlight.text"));  
-		mntmClearHighlight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+
+		mntmClearHighlight = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmClearHighlight.text"));
+		mntmClearHighlight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
+				InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmClearHighlight.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.clearHighlight();
 			}
 		});
 		mnSearch.add(mntmClearHighlight);
-		
+
 		separator_11 = new JSeparator();
 		mnSearch.add(separator_11);
 
-		mntmGoToLine = new JMenuItem(BUNDLE.getString("MainFrame.mntmGoToLine.text"));  
-		mntmGoToLine.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
+		mntmGoToLine = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmGoToLine.text"));
+		mntmGoToLine.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
+				InputEvent.CTRL_MASK));
 		mntmGoToLine.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.openGoToLineDialog();
 			}
 		});
 		mnSearch.add(mntmGoToLine);
 	}
-	
-	private void initProjectMenu(){
-		mnProject = new JMenu(BUNDLE.getString("MainFrame.mnProject.text"));  
+
+	private void initProjectMenu() {
+		mnProject = new JMenu(BUNDLE.getString("MainFrame.mnProject.text"));
 		mnProject.setMnemonic(KeyEvent.VK_P);
 		mainMenuBar.add(mnProject);
-		
-		mntmProperties = new JMenuItem(BUNDLE.getString("MainFrame.mntmProperties.text"));
-		mntmProperties.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Properties16.gif")));
+
+		mntmProperties = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmProperties.text"));
+		mntmProperties
+				.setIcon(new ImageIcon(
+						MainFrame.class
+								.getResource("/toolbarButtonGraphics/general/Properties16.gif")));
 		mntmProperties.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.showProjectProperties();
 			}
 		});
 		mnProject.add(mntmProperties);
 	}
-	
-	private void initToolsMenu(){
-		mnTools = new JMenu(BUNDLE.getString("MainFrame.mnTools.text"));  
+
+	private void initToolsMenu() {
+		mnTools = new JMenu(BUNDLE.getString("MainFrame.mnTools.text"));
 		mnTools.setMnemonic(KeyEvent.VK_T);
 		mainMenuBar.add(mnTools);
-		
-		mntmWorkflowEditor = new JMenuItem(BUNDLE.getString("MainFrame.mntmWorkflowEditor.text"));
+
+		mntmWorkflowEditor = new JMenuItem(
+				BUNDLE.getString("MainFrame.mntmWorkflowEditor.text"));
 		mntmWorkflowEditor.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.openWorkflowEditor();
 			}
 		});
 		mnTools.add(mntmWorkflowEditor);
-		
+
 		mntmWorkflowExecutions = new JMenuItem("Workflow Executions");
 		mntmWorkflowExecutions.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.openWorkflowViewer();
 			}
 		});
 		mnTools.add(mntmWorkflowExecutions);
-		
+
 		mntmInfrastructureBrowser = new JMenuItem("Infrastructure Browser");
 		mntmInfrastructureBrowser.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.openInfrastructureBrowser();
 			}
 		});
 		mnTools.add(mntmInfrastructureBrowser);
-		
+
 		mntmResourceMonitor = new JMenuItem("Resource Monitor");
 		mntmResourceMonitor.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.openResourceMonitor();
 			}
 		});
 		mnTools.add(mntmResourceMonitor);
 	}
-	
-	private void initHelpMenu(){
-		mnHelp = new JMenu(BUNDLE.getString("MainFrame.mnHelp.text"));  
+
+	private void initHelpMenu() {
+		mnHelp = new JMenu(BUNDLE.getString("MainFrame.mnHelp.text"));
 		mnHelp.setMnemonic(KeyEvent.VK_H);
 		mainMenuBar.add(mnHelp);
 
-//		mntmContents = new JMenuItem(BUNDLE.getString("MainFrame.mntmContents.text"));  
-//		mntmContents.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-//		mntmContents.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/About16.gif")));
-//		mntmContents.addActionListener(new ActionListener() {
-//			
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
-//		mnHelp.add(mntmContents);
+		// mntmContents = new
+		// JMenuItem(BUNDLE.getString("MainFrame.mntmContents.text"));
+		// mntmContents.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,
+		// 0));
+		// mntmContents.setIcon(new
+		// ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/About16.gif")));
+		// mntmContents.addActionListener(new ActionListener() {
+		//
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		// });
+		// mnHelp.add(mntmContents);
 
-		mntmAbout = new JMenuItem(BUNDLE.getString("MainFrame.mntmAbout.text"));  
-		mntmAbout.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/general/Information16.gif")));
+		mntmAbout = new JMenuItem(BUNDLE.getString("MainFrame.mntmAbout.text"));
+		mntmAbout
+				.setIcon(new ImageIcon(
+						MainFrame.class
+								.getResource("/toolbarButtonGraphics/general/Information16.gif")));
 		mntmAbout.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.openAboutDialog();
 			}
 		});
 		mnHelp.add(mntmAbout);
 	}
 
-	private void initMenu(){
+	private void initMenu() {
 		mainMenuBar = new JMenuBar();
 		setJMenuBar(mainMenuBar);
 
@@ -603,72 +668,81 @@ public class MainFrame extends JFrame {
 		initToolsMenu();
 		initHelpMenu();
 	}
-	
-	private void initWorkspace(){
+
+	private void initWorkspace() {
 		workspacePane = new JTabbedPane(JTabbedPane.TOP);
 		workspacePane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 		centerPane.setRightComponent(workspacePane);
 	}
-	
-	private void initToolbar(){
+
+	private void initToolbar() {
 		toolBar = new JToolBar();
 		contentPane.add(toolBar, BorderLayout.NORTH);
-		
-		btnStart = new JButton(BUNDLE.getString("MainFrame.btnStart.text"));
-		btnStart.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Play24.gif")));
+
+		btnStart = new JButton("Start Execution");
+		btnStart.setEnabled(false);
+		btnStart.setToolTipText("Sends Workflow To Execution");
+		btnStart.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/media/Play24.gif")));
 		btnStart.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.startWorkflowGraphExecution();
 			}
 		});
 		toolBar.add(btnStart);
-		
-		btnPause = new JButton(BUNDLE.getString("MainFrame.btnPause.text")); 
-		btnPause.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Pause24.gif")));
+
+		btnPause = new JButton("Pause Execution");
+		btnPause.setEnabled(false);
+		btnPause.setToolTipText("Pauses Previously Started Execution");
+		btnPause.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/media/Pause24.gif")));
 		btnPause.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.pauseWorkflowGraphExecution();
 			}
 		});
 		toolBar.add(btnPause);
-		
-		btnStop = new JButton(BUNDLE.getString("MainFrame.btnStop.text"));
-		btnStop.setIcon(new ImageIcon(MainFrame.class.getResource("/toolbarButtonGraphics/media/Stop24.gif")));
+
+		btnStop = new JButton("Stop Execution");
+		btnStop.setEnabled(false);
+		btnStop.setToolTipText("Stops Previously Started Execution");
+		btnStop.setIcon(new ImageIcon(MainFrame.class
+				.getResource("/toolbarButtonGraphics/media/Stop24.gif")));
 		btnStop.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				controller.stopWorkflowGraphExecution();
 			}
 		});
 		toolBar.add(btnStop);
 	}
-	
-	private void initStatusbar(){
+
+	private void initStatusbar() {
 		statusbar = new JPanel();
 		contentPane.add(statusbar, BorderLayout.SOUTH);
 		statusbar.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		// TODO XXX what info in statusbar?
-//		JLabel label = new JLabel("New label");
-//		statusbar.add(label);
-//
-//		JLabel label_1 = new JLabel("New label");
-//		statusbar.add(label_1);
-//
-//		JLabel label_2 = new JLabel("New label");
-//		statusbar.add(label_2);
-//
-//		JLabel label_3 = new JLabel("New label");
-//		statusbar.add(label_3);
+		// JLabel label = new JLabel("New label");
+		// statusbar.add(label);
+		//
+		// JLabel label_1 = new JLabel("New label");
+		// statusbar.add(label_1);
+		//
+		// JLabel label_2 = new JLabel("New label");
+		// statusbar.add(label_2);
+		//
+		// JLabel label_3 = new JLabel("New label");
+		// statusbar.add(label_3);
 		//
 	}
-	
-	private void initSidePane(){
+
+	private void initSidePane() {
 		sidePane = new JTabbedPane(JTabbedPane.TOP);
 		centerPane.setLeftComponent(sidePane);
 		sidePane.setMinimumSize(new Dimension(180, 0));
@@ -676,18 +750,18 @@ public class MainFrame extends JFrame {
 		projectPanel = new JPanel();
 		sidePane.addTab("Project", null, projectPanel, null);
 		projectPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		projectScrollPane = new JScrollPane();
 		projectPanel.add(projectScrollPane, BorderLayout.CENTER);
-		
+
 		repositoryPanel = new JPanel();
-		sidePane.addTab("Repository", null, repositoryPanel, null);	
+		sidePane.addTab("Repository", null, repositoryPanel, null);
 		repositoryPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		repositoryScrollPane = new JScrollPane();
 		repositoryPanel.add(repositoryScrollPane, BorderLayout.CENTER);
 	}
-	
+
 	/**
 	 * Create the frame.
 	 */
@@ -700,12 +774,12 @@ public class MainFrame extends JFrame {
 	/*
 	 * getters and setters
 	 */
-	
+
 	public JMenuBar getMainMenuBar() {
 		return mainMenuBar;
 	}
 
-	public void setMainMenuBar(JMenuBar mainMenuBar) {
+	public void setMainMenuBar(final JMenuBar mainMenuBar) {
 		this.mainMenuBar = mainMenuBar;
 	}
 
@@ -713,7 +787,7 @@ public class MainFrame extends JFrame {
 		return mnFile;
 	}
 
-	public void setMnFile(JMenu mnFile) {
+	public void setMnFile(final JMenu mnFile) {
 		this.mnFile = mnFile;
 	}
 
@@ -721,7 +795,7 @@ public class MainFrame extends JFrame {
 		return mntmNew;
 	}
 
-	public void setMntmNew(JMenuItem mntmNew) {
+	public void setMntmNew(final JMenuItem mntmNew) {
 		this.mntmNew = mntmNew;
 	}
 
@@ -729,7 +803,7 @@ public class MainFrame extends JFrame {
 		return mntmOpen;
 	}
 
-	public void setMntmOpen(JMenuItem mntmOpen) {
+	public void setMntmOpen(final JMenuItem mntmOpen) {
 		this.mntmOpen = mntmOpen;
 	}
 
@@ -737,7 +811,7 @@ public class MainFrame extends JFrame {
 		return mntmClose;
 	}
 
-	public void setMntmClose(JMenuItem mntmClose) {
+	public void setMntmClose(final JMenuItem mntmClose) {
 		this.mntmClose = mntmClose;
 	}
 
@@ -745,7 +819,7 @@ public class MainFrame extends JFrame {
 		return mntmCloseAll;
 	}
 
-	public void setMntmCloseAll(JMenuItem mntmCloseAll) {
+	public void setMntmCloseAll(final JMenuItem mntmCloseAll) {
 		this.mntmCloseAll = mntmCloseAll;
 	}
 
@@ -753,7 +827,7 @@ public class MainFrame extends JFrame {
 		return mntmSave;
 	}
 
-	public void setMntmSave(JMenuItem mntmSave) {
+	public void setMntmSave(final JMenuItem mntmSave) {
 		this.mntmSave = mntmSave;
 	}
 
@@ -761,7 +835,7 @@ public class MainFrame extends JFrame {
 		return mntmSaveAs;
 	}
 
-	public void setMntmSaveAs(JMenuItem mntmSaveAs) {
+	public void setMntmSaveAs(final JMenuItem mntmSaveAs) {
 		this.mntmSaveAs = mntmSaveAs;
 	}
 
@@ -769,7 +843,7 @@ public class MainFrame extends JFrame {
 		return mntmSaveAll;
 	}
 
-	public void setMntmSaveAll(JMenuItem mntmSaveAll) {
+	public void setMntmSaveAll(final JMenuItem mntmSaveAll) {
 		this.mntmSaveAll = mntmSaveAll;
 	}
 
@@ -777,7 +851,7 @@ public class MainFrame extends JFrame {
 		return mntmRefresh;
 	}
 
-	public void setMntmRefresh(JMenuItem mntmRefresh) {
+	public void setMntmRefresh(final JMenuItem mntmRefresh) {
 		this.mntmRefresh = mntmRefresh;
 	}
 
@@ -785,7 +859,7 @@ public class MainFrame extends JFrame {
 		return mntmLogin;
 	}
 
-	public void setMntmImport(JMenuItem mntmImport) {
+	public void setMntmImport(final JMenuItem mntmImport) {
 		this.mntmLogin = mntmImport;
 	}
 
@@ -793,7 +867,7 @@ public class MainFrame extends JFrame {
 		return mntmLogout;
 	}
 
-	public void setMntmExport(JMenuItem mntmExport) {
+	public void setMntmExport(final JMenuItem mntmExport) {
 		this.mntmLogout = mntmExport;
 	}
 
@@ -801,7 +875,7 @@ public class MainFrame extends JFrame {
 		return mntmExit;
 	}
 
-	public void setMntmExit(JMenuItem mntmExit) {
+	public void setMntmExit(final JMenuItem mntmExit) {
 		this.mntmExit = mntmExit;
 	}
 
@@ -809,7 +883,7 @@ public class MainFrame extends JFrame {
 		return mnEdit;
 	}
 
-	public void setMnEdit(JMenu mnEdit) {
+	public void setMnEdit(final JMenu mnEdit) {
 		this.mnEdit = mnEdit;
 	}
 
@@ -817,7 +891,7 @@ public class MainFrame extends JFrame {
 		return mntmUndo;
 	}
 
-	public void setMntmUndo(JMenuItem mntmUndo) {
+	public void setMntmUndo(final JMenuItem mntmUndo) {
 		this.mntmUndo = mntmUndo;
 	}
 
@@ -825,7 +899,7 @@ public class MainFrame extends JFrame {
 		return mntmRedo;
 	}
 
-	public void setMntmRedo(JMenuItem mntmRedo) {
+	public void setMntmRedo(final JMenuItem mntmRedo) {
 		this.mntmRedo = mntmRedo;
 	}
 
@@ -833,7 +907,7 @@ public class MainFrame extends JFrame {
 		return mntmCut;
 	}
 
-	public void setMntmCut(JMenuItem mntmCut) {
+	public void setMntmCut(final JMenuItem mntmCut) {
 		this.mntmCut = mntmCut;
 	}
 
@@ -841,7 +915,7 @@ public class MainFrame extends JFrame {
 		return mntmCopy;
 	}
 
-	public void setMntmCopy(JMenuItem mntmCopy) {
+	public void setMntmCopy(final JMenuItem mntmCopy) {
 		this.mntmCopy = mntmCopy;
 	}
 
@@ -849,7 +923,7 @@ public class MainFrame extends JFrame {
 		return mntmPaste;
 	}
 
-	public void setMntmPaste(JMenuItem mntmPaste) {
+	public void setMntmPaste(final JMenuItem mntmPaste) {
 		this.mntmPaste = mntmPaste;
 	}
 
@@ -857,7 +931,7 @@ public class MainFrame extends JFrame {
 		return mntmDelete;
 	}
 
-	public void setMntmDelete(JMenuItem mntmDelete) {
+	public void setMntmDelete(final JMenuItem mntmDelete) {
 		this.mntmDelete = mntmDelete;
 	}
 
@@ -865,7 +939,7 @@ public class MainFrame extends JFrame {
 		return mntmSelectAll;
 	}
 
-	public void setMntmSelectAll(JMenuItem mntmSelectAll) {
+	public void setMntmSelectAll(final JMenuItem mntmSelectAll) {
 		this.mntmSelectAll = mntmSelectAll;
 	}
 
@@ -873,7 +947,7 @@ public class MainFrame extends JFrame {
 		return mnView;
 	}
 
-	public void setMnView(JMenu mnView) {
+	public void setMnView(final JMenu mnView) {
 		this.mnView = mnView;
 	}
 
@@ -881,7 +955,7 @@ public class MainFrame extends JFrame {
 		return chckbxmntmToolbox;
 	}
 
-	public void setChckbxmntmToolbox(JCheckBoxMenuItem chckbxmntmToolbox) {
+	public void setChckbxmntmToolbox(final JCheckBoxMenuItem chckbxmntmToolbox) {
 		this.chckbxmntmToolbox = chckbxmntmToolbox;
 	}
 
@@ -889,7 +963,8 @@ public class MainFrame extends JFrame {
 		return chckbxmntmStatusbar;
 	}
 
-	public void setChckbxmntmStatusbar(JCheckBoxMenuItem chckbxmntmStatusbar) {
+	public void setChckbxmntmStatusbar(
+			final JCheckBoxMenuItem chckbxmntmStatusbar) {
 		this.chckbxmntmStatusbar = chckbxmntmStatusbar;
 	}
 
@@ -897,7 +972,8 @@ public class MainFrame extends JFrame {
 		return chckbxmntmSidePanel;
 	}
 
-	public void setChckbxmntmSidePanel(JCheckBoxMenuItem chckbxmntmSidePanel) {
+	public void setChckbxmntmSidePanel(
+			final JCheckBoxMenuItem chckbxmntmSidePanel) {
 		this.chckbxmntmSidePanel = chckbxmntmSidePanel;
 	}
 
@@ -905,7 +981,7 @@ public class MainFrame extends JFrame {
 		return mntmFullscreen;
 	}
 
-	public void setMntmFullscreen(JMenuItem mntmFullscreen) {
+	public void setMntmFullscreen(final JMenuItem mntmFullscreen) {
 		this.mntmFullscreen = mntmFullscreen;
 	}
 
@@ -913,7 +989,7 @@ public class MainFrame extends JFrame {
 		return mnSearch;
 	}
 
-	public void setMnSearch(JMenu mnSearch) {
+	public void setMnSearch(final JMenu mnSearch) {
 		this.mnSearch = mnSearch;
 	}
 
@@ -921,7 +997,7 @@ public class MainFrame extends JFrame {
 		return mntmFindreplace;
 	}
 
-	public void setMntmFindreplace(JMenuItem mntmFindreplace) {
+	public void setMntmFindreplace(final JMenuItem mntmFindreplace) {
 		this.mntmFindreplace = mntmFindreplace;
 	}
 
@@ -929,7 +1005,7 @@ public class MainFrame extends JFrame {
 		return mntmFindNext;
 	}
 
-	public void setMntmFindNext(JMenuItem mntmFindNext) {
+	public void setMntmFindNext(final JMenuItem mntmFindNext) {
 		this.mntmFindNext = mntmFindNext;
 	}
 
@@ -937,7 +1013,7 @@ public class MainFrame extends JFrame {
 		return mntmFindPrevious;
 	}
 
-	public void setMntmFindPrevious(JMenuItem mntmFindPrevious) {
+	public void setMntmFindPrevious(final JMenuItem mntmFindPrevious) {
 		this.mntmFindPrevious = mntmFindPrevious;
 	}
 
@@ -945,7 +1021,7 @@ public class MainFrame extends JFrame {
 		return mntmClearHighlight;
 	}
 
-	public void setMntmClearHighlight(JMenuItem mntmClearHighlight) {
+	public void setMntmClearHighlight(final JMenuItem mntmClearHighlight) {
 		this.mntmClearHighlight = mntmClearHighlight;
 	}
 
@@ -953,7 +1029,7 @@ public class MainFrame extends JFrame {
 		return mntmGoToLine;
 	}
 
-	public void setMntmGoToLine(JMenuItem mntmGoToLine) {
+	public void setMntmGoToLine(final JMenuItem mntmGoToLine) {
 		this.mntmGoToLine = mntmGoToLine;
 	}
 
@@ -961,7 +1037,7 @@ public class MainFrame extends JFrame {
 		return mnProject;
 	}
 
-	public void setMnProject(JMenu mnProject) {
+	public void setMnProject(final JMenu mnProject) {
 		this.mnProject = mnProject;
 	}
 
@@ -969,7 +1045,7 @@ public class MainFrame extends JFrame {
 		return mnTools;
 	}
 
-	public void setMnTools(JMenu mnTools) {
+	public void setMnTools(final JMenu mnTools) {
 		this.mnTools = mnTools;
 	}
 
@@ -977,7 +1053,7 @@ public class MainFrame extends JFrame {
 		return mnHelp;
 	}
 
-	public void setMnHelp(JMenu mnHelp) {
+	public void setMnHelp(final JMenu mnHelp) {
 		this.mnHelp = mnHelp;
 	}
 
@@ -985,7 +1061,7 @@ public class MainFrame extends JFrame {
 		return mntmContents;
 	}
 
-	public void setMntmContents(JMenuItem mntmContents) {
+	public void setMntmContents(final JMenuItem mntmContents) {
 		this.mntmContents = mntmContents;
 	}
 
@@ -993,7 +1069,7 @@ public class MainFrame extends JFrame {
 		return mntmAbout;
 	}
 
-	public void setMntmAbout(JMenuItem mntmAbout) {
+	public void setMntmAbout(final JMenuItem mntmAbout) {
 		this.mntmAbout = mntmAbout;
 	}
 
@@ -1001,7 +1077,7 @@ public class MainFrame extends JFrame {
 		return toolBar;
 	}
 
-	public void setToolBar(JToolBar toolBar) {
+	public void setToolBar(final JToolBar toolBar) {
 		this.toolBar = toolBar;
 	}
 
@@ -1009,7 +1085,7 @@ public class MainFrame extends JFrame {
 		return statusbar;
 	}
 
-	public void setStatusbar(JPanel statusbar) {
+	public void setStatusbar(final JPanel statusbar) {
 		this.statusbar = statusbar;
 	}
 
@@ -1017,7 +1093,7 @@ public class MainFrame extends JFrame {
 		return centerPane;
 	}
 
-	public void setCenterPane(JSplitPane centerPane) {
+	public void setCenterPane(final JSplitPane centerPane) {
 		this.centerPane = centerPane;
 	}
 
@@ -1025,7 +1101,7 @@ public class MainFrame extends JFrame {
 		return workspacePane;
 	}
 
-	public void setWorkspacePane(JTabbedPane workspacePane) {
+	public void setWorkspacePane(final JTabbedPane workspacePane) {
 		this.workspacePane = workspacePane;
 	}
 
@@ -1033,7 +1109,7 @@ public class MainFrame extends JFrame {
 		return projectPanel;
 	}
 
-	public void setProjectPanel(JPanel projectPanel) {
+	public void setProjectPanel(final JPanel projectPanel) {
 		this.projectPanel = projectPanel;
 	}
 
@@ -1041,7 +1117,7 @@ public class MainFrame extends JFrame {
 		return repositoryPanel;
 	}
 
-	public void setRepositoryPanel(JPanel repositoryPanel) {
+	public void setRepositoryPanel(final JPanel repositoryPanel) {
 		this.repositoryPanel = repositoryPanel;
 	}
 
@@ -1049,7 +1125,7 @@ public class MainFrame extends JFrame {
 		return mntmProperties;
 	}
 
-	public void setMntmProperties(JMenuItem mntmProperties) {
+	public void setMntmProperties(final JMenuItem mntmProperties) {
 		this.mntmProperties = mntmProperties;
 	}
 
@@ -1057,7 +1133,7 @@ public class MainFrame extends JFrame {
 		return btnStart;
 	}
 
-	public void setBtnStart(JButton btnStart) {
+	public void setBtnStart(final JButton btnStart) {
 		this.btnStart = btnStart;
 	}
 
@@ -1065,7 +1141,7 @@ public class MainFrame extends JFrame {
 		return btnPause;
 	}
 
-	public void setBtnPause(JButton btnPause) {
+	public void setBtnPause(final JButton btnPause) {
 		this.btnPause = btnPause;
 	}
 
@@ -1073,7 +1149,7 @@ public class MainFrame extends JFrame {
 		return btnStop;
 	}
 
-	public void setBtnStop(JButton btnStop) {
+	public void setBtnStop(final JButton btnStop) {
 		this.btnStop = btnStop;
 	}
 
@@ -1081,7 +1157,7 @@ public class MainFrame extends JFrame {
 		return sidePane;
 	}
 
-	public void setSidePane(JTabbedPane sidePane) {
+	public void setSidePane(final JTabbedPane sidePane) {
 		this.sidePane = sidePane;
 	}
 
@@ -1089,7 +1165,7 @@ public class MainFrame extends JFrame {
 		return mntmPreferences;
 	}
 
-	public void setMntmPreferences(JMenuItem mntmPreferences) {
+	public void setMntmPreferences(final JMenuItem mntmPreferences) {
 		this.mntmPreferences = mntmPreferences;
 	}
 
@@ -1097,7 +1173,7 @@ public class MainFrame extends JFrame {
 		return projectScrollPane;
 	}
 
-	public void setProjectScrollPane(JScrollPane projectScrollPane) {
+	public void setProjectScrollPane(final JScrollPane projectScrollPane) {
 		this.projectScrollPane = projectScrollPane;
 	}
 
@@ -1105,7 +1181,7 @@ public class MainFrame extends JFrame {
 		return projectTree;
 	}
 
-	public void setProjectTree(JTree projectTree) {
+	public void setProjectTree(final JTree projectTree) {
 		this.projectTree = projectTree;
 	}
 
@@ -1113,7 +1189,7 @@ public class MainFrame extends JFrame {
 		return controller;
 	}
 
-	public void setController(MainFrameController controller) {
+	public void setController(final MainFrameController controller) {
 		this.controller = controller;
 	}
 
@@ -1121,7 +1197,7 @@ public class MainFrame extends JFrame {
 		return repositoryList;
 	}
 
-	public void setRepositoryList(JList repositoryList) {
+	public void setRepositoryList(final JList repositoryList) {
 		this.repositoryList = repositoryList;
 	}
 
@@ -1129,7 +1205,7 @@ public class MainFrame extends JFrame {
 		return mntmWorkflowEditor;
 	}
 
-	public void setMntmWorkflowEditor(JMenuItem mntmWorkflowEditor) {
+	public void setMntmWorkflowEditor(final JMenuItem mntmWorkflowEditor) {
 		this.mntmWorkflowEditor = mntmWorkflowEditor;
 	}
 
@@ -1137,7 +1213,7 @@ public class MainFrame extends JFrame {
 		return repositoryScrollPane;
 	}
 
-	public void setRepositoryScrollPane(JScrollPane repositoryScrollPane) {
+	public void setRepositoryScrollPane(final JScrollPane repositoryScrollPane) {
 		this.repositoryScrollPane = repositoryScrollPane;
-	}	
+	}
 }

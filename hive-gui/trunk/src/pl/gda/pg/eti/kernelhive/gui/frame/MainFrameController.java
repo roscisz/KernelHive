@@ -64,7 +64,7 @@ public class MainFrameController {
 	private static ResourceBundle BUNDLE = AppConfiguration.getInstance()
 			.getLanguageResourceBundle();
 
-	private MainFrame frame;
+	private final MainFrame frame;
 	private IProject project;
 	private int newFileCounter;
 
@@ -74,14 +74,14 @@ public class MainFrameController {
 	 * @param frame
 	 *            {@link MainFrame}
 	 */
-	public MainFrameController(MainFrame frame) {
+	public MainFrameController(final MainFrame frame) {
 		this.frame = frame;
 		newFileCounter = 1;
 	}
 
-	private void addTabToWorkspacePane(JTabContent tab) {
+	private void addTabToWorkspacePane(final JTabContent tab) {
 		frame.getWorkspacePane().addTab(tab.getName(), tab);
-		int index = frame.getWorkspacePane().getTabCount() - 1;
+		final int index = frame.getWorkspacePane().getTabCount() - 1;
 		frame.getWorkspacePane().setTabComponentAt(index, new JTabPanel(tab));
 		frame.getWorkspacePane().getModel().setSelectedIndex(index);
 	}
@@ -100,11 +100,13 @@ public class MainFrameController {
 		frame.setRepositoryList(null);
 
 		while (frame.getWorkspacePane().getTabCount() > 0) {
-			Component c = frame.getWorkspacePane().getTabComponentAt(0);
+			final Component c = frame.getWorkspacePane().getTabComponentAt(0);
 			if (c instanceof JTabPanel) {
 				closeTab((JTabPanel) c);
 			}
 		}
+
+		frame.getBtnStart().setEnabled(false);
 	}
 
 	/**
@@ -113,13 +115,14 @@ public class MainFrameController {
 	 * @param tab
 	 *            {@link JTabPanel}
 	 */
-	public void closeTab(JTabPanel tab) {
+	public void closeTab(final JTabPanel tab) {
 		JTabContent content;
 		int index = -1;
 		if (tab != null) {
 			content = tab.getTabContent();
 			for (int i = 0; i < frame.getWorkspacePane().getTabCount(); i++) {
-				Component c = frame.getWorkspacePane().getTabComponentAt(i);
+				final Component c = frame.getWorkspacePane().getTabComponentAt(
+						i);
 				if (c.equals(tab)) {
 					index = i;
 					break;
@@ -136,12 +139,13 @@ public class MainFrameController {
 		}
 		// TODO i18n
 		if (content.isDirty()) {
-			int result = JOptionPane.showConfirmDialog(frame.getContentPane(),
+			final int result = JOptionPane.showConfirmDialog(
+					frame.getContentPane(),
 					"The selected file has been modified. "
 							+ "Do you wanto to save it?", "Save file?",
 					JOptionPane.YES_NO_CANCEL_OPTION);
 			if (result == JOptionPane.YES_OPTION) {
-				File f = content.getFile();
+				final File f = content.getFile();
 				if (f != null && f.exists()) {
 					content.saveContent(f);
 				} else {
@@ -161,7 +165,7 @@ public class MainFrameController {
 	 * copies content from the selected tab
 	 */
 	public void copy() {
-		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+		final JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.copy();
 	}
@@ -170,7 +174,7 @@ public class MainFrameController {
 	 * cuts content from the selected tab
 	 */
 	public void cut() {
-		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+		final JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.cut();
 	}
@@ -180,7 +184,7 @@ public class MainFrameController {
 	 * 
 	 * @param visible
 	 */
-	public void displaySidePanel(boolean visible) {
+	public void displaySidePanel(final boolean visible) {
 		// FIXME
 		// frame.getSidePane().setVisible(visible);
 	}
@@ -191,7 +195,7 @@ public class MainFrameController {
 	 * @param visible
 	 *            boolean
 	 */
-	public void displayStatusbar(boolean visible) {
+	public void displayStatusbar(final boolean visible) {
 		frame.getStatusbar().setVisible(visible);
 	}
 
@@ -201,7 +205,7 @@ public class MainFrameController {
 	 * @param visible
 	 *            boolean
 	 */
-	public void displayToolbox(boolean visible) {
+	public void displayToolbox(final boolean visible) {
 		frame.getToolBar().setVisible(visible);
 	}
 
@@ -220,11 +224,11 @@ public class MainFrameController {
 	 */
 	public void newProject() {
 
-		NewProjectDialog npd = new NewProjectDialog();
+		final NewProjectDialog npd = new NewProjectDialog();
 		npd.setVisible(true);
 		if (npd.getStatus() == NewProjectDialog.APPROVE_OPTION) {
 			try {
-				File projectDir = new File(npd.getProjectDirectory()
+				final File projectDir = new File(npd.getProjectDirectory()
 						+ System.getProperty("file.separator")
 						+ npd.getProjectName());
 				project = new KernelHiveProject(projectDir,
@@ -233,25 +237,28 @@ public class MainFrameController {
 				frame.setTitle(npd.getProjectName() + " - "
 						+ BUNDLE.getString("MainFrame.this.title"));
 
-				FileTreeModel model = new FileTreeModel(
+				final FileTreeModel model = new FileTreeModel(
 						project.getProjectDirectory());
-				FileTree tree = new FileTree(frame, model);
+				final FileTree tree = new FileTree(frame, model);
 				tree.setCellRenderer(new FileCellRenderer(tree
 						.getCellRenderer()));
 				frame.setProjectTree(tree);
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
 
-				IKernelRepository repository = new KernelRepository(
+				final IKernelRepository repository = new KernelRepository(
 						AppConfiguration.getInstance().getKernelRepositoryURL());
-				ListModel repoModel = new RepositoryViewerModel(
+				final ListModel repoModel = new RepositoryViewerModel(
 						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
 				frame.getRepositoryScrollPane().setViewportView(
 						frame.getRepositoryList());
 
+				frame.getBtnStart().setEnabled(true);
+
 				openWorkflowEditor();
-			} catch (ConfigurationException e) {
+
+			} catch (final ConfigurationException e) {
 				LOG.warning("KH: cannot create new project");
 				MessageDialog
 						.showErrorDialog(
@@ -268,11 +275,11 @@ public class MainFrameController {
 	 */
 	public void openProject() {
 		File file = null;
-		JFileChooser fc = new JFileChooser();
+		final JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setMultiSelectionEnabled(false);
-		FileFilter ff = new FileNameExtensionFilter("xml", "xml");
+		final FileFilter ff = new FileNameExtensionFilter("xml", "xml");
 		fc.setFileFilter(ff);
 		if (fc.showDialog(frame.getContentPane(), "Select") == JFileChooser.APPROVE_OPTION) {
 			try {
@@ -280,26 +287,28 @@ public class MainFrameController {
 				project = new KernelHiveProject(file.getParentFile(), null);
 				project.setProjectFile(file);
 				project.load();
-				FileTreeModel model = new FileTreeModel(
+				final FileTreeModel model = new FileTreeModel(
 						project.getProjectDirectory());
-				FileTree tree = new FileTree(frame, model);
+				final FileTree tree = new FileTree(frame, model);
 				tree.setCellRenderer(new FileCellRenderer(tree
 						.getCellRenderer()));
 				frame.setProjectTree(tree);
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
 
-				IKernelRepository repository = new KernelRepository(
+				final IKernelRepository repository = new KernelRepository(
 						AppConfiguration.getInstance().getKernelRepositoryURL());
-				ListModel repoModel = new RepositoryViewerModel(
+				final ListModel repoModel = new RepositoryViewerModel(
 						repository.getEntries());
 				frame.setRepositoryList(new RepositoryViewer(repoModel));
 				frame.getRepositoryScrollPane().setViewportView(
 						frame.getRepositoryList());
 
+				frame.getBtnStart().setEnabled(true);
+
 				openWorkflowEditor();
 
-			} catch (ConfigurationException e) {
+			} catch (final ConfigurationException e) {
 				MessageDialog.showErrorDialog(
 						frame,
 						"Error",
@@ -316,7 +325,7 @@ public class MainFrameController {
 	 * @param f
 	 *            {@link File}
 	 */
-	public void openTab(File f) {
+	public void openTab(final File f) {
 		SourceCodeEditor sourcePanel;
 		if (f != null) {
 			sourcePanel = new SourceCodeEditor(frame, f.getName());
@@ -337,7 +346,7 @@ public class MainFrameController {
 	 */
 	public void openWorkflowEditor() {
 		if (project != null) {
-			WorkflowEditor editor = new WorkflowEditor(
+			final WorkflowEditor editor = new WorkflowEditor(
 					frame,
 					BUNDLE.getString("MainFrameController.openWorkflowEditor.workflowEditor.text"),
 					project);
@@ -352,7 +361,7 @@ public class MainFrameController {
 	}
 
 	public void openWorkflowViewer() {
-		WorkflowViewer wv = new WorkflowViewer(frame, "Workflow Viewer");
+		final WorkflowViewer wv = new WorkflowViewer(frame, "Workflow Viewer");
 		addTabToWorkspacePane(wv);
 	}
 
@@ -360,7 +369,7 @@ public class MainFrameController {
 	 * pastes copied/cut content to the selected tab
 	 */
 	public void paste() {
-		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+		final JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.paste();
 	}
@@ -376,7 +385,7 @@ public class MainFrameController {
 	 * redoes the last action on the selected tab
 	 */
 	public void redoAction() {
-		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+		final JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.redoAction();
 	}
@@ -390,8 +399,9 @@ public class MainFrameController {
 				this.frame.getProjectTree().getModel());
 		this.frame.getProjectTree().updateUI();
 		// refresh tabs
-		Component[] tabContents = this.frame.getWorkspacePane().getComponents();
-		for (Component c : tabContents) {
+		final Component[] tabContents = this.frame.getWorkspacePane()
+				.getComponents();
+		for (final Component c : tabContents) {
 			if (c instanceof JTabContent) {
 				((JTabContent) c).refresh();
 			}
@@ -403,7 +413,7 @@ public class MainFrameController {
 	 */
 	public void saveAll() {
 		for (int i = 0; i < frame.getWorkspacePane().getTabCount(); i++) {
-			Component c = frame.getWorkspacePane().getTabComponentAt(i);
+			final Component c = frame.getWorkspacePane().getTabComponentAt(i);
 			if (c instanceof JTabPanel) {
 				saveTab((JTabPanel) c);
 			}
@@ -417,7 +427,7 @@ public class MainFrameController {
 		if (project != null) {
 			try {
 				project.save();
-			} catch (ConfigurationException e) {
+			} catch (final ConfigurationException e) {
 				LOG.warning("KH: could not save project");
 				e.printStackTrace();
 			}
@@ -430,12 +440,12 @@ public class MainFrameController {
 	 * @param tab
 	 *            {@link JTabPanel}
 	 */
-	public void saveTab(JTabPanel tab) {
+	public void saveTab(final JTabPanel tab) {
 		JTabContent content;
 		if (tab != null) {
 			content = tab.getTabContent();
 		} else {
-			int index = frame.getWorkspacePane().getSelectedIndex();
+			final int index = frame.getWorkspacePane().getSelectedIndex();
 			content = (JTabContent) frame.getWorkspacePane().getComponentAt(
 					index);
 		}
@@ -451,21 +461,21 @@ public class MainFrameController {
 	 * @param tab
 	 *            {@link JTabPanel}
 	 */
-	public void saveTabAs(JTabPanel tab) {
+	public void saveTabAs(final JTabPanel tab) {
 		JTabContent content;
 		if (tab != null) {
 			content = tab.getTabContent();
 		} else {
-			int index = frame.getWorkspacePane().getSelectedIndex();
+			final int index = frame.getWorkspacePane().getSelectedIndex();
 			content = (JTabContent) frame.getWorkspacePane().getComponentAt(
 					index);
 		}
 
-		NewFileDialog nfd = new NewFileDialog();
+		final NewFileDialog nfd = new NewFileDialog();
 		nfd.setVisible(true);
 		if (nfd.getStatus() == NewFileDialog.APPROVE_OPTION) {
 			try {
-				File f = FileUtils.createNewFile(nfd.getFileDirectory()
+				final File f = FileUtils.createNewFile(nfd.getFileDirectory()
 						+ System.getProperty("file.separator")
 						+ nfd.getFileName());
 				if (f == null) {
@@ -482,7 +492,7 @@ public class MainFrameController {
 						content.setFile(f);
 					}
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				LOG.severe("KH: cannot create new file!");
 				e.printStackTrace();
 			}
@@ -493,7 +503,7 @@ public class MainFrameController {
 	 * selects all content in the selected tab
 	 */
 	public void selectAll() {
-		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+		final JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.selectAll();
 	}
@@ -502,7 +512,7 @@ public class MainFrameController {
 	 * show application preferences window
 	 */
 	public void showPreferences() {
-		PreferencesDialog dialog = new PreferencesDialog(frame);
+		final PreferencesDialog dialog = new PreferencesDialog(frame);
 		dialog.setModal(true);
 		dialog.setVisible(true);
 	}
@@ -512,8 +522,8 @@ public class MainFrameController {
 	 */
 	public void showProjectProperties() {
 		if (project != null) {
-			ProjectPropertiesDialog dialog = new ProjectPropertiesDialog(frame,
-					project);
+			final ProjectPropertiesDialog dialog = new ProjectPropertiesDialog(
+					frame, project);
 			dialog.setModal(true);
 			dialog.setVisible(true);
 		}
@@ -523,18 +533,21 @@ public class MainFrameController {
 	 * 
 	 */
 	public void startWorkflowGraphExecution() {
-		IEngineGraphConfiguration engConfig = new EngineGraphConfiguration();
-		StringWriter w = new StringWriter();
+		final IEngineGraphConfiguration engConfig = new EngineGraphConfiguration();
+		final StringWriter w = new StringWriter();
 		IWorkflowWizardDisplay wizardDisplay;
-		IWorkflowExecution execution = new WorkflowExecution();
+		final IWorkflowExecution execution = new WorkflowExecution();
 		execution.addWorkflowExecutionListener(new WorkflowExecutionListener() {
 
 			@Override
-			public void workflowSubmissionCompleted(Integer workflowId) {
+			public void workflowSubmissionCompleted(final Integer workflowId) {
 				JOptionPane.showMessageDialog(frame,
 						"Workflow sent to execution. Workflow ID is "
 								+ workflowId, "Success",
 						JOptionPane.INFORMATION_MESSAGE, null);
+
+				frame.getBtnPause().setEnabled(true);
+				frame.getBtnStop().setEnabled(true);
 			}
 		});
 
@@ -548,29 +561,29 @@ public class MainFrameController {
 							.toExternalForm());
 					engConfig.saveGraphForEngine(GraphNodeDecoratorConverter
 							.convertGuiToEngine(project.getProjectNodes()), w);
-					byte[] graphStream = w.getBuffer().toString()
+					final byte[] graphStream = w.getBuffer().toString()
 							.getBytes("utf-8");
 					execution.setUsername(wizardDisplay.getUsername());
 					execution.setPassword(wizardDisplay.getPassword());
 					execution.setSerializedGraphStream(graphStream);
 					execution.submitForExecution();
 				}
-			} catch (WorkflowWizardDisplayException e) {
+			} catch (final WorkflowWizardDisplayException e) {
 				MessageDialog.showErrorDialog(frame, "Error",
 						"Error occured in displaying workflow wizard!");
 				e.printStackTrace();
-			} catch (GraphNodeDecoratorConverterException e) {
+			} catch (final GraphNodeDecoratorConverterException e) {
 				MessageDialog.showErrorDialog(frame, "Error",
 						"Could not convert the graph node with id: "
 								+ e.getNodeDecorator().getGraphNode()
 										.getNodeId()
 								+ " to the format required by engine!");
 				e.printStackTrace();
-			} catch (ConfigurationException e) {
+			} catch (final ConfigurationException e) {
 				MessageDialog.showErrorDialog(frame, "Error",
 						"Error saving graph configuration to stream!");
 				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
+			} catch (final UnsupportedEncodingException e) {
 				MessageDialog
 						.showErrorDialog(frame, "Error",
 								"The graph stream could not be created - unsupported encoding: 'utf-8'");
@@ -591,13 +604,13 @@ public class MainFrameController {
 	 * undoes the last action on the selected tab
 	 */
 	public void undoAction() {
-		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+		final JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.undoAction();
 	}
 
 	public void openInfrastructureBrowser() {
-		InfrastructureBrowser ib = new InfrastructureBrowser(frame,
+		final InfrastructureBrowser ib = new InfrastructureBrowser(frame,
 				"Infrastructure Browser");
 		addTabToWorkspacePane(ib);
 
@@ -613,13 +626,13 @@ public class MainFrameController {
 	}
 
 	public void clearHighlight() {
-		JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
+		final JTabContent tabContent = (JTabContent) frame.getWorkspacePane()
 				.getSelectedComponent();
 		tabContent.clearSelection();
 	}
 
 	public void openGoToLineDialog() {
-		GoToLineDialog dialog = new GoToLineDialog(frame);
+		final GoToLineDialog dialog = new GoToLineDialog(frame);
 		dialog.setModal(false);
 		dialog.setVisible(true);
 	}
@@ -640,7 +653,7 @@ public class MainFrameController {
 	}
 
 	public void openFindReplaceDialog() {
-		FindReplaceDialog dialog = new FindReplaceDialog(frame);
+		final FindReplaceDialog dialog = new FindReplaceDialog(frame);
 		dialog.setModal(false);
 		dialog.setVisible(true);
 	}

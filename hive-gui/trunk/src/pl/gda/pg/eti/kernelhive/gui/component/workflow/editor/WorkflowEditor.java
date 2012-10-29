@@ -412,6 +412,10 @@ public class WorkflowEditor extends JTabContent {
 								((GUIGraphNodeDecorator) terminal.getValue())
 										.getGraphNode());
 					} else {
+						LOG.info("KH: Selected nodes ("
+								+ wfSource.getGraphNode().getNodeId() + ", "
+								+ wfTerminal.getGraphNode().getNodeId()
+								+ ")cannot be connected.");
 						graph.getModel().beginUpdate();
 						try {
 							graph.getModel().remove(cell);
