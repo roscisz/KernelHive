@@ -94,7 +94,7 @@ void md5(unsigned char *msg, unsigned long msgLen, unsigned char *digest) {
     // Initial values for the results
     unsigned int h[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
     // Temporary results holders
-    unsigned int a, b, c, d, t;    
+    unsigned int a, b, c, d, t;
     
     // Append the "1" bit to the msg
     msg[msgLen] = ONE_BIT;   
@@ -235,7 +235,8 @@ void md5(unsigned char *msg, unsigned long msgLen, unsigned char *digest) {
 }
 
 /**
- * Compares two hashes and tells whether they are the same.
+ * Compares two hashes and tells whether they are the same. Assumes both arrays
+ * are of size 16 (length of MD5 digest). 
  * 
  * @param calculated the calculated hash
  * @param digest the provided hash
@@ -246,26 +247,61 @@ void compareHashes(unsigned char *calculated, unsigned char *digest, unsigned in
     for (i = 0; i < DIGEST_LEN; i++) {
         tmp &= (calculated[i] == digest[i]);
     }
-    *result = tmp;
+    result[0] = tmp;
+}
+
+#define ALPH_LEN 26
+
+void initState(long state, unsigned char *message, unsigned long *length) {
+    unsigned char alphabet[ALPH_LEN] = {
+        'a', 'b', 'c', 'd',
+        'e', 'f', 'g', 'h',
+        'i', 'j', 'k', 'l',
+        'm', 'n', 'o', 'p',
+        'q', 'r', 's', 't',
+        'u', 'v', 'w', 'x',
+        'y', 'z' 
+    };
+    unsigned char tmp[MAX_MSG_LEN];
+    int diff, n = ALPH_LEN, chr = 0;
+    while (state >= 0) {
+        diff = state % n;
+        tmp[chr] = alphabet[diff];
+        chr++;
+        state -= (diff + n);
+        state /= n;
+    }
+    n = chr - 1;
+    while (chr >= 0) {
+        message[n - chr] = tmp[chr];
+        chr--;
+    }
+    length[0] = n + 1;
 }
 
 __kernel void processData(__global unsigned char *input, unsigned int dataSize, __global unsigned char *output, unsigned int outputSize) {
     unsigned char msg[MAX_MSG_LEN];
-    //unsigned char digest[DIGEST_LEN] = { 0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04, 0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e };
+    // abc
     //unsigned char digest[DIGEST_LEN] = { 0x90, 0x01, 0x50, 0x98, 0x3c, 0xd2, 0x4f, 0xb0, 0xd6, 0x96, 0x3f, 0x7d, 0x28, 0xe1, 0x7f, 0x72 };
-    unsigned char digest[DIGEST_LEN] = { 0xe2, 0xfc, 0x71, 0x4c, 0x47, 0x27, 0xee, 0x93, 0x95, 0xf3, 0x24, 0xcd, 0x2e, 0x7f, 0x33, 0x1f };
+    // abcd
+    //unsigned char digest[DIGEST_LEN] = { 0xe2, 0xfc, 0x71, 0x4c, 0x47, 0x27, 0xee, 0x93, 0x95, 0xf3, 0x24, 0xcd, 0x2e, 0x7f, 0x33, 0x1f };
+    // haslo
+    unsigned char digest[DIGEST_LEN] = { 0x20, 0x70, 0x23, 0xcc, 0xb4, 0x4f, 0xeb, 0x4d, 0x7d, 0xad, 0xca, 0x00, 0x5c, 0xe2, 0x9a, 0x64 };
     unsigned char calculated[DIGEST_LEN];
     unsigned int outcome[1] = { 0 };
-    msg[0] = 'a';
-    msg[1] = 'b';
-    msg[2] = 'c';
-    msg[3] = 'd';
+    unsigned long msgLen[1] = { 0 };
+    long state = 0;
     
-    md5(msg, 4, calculated);    
-    compareHashes(calculated, digest, outcome);
-    
+    while (outcome[0] == 0) {
+        initState(state, msg, msgLen);
+        md5(msg, msgLen[0], calculated);    
+        compareHashes(calculated, digest, outcome);
+        state++;
+    }    
     // WARNING: Below will not run on all devices
-    //printf("%02x%02x%02x%02x%02x%02x%02x%02x\n", msg[56], msg[57], msg[58], msg[59], msg[60], msg[61], msg[62], msg[63]);
-    //printf("\n\noutcome = %d\n\n", *outcome);
+    /*for (state = 0; state < msgLen[0]; state++) {
+        printf("%c", msg[state]);
+    }
+    printf("\n");*/
 }
 
