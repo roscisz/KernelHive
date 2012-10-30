@@ -1,13 +1,18 @@
-/**
+/******************************************************************************
  * A kernel used for brute force MD5 cracking.
  */
  
+/**
+ * Some general constants
+ */
 #define MAX_MSG_LEN 64
 #define DIGEST_LEN 16
-
 #define ONE_BIT 0x80
 #define PADDING_ZEROES 0x00
- 
+
+/**
+ * Constants required by the MD5 algorithm.
+ */
 #define T_MASK ((unsigned int)~0)
 #define T1 /* 0xd76aa478 */ (T_MASK ^ 0x28955b87)
 #define T2 /* 0xe8c7b756 */ (T_MASK ^ 0x173848a9)
@@ -74,7 +79,14 @@
 #define T63    0x2ad7d2bb
 #define T64 /* 0xeb86d391 */ (T_MASK ^ 0x14792c6e)
 
-void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsigned int *outcome) {
+/**
+ * Calculates an MD5 sum of provided message.
+ *
+ * @param msg the message to digest
+ * @param msgLen the number of characters in the message
+ * @param digest an initialized placeholder for the results, assumed to be of size 16
+ */
+void md5(unsigned char *msg, unsigned long msgLen, unsigned char *digest) {
     // Support variables
     unsigned int i, tmp;
     unsigned int *X;
@@ -82,14 +94,10 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     // Initial values for the results
     unsigned int h[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
     // Temporary results holders
-    unsigned int a, b, c, d, t;  
-    
-    // Reset the result:
-    *outcome = 0;
+    unsigned int a, b, c, d, t;    
     
     // Append the "1" bit to the msg
-    msg[msgLen] = ONE_BIT;
-    
+    msg[msgLen] = ONE_BIT;   
     // Padd the msg with zeroes until 448 bits are reached    
     for (i = msgLen + 1; i < MAX_MSG_LEN - 8; i++) {
         msg[i] = PADDING_ZEROES;
@@ -99,8 +107,7 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     for (; i < MAX_MSG_LEN; i++) {
         msg[i] = ((8 * msgLen) >> (8 * tmp)) & 0xFF;
         tmp++;
-    }
-    
+    }  
     // Set initial values
     a = h[0];
     b = h[1];
@@ -119,7 +126,6 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
 #define SET(a, b, c, d, k, s, Ti)\
   t = a + F(b,c,d) + X[k] + Ti;\
   a = ROTATE_LEFT(t, s) + b
-    /* Do the following 16 operations. */
     SET(a, b, c, d,  0,  7,  T1);
     SET(d, a, b, c,  1, 12,  T2);
     SET(c, d, a, b,  2, 17,  T3);
@@ -221,25 +227,43 @@ void crack(unsigned char *msg, unsigned long msgLen, unsigned char *digest, unsi
     h[1] += b;
     h[2] += c;
     h[3] += d;
-    
-    // Check the result
+    // Copy the resulting hash to output variable
     chrPtr = (unsigned char *)h;
-    tmp = 1;
     for (i = 0; i < DIGEST_LEN; i++) {
-        tmp &= (chrPtr[i] == digest[i]);
+        digest[i] = chrPtr[i];
     }
-    *outcome = tmp;
+}
+
+/**
+ * Compares two hashes and tells whether they are the same.
+ * 
+ * @param calculated the calculated hash
+ * @param digest the provided hash
+ * @param result the result of comparison - 1 means equal, 0 means not equal
+ */
+void compareHashes(unsigned char *calculated, unsigned char *digest, unsigned int *result) {
+    unsigned int tmp = 1, i;
+    for (i = 0; i < DIGEST_LEN; i++) {
+        tmp &= (calculated[i] == digest[i]);
+    }
+    *result = tmp;
 }
 
 __kernel void processData(__global unsigned char *input, unsigned int dataSize, __global unsigned char *output, unsigned int outputSize) {
-    __private unsigned char msg[MAX_MSG_LEN];
-    //__private unsigned char digest[DIGEST_LEN] = { 0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04, 0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e };
-    __private unsigned char digest[DIGEST_LEN] = { 0x90, 0x01, 0x50, 0x98, 0x3c, 0xd2, 0x4f, 0xb0, 0xd6, 0x96, 0x3f, 0x7d, 0x28, 0xe1, 0x7f, 0x72 };
-    __private unsigned int outcome[1] = { 0 };
+    unsigned char msg[MAX_MSG_LEN];
+    //unsigned char digest[DIGEST_LEN] = { 0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04, 0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e };
+    //unsigned char digest[DIGEST_LEN] = { 0x90, 0x01, 0x50, 0x98, 0x3c, 0xd2, 0x4f, 0xb0, 0xd6, 0x96, 0x3f, 0x7d, 0x28, 0xe1, 0x7f, 0x72 };
+    unsigned char digest[DIGEST_LEN] = { 0xe2, 0xfc, 0x71, 0x4c, 0x47, 0x27, 0xee, 0x93, 0x95, 0xf3, 0x24, 0xcd, 0x2e, 0x7f, 0x33, 0x1f };
+    unsigned char calculated[DIGEST_LEN];
+    unsigned int outcome[1] = { 0 };
     msg[0] = 'a';
     msg[1] = 'b';
     msg[2] = 'c';
-    crack(msg, 3, digest, outcome);
+    msg[3] = 'd';
+    
+    md5(msg, 4, calculated);    
+    compareHashes(calculated, digest, outcome);
+    
     // WARNING: Below will not run on all devices
     //printf("%02x%02x%02x%02x%02x%02x%02x%02x\n", msg[56], msg[57], msg[58], msg[59], msg[60], msg[61], msg[62], msg[63]);
     //printf("\n\noutcome = %d\n\n", *outcome);
