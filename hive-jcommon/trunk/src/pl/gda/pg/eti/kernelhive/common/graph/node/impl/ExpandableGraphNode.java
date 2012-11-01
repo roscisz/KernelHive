@@ -16,6 +16,9 @@ import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationRes
  */
 public class ExpandableGraphNode extends GenericGraphNode {
 
+	private static final String MAX_INSTANCES = "max";
+	private static final String MIN_INSTANCES = "min";
+
 	/**
 	 * 
 	 */
@@ -24,11 +27,13 @@ public class ExpandableGraphNode extends GenericGraphNode {
 	public ExpandableGraphNode(final String id) {
 		super(id);
 		type = GraphNodeType.EXPANDABLE;
+		initProperties();
 	}
 
 	public ExpandableGraphNode(final String id, final String name) {
 		super(id, name);
 		type = GraphNodeType.EXPANDABLE;
+		initProperties();
 	}
 
 	public ExpandableGraphNode(final String id, final String name,
@@ -39,6 +44,13 @@ public class ExpandableGraphNode extends GenericGraphNode {
 		super(id, name, followingNodes, childrenNodes, previousNodes,
 				properties);
 		type = GraphNodeType.EXPANDABLE;
+		initProperties();
+	}
+
+	private void initProperties() {
+		this.properties.put(MAX_INSTANCES, "10");
+		this.properties.put(MIN_INSTANCES, "1");
+
 	}
 
 	@Override
@@ -96,6 +108,16 @@ public class ExpandableGraphNode extends GenericGraphNode {
 					ValidationResultType.VALID));
 		}
 		return results;
+	}
+
+	public int getMaxInstances() {
+		return Integer.parseInt((String) this.getProperties()
+				.get(MAX_INSTANCES));
+	}
+
+	public int getMinInstances() {
+		return Integer.parseInt((String) this.getProperties()
+				.get(MIN_INSTANCES));
 	}
 
 }
