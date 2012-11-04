@@ -288,10 +288,17 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     unsigned char calculated[DIGEST_LEN];
     unsigned int outcome[1] = { 0 };
     unsigned long msgLen[1] = { 0 };
+    
     long from[1] = { 0 };
     long to[1] = { 0 };
     long state = 0;
+    
+    long step = 0;
+    int wiCount = get_global_size(0);
+    int wiId = get_global_id(0);
+    
     int i;
+    
     
     // Work-group variables declarations
     __local int passLen;
@@ -318,7 +325,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     state = *from;
     passLen = 0;
     barrier(CLK_LOCAL_MEM_FENCE);
-    
+
     while (passLen == 0 && state <= *to) {
         initState(state, msg, msgLen);
         md5(msg, msgLen[0], calculated);    
@@ -327,7 +334,8 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
             passLen = msgLen[0];
         }
         barrier(CLK_LOCAL_MEM_FENCE);
-        state++;
+        step++;
+        state = (step * wiCount) + wiId;
     }    
     // WARNING: Below will not run on all devices
     /*printf("[work-item id: %d] ", get_global_id(0));
