@@ -9,6 +9,7 @@ __kernel void partitionData(__global unsigned char *input, unsigned int dataSize
 
     int wiId = get_global_id(0);
     int tmpId;
+    int offset;
     int wiCount = get_global_size(0);
     
     int itemsPerThread = partsCount / wiCount;
@@ -39,28 +40,34 @@ __kernel void partitionData(__global unsigned char *input, unsigned int dataSize
     if (itemsPerThread >= 1) {
         for (i = 0; i < itemsPerThread; i++) {
             tmpId = (wiId * itemsPerThread) + i;
+            offset = tmpId * dataSize;
             for (j = 0; j < DIGEST_LEN; j++) {
-                output[tmpId + j] = digest[j];
-            }
+                output[offset + j] = digest[j];
+            }           
             *((long *)fromTmp) = from + (subRangeLen * tmpId);
-            *((long *)toTmp) = to + (subRangeLen * tmpId) + subRangeLen + reminder;
+            //printf("[%d] from: %ld\n", tmpId, from + (subRangeLen * tmpId));
+            *((long *)toTmp) = from + (subRangeLen * (tmpId + 1)) + reminder;
+            //printf("[%d] to: %ld\n", tmpId, from + (subRangeLen * (tmpId + 1)) + reminder);
             for (j = 0; j < LONG_LEN; j++) {
-                output[j+tmpId+DIGEST_LEN] = fromTmp[j];
-                input[j+tmpId+DIGEST_LEN+LONG_LEN] = toTmp[j];
+                output[j+offset+DIGEST_LEN] = fromTmp[j];
+                output[j+offset+DIGEST_LEN+LONG_LEN] = toTmp[j];
             }
         }    
     }
     if (partsCount - batch > 0) {
         tmpId = wiId + batch;
+        offset = tmpId * dataSize;
         if (tmpId <= partsCount-1) {
             for (j = 0; j < DIGEST_LEN; j++) {
-                output[tmpId + j] = digest[j];
+                output[offset + j] = digest[j];
             }
             *((long *)fromTmp) = from + (subRangeLen * tmpId);
-            *((long *)toTmp) = to + (subRangeLen * tmpId) + subRangeLen + reminder;
+            //printf("[%d] from: %ld\n", tmpId, from + (subRangeLen * tmpId));
+            *((long *)toTmp) = from + (subRangeLen * (tmpId + 1)) + reminder;
+            //printf("[%d] to: %ld\n", tmpId, from + (subRangeLen * (tmpId + 1)) + reminder);
             for (j = 0; j < LONG_LEN; j++) {
-                output[j+tmpId+DIGEST_LEN] = fromTmp[j];
-                input[j+tmpId+DIGEST_LEN+LONG_LEN] = toTmp[j];
+                output[j+offset+DIGEST_LEN] = fromTmp[j];
+                output[j+offset+DIGEST_LEN+LONG_LEN] = toTmp[j];
             }
         }
     }
