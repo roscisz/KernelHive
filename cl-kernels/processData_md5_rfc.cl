@@ -296,6 +296,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     long step = 0;
     int wiCount = get_global_size(0);
     int wiId = get_global_id(0);
+    int finder;
     
     int i;
     
@@ -332,17 +333,28 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         compareHashes(calculated, digest, outcome);
         if (outcome[0] > 0) {
             passLen = msgLen[0];
+            finder = wiId;
         }
         barrier(CLK_LOCAL_MEM_FENCE);
         step++;
         state = (step * wiCount) + wiId;
     }    
-    // WARNING: Below will not run on all devices
-    /*printf("[work-item id: %d] ", get_global_id(0));
-    for (i = 0; i < passLen; i++) {
+    barrier(CLK_LOCAL_MEM_FENCE);
+    // WARNING: printf below will not run on all devices
+    /*for (i = 0; i < passLen; i++) {
         printf("%c", msg[i]);
     }
     printf("\n");*/
+    // Copy the result
+    if (wiId == finder) {
+        output[0] = (msgLen[0]) & 0xFF;
+        output[1] = (msgLen[0] >> 8) & 0xFF;
+        output[2] = (msgLen[0] >> 16) & 0xFF;
+        output[3] = (msgLen[0] >> 24) & 0xFF;
+        for (i = 0; i < *msgLen; i++) {
+            output[i+4] = msg[i];
+        }
+    }
 }
 
 /* Test hashes:
