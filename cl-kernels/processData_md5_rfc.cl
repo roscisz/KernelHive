@@ -9,6 +9,7 @@
 #define DIGEST_LEN 16
 #define ONE_BIT 0x80
 #define PADDING_ZEROES 0x00
+#define LONG_SIZE sizeof(long)
 
 /**
  * Constants required by the MD5 algorithm.
@@ -280,28 +281,68 @@ void initState(long state, unsigned char *message, unsigned long *length) {
 }
 
 __kernel void processData(__global unsigned char *input, unsigned int dataSize, __global unsigned char *output, unsigned int outputSize) {
+    // Work-item memory variables declarations
+    unsigned char tmp[LONG_SIZE];
     unsigned char msg[MAX_MSG_LEN];
-    // abc
-    //unsigned char digest[DIGEST_LEN] = { 0x90, 0x01, 0x50, 0x98, 0x3c, 0xd2, 0x4f, 0xb0, 0xd6, 0x96, 0x3f, 0x7d, 0x28, 0xe1, 0x7f, 0x72 };
-    // abcd
-    //unsigned char digest[DIGEST_LEN] = { 0xe2, 0xfc, 0x71, 0x4c, 0x47, 0x27, 0xee, 0x93, 0x95, 0xf3, 0x24, 0xcd, 0x2e, 0x7f, 0x33, 0x1f };
-    // haslo
-    unsigned char digest[DIGEST_LEN] = { 0x20, 0x70, 0x23, 0xcc, 0xb4, 0x4f, 0xeb, 0x4d, 0x7d, 0xad, 0xca, 0x00, 0x5c, 0xe2, 0x9a, 0x64 };
+    unsigned char digest[DIGEST_LEN];
     unsigned char calculated[DIGEST_LEN];
     unsigned int outcome[1] = { 0 };
     unsigned long msgLen[1] = { 0 };
+    long from[1] = { 0 };
+    long to[1] = { 0 };
     long state = 0;
+    int i;
     
-    while (outcome[0] == 0) {
+    // Work-group variables declarations
+    __local int passLen;
+    
+    // Read the MD5 hash of the password from input array
+    for (i = 0; i < DIGEST_LEN; i++) {
+        digest[i] = input[i];
+    }
+    barrier(CLK_GLOBAL_MEM_FENCE);
+    // Read the value from which we should begin generating hashes
+    for (i = 0; i < LONG_SIZE; i++) {
+        tmp[i] = input[i+DIGEST_LEN];
+    }
+    barrier(CLK_GLOBAL_MEM_FENCE);
+    *from = *((long *)tmp);
+    // Read the value on which we should stop generating hashes
+    for (i = 0; i < LONG_SIZE; i++) {
+        tmp[i] = input[i+DIGEST_LEN+LONG_SIZE];
+    }
+    barrier(CLK_GLOBAL_MEM_FENCE);
+    *to = *((long *)tmp);
+    
+    // Set the initial state
+    state = *from;
+    passLen = 0;
+    barrier(CLK_LOCAL_MEM_FENCE);
+    
+    while (passLen == 0 && state <= *to) {
         initState(state, msg, msgLen);
         md5(msg, msgLen[0], calculated);    
         compareHashes(calculated, digest, outcome);
+        if (outcome[0] > 0) {
+            passLen = msgLen[0];
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
         state++;
     }    
     // WARNING: Below will not run on all devices
-    /*for (state = 0; state < msgLen[0]; state++) {
-        printf("%c", msg[state]);
+    /*printf("[work-item id: %d] ", get_global_id(0));
+    for (i = 0; i < passLen; i++) {
+        printf("%c", msg[i]);
     }
     printf("\n");*/
 }
+
+/* Test hashes:
+    abc
+    unsigned char digest[DIGEST_LEN] = { 0x90, 0x01, 0x50, 0x98, 0x3c, 0xd2, 0x4f, 0xb0, 0xd6, 0x96, 0x3f, 0x7d, 0x28, 0xe1, 0x7f, 0x72 };
+    abcd
+    unsigned char digest[DIGEST_LEN] = { 0xe2, 0xfc, 0x71, 0x4c, 0x47, 0x27, 0xee, 0x93, 0x95, 0xf3, 0x24, 0xcd, 0x2e, 0x7f, 0x33, 0x1f };
+    haslo
+    unsigned char digest[DIGEST_LEN] = { 0x20, 0x70, 0x23, 0xcc, 0xb4, 0x4f, 0xeb, 0x4d, 0x7d, 0xad, 0xca, 0x00, 0x5c, 0xe2, 0x9a, 0x64 };
+*/
 
