@@ -1,9 +1,6 @@
 /**
  * A data merger for the MD5 calculations unroll node.
  */
- 
-#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable
-#pragma OPENCL EXTENSION cl_khr_local_int32_base_atomics : enable
 
 __kernel void mergeData(__global unsigned char *input, unsigned int dataSize, unsigned int partsCount, __global unsigned char *output, unsigned int outputSize) {
  

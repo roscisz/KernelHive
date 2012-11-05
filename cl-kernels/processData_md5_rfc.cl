@@ -296,7 +296,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     long step = 0;
     int wiCount = get_global_size(0);
     int wiId = get_global_id(0);
-    int finder;
+    int finder = -1;
     
     int i;
     
@@ -335,7 +335,6 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
             passLen = msgLen[0];
             finder = wiId;
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
         step++;
         state = (step * wiCount) + wiId;
     }    
@@ -351,7 +350,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         output[1] = (msgLen[0] >> 8) & 0xFF;
         output[2] = (msgLen[0] >> 16) & 0xFF;
         output[3] = (msgLen[0] >> 24) & 0xFF;
-        for (i = 0; i < *msgLen; i++) {
+        for (i = 0; i < passLen; i++) {
             output[i+4] = msg[i];
         }
     }
