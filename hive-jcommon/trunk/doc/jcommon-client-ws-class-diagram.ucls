@@ -1,0 +1,180 @@
+<class-diagram version="1.0.10" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.GetWorkflowResultsResponse" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/GetWorkflowResultsResponse.java" 
+    binary="false">    
+    <position height="125" width="201" x="41" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.GetWorkflowResults" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/GetWorkflowResults.java" 
+    binary="false">    
+    <position height="125" width="201" x="282" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.BrowseInfrastructureResponse" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/BrowseInfrastructureResponse.java" 
+    binary="false">    
+    <position height="91" width="204" x="523" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.BrowseWorkflowsResponse" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/BrowseWorkflowsResponse.java" 
+    binary="false">    
+    <position height="91" width="201" x="2232" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <interface id="5" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.ClientBean" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/ClientBean.java" binary="false">    
+    <position height="142" width="220" x="767" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.BrowseWorkflows" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/BrowseWorkflows.java" 
+    binary="false">    
+    <position height="74" width="201" x="1027" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="7" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.SubmitWorkflow" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/SubmitWorkflow.java" 
+    binary="false">    
+    <position height="125" width="201" x="1268" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="8" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.BrowseInfrastructure" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/BrowseInfrastructure.java" 
+    binary="false">    
+    <position height="74" width="201" x="1509" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="9" corner="BOTTOM_RIGHT" language="java" name="pl.gda.pg.eti.kernelhive.common.clientService.BrowseTasks" 
+    project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/BrowseTasks.java" binary="false">    
+    <position height="74" width="201" x="1750" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="10" corner="BOTTOM_RIGHT" language="java" name="pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo" 
+    project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/WorkflowInfo.java" binary="false">    
+    <position height="142" width="201" x="2232" y="695"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="11" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.TerminateWorkflow" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/TerminateWorkflow.java" 
+    binary="false">    
+    <position height="125" width="201" x="1991" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="12" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.SubmitWorkflowResponse" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/SubmitWorkflowResponse.java" 
+    binary="false">    
+    <position height="125" width="201" x="2473" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="13" corner="BOTTOM_RIGHT" language="java" name="pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo" 
+    project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/ClusterInfo.java" binary="false">    
+    <position height="125" width="201" x="523" y="695"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="14" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.ClientBeanService" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/ClientBeanService.java" 
+    binary="false">    
+    <position height="159" width="273" x="2714" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="15" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.ObjectFactory" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/ObjectFactory.java" binary="false">    
+    <position height="618" width="604" x="3027" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="16" corner="BOTTOM_RIGHT" language="java" 
+    name="pl.gda.pg.eti.kernelhive.common.clientService.TerminateWorkflowResponse" project="kernelhive-jcommon_trunk" 
+    file="/kernelhive-jcommon_trunk/src/pl/gda/pg/eti/kernelhive/common/clientService/TerminateWorkflowResponse.java" 
+    binary="false">    
+    <position height="74" width="201" x="3671" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <association id="17">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="18" name="_return"/>      
+      <multiplicity id="19" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="20">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="21" name="_return"/>      
+      <multiplicity id="22" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
