@@ -54,6 +54,7 @@ if __name__ == "__main__":
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	sock.bind((host, port))
 	sock.listen(1)
+	flag = False
 
 	while 1:
 		conn, addr = sock.accept()
@@ -62,6 +63,14 @@ if __name__ == "__main__":
 			msg = conn.recv(READ_BATCH)
 			if not msg:
 				break
+			if flag == True:
+				msg = part + msg
+				flag = False
+			#print len(msg)
+			if len(msg) == 4:
+				part = msg
+				flag = True				
+				continue
 			msg = msg[4:] # We don't need no message sizes
 			msgSize = len(msg)
 			#print map(ord, msg)
