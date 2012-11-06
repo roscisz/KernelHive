@@ -3,53 +3,27 @@
  */
 
 __kernel void mergeData(__global unsigned char *input, unsigned int dataSize, unsigned int partsCount, __global unsigned char *output, unsigned int outputSize) {
- 
     int wiId = get_global_id(0);
-    int tmpId;
     int offset;    
-    int wiCount = get_global_size(0);
-    int partSize = dataSize / partsCount;
+    int partSize = dataSize / partsCount;   
     
-    int itemsPerThread = partsCount / wiCount;
-    int batch = itemsPerThread * wiCount;
-    
-    __local int finder[1];
-    __local int result[2];    
+    int finder[1];
+    int result[2];    
     
     int tmp;
-    int i;
+    int i, j;
     
-    if (itemsPerThread >= 1) {
-        for (i = 0; i < itemsPerThread; i++) {
-            tmpId = (wiId * itemsPerThread) + i;
-            offset = tmpId * partSize;
-            tmp = *((int *)input[offset]);
+    if (wiId == 0) {
+        for (i = 0; i < partsCount; i++) {
+            offset = i * partSize;
+            tmp = *(((int *)input)+offset);
             if (tmp > 0) {
-                *finder = wiId;
-                result[0] = offset;
-                result[1] = tmp;
+                for (j = 0; j < partSize; j++) {
+                    output[j] = input[offset+j];
+                }
+                break;
             }
         }    
     }
-    if (partsCount - batch > 0) {
-        tmpId = wiId + batch;
-        offset = tmpId * partSize;
-        if (tmpId <= partsCount-1) {
-            tmp = *((int *)input[offset]);
-            if (tmp > 0) {
-                *finder = wiId;
-                result[0] = offset;
-                result[1] = tmp;
-            }
-        }
-    }
-    barrier(CLK_LOCAL_MEM_FENCE);
-    
-    if (wiId == *finder) {
-        offset = result[0];
-        for (i = 0; i < result[1]; i++) {
-            output[i] = input[offset+i];
-        }
-    }    
 }        
 
