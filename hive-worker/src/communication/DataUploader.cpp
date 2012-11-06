@@ -108,7 +108,7 @@ void DataUploader::uploadData() {
 		Logger::log(DEBUG, ">>>>>> SENT %u BYTES\n", msgSize);
 
 		// TODO Find out why this is necessary
-		sleep(1);
+		//sleep(1);
 
 		delete[] uploadBuffer;
 	}

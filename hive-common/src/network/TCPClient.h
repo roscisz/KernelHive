@@ -18,7 +18,7 @@
 #include "TCPClientListener.h"
 #include "TCPConnection.h"
 
-#define CONNECTION_RETRY_SECONDS 10
+#define CONNECTION_RETRY_SECONDS 1
 
 namespace KernelHive {
 
