@@ -23,7 +23,7 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public abstract class AbstractGraphConfiguration implements IGraphConfiguration {
 
@@ -57,24 +57,24 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 		config.setRootElementName(ROOT_NODE);
 	}
 
-	public AbstractGraphConfiguration(File file) {
+	public AbstractGraphConfiguration(final File file) {
 		config = new XMLConfiguration();
 		config.setRootElementName(ROOT_NODE);
 		readFromFile(file);
 	}
 
-	protected void readFromFile(File file) {
+	protected void readFromFile(final File file) {
 		this.configFile = file;
-		config.setFile(this.configFile);		
+		config.setFile(this.configFile);
 	}
 
-	protected Node createChildrenSubNode(IGraphNode node)
+	protected Node createChildrenSubNode(final IGraphNode node)
 			throws ConfigurationException {
-		Node childrenNode = new Node(FIRST_CHILDREN_NODE);
-		for (IGraphNode wfNode : node.getChildrenNodes()) {
+		final Node childrenNode = new Node(FIRST_CHILDREN_NODE);
+		for (final IGraphNode wfNode : node.getChildrenNodes()) {
 			if (wfNode.getPreviousNodes().size() == 0) {
-				Node childNode = new Node(CHILD_NODE);
-				Node childIdAttr = new Node(CHILD_NODE_ID_ATTRIBUTE,
+				final Node childNode = new Node(CHILD_NODE);
+				final Node childIdAttr = new Node(CHILD_NODE_ID_ATTRIBUTE,
 						wfNode.getNodeId());
 				childIdAttr.setAttribute(true);
 				childNode.addAttribute(childIdAttr);
@@ -84,35 +84,37 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 		return childrenNode;
 	}
 
-	protected Node createGraphNode(IGraphNode node)
+	protected Node createGraphNode(final IGraphNode node)
 			throws ConfigurationException {
 		try {
-			Node configNode = createNode(node);
-			Node sendToNode = createSendToSubNode(node);
-			Node childrenNode = createChildrenSubNode(node);
-			Node propertiesNode = createPropertiesSubNode(node);
+			final Node configNode = createNode(node);
+			final Node sendToNode = createSendToSubNode(node);
+			final Node childrenNode = createChildrenSubNode(node);
+			final Node propertiesNode = createPropertiesSubNode(node);
 			configNode.addChild(sendToNode);
 			configNode.addChild(childrenNode);
 			configNode.addChild(propertiesNode);
 			return configNode;
-		} catch (NullPointerException e) {
+		} catch (final NullPointerException e) {
 			throw new ConfigurationException(e);
 		}
 	}
 
-	protected Node createNode(IGraphNode node) throws ConfigurationException {
-		Node configNode = new Node(NODE);
-		Node idAttr = new Node(NODE_ID_ATTRIBUTE, node.getNodeId());
+	protected Node createNode(final IGraphNode node)
+			throws ConfigurationException {
+		final Node configNode = new Node(NODE);
+		final Node idAttr = new Node(NODE_ID_ATTRIBUTE, node.getNodeId());
 		idAttr.setAttribute(true);
-		Node hashAttr = new Node(NODE_HASH_ATTRIBUTE, node.hashCode());
+		final Node hashAttr = new Node(NODE_HASH_ATTRIBUTE, node.hashCode());
 		hashAttr.setAttribute(true);
-		Node parentAttr = new Node(NODE_PARENT_ID_ATTRIBUTE,
+		final Node parentAttr = new Node(NODE_PARENT_ID_ATTRIBUTE,
 				node.getParentNode() != null ? node.getParentNode().getNodeId()
 						: "");
 		parentAttr.setAttribute(true);
-		Node nameAttr = new Node(NODE_NAME_ATTRIBUTE, node.getName());
+		final Node nameAttr = new Node(NODE_NAME_ATTRIBUTE, node.getName());
 		nameAttr.setAttribute(true);
-		Node typeAttr = new Node(NODE_TYPE_ATTRIBUTE, node.getType().toString());
+		final Node typeAttr = new Node(NODE_TYPE_ATTRIBUTE, node.getType()
+				.toString());
 		typeAttr.setAttribute(true);
 		configNode.addAttribute(idAttr);
 		configNode.addAttribute(parentAttr);
@@ -122,15 +124,15 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 		return configNode;
 	}
 
-	protected Node createPropertiesSubNode(IGraphNode node)
+	protected Node createPropertiesSubNode(final IGraphNode node)
 			throws ConfigurationException {
-		Node propertiesNode = new Node(PROPERTIES_NODE);
-		Set<String> keySet = node.getProperties().keySet();
-		for (String key : keySet) {
-			Node propertyNode = new Node(PROPERTY_NODE);
-			Node keyAttr = new Node(PROPERTY_NODE_KEY_ATTRIBUTE, key);
+		final Node propertiesNode = new Node(PROPERTIES_NODE);
+		final Set<String> keySet = node.getProperties().keySet();
+		for (final String key : keySet) {
+			final Node propertyNode = new Node(PROPERTY_NODE);
+			final Node keyAttr = new Node(PROPERTY_NODE_KEY_ATTRIBUTE, key);
 			keyAttr.setAttribute(true);
-			Node valueAttr = new Node(PROPERTY_NODE_VALUE_ATTRIBUTE, node
+			final Node valueAttr = new Node(PROPERTY_NODE_VALUE_ATTRIBUTE, node
 					.getProperties().get(key));
 			valueAttr.setAttribute(true);
 			propertyNode.addAttribute(keyAttr);
@@ -140,12 +142,12 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 		return propertiesNode;
 	}
 
-	protected Node createSendToSubNode(IGraphNode node)
+	protected Node createSendToSubNode(final IGraphNode node)
 			throws ConfigurationException {
-		Node sendToNode = new Node(SEND_TO_NODE);
-		for (IGraphNode wfNode : node.getFollowingNodes()) {
-			Node followingNode = new Node(FOLLOWING_NODE);
-			Node followingIdAttr = new Node(FOLLOWING_NODE_ID_ATTRIBUTE,
+		final Node sendToNode = new Node(SEND_TO_NODE);
+		for (final IGraphNode wfNode : node.getFollowingNodes()) {
+			final Node followingNode = new Node(FOLLOWING_NODE);
+			final Node followingIdAttr = new Node(FOLLOWING_NODE_ID_ATTRIBUTE,
 					wfNode.getNodeId());
 			followingIdAttr.setAttribute(true);
 			followingNode.addAttribute(followingIdAttr);
@@ -162,8 +164,8 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 	@Override
 	public String getProjectName() throws ConfigurationException {
 		String projectName;
-		List<ConfigurationNode> attrList = config.getRoot().getAttributes(
-				ROOT_NODE_NAME_ATTRIBUTE);
+		final List<ConfigurationNode> attrList = config.getRoot()
+				.getAttributes(ROOT_NODE_NAME_ATTRIBUTE);
 		if (attrList.size() > 0) {
 			projectName = (String) attrList.get(0).getValue();
 			return projectName;
@@ -174,12 +176,12 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 		}
 	}
 
-	protected void linkGraphNodes(List<IGraphNode> nodes)
+	protected void linkGraphNodes(final List<IGraphNode> nodes)
 			throws ConfigurationException {
-		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
-			List<ConfigurationNode> idAttrList = node
+		for (final ConfigurationNode node : config.getRoot().getChildren(NODE)) {
+			final List<ConfigurationNode> idAttrList = node
 					.getAttributes(NODE_ID_ATTRIBUTE);
-			List<ConfigurationNode> parentIdAttrList = node
+			final List<ConfigurationNode> parentIdAttrList = node
 					.getAttributes(NODE_PARENT_ID_ATTRIBUTE);
 			IGraphNode graphNode = null;
 			String id = null, parentId = null;
@@ -194,7 +196,7 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 			}
 
 			if (id != null) {
-				for (IGraphNode pn : nodes) {
+				for (final IGraphNode pn : nodes) {
 					if (pn.getNodeId().equalsIgnoreCase(id)) {
 						graphNode = pn;
 						break;
@@ -203,7 +205,7 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 			}
 			if (parentId != null) {
 				IGraphNode parentNode = null;
-				for (IGraphNode pn : nodes) {
+				for (final IGraphNode pn : nodes) {
 					if (pn.getNodeId().equalsIgnoreCase(parentId)) {
 						parentNode = pn;
 						break;
@@ -223,14 +225,14 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 				followingNodes = followingNodes.get(0).getChildren(
 						FOLLOWING_NODE);
 				if (followingNodes.size() > 0) {
-					for (ConfigurationNode followingNode : followingNodes) {
-						List<ConfigurationNode> idList = followingNode
+					for (final ConfigurationNode followingNode : followingNodes) {
+						final List<ConfigurationNode> idList = followingNode
 								.getAttributes(FOLLOWING_NODE_ID_ATTRIBUTE);
 						if (idList.size() > 0) {
-							String followingId = (String) idList.get(0)
+							final String followingId = (String) idList.get(0)
 									.getValue();
 							IGraphNode followingProjectNode = null;
-							for (IGraphNode pn : nodes) {
+							for (final IGraphNode pn : nodes) {
 								if (pn.getNodeId()
 										.equalsIgnoreCase(followingId)) {
 									followingProjectNode = pn;
@@ -255,13 +257,14 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 	}
 
 	@Override
-	public List<IGraphNode> loadGraph(File file) throws ConfigurationException {
+	public List<IGraphNode> loadGraph(final File file)
+			throws ConfigurationException {
 		try {
 			config.setFile(file);
 			config.load();
 			// config.validate();//TODO attach schema
 			return loadGraphFromXML();
-		} catch (ConfigurationException e) {
+		} catch (final ConfigurationException e) {
 			LOG.severe("KH: could not load graph from file: " + file.getPath()
 					+ " " + e.getMessage());
 			throw e;
@@ -270,22 +273,22 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 
 	protected List<IGraphNode> loadGraphFromXML() throws ConfigurationException {
 		// initial creation of project nodes
-		List<IGraphNode> nodes = loadGraphNodes();
+		final List<IGraphNode> nodes = loadGraphNodes();
 		// linking project nodes with one another
 		linkGraphNodes(nodes);
 		return nodes;
 	}
 
-	protected IGraphNode loadGraphNode(ConfigurationNode node)
+	protected IGraphNode loadGraphNode(final ConfigurationNode node)
 			throws ConfigurationException {
 		String id = null, name = null;
 		GraphNodeType type = null;
 
-		List<ConfigurationNode> idAttrList = node
+		final List<ConfigurationNode> idAttrList = node
 				.getAttributes(NODE_ID_ATTRIBUTE);
-		List<ConfigurationNode> nameAttrList = node
+		final List<ConfigurationNode> nameAttrList = node
 				.getAttributes(NODE_NAME_ATTRIBUTE);
-		List<ConfigurationNode> typeAttrList = node
+		final List<ConfigurationNode> typeAttrList = node
 				.getAttributes(NODE_TYPE_ATTRIBUTE);
 
 		if (idAttrList.size() > 0)
@@ -297,32 +300,32 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 					.getValue());
 
 		IGraphNode graphNode;
-		IGraphNodeBuilder gnBuilder = new GraphNodeBuilder();
+		final IGraphNodeBuilder gnBuilder = new GraphNodeBuilder();
 		try {
 			graphNode = gnBuilder.setType(type).setId(id).setName(name).build();
-		} catch (GraphNodeBuilderException e) {
+		} catch (final GraphNodeBuilderException e) {
 			e.printStackTrace();
 			throw new ConfigurationException(e);
 		}
 		return graphNode;
 	}
 
-	protected Map<String, Object> loadGraphNodeProperties(ConfigurationNode node)
-			throws ConfigurationException {
-		Map<String, Object> props = new HashMap<String, Object>();
+	protected Map<String, Object> loadGraphNodeProperties(
+			final ConfigurationNode node) throws ConfigurationException {
+		final Map<String, Object> props = new HashMap<String, Object>();
 
 		List<ConfigurationNode> propertiesList = node
 				.getChildren(PROPERTIES_NODE);
 		if (propertiesList.size() > 0) {
-			ConfigurationNode propsNode = propertiesList.get(0);
+			final ConfigurationNode propsNode = propertiesList.get(0);
 			propertiesList = propsNode.getChildren(PROPERTY_NODE);
-			for (ConfigurationNode prop : propertiesList) {
+			for (final ConfigurationNode prop : propertiesList) {
 				String key;
 				Object value;
 
-				List<ConfigurationNode> keyAttrList = prop
+				final List<ConfigurationNode> keyAttrList = prop
 						.getAttributes(PROPERTY_NODE_KEY_ATTRIBUTE);
-				List<ConfigurationNode> valueAttrList = prop
+				final List<ConfigurationNode> valueAttrList = prop
 						.getAttributes(PROPERTY_NODE_VALUE_ATTRIBUTE);
 
 				if (keyAttrList.size() > 0) {
@@ -348,42 +351,45 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 	}
 
 	protected List<IGraphNode> loadGraphNodes() throws ConfigurationException {
-		List<IGraphNode> nodes = new ArrayList<IGraphNode>();
-		for (ConfigurationNode node : config.getRoot().getChildren(NODE)) {
-			IGraphNode graphNode = loadGraphNode(node);
-			Map<String, Object> nodeProperties = loadGraphNodeProperties(node);
+		final List<IGraphNode> nodes = new ArrayList<IGraphNode>();
+		for (final ConfigurationNode node : config.getRoot().getChildren(NODE)) {
+			final IGraphNode graphNode = loadGraphNode(node);
+			final Map<String, Object> nodeProperties = loadGraphNodeProperties(node);
 			graphNode.setProperties(nodeProperties);
 			nodes.add(graphNode);
 		}
 		return nodes;
 	}
-	
+
 	@Override
-	public void save() throws ConfigurationException{
+	public void save() throws ConfigurationException {
 		save(configFile);
 	}
-	
+
 	@Override
-	public void save(File file) throws ConfigurationException{
+	public void save(final File file) throws ConfigurationException {
 		config.save(file);
 	}
 
 	@Override
-	public void saveGraph(List<IGraphNode> nodes) throws ConfigurationException {
+	public void saveGraph(final List<IGraphNode> nodes)
+			throws ConfigurationException {
 		saveGraph(nodes, configFile);
 	}
 
 	@Override
-	public void saveGraph(List<IGraphNode> nodes, File file)
+	public void saveGraph(final List<IGraphNode> nodes, final File file)
 			throws ConfigurationException {
-		XMLConfiguration tempConfig = (XMLConfiguration) config.clone();
+		final XMLConfiguration tempConfig = (XMLConfiguration) config.clone();
 		try {
 			config.clear();
-			for (IGraphNode node : nodes) {
+			config.setRootNode(tempConfig.getRootNode());
+			config.getRootNode().removeChildren();
+			for (final IGraphNode node : nodes) {
 				config.getRoot().addChild(createGraphNode(node));
 			}
 			config.save(file);
-		} catch (ConfigurationException e) {
+		} catch (final ConfigurationException e) {
 			config = tempConfig;
 			config.save(file);
 			throw e;
@@ -391,18 +397,18 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 	}
 
 	@Override
-	public void setConfigurationFile(File file) {
+	public void setConfigurationFile(final File file) {
 		this.configFile = file;
 	}
 
 	@Override
-	public void setProjectName(String name) throws ConfigurationException {
-		List<ConfigurationNode> attributes = config.getRoot().getAttributes(
-				ROOT_NODE_NAME_ATTRIBUTE);
+	public void setProjectName(final String name) throws ConfigurationException {
+		final List<ConfigurationNode> attributes = config.getRoot()
+				.getAttributes(ROOT_NODE_NAME_ATTRIBUTE);
 		if (attributes.size() > 0) {
 			attributes.get(0).setValue(name);
 		} else {
-			Node attr = new Node(ROOT_NODE_NAME_ATTRIBUTE);
+			final Node attr = new Node(ROOT_NODE_NAME_ATTRIBUTE);
 			attr.setAttribute(true);
 			attr.setValue(name);
 			config.getRoot().addAttribute(attr);

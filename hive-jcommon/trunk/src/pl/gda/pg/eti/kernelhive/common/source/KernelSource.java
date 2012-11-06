@@ -42,7 +42,7 @@ public abstract class KernelSource implements IKernelSource {
 			final String s = (String) properties.get(GLOBAL_SIZES);
 			final String[] sizesStr = s.trim().split(" ");
 			if (sizesStr.length <= 3) {
-				final int[] globalSize = new int[3];
+				final int[] globalSize = new int[] { 1, 1, 1 };
 				for (int i = 0; i < sizesStr.length; i++) {
 					globalSize[i] = Integer.parseInt(sizesStr[i]);
 				}
@@ -60,7 +60,7 @@ public abstract class KernelSource implements IKernelSource {
 			final String s = (String) properties.get(LOCAL_SIZES);
 			final String[] sizesStr = s.trim().split(" ");
 			if (sizesStr.length <= 3) {
-				final int[] localSize = new int[3];
+				final int[] localSize = new int[] { 1, 1, 1 };
 				for (int i = 0; i < sizesStr.length; i++) {
 					localSize[i] = Integer.parseInt(sizesStr[i]);
 				}
