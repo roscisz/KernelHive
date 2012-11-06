@@ -346,10 +346,10 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     printf("\n");*/
     // Copy the result
     if (wiId == finder) {
-        output[0] = (msgLen[0]) & 0xFF;
-        output[1] = (msgLen[0] >> 8) & 0xFF;
-        output[2] = (msgLen[0] >> 16) & 0xFF;
-        output[3] = (msgLen[0] >> 24) & 0xFF;
+        output[0] = (passLen) & 0xFF;
+        output[1] = (passLen >> 8) & 0xFF;
+        output[2] = (passLen >> 16) & 0xFF;
+        output[3] = (passLen >> 24) & 0xFF;
         for (i = 0; i < passLen; i++) {
             output[i+4] = msg[i];
         }
