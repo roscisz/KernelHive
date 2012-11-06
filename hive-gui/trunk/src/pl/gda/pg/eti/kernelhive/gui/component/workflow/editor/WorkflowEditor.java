@@ -29,6 +29,7 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
+import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NodePropertiesDialog;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
@@ -422,6 +423,9 @@ public class WorkflowEditor extends JTabContent {
 						} finally {
 							graph.getModel().endUpdate();
 						}
+						MessageDialog
+								.showMessageDialog(WorkflowEditor.this, "",
+										"Selected nodes cannot be connected. Invalid graph state!");
 					}
 
 				}
