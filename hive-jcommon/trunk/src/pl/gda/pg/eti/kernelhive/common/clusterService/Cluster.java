@@ -14,6 +14,7 @@ public class Cluster extends HasID {
 	public String hostname;
 	public int TCPPort;
 	public int UDPPort;
+	public int dataPort;
 	public List<Unit> unitList = new ArrayList<Unit>();
 	@XmlTransient
 	public List<Job> jobsToRun = new ArrayList<Job>();
@@ -25,13 +26,14 @@ public class Cluster extends HasID {
 	public Cluster(int clusterTCPPort, int clusterDataPort, int clusterUDPPort, String clusterTCPHostname) {
 		this.TCPPort = clusterTCPPort;
 		this.UDPPort = clusterUDPPort;
+		this.dataPort = clusterDataPort;
 		this.hostname = clusterTCPHostname;
 	}
 
 	public void runJob(Job jobToRun) {
 		jobsToRun.add(jobToRun);
 		synchronized(monitor) {
-			System.out.println("Notify on cluster " + this);
+			//System.out.println("Notify on cluster " + this);
 			monitor.notifyAll();
 		}
 	}
@@ -63,9 +65,9 @@ public class Cluster extends HasID {
 						jobsToRun.remove(0);
 						return jobToRun;
 					} else {
-						System.out.println("Wait on cluster" + this);
+						//System.out.println("Wait on cluster" + this);
 						monitor.wait();
-						System.out.println("Get job released");						
+						//System.out.println("Get job released");						
 					}
 				}
 			}

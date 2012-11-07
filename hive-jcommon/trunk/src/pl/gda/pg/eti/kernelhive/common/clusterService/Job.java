@@ -19,13 +19,11 @@ public class Job extends HasID {
 		FINISHED
 	}
 	
-	private int numData;
+	public int numData = 1;
 	private int collectedAddresses = 0;
 	private List<DataAddress> dataAddresses = new ArrayList<DataAddress>();
-	private Workflow task;
 	
 	public EngineGraphNodeDecorator node;
-	public IKernelString assignedKernel;
 	
 	public Device device;
 	
@@ -34,42 +32,33 @@ public class Job extends HasID {
 		
 	private int unassignedInt = 0;	
 
-	public String inputDataUrl;
-	public int nOutputs;
-
+	public String inputDataUrl;	
+	public int nOutputs = 1;
+	
 	public Job() {				
 	}
 	
-	public Job(EngineGraphNodeDecorator node, Workflow task) {
-		this.node = node;
-		this.task = task;
-		prepareNumData();
+	public Job(EngineGraphNodeDecorator node) {
+		this.node = node;	
 	}				
 
-	private void prepareNumData() {		
-		// FIXME:
-		if(this.node.getGraphNode().getType() == GraphNodeType.MERGER)
-			this.numData = 2;
-		else this.numData = 1;		
-	}
-
 	private String getOffsets() {
-		int[] offsets = assignedKernel.getOffset();
+		int[] offsets = getAssignedKernel().getOffset();
 		return concatKernelAttrs(offsets);
 	}
 
 	private String getGlobalSizes() {
-		int[] globalSizes = assignedKernel.getGlobalSize();
+		int[] globalSizes = getAssignedKernel().getGlobalSize();
 		return concatKernelAttrs(globalSizes);
 	}
 	
 	private String getLocalSizes() {
-		int[] localSizes = assignedKernel.getLocalSize();
+		int[] localSizes = getAssignedKernel().getLocalSize();
 		return concatKernelAttrs(localSizes);
 	}
 	
 	private String getOutputSize() {
-		return "" + this.assignedKernel.getOutputSize();
+		return "" + this.getAssignedKernel().getOutputSize();
 	}
 	
 	private String getDataString() {
@@ -116,10 +105,10 @@ public class Job extends HasID {
 		return device.name;
 	}
 	
-	private GraphNodeType getJobType() {
+	protected GraphNodeType getJobType() {
 		return node.getGraphNode().getType();
 	}
-	
+		
 	private String getResultDataHost() {
 		// FIXME: it shouldn't happen:
 		if(device== null) return "hive-cluster";
@@ -143,7 +132,7 @@ public class Job extends HasID {
 		JobInfo ret = new JobInfo();
 		
 		ret.unitID = getUnitId();
-		ret.kernelString = this.assignedKernel.getKernel();
+		ret.kernelString = this.getAssignedKernel().getKernel();
 		
 		ret.ID = ID;
 		ret.clusterHost = getClusterHost();
@@ -166,6 +155,10 @@ public class Job extends HasID {
 		return ret;
 	}
 
+	protected IKernelString getAssignedKernel() {
+		return this.node.getKernels().get(0);
+	}
+
 	public void tryToCollectDataAddresses(Iterator<DataAddress> dataIterator) {	
 		System.out.println("Job " + ID + " trying to collect " + numData + " addresses.");
 		
@@ -180,7 +173,7 @@ public class Job extends HasID {
 		}
 		System.out.println("Job " + this.ID + " collected " + collectedAddresses + " dataAddresses.");
 		if(collectedAddresses == numData)
-			this.state = JobState.READY;
+			getReady();
 	}
 
 	public void finish() {
@@ -190,5 +183,9 @@ public class Job extends HasID {
 
 	public boolean canBeScheduledOn(Device device) {
 		return true;
+	}
+	
+	protected void getReady() {
+		this.state = JobState.READY;		
 	}
 }

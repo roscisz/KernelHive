@@ -54,7 +54,8 @@ public class TCPServer implements Runnable {
 
 	private void prepareSocket(String host, int port) throws IOException {
 		server = ServerSocketChannel.open();
-		server.configureBlocking(false);		
+		server.configureBlocking(false);	
+		System.out.println("Host " + host + ", port: " + port);
 		server.socket().bind(new InetSocketAddress(host, port));
 		
 		selector = Selector.open();
