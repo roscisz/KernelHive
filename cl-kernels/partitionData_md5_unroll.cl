@@ -33,7 +33,7 @@ __kernel void partitionData(__global unsigned char *input, unsigned int dataSize
     
     if (wiId == 0) {
         for (i = 0; i < partsCount; i++) {
-            offset = i * dataSize;
+            offset = i * outputSize;
             for (j = 0; j < DIGEST_LEN; j++) {
                 output[offset + j] = digest[j];
             }           
