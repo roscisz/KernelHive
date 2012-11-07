@@ -4,11 +4,11 @@
  
 #define DIGEST_LEN 16
 #define LONG_LEN sizeof(long)
-#define MAX_VAL 9223372036854775808L
+#define MAX_VAL 9223372036854775807L
 
 __kernel void partitionData(__global unsigned char *input, unsigned int dataSize, unsigned int partsCount, __global unsigned char *output, unsigned int outputSize) {
     int wiId = get_global_id(0);
-    int offset;
+    int offset;  
     
     unsigned char digest[DIGEST_LEN];
     unsigned char fromTmp[LONG_LEN], toTmp[LONG_LEN];
@@ -17,7 +17,6 @@ __kernel void partitionData(__global unsigned char *input, unsigned int dataSize
     int reminder;
     
     int i, j;
-    unsigned long check;
     long tmp;
     
     for (i = 0; i < DIGEST_LEN; i++) {
@@ -41,8 +40,10 @@ __kernel void partitionData(__global unsigned char *input, unsigned int dataSize
             }           
             tmp = from + (subRangeLen * i);
             *((long *)fromTmp) = tmp;
-            check = (from + (subRangeLen * (i + 1)) + reminder) % MAX_VAL;
-            tmp = (long)check;
+            tmp = from + (subRangeLen * (i + 1)) + reminder;
+            if (tmp < 0L) {
+                tmp = MAX_VAL;
+            }
             *((long *)toTmp) = tmp;
             for (j = 0; j < LONG_LEN; j++) {
                 output[j+offset+DIGEST_LEN] = fromTmp[j];
