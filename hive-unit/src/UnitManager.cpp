@@ -22,14 +22,9 @@
 
 namespace KernelHive {
 
-UnitManager::UnitManager() {
-
-	// Testing worker
-	/*WorkerProxy *proxy = WorkerProxy::create(/* type ,*
-			"bin 1 localhost 31338 localhost 31340 localhost 31340 ION 1 0 4096 64 456 123"); */
-
+UnitManager::UnitManager(char *clusterHostname) {
 	try {
-		this->clusterProxy = new ClusterProxy(new NetworkAddress("hive-cluster", 31338), this);
+		this->clusterProxy = new ClusterProxy(new NetworkAddress(clusterHostname, 31338), this);
 	}
 	catch(const char *msg) {
 		Logger::log(FATAL, "Couldn't open Cluster Proxy: %s\n", msg);
@@ -37,8 +32,8 @@ UnitManager::UnitManager() {
 	}
 	ThreadManager::Get()->runThread(clusterProxy);
 
-	DataPublisher *dataPublisher = new DataPublisher(new NetworkAddress("hive-cluster", 31350));
-	dataPublisher->publish(123, "DANE PRZYKLADOWE C++");
+	//DataPublisher *dataPublisher = new DataPublisher(new NetworkAddress("hive-cluster", 31350));
+	//dataPublisher->publish(123, "DANE PRZYKLADOWE C++");
 }
 
 UnitManager::~UnitManager() {

@@ -18,7 +18,7 @@ class UnitManager : public TCPClientListener {
 private:
 	ClusterProxy *clusterProxy;
 public:
-	UnitManager();
+	UnitManager(char *clusterHostname);
 	virtual ~UnitManager();
 
 	void listen();

@@ -18,14 +18,19 @@ void forkAndExitParent();
 void createNewSession();
 void prepareWorkingDirectory();
 
-int main() {
+int main(int argc, char* argv[]) {
+	if(argc < 2) {
+    	KernelHive::Logger::log(KernelHive::FATAL, "No cluster hostname specified.\n");
+		exit(EXIT_FAILURE);
+	}
+
 	//daemonize();
 	configureLogs();
 
 	// TODO: Read configuration
 	// TODO: Connect to signals
 
-	KernelHive::UnitManager* unitManager = new KernelHive::UnitManager();
+	KernelHive::UnitManager* unitManager = new KernelHive::UnitManager(argv[1]);
 	unitManager->listen();
 
 	return 0;
