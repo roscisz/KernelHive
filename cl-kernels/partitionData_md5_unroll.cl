@@ -34,16 +34,13 @@ __kernel void partitionData(__global unsigned char *input, unsigned int dataSize
     if (wiId == 0) {
         for (i = 0; i < partsCount; i++) {
             offset = i * dataSize;
-            printf("[%d] offset: %d\n", wiId, offset);
             for (j = 0; j < DIGEST_LEN; j++) {
                 output[offset + j] = digest[j];
             }           
             tmp = from + (subRangeLen * i);
             *((long *)fromTmp) = tmp;
-            printf("[%d] from: %ld\n", i, tmp);
             tmp = from + (subRangeLen * (i + 1)) + reminder;
             *((long *)toTmp) = tmp;
-            printf("[%d] to: %ld\n", i, tmp);
             for (j = 0; j < LONG_LEN; j++) {
                 output[j+offset+DIGEST_LEN] = fromTmp[j];
                 output[j+offset+DIGEST_LEN+LONG_LEN] = toTmp[j];
