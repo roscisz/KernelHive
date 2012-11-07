@@ -326,8 +326,11 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     state = *from;
     passLen = 0;
     barrier(CLK_LOCAL_MEM_FENCE);
+    
+    //printf("[%d] from: %lu, to: %lu\n", wiId, *from, *to);
 
     while (passLen == 0 && state <= *to) {
+        //printf("[%d] state: %lu\n", wiId, state);
         initState(state, msg, msgLen);
         md5(msg, msgLen[0], calculated);    
         compareHashes(calculated, digest, outcome);
@@ -336,7 +339,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
             finder = wiId;
         }
         step++;
-        state = (step * wiCount) + wiId;
+        state = *from + (step * wiCount) + wiId;
     }    
     barrier(CLK_LOCAL_MEM_FENCE);
     // WARNING: printf below will not run on all devices
