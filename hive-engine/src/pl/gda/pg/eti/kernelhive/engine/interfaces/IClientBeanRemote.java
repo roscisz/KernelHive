@@ -6,7 +6,7 @@ import javax.ejb.Remote;
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
+import pl.gda.pg.eti.kernelhive.engine.Workflow;
 
 @Remote
 public interface IClientBeanRemote {

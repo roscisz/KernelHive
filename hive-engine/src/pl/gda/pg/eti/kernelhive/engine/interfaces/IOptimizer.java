@@ -5,7 +5,7 @@ import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
+import pl.gda.pg.eti.kernelhive.engine.Workflow;
 
 public interface IOptimizer {
 	/**	

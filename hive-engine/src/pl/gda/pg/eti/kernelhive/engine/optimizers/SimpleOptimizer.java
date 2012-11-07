@@ -9,14 +9,15 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
+import pl.gda.pg.eti.kernelhive.engine.Workflow;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IOptimizer;
+import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
 
 public class SimpleOptimizer implements IOptimizer {
 
 	@Override
 	public List<Job> processWorkflow(Workflow workflow, Collection<Cluster> infrastructure) {
-		List<Job> readyJobs = workflow.getReadyJobs();
+		List<EngineJob> readyJobs = workflow.getReadyJobs();
 		List<Job> scheduledJobs = new ArrayList<Job>();
 
 		if(readyJobs.size() == 0) {
@@ -46,9 +47,7 @@ public class SimpleOptimizer implements IOptimizer {
 					}
 				}				
 			}
-		}
-				
+		}			
 		return scheduledJobs;
 	}
-
 }

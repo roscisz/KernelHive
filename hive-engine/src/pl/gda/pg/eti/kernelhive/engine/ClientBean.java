@@ -12,7 +12,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.impl.EngineGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IClientBeanRemote;

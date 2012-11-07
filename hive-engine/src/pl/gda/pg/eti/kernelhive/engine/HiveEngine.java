@@ -19,11 +19,11 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.DataAddress;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow;
 import pl.gda.pg.eti.kernelhive.common.communication.DataDownloader;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.engine.http.file.utils.HttpFileUploadClient;
+import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 
 public class HiveEngine {
@@ -66,16 +66,15 @@ public class HiveEngine {
 	}
 
 	private void processWorkflow(Workflow workflow) {
-		//System.out.println("Processing workflow: " + workflow.ID);
+		//System.out.println("Processing workflow: " + workflow.ID);				
 		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(workflow, clusters.values());	
 		
-		for(Job job : readyJobs) {
+		for(Job job : readyJobs)
 			job.run();
-		}	
 	}
 	
 	public void cleanup() {
-		// jeżeli któryś job za długo nie odpowiada to najpierw włącz mu tryb nie odpowiada, a potem wywal
+		// TODO: jeżeli któryś job za długo nie odpowiada to najpierw włącz mu tryb nie odpowiada, a potem wywal
 		for(Workflow workflow : workflows.values())
 			processWorkflow(workflow);
 	}
@@ -117,28 +116,28 @@ public class HiveEngine {
 
 	public void onJobOver(int jobID, String returnData) {		
 		System.out.println("JOB OVER " + jobID + ", " + returnData);	
-		List<DataAddress> resultAddresses = parseResults(returnData);
-		Job jobOver = getJobByID(jobID);				
-		jobOver.finish();
+
+		EngineJob jobOver = getJobByID(jobID);				
+		jobOver.finish();	
 		
-		Iterator<DataAddress> dataIterator = resultAddresses.iterator();		
-		if(jobOver.node.getGraphNode().getFollowingNodes().size() == 0) {
-			DataAddress resultAddress = dataIterator.next();
-			byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);
-			deployResult(result);
-			Workflow finisingWorkflow = getWorkflowByJob(jobOver);
-			finisingWorkflow.finish(resultDownloadURL);
-		}
+		List<DataAddress> resultAddresses = parseResults(returnData);
+		Iterator<DataAddress> dataIterator = resultAddresses.iterator();
+				
+		if(jobOver.nOutputs == 0)			
+			deployResults(jobOver.workflow, dataIterator);							
 		else {
-			for(IGraphNode graphNode : jobOver.node.getGraphNode().getFollowingNodes()) {
-				Job followingJob = getJobByGraphNode(graphNode);
-				followingJob.tryToCollectDataAddresses(dataIterator);
-				System.out.println("Following job: " + followingJob);
-			}		
-			processWorkflow(getWorkflowByJob(jobOver));
+			jobOver.tryCollectFollowingJobsData(dataIterator);
+			processWorkflow(jobOver.workflow);
 		}
-	}
+	}	
 	
+	private void deployResults(Workflow finishingWorkflow, Iterator<DataAddress> dataIterator) {		
+		DataAddress resultAddress = dataIterator.next();
+		byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);
+		deployResult(result);
+		finishingWorkflow.finish(resultDownloadURL);
+	}
+
 	private void deployResult(byte[] result) {
 		HttpFileUploadClient uploadClient = new HttpFileUploadClient();
 		try {
@@ -147,14 +146,6 @@ public class HiveEngine {
 			e.printStackTrace();
 		}		
 
-	}
-
-	private Workflow getWorkflowByJob(Job jobOver) {
-		for(Workflow workflow : workflows.values()) {
-			if(workflow.containsJob(jobOver))
-				return workflow;
-		}
-		return null;
 	}
 
 	private Job getJobByGraphNode(IGraphNode graphNode) {
@@ -166,9 +157,9 @@ public class HiveEngine {
 		return null;
 	}
 
-	private Job getJobByID(int jobID) {
+	private EngineJob getJobByID(int jobID) {
 		for(Workflow workflow : workflows.values()) {
-			Job job = workflow.getJobByID(jobID);
+			EngineJob job = workflow.getJobByID(jobID);
 			if(job != null)
 				return job;
 		}				
@@ -191,6 +182,11 @@ public class HiveEngine {
 		}
 		
 		return ret;
+	}
+
+	public static int queryFreeDevicesNumber() {
+		// TODO
+		return 1;
 	}
 
 }
