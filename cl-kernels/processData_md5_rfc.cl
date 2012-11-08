@@ -334,9 +334,11 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         initState(state, msg, msgLen);
         md5(msg, msgLen[0], calculated);    
         compareHashes(calculated, digest, outcome);
+        barrier(CLK_GLOBAL_MEM_FENCE);
         if (outcome[0] > 0) {
             passLen = msgLen[0];
             finder = wiId;
+            break;
         }
         step++;
         state = *from + (step * wiCount) + wiId;
@@ -356,6 +358,11 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         for (i = 0; i < passLen; i++) {
             output[i+4] = msg[i];
         }
+    } else if (wiId == 0) {
+        output[0] = 0;
+        output[1] = 0;
+        output[2] = 0;
+        output[3] = 0;
     }
 }
 
