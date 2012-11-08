@@ -31,28 +31,32 @@ import pl.gda.pg.eti.kernelhive.common.communication.UDPServerListener;
 
 public class ClusterManager implements TCPServerListener, UDPServerListener {	
 	
-	private final String clusterDataHostname = "hive-cluster";
-	private final String clusterTcpHostname = "hive-cluster";	
+	//private final String clusterDataHostname = "hive-cluster";
+	//private final String clusterTcpHostname = "hive-cluster";
+	private String clusterHostname;
 	private final int clusterTCPPort = 31338;
 	private final int clusterDataPort = 31339;
 	private final int clusterUDPPort = 31340;	
 
 	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
 	
-	private Cluster cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort, clusterTcpHostname);
+	private Cluster cluster;
 	private ClusterBean clusterBean;
 	private DataPublisher dataPublisher;
 		
-	public ClusterManager() {
+	public ClusterManager(String clusterHostname) {
+		this.clusterHostname = clusterHostname;
+		 this.cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort, clusterHostname);
 		try {
-			TCPServer unitServer = new TCPServer(new NetworkAddress(clusterTcpHostname, clusterTCPPort), this);
-			dataPublisher = new DataPublisher(new NetworkAddress(clusterDataHostname, clusterDataPort));
+			TCPServer unitServer = new TCPServer(new NetworkAddress(clusterHostname, clusterTCPPort), this);
+			dataPublisher = new DataPublisher(new NetworkAddress(clusterHostname, clusterDataPort));
 			UDPServer runnerServer = new UDPServer(clusterUDPPort, this);
+			//dataPublisher.publish(13, new byte[9]);
 		} catch (CommunicationException e) {
 			// TODO: Exit gracefully
 			e.printStackTrace();
 		}
-		
+
 		ClusterBeanService cbs;
 		try {
 			cbs = new ClusterBeanService(new URL("http://hive-engine:8080/ClusterBeanService/ClusterBean?wsdl"), new QName("http://engine.kernelhive.eti.pg.gda.pl/", "ClusterBeanService"));
@@ -64,7 +68,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		tryUpdateInEngine();
 		
 		while(true) {
-			System.out.println("Cluster getJobThread cycle");
+			//System.out.println("Cluster getJobThread cycle");
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
@@ -91,7 +95,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	}
 
 	private void runJob(JobInfo jobInfo) {
-		System.out.println("Kernel: " + jobInfo.kernelString);
+		//System.out.println("Kernel: " + jobInfo.kernelString);
 		UnitProxy proxy = getProxyById(jobInfo.unitID);
 		deployKernel(jobInfo);
 		deployDataIfURL(jobInfo);
@@ -99,8 +103,8 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	}
 
 	private void deployKernel(JobInfo jobInfo) {
-		jobInfo.kernelHost = clusterDataHostname;
-		jobInfo.kernelPort = clusterDataPort;
+		jobInfo.kernelHost = this.cluster.hostname;
+		jobInfo.kernelPort = this.cluster.dataPort;
 		jobInfo.kernelID = dataPublisher.publish(TCPServer.byteBufferToArray(Decoder.encode(jobInfo.kernelString)));		
 	}
 	
@@ -110,7 +114,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		if(jobInfo.inputDataUrl != null) {
 			System.out.println("Deploying data from " + jobInfo.inputDataUrl);
 			byte[] data = downloadURL(jobInfo.inputDataUrl);
-			jobInfo.dataString = "1 " + clusterDataHostname + " " + clusterDataPort + " " + dataPublisher.publish(data);
+			jobInfo.dataString = "1 " + clusterHostname + " " + clusterDataPort + " " + dataPublisher.publish(data);
 		}		
 	}
 
@@ -156,7 +160,6 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	}
 
 	private void commandUpdate(SocketChannel channel, String data) {
-		System.out.println("Command update...");
 		UnitProxy proxy = unitsMap.get(channel);
 		if(proxy == null) {
 			Unit unit = new Unit(cluster);
@@ -202,21 +205,13 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 		int percent = Integer.parseInt(report[1]);
 		
 		// TODO: Update progress in Job representation
-		System.out.println("JobID " + id + ": " + percent + "% done.");
+		//System.out.println("JobID " + id + ": " + percent + "% done.");
 	}
 
 	private void onJobDone(int id, String status) {
 		System.out.println("Job " + id + " over.");				
 		
-		clusterBean.reportOver(id, status);
-		/*id++;
-		if(id < currentJobs.size()) {
-			System.out.println("Running job " + id);
-			currentJobs.get(id).setDataAddress(status);
-			currentJobs.get(id).run();
-		}
-		else System.out.println("All jobs done.");
-		*/		
+		clusterBean.reportOver(id, status);		
 	}
 	
 	private UnitProxy findUnitProxy(Unit unit) {

@@ -5,13 +5,16 @@ import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
 
 public class HiveCluster implements Daemon {
+	private String clusterHostname;
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		try {
-			(new HiveCluster()).start();
+			HiveCluster cluster = new HiveCluster();
+			cluster.clusterHostname = parseHostname(args);
+			cluster.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -23,16 +26,15 @@ public class HiveCluster implements Daemon {
 	}
 
 	@Override
-	public void init(DaemonContext arg0) throws DaemonInitException, Exception {
+	public void init(DaemonContext dc) throws DaemonInitException, Exception {
 		System.out.println("SVC INIT");
+		this.clusterHostname = parseHostname(dc.getArguments());
 	}
 
 	@Override
 	public void start() throws Exception {
 		System.out.println("SVC START");
-		ClusterManager cm = new ClusterManager();	
-		
-		// TODO: connect to the execution engine
+		ClusterManager cm = new ClusterManager(this.clusterHostname);		
 		
 		while(true);
 	}
@@ -41,5 +43,9 @@ public class HiveCluster implements Daemon {
 	public void stop() throws Exception {
 		System.out.println("SVC STOP");
 	}
-
+	
+	private static String parseHostname(String[] args) throws Exception {
+		if(args.length < 1) throw new Exception("Cluster hostname should be provided as argument.");
+		return args[0];
+	}
 }
