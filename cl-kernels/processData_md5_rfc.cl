@@ -359,10 +359,46 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
             output[i+4] = msg[i];
         }
     } else if (wiId == 0) {
-        output[0] = 0;
+        /*output[0] = 0;
         output[1] = 0;
         output[2] = 0;
-        output[3] = 0;
+        output[3] = 0;*/
+        output[0] = (*from) & 0xFF;
+        output[1] = ((*from) >> 8) & 0xFF;
+        output[2] = ((*from) >> 16) & 0xFF;
+        output[3] = ((*from) >> 24) & 0xFF;
+        output[4] = ((*from) >> 32) & 0xFF;
+        output[5] = ((*from) >> 40) & 0xFF;
+        output[6] = ((*from) >> 48) & 0xFF;
+        output[7] = ((*from) >> 56) & 0xFF;
+        
+        output[8] = (*to) & 0xFF;
+        output[9] = ((*to) >> 8) & 0xFF;
+        output[10] = ((*to) >> 16) & 0xFF;
+        output[11] = ((*to) >> 24) & 0xFF;
+        output[12] = ((*to) >> 32) & 0xFF;
+        output[13] = ((*to) >> 40) & 0xFF;
+        output[14] = ((*to) >> 48) & 0xFF;
+        output[15] = ((*to) >> 56) & 0xFF;
+        
+        output[16] = (state) & 0xFF;
+        output[17] = (state >> 8) & 0xFF;
+        output[18] = (state >> 16) & 0xFF;
+        output[19] = (state >> 24) & 0xFF;
+        output[20] = (state >> 32) & 0xFF;
+        output[21] = (state >> 40) & 0xFF;
+        output[22] = (state >> 48) & 0xFF;
+        output[23] = (state >> 56) & 0xFF;
+        
+        output[24] = (passLen) & 0xFF;
+        output[25] = (passLen >> 8) & 0xFF;
+        output[26] = (passLen >> 16) & 0xFF;
+        output[27] = (passLen >> 24) & 0xFF;
+        
+        output[28] = (msgLen[0]) & 0xFF;
+        output[29] = (msgLen[0] >> 8) & 0xFF;
+        output[30] = (msgLen[0] >> 16) & 0xFF;
+        output[31] = (msgLen[0] >> 24) & 0xFF;
     }
 }
 
