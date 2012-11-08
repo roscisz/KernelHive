@@ -10,6 +10,7 @@
 #define ONE_BIT 0x80
 #define PADDING_ZEROES 0x00
 #define LONG_SIZE sizeof(long)
+#define MAX_WORK_ITEMS 512
 
 /**
  * Constants required by the MD5 algorithm.
@@ -243,7 +244,7 @@ void md5(unsigned char *msg, unsigned long msgLen, unsigned char *digest) {
  * @param digest the provided hash
  * @param result the result of comparison - 1 means equal, 0 means not equal
  */
-void compareHashes(unsigned char *calculated, unsigned char *digest, unsigned int *result) {
+void compareHashes(unsigned char *calculated, unsigned char *digest, __local unsigned int *result) {
     unsigned int tmp = 1, i;
     for (i = 0; i < DIGEST_LEN; i++) {
         tmp &= (calculated[i] == digest[i]);
@@ -253,7 +254,7 @@ void compareHashes(unsigned char *calculated, unsigned char *digest, unsigned in
 
 #define ALPH_LEN 26
 
-void initState(long state, unsigned char *message, unsigned long *length) {
+void initState(long state, unsigned char *message, __local unsigned long *length) {
     unsigned char alphabet[ALPH_LEN] = {
         'a', 'b', 'c', 'd',
         'e', 'f', 'g', 'h',
@@ -285,10 +286,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     unsigned char tmp[LONG_SIZE];
     unsigned char msg[MAX_MSG_LEN];
     unsigned char digest[DIGEST_LEN];
-    unsigned char calculated[DIGEST_LEN];
-    unsigned int outcome[1] = { 0 };
-    unsigned long msgLen[1] = { 0 };
-    
+    unsigned char calculated[DIGEST_LEN];    
     long from[1] = { 0 };
     long to[1] = { 0 };
     long state = 0;
@@ -296,13 +294,21 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     long step = 0;
     int wiCount = get_global_size(0);
     int wiId = get_global_id(0);
-    int finder = -1;
     
     int i;
     
-    
     // Work-group variables declarations
+    __local unsigned int outcome[MAX_WORK_ITEMS];
+    __local unsigned long msgLen[MAX_WORK_ITEMS];
     __local int passLen;
+    __local int finder;
+    
+    outcome[wiId] = 0;
+    msgLen[wiId] = 0;
+    if (wiId == 0) {
+        passLen = 0;
+        finder = -1;
+    }
     
     // Read the MD5 hash of the password from input array
     for (i = 0; i < DIGEST_LEN; i++) {
@@ -324,24 +330,20 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     
     // Set the initial state
     state = *from;
-    passLen = 0;
-    barrier(CLK_LOCAL_MEM_FENCE);
-    
-    //printf("[%d] from: %lu, to: %lu\n", wiId, *from, *to);
+    barrier(CLK_LOCAL_MEM_FENCE);   
 
     while (passLen == 0 && state <= *to) {
-        //printf("[%d] state: %lu\n", wiId, state);
-        initState(state, msg, msgLen);
-        md5(msg, msgLen[0], calculated);    
-        compareHashes(calculated, digest, outcome);
-        barrier(CLK_GLOBAL_MEM_FENCE);
-        if (outcome[0] > 0) {
-            passLen = msgLen[0];
+        initState(state, msg, msgLen+wiId);
+        md5(msg, msgLen[wiId], calculated);    
+        compareHashes(calculated, digest, outcome+wiId);
+        barrier(CLK_LOCAL_MEM_FENCE);
+        if (outcome[wiId] > 0) {
+            passLen = msgLen[wiId];
             finder = wiId;
-            break;
         }
         step++;
         state = *from + (step * wiCount) + wiId;
+        barrier(CLK_LOCAL_MEM_FENCE);
     }    
     barrier(CLK_LOCAL_MEM_FENCE);
     // WARNING: printf below will not run on all devices
@@ -350,7 +352,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     }
     printf("\n");*/
     // Copy the result
-    if (wiId == finder) {
+    if (passLen > 0 && wiId == finder) {
         output[0] = (passLen) & 0xFF;
         output[1] = (passLen >> 8) & 0xFF;
         output[2] = (passLen >> 16) & 0xFF;
@@ -358,12 +360,12 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         for (i = 0; i < passLen; i++) {
             output[i+4] = msg[i];
         }
-    } else if (wiId == 0) {
-        /*output[0] = 0;
+    } else if (passLen == 0 && wiId == 0) {
+        output[0] = 0;
         output[1] = 0;
         output[2] = 0;
-        output[3] = 0;*/
-        output[0] = (*from) & 0xFF;
+        output[3] = 0;
+        /*output[0] = (*from) & 0xFF;
         output[1] = ((*from) >> 8) & 0xFF;
         output[2] = ((*from) >> 16) & 0xFF;
         output[3] = ((*from) >> 24) & 0xFF;
@@ -395,10 +397,15 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         output[26] = (passLen >> 16) & 0xFF;
         output[27] = (passLen >> 24) & 0xFF;
         
-        output[28] = (msgLen[0]) & 0xFF;
-        output[29] = (msgLen[0] >> 8) & 0xFF;
-        output[30] = (msgLen[0] >> 16) & 0xFF;
-        output[31] = (msgLen[0] >> 24) & 0xFF;
+        output[28] = (finder) & 0xFF;
+        output[29] = (finder >> 8) & 0xFF;
+        output[30] = (finder >> 16) & 0xFF;
+        output[31] = (finder >> 24) & 0xFF;*/
+        
+        /*output[28] = (msgLen[wiId]) & 0xFF;
+        output[29] = (msgLen[wiId] >> 8) & 0xFF;
+        output[30] = (msgLen[wiId] >> 16) & 0xFF;
+        output[31] = (msgLen[wiId] >> 24) & 0xFF;*/
     }
 }
 
