@@ -1,5 +1,7 @@
 package pl.gda.pg.eti.kernelhive.gui.dialog;
 
+import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -8,72 +10,80 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
-
-import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.Rectangle;
+import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
+import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 public class SourceFilePropertiesDialog extends JDialog {
 
 	private static final long serialVersionUID = 1825937840391440307L;
-	
-	private IKernelFile sourceFile;
+
+	private final IKernelFile sourceFile;
 	private JTextField textField;
 	private JTable table;
-	
-	public SourceFilePropertiesDialog(Dialog dialog, IKernelFile sourceFile){
-		super(dialog);
+	private MainFrame frame;
+
+	public SourceFilePropertiesDialog(final MainFrame frame,
+			final IKernelFile sourceFile) {
+		super(frame);
+		this.frame = frame;
 		this.sourceFile = sourceFile;
 		init();
 	}
-	
-	private void init(){
-		setBounds(new Rectangle(getParent().getX(), getParent().getY(), 460, 380));
+
+	// public SourceFilePropertiesDialog(final Dialog dialog,
+	// final IKernelFile sourceFile) {
+	// super(dialog);
+	// this.sourceFile = sourceFile;
+	// init();
+	// }
+
+	private void init() {
+		setBounds(new Rectangle(getParent().getX(), getParent().getY(), 460,
+				380));
 		getContentPane().setLayout(null);
-		
-		JLabel lblId = new JLabel("ID");
+
+		final JLabel lblId = new JLabel("ID");
 		lblId.setHorizontalAlignment(SwingConstants.CENTER);
 		lblId.setBounds(12, 12, 70, 15);
 		getContentPane().add(lblId);
-		
+
 		textField = new JTextField();
 		textField.setEditable(false);
 		textField.setBounds(116, 10, 320, 19);
 		getContentPane().add(textField);
 		textField.setColumns(10);
 		textField.setText(sourceFile.getId());
-		
-		JLabel lblProperties = new JLabel("Properties");
+
+		final JLabel lblProperties = new JLabel("Properties");
 		lblProperties.setBounds(12, 80, 86, 15);
 		getContentPane().add(lblProperties);
-		
-		JScrollPane scrollPane = new JScrollPane();
+
+		final JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(116, 80, 198, 175);
 		getContentPane().add(scrollPane);
-		
+
 		table = new JTable();
 		scrollPane.setViewportView(table);
-		
-		JButton btnAdd = new JButton("Add");
+
+		final JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				TableModel model = table.getModel();
+			public void actionPerformed(final ActionEvent e) {
+				final TableModel model = table.getModel();
 				if (model instanceof PropertiesTableModel) {
 					((PropertiesTableModel) model).addRow(new Object[2]);
 					((PropertiesTableModel) model).fireTableDataChanged();
@@ -82,14 +92,14 @@ public class SourceFilePropertiesDialog extends JDialog {
 		});
 		btnAdd.setBounds(326, 75, 110, 25);
 		getContentPane().add(btnAdd);
-		
-		JButton btnDelete = new JButton("Delete");
+
+		final JButton btnDelete = new JButton("Delete");
 		btnDelete.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				int rowIndex = table.getSelectedRow();
-				TableModel model = table.getModel();
+			public void actionPerformed(final ActionEvent e) {
+				final int rowIndex = table.getSelectedRow();
+				final TableModel model = table.getModel();
 				if (model instanceof PropertiesTableModel) {
 					((PropertiesTableModel) model).removeRow(rowIndex);
 					((PropertiesTableModel) model).fireTableDataChanged();
@@ -98,59 +108,68 @@ public class SourceFilePropertiesDialog extends JDialog {
 		});
 		btnDelete.setBounds(326, 112, 110, 25);
 		getContentPane().add(btnDelete);
-		
-		JButton btnCancel = new JButton("Cancel");
+
+		final JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				close();
 			}
 		});
 		btnCancel.setBounds(326, 300, 110, 25);
 		getContentPane().add(btnCancel);
-		
-		JButton btnSave = new JButton("Save");
+
+		final JButton btnSave = new JButton("Save");
 		btnSave.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (save()) {
 					close();
 				} else {
-					MessageDialog.showErrorDialog(SourceFilePropertiesDialog.this, "Error", "Duplicate keys in kernel properties - save failed!");
+					MessageDialog
+							.showErrorDialog(SourceFilePropertiesDialog.this,
+									"Error",
+									"Duplicate keys in kernel properties - save failed!");
 				}
 			}
 		});
 		btnSave.setBounds(209, 300, 110, 25);
 		getContentPane().add(btnSave);
-		
+
 		fillPropertiesTable(sourceFile.getProperties());
 	}
-	
-	public SourceFilePropertiesDialog(Frame frame, IKernelFile sourceFile){
+
+	public SourceFilePropertiesDialog(final Frame frame,
+			final IKernelFile sourceFile) {
 		super(frame);
 		this.sourceFile = sourceFile;
-		
+
 		init();
 	}
-	
+
 	private void close() {
 		this.setVisible(false);
 		this.dispose();
 	}
 
 	private boolean save() {
-		return saveProperties();
+		if (saveProperties()) {
+			frame.getController().saveProject();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private boolean saveProperties() {
-		Map<String, Object> properties = new HashMap<String, Object>();
-		TableModel model = table.getModel();
+		final Map<String, Object> properties = new HashMap<String, Object>();
+		final TableModel model = table.getModel();
 		if (model.getColumnCount() == 2) {
 			for (int i = 0; i < model.getRowCount(); i++) {
-				String key = (String) model.getValueAt(i, 0);
-				Object value = model.getValueAt(i, 1);
+				final String key = (String) model.getValueAt(i, 0);
+				final Object value = model.getValueAt(i, 1);
 				if (properties.containsKey(key)) {
 					return false;
 				} else {
@@ -164,23 +183,23 @@ public class SourceFilePropertiesDialog extends JDialog {
 		}
 	}
 
-	private void fillPropertiesTable(Map<String, Object> properties){
-		TableModel model = new PropertiesTableModel(properties);
+	private void fillPropertiesTable(final Map<String, Object> properties) {
+		final TableModel model = new PropertiesTableModel(properties);
 		table.setModel(model);
 		table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.SINGLE_SELECTION);
 		model.addTableModelListener(table);
 	}
-	
-	private class PropertiesTableModel extends AbstractTableModel{
-		private static final long serialVersionUID = -1313805087006665662L;
-		
-		private List<Object[]> dynamicArray;
 
-		public PropertiesTableModel(Map<String, Object> properties) {
+	private class PropertiesTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = -1313805087006665662L;
+
+		private final List<Object[]> dynamicArray;
+
+		public PropertiesTableModel(final Map<String, Object> properties) {
 			dynamicArray = new ArrayList<Object[]>();
-			Set<String> keySet = properties.keySet();
-			for (String key : keySet) {
+			final Set<String> keySet = properties.keySet();
+			for (final String key : keySet) {
 				dynamicArray.add(new Object[] { key, properties.get(key) });
 			}
 		}
@@ -196,7 +215,7 @@ public class SourceFilePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public String getColumnName(int columnIndex) {
+		public String getColumnName(final int columnIndex) {
 			if (columnIndex == 0) {
 				return "Key";
 			} else if (columnIndex == 1) {
@@ -207,17 +226,17 @@ public class SourceFilePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public Class<?> getColumnClass(int columnIndex) {
+		public Class<?> getColumnClass(final int columnIndex) {
 			return String.class;
 		}
 
 		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
+		public boolean isCellEditable(final int rowIndex, final int columnIndex) {
 			return true;
 		}
 
 		@Override
-		public Object getValueAt(int rowIndex, int columnIndex) {
+		public Object getValueAt(final int rowIndex, final int columnIndex) {
 			if (rowIndex < dynamicArray.size() && columnIndex < 2) {
 				return dynamicArray.get(rowIndex)[columnIndex];
 			} else {
@@ -226,17 +245,18 @@ public class SourceFilePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		public void setValueAt(final Object aValue, final int rowIndex,
+				final int columnIndex) {
 			if (rowIndex < dynamicArray.size() && columnIndex < 2) {
 				dynamicArray.get(rowIndex)[columnIndex] = aValue;
 			}
-			for (TableModelListener l : getTableModelListeners()) {
+			for (final TableModelListener l : getTableModelListeners()) {
 				l.tableChanged(new TableModelEvent(this, rowIndex, rowIndex,
 						columnIndex, TableModelEvent.UPDATE));
 			}
 		}
 
-		public void addRow(Object[] row) {
+		public void addRow(final Object[] row) {
 			if (row.length == 2) {
 				dynamicArray.add(row);
 			} else {
@@ -244,7 +264,7 @@ public class SourceFilePropertiesDialog extends JDialog {
 			}
 		}
 
-		public void removeRow(int rowIndex) {
+		public void removeRow(final int rowIndex) {
 			dynamicArray.remove(rowIndex);
 		}
 	}

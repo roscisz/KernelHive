@@ -24,7 +24,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Workflow.WorkflowState;
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
 /**
@@ -130,7 +129,7 @@ public class WorkflowViewerPanel extends JPanel {
 				"Status", "Results" };
 		@SuppressWarnings("rawtypes")
 		private final Class[] columnClasses = new Class[] { Integer.class,
-				String.class, WorkflowState.class, String.class };
+				String.class, String.class, String.class };
 		List<Object[]> data = new ArrayList<Object[]>();
 
 		public WorkflowExecutionsTableModel(final List<WorkflowInfo> workflows) {

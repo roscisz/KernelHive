@@ -1,5 +1,7 @@
 package pl.gda.pg.eti.kernelhive.gui.dialog;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -28,8 +30,6 @@ import javax.swing.table.TableModel;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
-import java.awt.Rectangle;
-import java.awt.Dimension;
 
 /**
  * graph node properties dialog
@@ -41,26 +41,28 @@ public class NodePropertiesDialog extends JDialog {
 
 	private static final long serialVersionUID = -7313937306855473619L;
 
-	private JTextField textFieldName;
-	private JTextField textFieldType;
-	private JTextField textFieldId;
-	private JLabel lblSourceFiles;
-	private JList list;
-	private MainFrame frame;
-	private GUIGraphNodeDecorator node;
-	private JTable table;
+	private final JTextField textFieldName;
+	private final JTextField textFieldType;
+	private final JTextField textFieldId;
+	private final JLabel lblSourceFiles;
+	private final JList list;
+	private final MainFrame frame;
+	private final GUIGraphNodeDecorator node;
+	private final JTable table;
 
-	public NodePropertiesDialog(MainFrame frame, GUIGraphNodeDecorator node) {
+	public NodePropertiesDialog(final MainFrame frame,
+			final GUIGraphNodeDecorator node) {
 		super(frame);
 		getContentPane().setSize(new Dimension(460, 500));
 		getContentPane().setPreferredSize(new Dimension(460, 500));
 		setPreferredSize(new Dimension(460, 500));
-		setBounds(new Rectangle(getParent().getX(), getParent().getY(), 460, 500));
+		setBounds(new Rectangle(getParent().getX(), getParent().getY(), 460,
+				500));
 		this.frame = frame;
 		this.node = node;
 		getContentPane().setLayout(null);
 
-		JLabel lblName = new JLabel("Name");
+		final JLabel lblName = new JLabel("Name");
 		lblName.setBounds(12, 41, 46, 15);
 		getContentPane().add(lblName);
 
@@ -70,7 +72,7 @@ public class NodePropertiesDialog extends JDialog {
 		textFieldName.setColumns(10);
 		textFieldName.setText(node.getGraphNode().getName());
 
-		JLabel lblType = new JLabel("Type");
+		final JLabel lblType = new JLabel("Type");
 		lblType.setBounds(12, 68, 46, 15);
 		getContentPane().add(lblType);
 
@@ -81,7 +83,7 @@ public class NodePropertiesDialog extends JDialog {
 		textFieldType.setColumns(10);
 		textFieldType.setText(node.getGraphNode().getType().toString());
 
-		JLabel lblId = new JLabel("ID");
+		final JLabel lblId = new JLabel("ID");
 		lblId.setBounds(12, 12, 46, 15);
 		getContentPane().add(lblId);
 
@@ -96,46 +98,49 @@ public class NodePropertiesDialog extends JDialog {
 		lblSourceFiles.setBounds(12, 107, 92, 15);
 		getContentPane().add(lblSourceFiles);
 
-		JButton btnCancel = new JButton("Cancel");
+		final JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(333, 421, 81, 25);
 		btnCancel.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				close();
 			}
 		});
 		getContentPane().add(btnCancel);
 
-		JButton btnSave = new JButton("Save");
+		final JButton btnSave = new JButton("Save");
 		btnSave.setBounds(240, 421, 81, 25);
 		btnSave.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (save()) {
 					close();
 				} else {
-					MessageDialog.showErrorDialog(NodePropertiesDialog.this, "Error", "Duplicate keys in graph node properties - save failed!");
+					MessageDialog
+							.showErrorDialog(NodePropertiesDialog.this,
+									"Error",
+									"Duplicate keys in graph node properties - save failed!");
 				}
 			}
 		});
 		getContentPane().add(btnSave);
 
-		JScrollPane scrollPane = new JScrollPane();
+		final JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(115, 97, 193, 106);
 		getContentPane().add(scrollPane);
 
 		list = new JList();
 		scrollPane.setViewportView(list);
 
-		JButton btnAdd = new JButton("Add");
+		final JButton btnAdd = new JButton("Add");
 		btnAdd.setBounds(322, 215, 92, 25);
 		btnAdd.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				TableModel model = table.getModel();
+			public void actionPerformed(final ActionEvent e) {
+				final TableModel model = table.getModel();
 				if (model instanceof PropertiesTableModel) {
 					((PropertiesTableModel) model).addRow(new Object[2]);
 					((PropertiesTableModel) model).fireTableDataChanged();
@@ -144,14 +149,14 @@ public class NodePropertiesDialog extends JDialog {
 		});
 		getContentPane().add(btnAdd);
 
-		JButton btnRemove = new JButton("Remove");
+		final JButton btnRemove = new JButton("Remove");
 		btnRemove.setBounds(323, 252, 91, 25);
 		btnRemove.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				int rowIndex = table.getSelectedRow();
-				TableModel model = table.getModel();
+			public void actionPerformed(final ActionEvent e) {
+				final int rowIndex = table.getSelectedRow();
+				final TableModel model = table.getModel();
 				if (model instanceof PropertiesTableModel) {
 					((PropertiesTableModel) model).removeRow(rowIndex);
 					((PropertiesTableModel) model).fireTableDataChanged();
@@ -160,64 +165,72 @@ public class NodePropertiesDialog extends JDialog {
 		});
 		getContentPane().add(btnRemove);
 
-		JScrollPane scrollPane_1 = new JScrollPane();
+		final JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(115, 215, 193, 181);
 		getContentPane().add(scrollPane_1);
 
 		table = new JTable();
 		scrollPane_1.setViewportView(table);
 
-		JLabel lblProperties = new JLabel("Properties");
+		final JLabel lblProperties = new JLabel("Properties");
 		lblProperties.setBounds(12, 220, 92, 15);
 		getContentPane().add(lblProperties);
-		
-		JButton btnDetails = new JButton("Details");
+
+		final JButton btnDetails = new JButton("Details");
 		btnDetails.setBounds(320, 97, 94, 25);
 		btnDetails.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				displaySourceFileProperties();
 			}
 		});
 		getContentPane().add(btnDetails);
-		
-		JButton btnEdit = new JButton("Edit");
+
+		final JButton btnEdit = new JButton("Edit");
 		btnEdit.setBounds(320, 134, 94, 25);
 		btnEdit.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				IKernelFile file = (IKernelFile) list.getSelectedValue();
-				NodePropertiesDialog.this.frame.getController().openTab(file.getFile());
+			public void actionPerformed(final ActionEvent e) {
+				final IKernelFile file = (IKernelFile) list.getSelectedValue();
+				if (file != null) {
+					NodePropertiesDialog.this.frame.getController().openTab(
+							file.getFile());
+				}
 			}
 		});
 		getContentPane().add(btnEdit);
-		
+
 		fillSourceFilesList(node.getSourceFiles());
 		fillPropertiesTable(node.getGraphNode().getProperties());
 	}
-	
-	private void displaySourceFileProperties(){
-		IKernelFile file = (IKernelFile) list.getSelectedValue();
-		if(file!=null){
-			SourceFilePropertiesDialog dialog = new SourceFilePropertiesDialog(this, file);
+
+	private void displaySourceFileProperties() {
+		final IKernelFile file = (IKernelFile) list.getSelectedValue();
+		if (file != null) {
+			final SourceFilePropertiesDialog dialog = new SourceFilePropertiesDialog(
+					frame, file);
 			dialog.setVisible(true);
 		}
 	}
 
 	private boolean save() {
 		node.getGraphNode().setName(textFieldName.getText());
-		return saveProperties();
+		if (saveProperties()) {
+			frame.getController().saveProject();
+			return true;
+		}
+		return false;
 	}
 
 	private boolean saveProperties() {
-		Map<String, Object> properties = new HashMap<String, Object>();
-		TableModel model = table.getModel();
+		final Map<String, Object> properties = new HashMap<String, Object>();
+		final TableModel model = table.getModel();
 		if (model.getColumnCount() == 2) {
 			for (int i = 0; i < model.getRowCount(); i++) {
-				String key = (String) model.getValueAt(i, 0);
-				Object value = model.getValueAt(i, 1);
+				final String key = (String) model.getValueAt(i, 0);
+				final Object value = model.getValueAt(i, 1);
 				if (properties.containsKey(key)) {
 					return false;
 				} else {
@@ -236,15 +249,17 @@ public class NodePropertiesDialog extends JDialog {
 		this.dispose();
 	}
 
-	private void fillSourceFilesList(List<IKernelFile> sourceFiles) {
-		ListModel model = new SourceFilesListModel(sourceFiles);
+	private void fillSourceFilesList(final List<IKernelFile> sourceFiles) {
+		final ListModel model = new SourceFilesListModel(sourceFiles);
 		list.setModel(model);
 		list.addMouseListener(new MouseAdapter() {
 
-			public void mouseClicked(MouseEvent e) {
+			@Override
+			public void mouseClicked(final MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					e.consume();
-					IKernelFile file = (IKernelFile) list.getSelectedValue();
+					final IKernelFile file = (IKernelFile) list
+							.getSelectedValue();
 					frame.getController().openTab(file.getFile());
 				}
 			}
@@ -252,8 +267,8 @@ public class NodePropertiesDialog extends JDialog {
 		});
 	}
 
-	private void fillPropertiesTable(Map<String, Object> properties) {
-		TableModel model = new PropertiesTableModel(properties);
+	private void fillPropertiesTable(final Map<String, Object> properties) {
+		final TableModel model = new PropertiesTableModel(properties);
 		table.setModel(model);
 		table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.SINGLE_SELECTION);
@@ -262,12 +277,12 @@ public class NodePropertiesDialog extends JDialog {
 
 	private class PropertiesTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 1731110689845777045L;
-		private List<Object[]> dynamicArray;
+		private final List<Object[]> dynamicArray;
 
-		public PropertiesTableModel(Map<String, Object> properties) {
+		public PropertiesTableModel(final Map<String, Object> properties) {
 			dynamicArray = new ArrayList<Object[]>();
-			Set<String> keySet = properties.keySet();
-			for (String key : keySet) {
+			final Set<String> keySet = properties.keySet();
+			for (final String key : keySet) {
 				dynamicArray.add(new Object[] { key, properties.get(key) });
 			}
 		}
@@ -283,7 +298,7 @@ public class NodePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public String getColumnName(int columnIndex) {
+		public String getColumnName(final int columnIndex) {
 			if (columnIndex == 0) {
 				return "Key";
 			} else if (columnIndex == 1) {
@@ -294,17 +309,17 @@ public class NodePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public Class<?> getColumnClass(int columnIndex) {
+		public Class<?> getColumnClass(final int columnIndex) {
 			return String.class;
 		}
 
 		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
+		public boolean isCellEditable(final int rowIndex, final int columnIndex) {
 			return true;
 		}
 
 		@Override
-		public Object getValueAt(int rowIndex, int columnIndex) {
+		public Object getValueAt(final int rowIndex, final int columnIndex) {
 			if (rowIndex < dynamicArray.size() && columnIndex < 2) {
 				return dynamicArray.get(rowIndex)[columnIndex];
 			} else {
@@ -313,17 +328,18 @@ public class NodePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		public void setValueAt(final Object aValue, final int rowIndex,
+				final int columnIndex) {
 			if (rowIndex < dynamicArray.size() && columnIndex < 2) {
 				dynamicArray.get(rowIndex)[columnIndex] = aValue;
 			}
-			for (TableModelListener l : getTableModelListeners()) {
+			for (final TableModelListener l : getTableModelListeners()) {
 				l.tableChanged(new TableModelEvent(this, rowIndex, rowIndex,
 						columnIndex, TableModelEvent.UPDATE));
 			}
 		}
 
-		public void addRow(Object[] row) {
+		public void addRow(final Object[] row) {
 			if (row.length == 2) {
 				dynamicArray.add(row);
 			} else {
@@ -331,7 +347,7 @@ public class NodePropertiesDialog extends JDialog {
 			}
 		}
 
-		public void removeRow(int rowIndex) {
+		public void removeRow(final int rowIndex) {
 			dynamicArray.remove(rowIndex);
 		}
 	}
@@ -341,7 +357,7 @@ public class NodePropertiesDialog extends JDialog {
 		List<IKernelFile> list;
 		List<ListDataListener> listDataListeners;
 
-		public SourceFilesListModel(List<IKernelFile> list) {
+		public SourceFilesListModel(final List<IKernelFile> list) {
 			this.list = list;
 			listDataListeners = new ArrayList<ListDataListener>();
 		}
@@ -356,7 +372,7 @@ public class NodePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public IKernelFile getElementAt(int index) {
+		public IKernelFile getElementAt(final int index) {
 			if (list != null) {
 				return list.get(index);
 			} else {
@@ -365,14 +381,14 @@ public class NodePropertiesDialog extends JDialog {
 		}
 
 		@Override
-		public void addListDataListener(ListDataListener l) {
+		public void addListDataListener(final ListDataListener l) {
 			if (!listDataListeners.contains(l)) {
 				listDataListeners.add(l);
 			}
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
+		public void removeListDataListener(final ListDataListener l) {
 			if (listDataListeners.contains(l)) {
 				listDataListeners.remove(l);
 			}
