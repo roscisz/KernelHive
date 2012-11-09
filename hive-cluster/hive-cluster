@@ -12,14 +12,15 @@ BOOTSTRAP_CLASS=pl.gda.pg.eti.kernelhive.cluster.HiveCluster
 JAVA_HOME=/usr/lib/jvm/java-6-sun/
 
 CLUSTER_HOSTNAME=127.0.0.1
-ARGS=$CLUSTER_HOSTNAME
+ENGINE_HOSTNAME=hive-engine
+#ARGS="$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME"
 
 set -e
 
 case "$1" in
     start)
         echo -n "Starting $DESC: "
-	if "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "./dist/hive-cluster" "$BOOTSTRAP_CLASS" "$ARGS"; then
+	if "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "./dist/hive-cluster" "$BOOTSTRAP_CLASS" "$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME"; then
         	echo "$NAME."
 	else
                 echo "(already running)."

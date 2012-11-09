@@ -44,7 +44,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 	private ClusterBean clusterBean;
 	private DataPublisher dataPublisher;
 		
-	public ClusterManager(String clusterHostname) {
+	public ClusterManager(String clusterHostname, String engineHostname) {
 		this.clusterHostname = clusterHostname;
 		 this.cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort, clusterHostname);
 		try {
@@ -59,7 +59,7 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 
 		ClusterBeanService cbs;
 		try {
-			cbs = new ClusterBeanService(new URL("http://hive-engine:8080/ClusterBeanService/ClusterBean?wsdl"), new QName("http://engine.kernelhive.eti.pg.gda.pl/", "ClusterBeanService"));
+			cbs = new ClusterBeanService(new URL("http://" + engineHostname +":8080/ClusterBeanService/ClusterBean?wsdl"), new QName("http://engine.kernelhive.eti.pg.gda.pl/", "ClusterBeanService"));
 			clusterBean = cbs.getClusterBeanPort();
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
