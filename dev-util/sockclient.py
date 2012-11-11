@@ -6,6 +6,7 @@ import socket
 import os
 import struct
 import random
+import datetime
 
 # Global variables
 HOST = "localhost"
@@ -29,6 +30,9 @@ def itob(num):
 def register(repo, ident, path):
 	print 'Registering %s with ID %d' % (path, ident)
 	repo[ident] = path
+
+def currTime():
+	return datetime.datetime.now()
 
 # Sockclient main
 if __name__ == "__main__":
@@ -63,6 +67,7 @@ if __name__ == "__main__":
 			msg = conn.recv(READ_BATCH)
 			if not msg:
 				break
+			print(str(currTime()))
 			if flag == True:
 				msg = part + msg
 				flag = False
