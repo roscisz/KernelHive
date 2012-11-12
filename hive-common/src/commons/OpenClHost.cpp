@@ -19,11 +19,12 @@ namespace KernelHive {
 		std::stringstream stream;
 
 		cl_uint counts = 0;
-		cl_uint count;
+		cl_uint count = 0;
 		OpenClDevice** devices;
 		OpenClPlatform** platforms = instance.getPlatforms();
 		for (cl_uint i = 0; i < instance.getPlatformsCount(); i++) {
-			count = platforms[i]->getGpuDevicesCount();
+			// TODO Commented out so that only CPU devices are returned
+			/*count = platforms[i]->getGpuDevicesCount();
 			if (count > 0) {
 				counts += count;
 				devices = platforms[i]->getGpuDevices();
@@ -33,7 +34,7 @@ namespace KernelHive {
 						stream << OpenClPlatform::DEVICES_INFO_SEPARATOR;
 					}
 				}
-			}
+			}*/
 			count = platforms[i]->getCpuDevicesCount();
 			if (count > 0) {
 				counts += count;
@@ -52,7 +53,8 @@ namespace KernelHive {
 
 		std::stringstream outStream;
 		outStream << counts;
-		outStream << OpenClPlatform::DEVICES_INFO_SEPARATOR;
+		// TODO Commented out while only CPU devices are fetched
+		//outStream << OpenClPlatform::DEVICES_INFO_SEPARATOR;
 		outStream << stream.str();
 		return outStream.str();
 	}
