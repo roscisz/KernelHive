@@ -339,7 +339,6 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         compareHashes(calculated, digest, outcome+wiId);
         barrier(CLK_LOCAL_MEM_FENCE);
         if (outcome[wiId] > 0) {
-            printf("found! by %d\n", wiId);
             passLen = msgLen[wiId];
             finder = wiId;
         }
