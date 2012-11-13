@@ -25,9 +25,9 @@ public class EngineJob extends Job {
 	}
 	
 	public void tryCollectFollowingJobsData(Iterator<DataAddress> dataIterator) {
-		System.out.println("Job " + this.ID + " try to collect following");
+		//System.out.println("Job " + this.ID + " try to collect following");
 		for(Job followingJob : followingJobs) {
-			System.out.println("Follow: " + followingJob.ID);
+			//System.out.println("Follow: " + followingJob.ID);
 			followingJob.tryToCollectDataAddresses(dataIterator);
 		}
 	}

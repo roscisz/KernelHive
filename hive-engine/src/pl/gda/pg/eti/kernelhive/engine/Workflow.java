@@ -1,9 +1,12 @@
 package pl.gda.pg.eti.kernelhive.engine;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+
+import org.joda.time.DateTime;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo.WorkflowState;
@@ -27,6 +30,8 @@ public class Workflow extends HasID {
 	
 	private List<EngineGraphNodeDecorator> graph;
 
+	private Date startTime;
+
 	public Workflow(List<EngineGraphNodeDecorator> graph, String workflowName, String inputDataURL) {
 		super();
 		
@@ -36,6 +41,7 @@ public class Workflow extends HasID {
 		configureJobs(rootNode.getGraphNode(), null);
 		getJobByGraphNode(rootNode.getGraphNode()).deployDataFromURL(inputDataURL);		
 		initWorkflowInfo(workflowName);
+		this.startTime = new Date();
 	}
 
 	private void configureJobs(IGraphNode node, EngineJob previousJob) {
@@ -110,7 +116,8 @@ public class Workflow extends HasID {
 
 	public void finish(String resultURL) {
 		this.state = WorkflowState.COMPLETED;
-		this.info.result = resultURL + this.info.name;		
+		this.info.result = resultURL;
+		System.out.println("Time in seconds: " + ((new Date()).getSeconds() - this.startTime.getSeconds()) );
 	}
 
 	public void registerJob(EngineJob job) {

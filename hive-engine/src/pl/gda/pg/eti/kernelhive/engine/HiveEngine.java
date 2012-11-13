@@ -134,20 +134,19 @@ public class HiveEngine {
 	
 	private void deployResults(Workflow finishingWorkflow, Iterator<DataAddress> dataIterator) {		
 		DataAddress resultAddress = dataIterator.next();
-		byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);
-		deployResult(result);
-		finishingWorkflow.finish(resultDownloadURL);
+		byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);		
+		finishingWorkflow.finish(resultDownloadURL + deployResult(result));
 		System.out.println(finishingWorkflow.info.result);
 	}
 
-	private void deployResult(byte[] result) {
+	private String deployResult(byte[] result) {
 		HttpFileUploadClient uploadClient = new HttpFileUploadClient();
 		try {
-			uploadClient.postFileUpload(resultUploadURL, result);
+			return uploadClient.postFileUpload(resultUploadURL, result);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
-
+		return "";
 	}
 
 	private Job getJobByGraphNode(IGraphNode graphNode) {

@@ -39,6 +39,7 @@ public class PartitionerJob extends EngineJob {
 		merger.followingJobs = this.followingJobs;
 		this.followingJobs = new ArrayList<EngineJob>();			
 				
+		// FIXME: what if there's no free devices?
 		int processorCounter = HiveEngine.queryFreeDevicesNumber() * 4;
 		for(int i = 0; i != processorCounter; i++) {			
 			ProcessorJob processor = new ProcessorJob(this.node, this.workflow);
