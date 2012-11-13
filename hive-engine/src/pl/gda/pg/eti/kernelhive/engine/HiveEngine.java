@@ -19,6 +19,7 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.DataAddress;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.DataDownloader;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
@@ -30,7 +31,7 @@ public class HiveEngine {
 	
 	private static HiveEngine instance;
 	
-	private static String resultUploadURL = "http://localhost:8080/hive-engine/download";
+	private static String resultUploadURL = "http://localhost:8080/hive-engine/upload";
 	private static String resultDownloadURL = "http://localhost:8080/hive-engine/download?filename=";
 	
 	private Map<String, Cluster> clusters = new HashMap<String, Cluster>();
@@ -123,7 +124,7 @@ public class HiveEngine {
 		List<DataAddress> resultAddresses = parseResults(returnData);
 		Iterator<DataAddress> dataIterator = resultAddresses.iterator();
 				
-		if(jobOver.nOutputs == 0)			
+		if(jobOver.followingJobs.size() == 0)			
 			deployResults(jobOver.workflow, dataIterator);							
 		else {
 			jobOver.tryCollectFollowingJobsData(dataIterator);
@@ -136,6 +137,7 @@ public class HiveEngine {
 		byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);
 		deployResult(result);
 		finishingWorkflow.finish(resultDownloadURL);
+		System.out.println(finishingWorkflow.info.result);
 	}
 
 	private void deployResult(byte[] result) {
@@ -185,8 +187,13 @@ public class HiveEngine {
 	}
 
 	public static int queryFreeDevicesNumber() {
-		// TODO
-		return 1;
+		int ret = 0;		
+		for(Cluster cluster : instance.clusters.values())
+			for(Unit unit : cluster.unitList)
+				for(Device device : unit.devices)
+					if(!device.busy)
+						ret++;
+		return ret;
 	}
 
 }
