@@ -22,4 +22,19 @@ public interface IHttpFileUploadClient {
 	 */
 	void postFileUpload(String uploadServletUrl, String fileName, byte[] bytes)
 			throws IOException;
+
+	/**
+	 * Sends HTTP POST Request to the file upload servlet via Apache HttpCLient
+	 * library. It takes byte array, saves it to temp file and then sends
+	 * appropriate post request.
+	 * 
+	 * @param uploadServletUrl
+	 *            url of the file upload servlet
+	 * @param bytes
+	 *            output data to be saved
+	 * @return uploaded file name
+	 * @throws IOException
+	 */
+	String postFileUpload(String uploadServletUrl, byte[] bytes)
+			throws IOException;
 }

@@ -20,10 +20,12 @@ public class HttpFileUploadClient implements IHttpFileUploadClient {
 
 	private HttpClient client;
 
-	public void postFileUpload(final String uploadServletUrl, final byte[] bytes)
-			throws IOException {
+	@Override
+	public String postFileUpload(final String uploadServletUrl,
+			final byte[] bytes) throws IOException {
 		final String fileName = UUID.randomUUID().toString();
 		postFileUpload(uploadServletUrl, fileName, bytes);
+		return fileName;
 
 	}
 
