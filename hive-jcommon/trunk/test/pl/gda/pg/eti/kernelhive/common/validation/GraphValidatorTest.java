@@ -1,6 +1,12 @@
 package pl.gda.pg.eti.kernelhive.common.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +23,6 @@ import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
 import pl.gda.pg.eti.kernelhive.common.source.KernelFile;
 import pl.gda.pg.eti.kernelhive.common.source.KernelString;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class GraphValidatorTest {
 

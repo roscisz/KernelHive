@@ -27,6 +27,7 @@ public class TCPServer implements Runnable {
 	private Selector selector;
 	
 	private Map<SocketChannel, ByteBuffer> buffers = new HashMap<SocketChannel, ByteBuffer>();
+	private Map<SocketChannel, ByteBuffer> commandSizeBuffers = new HashMap<SocketChannel, ByteBuffer>();
 		
 	public TCPServer(NetworkAddress address, TCPServerListener listener) throws CommunicationException {
 		this.listener = listener;
@@ -116,8 +117,16 @@ public class TCPServer implements Runnable {
 			}
 						
 			while(incomingBuffer.hasRemaining()) {
-				//if(incomingBuffer.remaining() < 4) return;
-				int commandSize = incomingBuffer.getInt();
+				ByteBuffer commandSizeBuffer = getCommandSizeBuffer(client);
+				commandSizeBuffer.put(incomingBuffer.get());
+				if(commandSizeBuffer.position() < 4)
+					continue;
+				commandSizeBuffer.rewind();
+				int commandSize = commandSizeBuffer.getInt();
+				commandSizeBuffer.rewind();
+				//int commandSize = incomingBuffer.getInt();
+				
+				System.out.println("Command size: " + commandSize);
 				
 				if(incomingBuffer.remaining() >= commandSize) {
 					listener.onTCPMessage(client, incomingBuffer);
@@ -135,6 +144,17 @@ public class TCPServer implements Runnable {
 		}
 	}
 	
+	private ByteBuffer getCommandSizeBuffer(SocketChannel client) {
+		if(!commandSizeBuffers.containsKey(client)) {
+			ByteBuffer commandSizeBuffer = ByteBuffer.allocate(4);
+			commandSizeBuffer.order(ByteOrder.LITTLE_ENDIAN);
+			commandSizeBuffers.put(client, commandSizeBuffer);
+			return commandSizeBuffer;
+		} 
+		else return commandSizeBuffers.get(client);
+		
+	}
+
 	/**
 	 * 
 	 * @param toComplete - the Buffer that needs to be completed with position at limit

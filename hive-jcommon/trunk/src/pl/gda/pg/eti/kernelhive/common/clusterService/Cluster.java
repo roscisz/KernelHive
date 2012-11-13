@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
+import pl.gda.pg.eti.kernelhive.common.clientService.UnitInfo;
 
 public class Cluster extends HasID {
 	
@@ -39,13 +40,13 @@ public class Cluster extends HasID {
 	}
 
 	public ClusterInfo getClusterInfo() {
-		StringBuilder sb = new StringBuilder();
-		
+		List<UnitInfo> unitInfos = new ArrayList<UnitInfo>();
+				
 		for(Unit unit : unitList)
-			for(Device device : unit.devices)
-				sb.append(device.toString());
+			unitInfos.add(unit.getUnitInfo());
 		
-		return new ClusterInfo(sb.toString());
+		
+		return new ClusterInfo(this.ID, unitInfos, hostname, TCPPort, UDPPort, dataPort);
 	}
 
 	public void updateReverseReferences() {

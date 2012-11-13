@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.DeviceInfo;
+import pl.gda.pg.eti.kernelhive.common.clientService.UnitInfo;
+
 public class Unit extends HasID {
 	
 	private static String deviceSeparator = ";";
@@ -40,6 +43,15 @@ public class Unit extends HasID {
 		this.cluster = cluster;
 		for(Device device : devices)
 			device.updateReverseReferences(this);
+	}
+
+	public UnitInfo getUnitInfo() {
+		List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
+		
+		for(Device device : devices)
+			deviceInfos.add(device.getDeviceInfo());
+		
+		return new UnitInfo(this.ID, deviceInfos);
 	}		
 
 }

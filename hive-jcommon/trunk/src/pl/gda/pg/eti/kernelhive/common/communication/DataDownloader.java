@@ -21,14 +21,12 @@ public class DataDownloader {
 			outBuffer.putInt(dataID);
 
 			writeBufferToStream(outBuffer, clientSocket.getOutputStream());
-			
 			ByteBuffer inBuffer = TCPServer.prepareEmptyBuffer();
 			for(int i = 0; i != 4; i++)
 				inBuffer.put((byte) clientSocket.getInputStream().read());
 			
 			inBuffer.rewind();
 			int dataSize = inBuffer.getInt();
-			System.out.println("Data size: " + dataSize);
 			
 			ByteBuffer outBuffer2 = TCPServer.prepareEmptyBuffer();
 			outBuffer2.putInt(8);
@@ -41,14 +39,10 @@ public class DataDownloader {
 			for(int i = 0; i != dataSize; i++)
 				inBuffer2.put((byte) clientSocket.getInputStream().read());
 			
-			System.out.println("Le");
-									
 			byte[] data = new byte[dataSize];
 			for(int i = 0; i != dataSize; i++) {
 				data[i] = inBuffer2.get();
 			}
-			
-			System.out.println("Blu");
 			
 			return data;
 		} catch (UnknownHostException e) {
@@ -70,12 +64,13 @@ public class DataDownloader {
 
 	private static void writeBufferToStream(ByteBuffer buffer, OutputStream stream) throws IOException {
 		buffer.flip();
+		int i =0;
 		while(buffer.hasRemaining())
 			stream.write(buffer.get());
 	}
 	
 	public static void main(String[] args) {
-		byte[] abc = downloadData("hive-cluster", 31339, 13);
+		byte[] abc = downloadData("127.0.0.1", 31339, 13);
 	}
 
 }
