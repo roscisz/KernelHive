@@ -24,6 +24,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo.WorkflowState;
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
 /**
@@ -36,6 +37,7 @@ public class WorkflowViewerPanel extends JPanel {
 	private static final long serialVersionUID = -2548380853826858288L;
 	private final JTable table;
 	private final JButton btnRefresh;
+	private WorkflowExecutionsTableModel model;
 
 	public WorkflowViewerPanel() {
 		setLayout(new BorderLayout(0, 0));
@@ -57,8 +59,7 @@ public class WorkflowViewerPanel extends JPanel {
 	}
 
 	private void fillWorkflowExecutionsTable(final List<WorkflowInfo> workflows) {
-		final WorkflowExecutionsTableModel model = new WorkflowExecutionsTableModel(
-				workflows);
+		model = new WorkflowExecutionsTableModel(workflows);
 		table.setModel(model);
 		table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.SINGLE_SELECTION);
@@ -71,30 +72,42 @@ public class WorkflowViewerPanel extends JPanel {
 
 			@Override
 			public void mouseClicked(final MouseEvent ev) {
-				if (ev.getClickCount() > 2) {
+				if (ev.getClickCount() == 2 && !ev.isConsumed()) {
 					ev.consume();
 					final int col = table.getSelectedColumn();
 					final int row = table.getSelectedRow();
-					final String val = (String) table.getValueAt(row, col);
-					try {
-						final URL url = new URL(val);
-						if (Desktop.isDesktopSupported()) {
-							Desktop.getDesktop().browse(
-									new URI(url.toExternalForm()));
-						} else {
-							MessageDialog
-									.showErrorDialog(WorkflowViewerPanel.this,
-											"Error",
-											"Java Dialog API not supported - could not open web browser");
+					if (model.isResultColumn(col)) {
+						final String val = (String) table.getValueAt(row, col);
+						try {
+							final URL url = new URL(val);
+							if (Desktop.isDesktopSupported()) {
+								Desktop.getDesktop().browse(
+										new URI(url.toExternalForm()));
+								MessageDialog
+										.showSuccessDialog(
+												WorkflowViewerPanel.this,
+												"Please wait",
+												"Default internet browser will open to download the requested file...");
+							} else {
+								MessageDialog
+										.showErrorDialog(
+												WorkflowViewerPanel.this,
+												"Error",
+												"Java Dialog API not supported - could not open web browser");
+							}
+						} catch (final MalformedURLException e1) {
+							e1.printStackTrace();
+							MessageDialog.showErrorDialog(
+									WorkflowViewerPanel.this, "Error",
+									"The results data URL is invalid!");
+						} catch (final IOException e) {
+							e.printStackTrace();
+							MessageDialog.showErrorDialog(
+									WorkflowViewerPanel.this, "Error",
+									"Could not open web browser!");
+						} catch (final URISyntaxException e) {
+							e.printStackTrace();
 						}
-					} catch (final MalformedURLException e1) {
-						// silent exception, continue
-					} catch (final IOException e) {
-						e.printStackTrace();
-						MessageDialog.showErrorDialog(WorkflowViewerPanel.this,
-								"Error", "Could not open web browser!");
-					} catch (final URISyntaxException e) {
-						e.printStackTrace();
 					}
 				}
 			}
@@ -129,7 +142,7 @@ public class WorkflowViewerPanel extends JPanel {
 				"Status", "Results" };
 		@SuppressWarnings("rawtypes")
 		private final Class[] columnClasses = new Class[] { Integer.class,
-				String.class, String.class, String.class };
+				String.class, WorkflowState.class, String.class };
 		List<Object[]> data = new ArrayList<Object[]>();
 
 		public WorkflowExecutionsTableModel(final List<WorkflowInfo> workflows) {
@@ -138,6 +151,14 @@ public class WorkflowViewerPanel extends JPanel {
 				for (final WorkflowInfo wi : workflows) {
 					data.add(new Object[] { wi.ID, wi.name, wi.state, wi.result });
 				}
+			}
+		}
+
+		public boolean isResultColumn(final int col) {
+			if (col == 3) {
+				return true;
+			} else {
+				return false;
 			}
 		}
 
