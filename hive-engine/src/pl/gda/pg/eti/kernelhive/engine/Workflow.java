@@ -6,8 +6,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
-
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo.WorkflowState;
 import pl.gda.pg.eti.kernelhive.common.clusterService.HasID;
@@ -17,68 +15,70 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
-import pl.gda.pg.eti.kernelhive.engine.job.MergerJob;
 import pl.gda.pg.eti.kernelhive.engine.job.PartitionerJob;
 
 public class Workflow extends HasID {
 
-	private Map<Integer, EngineJob> jobs = new Hashtable<Integer, EngineJob>();
+	private final Map<Integer, EngineJob> jobs = new Hashtable<Integer, EngineJob>();
 
 	public WorkflowInfo info = new WorkflowInfo();
 	private WorkflowState state = WorkflowState.PENDING;
-	private String result = null;
-	
-	private List<EngineGraphNodeDecorator> graph;
+	private final String result = null;
 
-	private Date startTime;
+	private final List<EngineGraphNodeDecorator> graph;
 
-	public Workflow(List<EngineGraphNodeDecorator> graph, String workflowName, String inputDataURL) {
+	private final Date startTime;
+
+	public Workflow(final List<EngineGraphNodeDecorator> graph,
+			final String workflowName, final String inputDataURL) {
 		super();
-		
+
 		this.graph = graph;
-		
-		EngineGraphNodeDecorator rootNode = getRootNode();
+
+		final EngineGraphNodeDecorator rootNode = getRootNode();
 		configureJobs(rootNode.getGraphNode(), null);
-		getJobByGraphNode(rootNode.getGraphNode()).deployDataFromURL(inputDataURL);		
+		getJobByGraphNode(rootNode.getGraphNode()).deployDataFromURL(
+				inputDataURL);
 		initWorkflowInfo(workflowName);
 		this.startTime = new Date();
 	}
 
-	private void configureJobs(IGraphNode node, EngineJob previousJob) {
-		EngineJob newJob = configureJob(node);
-		if(previousJob != null)
+	private void configureJobs(final IGraphNode node,
+			final EngineJob previousJob) {
+		final EngineJob newJob = configureJob(node);
+		if (previousJob != null)
 			previousJob.addFollowingJob(newJob);
-		for(IGraphNode followingNode : node.getFollowingNodes()) {
+		for (final IGraphNode followingNode : node.getFollowingNodes()) {
 			configureJobs(followingNode, newJob);
-		}					
+		}
 	}
 
-	private EngineJob configureJob(IGraphNode node) {
+	private EngineJob configureJob(final IGraphNode node) {
 		EngineJob ret;
-		EngineGraphNodeDecorator decoratorNode = getDecoratorByIGraphNode(node);
-		if(node.getType().equals(GraphNodeType.EXPANDABLE))
+		final EngineGraphNodeDecorator decoratorNode = getDecoratorByIGraphNode(node);
+		if (node.getType().equals(GraphNodeType.EXPANDABLE))
 			ret = new PartitionerJob(decoratorNode, this);
-		else ret = new EngineJob(decoratorNode, this);
+		else
+			ret = new EngineJob(decoratorNode, this);
 		registerJob(ret);
 		return ret;
 	}
 
-
 	private EngineGraphNodeDecorator getRootNode() {
-		for(EngineGraphNodeDecorator node : this.graph)
-			if(node.getGraphNode().getPreviousNodes().isEmpty())
+		for (final EngineGraphNodeDecorator node : this.graph)
+			if (node.getGraphNode().getPreviousNodes().isEmpty())
 				return node;
 		return null;
 	}
 
-	private void initWorkflowInfo(String workflowName) {		
+	private void initWorkflowInfo(final String workflowName) {
 		this.info.ID = this.ID;
-		this.info.name = workflowName;		
+		this.info.name = workflowName;
 	}
 
 	public List<EngineJob> getReadyJobs() {
-		List<EngineJob> ret = new ArrayList<EngineJob>();
-		for (EngineJob job : jobs.values())
+		final List<EngineJob> ret = new ArrayList<EngineJob>();
+		for (final EngineJob job : jobs.values())
 			if (job.state == JobState.READY)
 				ret.add(job);
 		return ret;
@@ -86,7 +86,7 @@ public class Workflow extends HasID {
 
 	public boolean checkFinished() {
 
-		for (Job job : jobs.values())
+		for (final Job job : jobs.values())
 			if (job.state != JobState.FINISHED)
 				return false;
 
@@ -99,34 +99,36 @@ public class Workflow extends HasID {
 		return this.info;
 	}
 
-	public EngineJob getJobByID(int jobID) {
+	public EngineJob getJobByID(final int jobID) {
 		return jobs.get(jobID);
 	}
 
-	public EngineJob getJobByGraphNode(IGraphNode graphNode) {
-		for(EngineJob job : jobs.values())
-			if(job.node.getGraphNode().equals(graphNode))
+	public EngineJob getJobByGraphNode(final IGraphNode graphNode) {
+		for (final EngineJob job : jobs.values())
+			if (job.node.getGraphNode().equals(graphNode))
 				return job;
 		return null;
 	}
 
-	public boolean containsJob(Job jobOver) {
+	public boolean containsJob(final Job jobOver) {
 		return jobs.containsValue(jobOver);
 	}
 
-	public void finish(String resultURL) {
+	public void finish(final String resultURL) {
 		this.state = WorkflowState.COMPLETED;
 		this.info.result = resultURL;
-		System.out.println("Time in seconds: " + ((new Date()).getSeconds() - this.startTime.getSeconds()) );
+		System.out.println("Time in seconds: "
+				+ ((new Date()).getSeconds() - this.startTime.getSeconds()));
 	}
 
-	public void registerJob(EngineJob job) {
-		this.jobs.put(job.ID, job);		
+	public void registerJob(final EngineJob job) {
+		this.jobs.put(job.ID, job);
 	}
-	
-	private EngineGraphNodeDecorator getDecoratorByIGraphNode(IGraphNode node) {
-		for(EngineGraphNodeDecorator decorator : this.graph)
-			if(decorator.getGraphNode().equals(node))
+
+	private EngineGraphNodeDecorator getDecoratorByIGraphNode(
+			final IGraphNode node) {
+		for (final EngineGraphNodeDecorator decorator : this.graph)
+			if (decorator.getGraphNode().equals(node))
 				return decorator;
 		return null;
 	}
