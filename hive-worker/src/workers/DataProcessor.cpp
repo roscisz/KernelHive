@@ -8,6 +8,8 @@
 #include "DataProcessor.h"
 #include "commons/KhUtils.h"
 
+#define ITERATIVE_EXECUTION
+
 namespace KernelHive {
 
 // ========================================================================= //
@@ -95,9 +97,26 @@ void DataProcessor::workSpecific() {
 	context->setValueArg(3, sizeof(unsigned int), (void*)&outputSize);
 
 	// Execute the kernel
+#ifdef ITERATIVE_EXECUTION
+	cl_int *result = new cl_int;
+	*result = -1;
+	int counter = 0;
+	while ((*result) < 0) {
+		counter++;
+		//Logger::log(DEBUG, ">>> Iteration %d\n", counter);
+		context->executeKernel(numberOfDimensions, dimensionOffsets,
+				globalSizes, localSizes);
+		context->finishPreviousExecution();
+		// TODO Read the first byte of output and assign it to result
+		context->read(OUTPUT_BUFFER, 0, sizeof(cl_int), (void*)result);
+	}
+	delete result;
+#else
 	context->executeKernel(numberOfDimensions, dimensionOffsets,
 			globalSizes, localSizes);
+#endif
 	setPercentDone(80);
+
 
 	// Copy the result:
 	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffer->getRawData());

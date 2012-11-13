@@ -202,6 +202,11 @@ namespace KernelHive {
 		OpenClEvent enqueueKernelExecution(cl_uint numDimensions, const size_t* globalWorkOffset,
 				const size_t* globalWorkSize, const size_t* localWorkSize);
 
+		/**
+		 * Waits for commands from the previous to finish.
+		 */
+		void finishPreviousExecution();
+
 	private:
 		/** The OpenCL device to use for this context. */
 		OpenClDevice device;

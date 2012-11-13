@@ -11,7 +11,7 @@
 #define PADDING_ZEROES 0x00
 #define LONG_SIZE sizeof(long)
 #define MAX_WORK_ITEMS 512
-
+#define MAX_ITERATIONS 1000000
 
 /**
  * Constants required by the MD5 algorithm.
@@ -307,7 +307,7 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     outcome[wiId] = 0;
     msgLen[wiId] = 0;
     if (wiId == 0) {
-        passLen = 0;
+        passLen = -1;
         finder = -1;
     }
     
@@ -333,12 +333,13 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
     state = *from;
     barrier(CLK_LOCAL_MEM_FENCE);   
 
-    while (passLen == 0 && state <= *to) {
+    while (passLen <= 0 && state <= *to && step < MAX_ITERATIONS) {
         initState(state, msg, msgLen+wiId);
         md5(msg, msgLen[wiId], calculated);    
         compareHashes(calculated, digest, outcome+wiId);
         barrier(CLK_LOCAL_MEM_FENCE);
         if (outcome[wiId] > 0) {
+            printf("found! by %d\n", wiId);
             passLen = msgLen[wiId];
             finder = wiId;
         }
@@ -361,11 +362,24 @@ __kernel void processData(__global unsigned char *input, unsigned int dataSize, 
         for (i = 0; i < passLen; i++) {
             output[i+4] = msg[i];
         }
-    } else if (passLen == 0 && wiId == 0) {
-        output[0] = 0;
-        output[1] = 0;
-        output[2] = 0;
-        output[3] = 0;
+    } else if (passLen <= 0 && wiId == 0) {
+        if (step >= MAX_ITERATIONS) {
+            // The result was not yet found, but we will try in the next batch
+            output[0] = 0xFF;
+            output[1] = 0xFF;
+            output[2] = 0xFF;
+            output[3] = 0xFF;
+            // Copy the last state to input as 'from'
+            for (i = 0; i < LONG_SIZE; i++) {
+                input[i+DIGEST_LEN] = (state >> i*8) & 0xFF;
+            }            
+        } else {
+            // The password was not found, set result size to 0
+            output[0] = 0;
+            output[1] = 0;
+            output[2] = 0;
+            output[3] = 0;                
+        }
         /*output[0] = (*from) & 0xFF;
         output[1] = ((*from) >> 8) & 0xFF;
         output[2] = ((*from) >> 16) & 0xFF;

@@ -4,6 +4,8 @@
 #include <cstdio>
 #include "Logger.h"
 
+#define ITERATIVE_EXECUTION
+
 namespace KernelHive {
 
 // ========================================================================= //
@@ -271,6 +273,19 @@ namespace KernelHive {
 
 			}
 			throw OpenClException("Error building the program", errorCode);
+		}
+	}
+
+	void ExecutionContext::finishPreviousExecution() {
+		if (clCommandQueue != NULL) {
+			cl_int errCode = clFlush(clCommandQueue);
+			if (errCode != CL_SUCCESS) {
+				throw OpenClException("Error flushing a command queue", errCode);
+			}
+			errCode = clFinish(clCommandQueue);
+			if (errCode != CL_SUCCESS) {
+				throw OpenClException("Error finishing command queue events", errCode);
+			}
 		}
 	}
 
