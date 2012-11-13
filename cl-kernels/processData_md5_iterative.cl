@@ -11,7 +11,7 @@
 #define PADDING_ZEROES 0x00
 #define LONG_SIZE sizeof(long)
 #define MAX_WORK_ITEMS 512
-#define MAX_ITERATIONS 1000000
+#define MAX_ITERATIONS 100000
 
 /**
  * Constants required by the MD5 algorithm.
