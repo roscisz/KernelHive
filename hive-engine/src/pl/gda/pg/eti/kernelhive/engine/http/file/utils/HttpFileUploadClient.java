@@ -20,9 +20,16 @@ public class HttpFileUploadClient implements IHttpFileUploadClient {
 
 	private HttpClient client;
 
-	@Override
-	public void postFileUpload(String uploadServletUrl, byte[] bytes)
+	public void postFileUpload(final String uploadServletUrl, final byte[] bytes)
 			throws IOException {
+		final String fileName = UUID.randomUUID().toString();
+		postFileUpload(uploadServletUrl, fileName, bytes);
+
+	}
+
+	@Override
+	public void postFileUpload(final String uploadServletUrl,
+			final String fileName, final byte[] bytes) throws IOException {
 		File file = null;
 
 		try {
@@ -33,21 +40,21 @@ public class HttpFileUploadClient implements IHttpFileUploadClient {
 			// if uploadServletURL is malformed - exception is thrown
 			new URL(uploadServletUrl);
 
-			file = File.createTempFile(UUID.randomUUID().toString(), "kh");
-			BufferedOutputStream bos = new BufferedOutputStream(
+			file = File.createTempFile(fileName, "");
+			final BufferedOutputStream bos = new BufferedOutputStream(
 					new FileOutputStream(file));
 			bos.write(bytes);
 			bos.flush();
 			bos.close();
 
-			HttpPost post = new HttpPost(uploadServletUrl);
-			MultipartEntity entity = new MultipartEntity(
+			final HttpPost post = new HttpPost(uploadServletUrl);
+			final MultipartEntity entity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
 			entity.addPart("file", new FileBody(file,
 					"application/octet-stream"));
 			post.setEntity(entity);
 			client.execute(post);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw e;
 		} finally {
 			client.getConnectionManager().shutdown();
