@@ -378,7 +378,6 @@ public class MainFrameController {
 	 * 
 	 */
 	public void pauseWorkflowGraphExecution() {
-		// TODO Auto-generated method stub
 	}
 
 	/**

@@ -77,7 +77,6 @@ public class InfrastructureTreeModel implements TreeModel {
 
 	@Override
 	public void valueForPathChanged(final TreePath path, final Object newValue) {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -116,7 +116,6 @@ public class InfrastructureBrowser extends JTabContent implements
 
 	@Override
 	public void clearSelection() {
-		// TODO Auto-generated method stub
 
 	}
 }
