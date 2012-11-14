@@ -90,8 +90,10 @@ public class ClusterManager implements TCPServerListener, UDPServerListener {
 
 	private void tryProcessJob() {
 		JobInfo jobInfo = tryGetJob(cluster, clusterBean);
-		if(jobInfo != null)
+		if(jobInfo != null) {
 			runJob(jobInfo);
+			tryProcessJob();
+		}
 	}
 
 	private void runJob(JobInfo jobInfo) {

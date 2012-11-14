@@ -20,7 +20,7 @@ set -e
 case "$1" in
     start)
         echo -n "Starting $DESC: "
-	if "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "./dist/hive-cluster" "$BOOTSTRAP_CLASS" "$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME"; then
+	if sudo "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "./dist/hive-cluster" "$BOOTSTRAP_CLASS" "$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME"; then
         	echo "$NAME."
 	else
                 echo "(already running)."
@@ -30,7 +30,7 @@ case "$1" in
         ;;
     stop)
         echo -n "Stopping $DESC: "
-	"$DAEMON" -stop -pidfile "$PIDFILE" -cp "$DAEMON_JAR" "$BOOTSTRAP_CLASS"
+	sudo "$DAEMON" -stop -pidfile "$PIDFILE" -cp "$DAEMON_JAR" "$BOOTSTRAP_CLASS"
         echo "$NAME."
         ;;
     *)
