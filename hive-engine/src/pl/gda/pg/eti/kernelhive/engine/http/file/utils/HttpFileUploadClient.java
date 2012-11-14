@@ -23,7 +23,7 @@ public class HttpFileUploadClient implements IHttpFileUploadClient {
 	@Override
 	public String postFileUpload(final String uploadServletUrl,
 			final byte[] bytes) throws IOException {
-		final String fileName = UUID.randomUUID().toString();
+		final String fileName = UUID.randomUUID().toString().replace("-", "");
 		postFileUpload(uploadServletUrl, fileName, bytes);
 		return fileName;
 
