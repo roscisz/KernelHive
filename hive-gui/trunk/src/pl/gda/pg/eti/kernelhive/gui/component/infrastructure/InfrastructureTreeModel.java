@@ -47,7 +47,7 @@ public class InfrastructureTreeModel implements TreeModel {
 		} else if (parent instanceof ClusterInfo) {
 			return ((ClusterInfo) parent).unitInfos.get(index);
 		} else if (parent instanceof UnitInfo) {
-			return ((UnitInfo) parent).deviceInfos.get(0);
+			return ((UnitInfo) parent).deviceInfos.get(index);
 		} else {
 			return null;
 		}
