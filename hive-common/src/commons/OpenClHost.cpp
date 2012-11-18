@@ -3,6 +3,15 @@
 
 #include "OpenClHost.h"
 
+#define USE_CPU
+#define USE_GPU
+#ifndef USE_CPU
+	#define SINGLE_TYPE
+#endif
+#ifndef USE_GPU
+	#define SINGLE_TYPE
+#endif
+
 namespace KernelHive {
 
 // ========================================================================= //
@@ -23,6 +32,7 @@ namespace KernelHive {
 		OpenClDevice** devices;
 		OpenClPlatform** platforms = instance.getPlatforms();
 		for (cl_uint i = 0; i < instance.getPlatformsCount(); i++) {
+#ifdef USE_GPU
 			count = platforms[i]->getGpuDevicesCount();
 			if (count > 0) {
 				counts += count;
@@ -34,6 +44,8 @@ namespace KernelHive {
 					}
 				}
 			}
+#endif
+#ifdef USE_CPU
 			count = platforms[i]->getCpuDevicesCount();
 			if (count > 0) {
 				counts += count;
@@ -45,9 +57,12 @@ namespace KernelHive {
 					}
 				}
 			}
+#endif
+#ifndef SINGLE_TYPE
 			if (i + 1 < instance.getPlatformsCount()) {
 				stream << OpenClPlatform::DEVICES_INFO_SEPARATOR;
 			}
+#endif
 		}
 
 		std::stringstream outStream;
