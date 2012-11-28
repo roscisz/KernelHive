@@ -13,17 +13,17 @@ import org.apache.commons.configuration.HierarchicalConfiguration.Node;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 
-import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
-import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
-import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGraphConfiguration;
-import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.GraphNodeBuilderException;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNodeBuilder;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
+import pl.gda.pg.eti.kernelhive.repository.loader.RepositoryLoaderService;
 
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public abstract class AbstractGraphConfiguration implements IGraphConfiguration {
 
@@ -51,6 +51,7 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 
 	protected File configFile;
 	protected XMLConfiguration config;
+	protected RepositoryLoaderService repositoryLoaderService;
 
 	public AbstractGraphConfiguration() {
 		config = new XMLConfiguration();
@@ -65,7 +66,7 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 
 	protected void readFromFile(File file) {
 		this.configFile = file;
-		config.setFile(this.configFile);		
+		config.setFile(this.configFile);
 	}
 
 	protected Node createChildrenSubNode(IGraphNode node)
@@ -297,7 +298,8 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 					.getValue());
 
 		IGraphNode graphNode;
-		IGraphNodeBuilder gnBuilder = new GraphNodeBuilder();
+		IGraphNodeBuilder gnBuilder = RepositoryLoaderService.getInstance()
+				.createGraphNodeBuilder();
 		try {
 			graphNode = gnBuilder.setType(type).setId(id).setName(name).build();
 		} catch (GraphNodeBuilderException e) {
@@ -357,14 +359,14 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 		}
 		return nodes;
 	}
-	
+
 	@Override
-	public void save() throws ConfigurationException{
+	public void save() throws ConfigurationException {
 		save(configFile);
 	}
-	
+
 	@Override
-	public void save(File file) throws ConfigurationException{
+	public void save(File file) throws ConfigurationException {
 		config.save(file);
 	}
 

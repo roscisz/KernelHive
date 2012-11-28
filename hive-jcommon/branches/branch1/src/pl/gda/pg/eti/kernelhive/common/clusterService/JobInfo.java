@@ -1,17 +1,17 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
-import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 
 public class JobInfo {
-	
+
 	public int unitID;
-	// change to localhost? 
+	// change to localhost?
 	private String resultDataHost = "hive-cluster";
 	private int resultDataPort = 31339;
 	public String kernelString;
 	public GraphNodeType jobType;
 	public String inputDataUrl;
-	
+
 	public String kernelHost;
 	public int kernelPort;
 	public int kernelID;
@@ -26,23 +26,23 @@ public class JobInfo {
 	public String outputSize;
 	public String dataHost;
 	public int dataPort;
-	public int dataID;	
-	
+	public int dataID;
+
 	@Override
-	public String toString() {	
+	public String toString() {
 		StringBuilder ret = new StringBuilder();
-		
+
 		ret.append(" " + jobType.toString());
 		ret.append(" " + ID);
 		ret.append(" " + clusterHost);
 		ret.append(" " + clusterTCPPort);
 		ret.append(" " + clusterUDPPort);
-		ret.append(" " + deviceID);		
+		ret.append(" " + deviceID);
 		// FIXME:
-		//ret.append(" 3");
-		//ret.append(" " + offsets);
-		//ret.append(" " + globalSizes);
-		//ret.append(" " + localSizes);
+		// ret.append(" 3");
+		// ret.append(" " + offsets);
+		// ret.append(" " + globalSizes);
+		// ret.append(" " + localSizes);
 		ret.append(" 3 0 0 0 512 1 1 64 1 1");
 		ret.append(" " + outputSize);
 		ret.append(" " + kernelHost);
@@ -51,16 +51,14 @@ public class JobInfo {
 		ret.append(" " + dataHost);
 		ret.append(" " + dataPort);
 		ret.append(" " + dataID);
-		
+
 		// FIXME:
-		if(jobType == GraphNodeType.PARTITIONER)
+		if (jobType.equals(GraphNodeType.PARTITIONER))
 			ret.append(" 2");
-		
+
 		ret.append(" " + resultDataHost);
 		ret.append(" " + resultDataPort);
-		
+
 		return ret.toString();
 	}
-	
-	
 }

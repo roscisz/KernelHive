@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
 
 public interface IGraphConfiguration {
 	/**

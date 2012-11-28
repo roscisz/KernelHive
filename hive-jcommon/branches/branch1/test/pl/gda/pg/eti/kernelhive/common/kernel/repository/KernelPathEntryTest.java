@@ -8,6 +8,8 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelPathEntry;
+
 public class KernelPathEntryTest {
 
 	private KernelPathEntry entry;

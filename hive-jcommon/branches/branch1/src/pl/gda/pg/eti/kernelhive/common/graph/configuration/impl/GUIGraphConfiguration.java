@@ -16,9 +16,9 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
 import pl.gda.pg.eti.kernelhive.common.file.FileUtils;
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IGUIGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import pl.gda.pg.eti.kernelhive.common.source.KernelFile;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
 
 /**
  * {@link GUIGraphConfiguration} object is responsible for persisting project

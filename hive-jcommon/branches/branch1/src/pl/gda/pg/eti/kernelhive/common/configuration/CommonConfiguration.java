@@ -1,14 +1,15 @@
 package pl.gda.pg.eti.kernelhive.common.configuration;
 
-import java.net.URL;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import pl.gda.pg.eti.kernelhive.repository.configuration.RepositoryConfiguration;
+
 public class CommonConfiguration {
 
-	private static Logger LOG = Logger.getLogger(CommonConfiguration.class.getName());
+	private static Logger LOG = Logger.getLogger(RepositoryConfiguration.class.getName());
 	private static CommonConfiguration _commonConfig = null;
 
 	private PropertiesConfiguration config;
@@ -41,19 +42,6 @@ public class CommonConfiguration {
 	 */
 	public void reloadConfiguration() throws ConfigurationException {
 		this.config = new PropertiesConfiguration("common.properties");
-	}
-	
-	/**
-	 * get the {@link URL} to the Kernel Repository
-	 * @return {@link URL}
-	 */
-	public URL getKernelRepositoryURL(){
-		String prop = this.config.getString("kernel.repository.file.path");
-		if(prop!=null){
-			return CommonConfiguration.class.getResource(prop);
-		} else{
-			return null;
-		}
 	}
 	
 	/**

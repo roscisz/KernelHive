@@ -19,9 +19,9 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import pl.gda.pg.eti.kernelhive.common.graph.configuration.IEngineGraphConfiguration;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
 import pl.gda.pg.eti.kernelhive.common.source.KernelString;
+import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
 
 /**
  * 

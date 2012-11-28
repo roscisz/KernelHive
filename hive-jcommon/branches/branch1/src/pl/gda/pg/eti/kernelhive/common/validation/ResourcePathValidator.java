@@ -2,6 +2,7 @@ package pl.gda.pg.eti.kernelhive.common.validation;
 
 import java.io.File;
 
+import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 
 /**
