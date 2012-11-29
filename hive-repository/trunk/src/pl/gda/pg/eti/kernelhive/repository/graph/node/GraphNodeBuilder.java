@@ -14,6 +14,8 @@ import pl.gda.pg.eti.kernelhive.repository.graph.node.util.NodeNameGenerator;
  */
 public class GraphNodeBuilder implements IGraphNodeBuilder {
 
+	private static final long serialVersionUID = 1324113986251013532L;
+
 	GraphNodeType type;
 	String id = null;
 	String name = null;
@@ -23,25 +25,25 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 	}
 
 	@Override
-	public IGraphNodeBuilder setType(GraphNodeType type) {
+	public IGraphNodeBuilder setType(final GraphNodeType type) {
 		this.type = type;
 		return this;
 	}
 
 	@Override
-	public IGraphNodeBuilder setId(String id) {
+	public IGraphNodeBuilder setId(final String id) {
 		this.id = id;
 		return this;
 	}
 
 	@Override
-	public IGraphNodeBuilder setName(String name) {
+	public IGraphNodeBuilder setName(final String name) {
 		this.name = name;
 		return this;
 	}
 
 	@Override
-	public IGraphNodeBuilder setProperties(Map<String, Object> properties) {
+	public IGraphNodeBuilder setProperties(final Map<String, Object> properties) {
 		this.properties = properties;
 		return this;
 	}
@@ -53,19 +55,33 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 			id = NodeIdGenerator.generateId();
 		}
 		try {
-			if (type.toString().equals(GraphNodeType.COMPOSITE)) {
+			switch (type) {
+			case GENERIC:
+				node = new GenericGraphNode(id);
+				break;
+			case COMPOSITE:
 				node = new CompositeGraphNode(id);
-			} else if (type.toString().equals(GraphNodeType.MERGER)) {
+				break;
+			case DAC:
+				// break;
+			case MASTERSLAVE:
+				// break;
+			case MERGER:
 				node = new MergerGraphNode(id);
-			} else if (type.toString().equals(GraphNodeType.PARTITIONER)) {
+				break;
+			case PARTITIONER:
 				node = new PartitionerGraphNode(id);
-			} else if (type.toString().equals(GraphNodeType.PROCESSOR)) {
+				break;
+			case PROCESSOR:
 				node = new ProcessorGraphNode(id);
-			} else {
+				break;
+			case EXPANDABLE:
+				node = new ExpandableGraphNode(id);
+				break;
+			default:
 				throw new GraphNodeBuilderException(
 						"KH: unrecognised graph node type: " + type.toString());
 			}
-
 			if (name != null) {
 				node.setName(name);
 			} else {
@@ -75,7 +91,7 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 				node.setProperties(properties);
 			}
 			return node;
-		} catch (NullPointerException e) {
+		} catch (final NullPointerException e) {
 			throw new GraphNodeBuilderException(e);
 		}
 	}

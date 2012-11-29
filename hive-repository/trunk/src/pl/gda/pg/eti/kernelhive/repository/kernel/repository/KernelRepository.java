@@ -32,11 +32,11 @@ public class KernelRepository implements IKernelRepository {
 	private static String KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE = "key";
 	private static String KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
 
-	private XMLConfiguration config;
-	private URL resource;
+	private final XMLConfiguration config;
+	private final URL resource;
 
 	public KernelRepository() {
-		this.resource = RepositoryConfiguration.getInstance()
+		resource = RepositoryConfiguration.getInstance()
 				.getKernelRepositoryDescriptorFileURL();
 		config = new XMLConfiguration();
 	}
@@ -47,32 +47,32 @@ public class KernelRepository implements IKernelRepository {
 		try {
 			config.load(resource);
 
-			List<IKernelRepositoryEntry> entries = new ArrayList<IKernelRepositoryEntry>();
+			final List<IKernelRepositoryEntry> entries = new ArrayList<IKernelRepositoryEntry>();
 
-			List<ConfigurationNode> entryNodes = config.getRoot().getChildren(
-					ENTRY_NODE);
-			for (ConfigurationNode node : entryNodes) {
+			final List<ConfigurationNode> entryNodes = config.getRoot()
+					.getChildren(ENTRY_NODE);
+			for (final ConfigurationNode node : entryNodes) {
 				entries.add(getEntryFromConfigurationNode(node));
 			}
 			return entries;
-		} catch (ConfigurationException e) {
+		} catch (final ConfigurationException e) {
 			throw new KernelRepositoryException(e);
 		}
 	}
 
 	@Override
-	public IKernelRepositoryEntry getEntryForGraphNodeType(GraphNodeType type)
-			throws KernelRepositoryException {
+	public IKernelRepositoryEntry getEntryForGraphNodeType(
+			final GraphNodeType type) throws KernelRepositoryException {
 		try {
 			config.load(resource);
-			List<ConfigurationNode> entryNodes = config.getRootNode()
+			final List<ConfigurationNode> entryNodes = config.getRootNode()
 					.getChildren(ENTRY_NODE);
-			for (ConfigurationNode node : entryNodes) {
-				List<ConfigurationNode> typeAttrList = node
+			for (final ConfigurationNode node : entryNodes) {
+				final List<ConfigurationNode> typeAttrList = node
 						.getAttributes(ENTRY_NODE_TYPE_ATTRIBUTE);
 
 				if (typeAttrList.size() > 0) {
-					String val = (String) typeAttrList.get(0).getValue();
+					final String val = (String) typeAttrList.get(0).getValue();
 
 					if (type.equals(GraphNodeType.getType(val))) {
 						return getEntryFromConfigurationNode(node);
@@ -84,16 +84,16 @@ public class KernelRepository implements IKernelRepository {
 				}
 			}
 			return null;
-		} catch (ConfigurationException e) {
+		} catch (final ConfigurationException e) {
 			throw new KernelRepositoryException(e);
 		}
 	}
 
 	private IKernelRepositoryEntry getEntryFromConfigurationNode(
-			ConfigurationNode node) throws ConfigurationException {
-		List<ConfigurationNode> typeAttrList = node
+			final ConfigurationNode node) throws ConfigurationException {
+		final List<ConfigurationNode> typeAttrList = node
 				.getAttributes(ENTRY_NODE_TYPE_ATTRIBUTE);
-		List<ConfigurationNode> descAttrList = node
+		final List<ConfigurationNode> descAttrList = node
 				.getAttributes(ENTRY_NODE_DESCRIPTION_ATTRIBUTE);
 		String typeStr;
 		String desc = null;
@@ -110,27 +110,28 @@ public class KernelRepository implements IKernelRepository {
 			desc = (String) descAttrList.get(0).getValue();
 		}
 
-		List<IKernelPathEntry> kernelPathEntries = getKernelPathEntries(node);
+		final List<IKernelPathEntry> kernelPathEntries = getKernelPathEntries(node);
 
 		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc,
 				kernelPathEntries);
 	}
 
-	private List<IKernelPathEntry> getKernelPathEntries(ConfigurationNode node)
-			throws ConfigurationException {
-		List<ConfigurationNode> kernelsList = node.getChildren(KERNEL_NODE);
-		List<IKernelPathEntry> list = new ArrayList<IKernelPathEntry>(
+	private List<IKernelPathEntry> getKernelPathEntries(
+			final ConfigurationNode node) throws ConfigurationException {
+		final List<ConfigurationNode> kernelsList = node
+				.getChildren(KERNEL_NODE);
+		final List<IKernelPathEntry> list = new ArrayList<IKernelPathEntry>(
 				kernelsList.size());
-		for (ConfigurationNode kNode : kernelsList) {
+		for (final ConfigurationNode kNode : kernelsList) {
 			String name;
 			URL src;
 			String id;
 
-			List<ConfigurationNode> idAttrList = kNode
+			final List<ConfigurationNode> idAttrList = kNode
 					.getAttributes(KERNEL_NODE_ID_ATTRIBUTE);
-			List<ConfigurationNode> nameAttrList = kNode
+			final List<ConfigurationNode> nameAttrList = kNode
 					.getAttributes(KERNEL_NODE_NAME_ATTRIBUTE);
-			List<ConfigurationNode> srcAttrList = kNode
+			final List<ConfigurationNode> srcAttrList = kNode
 					.getAttributes(KERNEL_NODE_SRC_ATTRIBUTE);
 
 			if (nameAttrList.size() > 0) {
@@ -163,27 +164,27 @@ public class KernelRepository implements IKernelRepository {
 						+ KERNEL_NODE + " node");
 			}
 
-			Map<String, Object> properties = getKernelProperties(kNode);
+			final Map<String, Object> properties = getKernelProperties(kNode);
 
 			list.add(new KernelPathEntry(id, name, src, properties));
 		}
 		return list;
 	}
 
-	private Map<String, Object> getKernelProperties(ConfigurationNode node)
+	private Map<String, Object> getKernelProperties(final ConfigurationNode node)
 			throws ConfigurationException {
-		List<ConfigurationNode> propertiesNodeList = node
+		final List<ConfigurationNode> propertiesNodeList = node
 				.getChildren(KERNEL_PROPERTY_NODE);
-		Map<String, Object> properties = new HashMap<String, Object>(
+		final Map<String, Object> properties = new HashMap<String, Object>(
 				propertiesNodeList.size());
 
-		for (ConfigurationNode pNode : propertiesNodeList) {
+		for (final ConfigurationNode pNode : propertiesNodeList) {
 			String key;
 			Object value;
 
-			List<ConfigurationNode> keyAttrList = pNode
+			final List<ConfigurationNode> keyAttrList = pNode
 					.getAttributes(KERNEL_PROPERTY_NODE_KEY_ATTRIBUTE);
-			List<ConfigurationNode> valueAttrList = pNode
+			final List<ConfigurationNode> valueAttrList = pNode
 					.getAttributes(KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE);
 
 			if (keyAttrList.size() > 0) {
@@ -206,4 +207,5 @@ public class KernelRepository implements IKernelRepository {
 		}
 		return properties;
 	}
+
 }

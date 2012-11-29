@@ -7,8 +7,10 @@
 	<property name="src.dir" value="src" />
 	<property name="src.api.dir" value="src-api"/>
 	<property name="build.dir" value="bin" />
+	<property name="build.api.dir" value="bin-api"/>
 	<property name="dist.dir" value="dist" />
 	<property name="lib.dir" value="lib" />
+	<property name="res.dir" value="res" />
 	
 	<path id="project.classpath">
 		<fileset dir="${lib.dir}" includes="*/*.jar" />
@@ -19,14 +21,46 @@
 	    <tstamp />
 	    <!-- Create the build directory structure used by compile -->
 	    <mkdir dir="${build.dir}" />
+		<mkdir dir="${build.api.dir}"/>
     </target>
 	
-    <target name="compile" depends="init" description="compile the source">
+	<target name="compile-api" depends="init" description="compile api">
+		<javac srcdir="${src.api.dir}" destdir="${build.api.dir}" includeantruntime="false">
+			<classpath refid="project.classpath">
+			</classpath>
+		</javac>
+		<copy todir="${build.api.dir}">
+			<fileset dir="${src.api.dir}">
+				<include name="*.properties"/>
+			</fileset>
+		</copy>
+		
+	</target>
+	
+    <target name="compile" depends="compile-api" description="compile the source">
         <!-- Compile the java code from ${src.dir} into ${build.dir} -->        
-        <javac srcdir="${src.dir}:${src.api.dir}" destdir="${build.dir}" includeantruntime="false">
-            <classpath refid="project.classpath" />
-        </javac>        
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+            <classpath>
+            	<dirset dir="${build.api.dir}"/>
+            	<path refid="project.classpath"/>
+            </classpath>
+        </javac> 
+    	<copy todir="${build.dir}">
+    		<fileset dir="${res.dir}">
+    			<include name="**"/>
+    			<exclude name="**/*.jar"/>
+    		</fileset>
+    		<fileset dir="${src.api.dir}">
+    			<include name="*.properties"/>
+    		</fileset>
+    	</copy>
     </target>
+	
+	<target name="jar-api" depends="compile-api" description="">
+			<mkdir dir="${dist.dir}"/>
+			<jar destfile="${dist.dir}/${project.name}-api.jar" basedir="${build.api.dir}">
+			</jar>
+	</target>
 	
 	<target name="jar" depends="compile" description="generate the distribution">
 		<!-- Create the distribution directory -->
@@ -40,6 +74,7 @@
 	<target name="clean" description="clean up" >
 		<!-- Delete the ${build.dir} and ${dist.dir} directory trees -->
 		<delete dir="${build.dir}" />
+		<delete dir="${build.api.dir}"/>
 		<delete dir="${dist.dir}" />
 	</target>
 	
