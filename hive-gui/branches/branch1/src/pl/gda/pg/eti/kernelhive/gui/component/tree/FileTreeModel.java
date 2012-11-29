@@ -11,45 +11,49 @@ import javax.swing.tree.TreePath;
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public class FileTreeModel implements TreeModel {
 
 	protected File root;
 	protected List<TreeModelListener> treeModelListeners;
-	
-	
-	public FileTreeModel(File root){
+
+	public FileTreeModel(final File root) {
 		this.root = root;
 		treeModelListeners = new ArrayList<TreeModelListener>();
 	}
-	
+
 	@Override
-	public void addTreeModelListener(TreeModelListener tml) {
+	public void addTreeModelListener(final TreeModelListener tml) {
 		treeModelListeners.add(tml);
 	}
 
 	@Override
-	public Object getChild(Object node, int index) {
-		String[] chilren = ((File)node).list();
-		if((chilren==null)||(index>=chilren.length)) return null;
-		else return new File((File)node, chilren[index]);
+	public Object getChild(final Object node, final int index) {
+		final String[] chilren = ((File) node).list();
+		if ((chilren == null) || (index >= chilren.length))
+			return null;
+		else
+			return new File((File) node, chilren[index]);
 	}
 
 	@Override
-	public int getChildCount(Object node) {
-		String[] children = ((File) node).list();
-		if(children==null) return 0;
-		else return children.length;
+	public int getChildCount(final Object node) {
+		final String[] children = ((File) node).list();
+		if (children == null)
+			return 0;
+		else
+			return children.length;
 	}
 
 	@Override
-	public int getIndexOfChild(Object node, Object child) {
-		String[] children = ((File)node).list();
-		if(children==null) return -1;
-		String childname = ((File)child).getName();
-		for(int i=0; i<children.length; i++){
-			if(children[i].equalsIgnoreCase(childname)){
+	public int getIndexOfChild(final Object node, final Object child) {
+		final String[] children = ((File) node).list();
+		if (children == null)
+			return -1;
+		final String childname = ((File) child).getName();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].equalsIgnoreCase(childname)) {
 				return i;
 			}
 		}
@@ -62,18 +66,17 @@ public class FileTreeModel implements TreeModel {
 	}
 
 	@Override
-	public boolean isLeaf(Object node) {
-		return ((File)node).isFile();
+	public boolean isLeaf(final Object node) {
+		return ((File) node).isFile();
 	}
 
 	@Override
-	public void removeTreeModelListener(TreeModelListener tml) {
+	public void removeTreeModelListener(final TreeModelListener tml) {
 		treeModelListeners.remove(tml);
 	}
 
 	@Override
-	public void valueForPathChanged(TreePath arg0, Object arg1) {
-		// TODO Auto-generated method stub
+	public void valueForPathChanged(final TreePath arg0, final Object arg1) {
 
 	}
 

@@ -27,7 +27,9 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
+import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NodePropertiesDialog;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
@@ -69,12 +71,13 @@ public class WorkflowEditor extends JTabContent {
 	private static final Logger LOG = Logger.getLogger(WorkflowEditor.class
 			.getName());
 
-	private static mxIGraphLayout createLayout(WorkflowGraphLayoutType layout,
-			final mxGraphComponent graphComponent, boolean animate) {
+	private static mxIGraphLayout createLayout(
+			final WorkflowGraphLayoutType layout,
+			final mxGraphComponent graphComponent, final boolean animate) {
 		mxIGraphLayout newLayout = null;
 
 		if (layout != null) {
-			mxGraph graph = graphComponent.getGraph();
+			final mxGraph graph = graphComponent.getGraph();
 
 			if (layout.getIdent().equalsIgnoreCase("verticalHierarchical")) {
 				newLayout = new mxHierarchicalLayout(graph);
@@ -98,6 +101,7 @@ public class WorkflowEditor extends JTabContent {
 					 * Overrides the empty implementation to return the size of
 					 * the graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize() {
 						return graphComponent.getLayoutAreaSize();
 					}
@@ -109,6 +113,7 @@ public class WorkflowEditor extends JTabContent {
 					 * Overrides the empty implementation to return the size of
 					 * the graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize() {
 						return graphComponent.getLayoutAreaSize();
 					}
@@ -119,6 +124,7 @@ public class WorkflowEditor extends JTabContent {
 					 * Overrides the empty implementation to return the size of
 					 * the graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize() {
 						return graphComponent.getLayoutAreaSize();
 					}
@@ -129,6 +135,7 @@ public class WorkflowEditor extends JTabContent {
 					 * Overrides the empty implementation to return the size of
 					 * the graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize() {
 						return graphComponent.getLayoutAreaSize();
 					}
@@ -141,15 +148,16 @@ public class WorkflowEditor extends JTabContent {
 		return newLayout;
 	}
 
-	private static mxGraph loadProject(IProject project) {
-		List<GUIGraphNodeDecorator> projectNodes = project.getProjectNodes();
-		Map<IGraphNode, mxCell> mapping = new Hashtable<IGraphNode, mxCell>(
+	private static mxGraph loadProject(final IProject project) {
+		final List<GUIGraphNodeDecorator> projectNodes = project
+				.getProjectNodes();
+		final Map<IGraphNode, mxCell> mapping = new Hashtable<IGraphNode, mxCell>(
 				projectNodes.size());
 
-		mxGraph graph = new mxGraph();
+		final mxGraph graph = new mxGraph();
 		// initial load of all nodes
-		for (GUIGraphNodeDecorator node : projectNodes) {
-			mxCell parent = (mxCell) graph.getDefaultParent();
+		for (final GUIGraphNodeDecorator node : projectNodes) {
+			final mxCell parent = (mxCell) graph.getDefaultParent();
 			graph.getModel().beginUpdate();
 			try {
 				mxCell v1;
@@ -170,10 +178,10 @@ public class WorkflowEditor extends JTabContent {
 			}
 		}
 		// linking nodes to their parents
-		for (GUIGraphNodeDecorator node : projectNodes) {
+		for (final GUIGraphNodeDecorator node : projectNodes) {
 			graph.getModel().beginUpdate();
 			try {
-				mxCell v = mapping.get(node.getGraphNode());
+				final mxCell v = mapping.get(node.getGraphNode());
 				if (node.getGraphNode().getParentNode() != null) {
 					graph.addCell(v,
 							mapping.get(node.getGraphNode().getParentNode()));
@@ -182,24 +190,24 @@ public class WorkflowEditor extends JTabContent {
 				graph.getModel().endUpdate();
 			}
 		}
-		for (GUIGraphNodeDecorator node : projectNodes) {
+		for (final GUIGraphNodeDecorator node : projectNodes) {
 			graph.getModel().beginUpdate();
 			try {
-				mxCell v = mapping.get(node.getGraphNode());
+				final mxCell v = mapping.get(node.getGraphNode());
 				graph.extendParent(v);
 			} finally {
 				graph.getModel().endUpdate();
 			}
 		}
 		// linking following nodes
-		for (GUIGraphNodeDecorator node : projectNodes) {
+		for (final GUIGraphNodeDecorator node : projectNodes) {
 			graph.getModel().beginUpdate();
 			try {
-				mxCell v = mapping.get(node.getGraphNode());
-				mxCell parent = (mxCell) v.getParent();
-				List<IGraphNode> followingNodes = node.getGraphNode()
+				final mxCell v = mapping.get(node.getGraphNode());
+				final mxCell parent = (mxCell) v.getParent();
+				final List<IGraphNode> followingNodes = node.getGraphNode()
 						.getFollowingNodes();
-				for (IGraphNode fNode : followingNodes) {
+				for (final IGraphNode fNode : followingNodes) {
 					graph.insertEdge(parent, "", null, v, mapping.get(fNode));
 				}
 			} finally {
@@ -222,7 +230,8 @@ public class WorkflowEditor extends JTabContent {
 	protected mxRubberband rubberband;
 	protected WorkflowEditorDropTargetListener dropTargetListener;
 
-	public WorkflowEditor(MainFrame frame, final String name, IProject project) {
+	public WorkflowEditor(final MainFrame frame, final String name,
+			final IProject project) {
 		super(frame);
 		this.name = name;
 		this.project = project;
@@ -245,9 +254,9 @@ public class WorkflowEditor extends JTabContent {
 
 		installListeners();
 	}
-	
-	public void initGraphComponent(){
-		
+
+	public void initGraphComponent() {
+
 	}
 
 	@Override
@@ -257,19 +266,20 @@ public class WorkflowEditor extends JTabContent {
 	@Override
 	public void cut() {
 	}
-	
-	private void installGraphListeners(){
+
+	private void installGraphListeners() {
 		undoHandler = new mxIEventListener() {
 
 			@Override
-			public void invoke(Object sender, mxEventObject evt) {
+			public void invoke(final Object sender, final mxEventObject evt) {
 				undoManager.undoableEditHappened((mxUndoableEdit) evt
 						.getProperty("edit"));
-				Object[] cells = graphComponent.getGraph().getSelectionCells();
-				for (Object cell : cells) {
+				final Object[] cells = graphComponent.getGraph()
+						.getSelectionCells();
+				for (final Object cell : cells) {
 					if (((mxCell) cell).isVertex()) {
 						if (((mxCell) cell).getValue() instanceof GUIGraphNodeDecorator) {
-							GUIGraphNodeDecorator wfNode = (GUIGraphNodeDecorator) ((mxCell) cell)
+							final GUIGraphNodeDecorator wfNode = (GUIGraphNodeDecorator) ((mxCell) cell)
 									.getValue();
 							wfNode.setX((int) graphComponent.getGraph()
 									.getView().getState(cell).getX());
@@ -283,22 +293,23 @@ public class WorkflowEditor extends JTabContent {
 		changeHandler = new mxIEventListener() {
 
 			@SuppressWarnings("unchecked")
-			private void checkParentChanges(mxEventObject evt) {
-				Object obj = evt.getProperty("changes");
+			private void checkParentChanges(final mxEventObject evt) {
+				final Object obj = evt.getProperty("changes");
 				if (obj instanceof List) {
-					List<Object> list = (List<Object>) obj;
-					for (Object o : list) {
+					final List<Object> list = (List<Object>) obj;
+					for (final Object o : list) {
 						if (o instanceof mxChildChange) {
-							mxChildChange childChange = (mxChildChange) o;
-							mxCell cell = (mxCell) childChange.getChild();
-							mxCell parent = (mxCell) childChange.getParent();
-							mxCell previousParent = (mxCell) childChange
+							final mxChildChange childChange = (mxChildChange) o;
+							final mxCell cell = (mxCell) childChange.getChild();
+							final mxCell parent = (mxCell) childChange
+									.getParent();
+							final mxCell previousParent = (mxCell) childChange
 									.getPrevious();
 							if (cell.isVertex()
 									&& cell.getValue() instanceof GUIGraphNodeDecorator) {
 								if (parent != null && previousParent != null
 										&& !parent.equals(previousParent)) {
-									GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
+									final GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
 											.getValue();
 									if (parent.getValue() instanceof GUIGraphNodeDecorator) {
 										node.getGraphNode().setParentNode(
@@ -318,7 +329,7 @@ public class WorkflowEditor extends JTabContent {
 			}
 
 			@Override
-			public void invoke(Object sender, mxEventObject evt) {
+			public void invoke(final Object sender, final mxEventObject evt) {
 				setDirty(true);
 				if (getTabPanel() != null) {
 					getTabPanel().getLabel().setText("* " + name);
@@ -327,21 +338,21 @@ public class WorkflowEditor extends JTabContent {
 			}
 		};
 		graphComponent.getGraph().getModel()
-			.addListener(mxEvent.CHANGE, changeHandler);
+				.addListener(mxEvent.CHANGE, changeHandler);
 		graphComponent.getGraph().getModel()
-			.addListener(mxEvent.UNDO, undoHandler);
+				.addListener(mxEvent.UNDO, undoHandler);
 		graphComponent.getGraph().getView()
-			.addListener(mxEvent.UNDO, undoHandler);
-		
+				.addListener(mxEvent.UNDO, undoHandler);
+
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(final MouseEvent e) {
 				rubberband.mouseClicked(e);
 
 				if (e.getButton() == MouseEvent.BUTTON3) {
-					mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(),
-							e.getY());
+					final mxCell cell = (mxCell) graphComponent.getCellAt(
+							e.getX(), e.getY());
 					if (cell != null && cell.isVertex()) {
 						nodePopup.show(graphComponent, e.getX(), e.getY());
 					} else {
@@ -351,28 +362,28 @@ public class WorkflowEditor extends JTabContent {
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {
+			public void mouseEntered(final MouseEvent e) {
 				rubberband.mouseEntered(e);
 			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
+			public void mouseExited(final MouseEvent e) {
 				rubberband.mouseExited(e);
 			}
 
 			@Override
-			public void mouseMoved(MouseEvent e) {
+			public void mouseMoved(final MouseEvent e) {
 				rubberband.mouseMoved(e);
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
+			public void mousePressed(final MouseEvent e) {
 
 				rubberband.mousePressed(e);
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				rubberband.mouseReleased(e);
 			}
 		});
@@ -384,16 +395,39 @@ public class WorkflowEditor extends JTabContent {
 		connectHandler = new mxIEventListener() {
 
 			@Override
-			public void invoke(Object sender, mxEventObject evt) {
-				mxCell cell = (mxCell) evt.getProperty("cell");
+			public void invoke(final Object sender, final mxEventObject evt) {
+				final mxCell cell = (mxCell) evt.getProperty("cell");
 				if (cell.isEdge()) {
-					mxICell source = cell.getSource();
-					mxICell terminal = cell.getTarget();
-					GUIGraphNodeDecorator wfSource = (GUIGraphNodeDecorator) source
+					final mxICell source = cell.getSource();
+					final mxICell terminal = cell.getTarget();
+					final IGraphNodeDecorator wfSource = (IGraphNodeDecorator) source
 							.getValue();
-					wfSource.getGraphNode().addFollowingNode(
-							((GUIGraphNodeDecorator) terminal.getValue())
-									.getGraphNode());
+					final IGraphNodeDecorator wfTerminal = (IGraphNodeDecorator) terminal
+							.getValue();
+
+					if (wfSource.getGraphNode().canAddFollowingNode(
+							wfTerminal.getGraphNode())
+							&& wfTerminal.getGraphNode().canAddPreviousNode(
+									wfSource.getGraphNode())) {
+						wfSource.getGraphNode().addFollowingNode(
+								((GUIGraphNodeDecorator) terminal.getValue())
+										.getGraphNode());
+					} else {
+						LOG.info("KH: Selected nodes ("
+								+ wfSource.getGraphNode().getNodeId() + ", "
+								+ wfTerminal.getGraphNode().getNodeId()
+								+ ")cannot be connected.");
+						graph.getModel().beginUpdate();
+						try {
+							graph.getModel().remove(cell);
+						} finally {
+							graph.getModel().endUpdate();
+						}
+						MessageDialog
+								.showMessageDialog(WorkflowEditor.this, "",
+										"Selected nodes cannot be connected. Invalid graph state!");
+					}
+
 				}
 			}
 		};
@@ -401,11 +435,12 @@ public class WorkflowEditor extends JTabContent {
 		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT,
 				connectHandler);
 
-		mxIEventListener undoHandler = new mxIEventListener() {
+		final mxIEventListener undoHandler = new mxIEventListener() {
 
 			@Override
-			public void invoke(Object sender, mxEventObject evt) {
-				mxUndoableEdit edit = (mxUndoableEdit) evt.getProperty("edit");
+			public void invoke(final Object sender, final mxEventObject evt) {
+				final mxUndoableEdit edit = (mxUndoableEdit) evt
+						.getProperty("edit");
 				graphComponent.getGraph().setSelectionCells(
 						graphComponent.getGraph().getSelectionCellsForChanges(
 								edit.getChanges()));
@@ -415,10 +450,10 @@ public class WorkflowEditor extends JTabContent {
 		undoManager.addListener(mxEvent.UNDO, undoHandler);
 		undoManager.addListener(mxEvent.REDO, undoHandler);
 
-		MouseWheelListener wheelTracker = new MouseWheelListener() {
+		final MouseWheelListener wheelTracker = new MouseWheelListener() {
 
 			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
+			public void mouseWheelMoved(final MouseWheelEvent e) {
 				if (e.getSource() instanceof mxGraphComponent
 						&& e.isControlDown()) {
 					if (e.getWheelRotation() < 0) {
@@ -432,26 +467,25 @@ public class WorkflowEditor extends JTabContent {
 		};
 		graphComponent.addMouseWheelListener(wheelTracker);
 
-		
-		KeyListener keyTracker = new KeyListener() {
+		final KeyListener keyTracker = new KeyListener() {
 
 			@Override
-			public void keyPressed(KeyEvent arg0) {
+			public void keyPressed(final KeyEvent arg0) {
 			}
 
 			@Override
-			public void keyReleased(KeyEvent ke) {
+			public void keyReleased(final KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-					Object[] cells = graphComponent.getGraph()
+					final Object[] cells = graphComponent.getGraph()
 							.getSelectionCells();
-					for (Object cell : cells) {
+					for (final Object cell : cells) {
 						removeNode(graphComponent.getGraph(), (mxCell) cell);
 					}
 				}
 			}
 
 			@Override
-			public void keyTyped(KeyEvent ke) {
+			public void keyTyped(final KeyEvent ke) {
 			}
 		};
 		graphComponent.addKeyListener(keyTracker);
@@ -465,7 +499,7 @@ public class WorkflowEditor extends JTabContent {
 	}
 
 	@Override
-	public boolean loadContent(File file) {
+	public boolean loadContent(final File file) {
 		return false;
 	}
 
@@ -493,7 +527,7 @@ public class WorkflowEditor extends JTabContent {
 		}
 	}
 
-	private void removeNode(mxGraph graph, mxCell cell) {
+	private void removeNode(final mxGraph graph, final mxCell cell) {
 		graph.getModel().beginUpdate();
 		try {
 			graph.getModel().remove(cell);
@@ -501,7 +535,7 @@ public class WorkflowEditor extends JTabContent {
 			graph.getModel().endUpdate();
 		}
 		if (cell.isVertex()) {
-			GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
+			final GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
 					.getValue();
 			Iterator<IGraphNode> iter = node.getGraphNode().getChildrenNodes()
 					.iterator();
@@ -522,11 +556,11 @@ public class WorkflowEditor extends JTabContent {
 			}
 			project.removeProjectNode(node, false);
 		} else {// edge
-			mxICell source = cell.getSource();
-			mxICell target = cell.getTarget();
-			GUIGraphNodeDecorator sourceNode = (GUIGraphNodeDecorator) source
+			final mxICell source = cell.getSource();
+			final mxICell target = cell.getTarget();
+			final GUIGraphNodeDecorator sourceNode = (GUIGraphNodeDecorator) source
 					.getValue();
-			GUIGraphNodeDecorator targetNode = (GUIGraphNodeDecorator) target
+			final GUIGraphNodeDecorator targetNode = (GUIGraphNodeDecorator) target
 					.getValue();
 			sourceNode.getGraphNode().removeFollowingNode(
 					targetNode.getGraphNode());
@@ -542,7 +576,7 @@ public class WorkflowEditor extends JTabContent {
 				getTabPanel().getLabel().setText(name);
 			}
 			return true;
-		} catch (ConfigurationException e) {
+		} catch (final ConfigurationException e) {
 			LOG.warning("KH: could not save graph to file: "
 					+ project.getProjectFile().getAbsolutePath());
 			e.printStackTrace();
@@ -551,7 +585,7 @@ public class WorkflowEditor extends JTabContent {
 	}
 
 	@Override
-	public boolean saveContent(File file) {
+	public boolean saveContent(final File file) {
 		return saveContent();
 	}
 
@@ -560,7 +594,8 @@ public class WorkflowEditor extends JTabContent {
 		graphComponent.getGraph().selectAll();
 	}
 
-	private void setGraphLayout(WorkflowGraphLayoutType layout, boolean animate) {
+	private void setGraphLayout(final WorkflowGraphLayoutType layout,
+			final boolean animate) {
 		final mxIGraphLayout newLayout = WorkflowEditor.createLayout(layout,
 				graphComponent, animate);
 
@@ -576,11 +611,13 @@ public class WorkflowEditor extends JTabContent {
 			try {
 				newLayout.execute(cell);
 			} finally {
-				mxMorphing morph = new mxMorphing(graphComponent, 20, 1.2, 20);
+				final mxMorphing morph = new mxMorphing(graphComponent, 20,
+						1.2, 20);
 				morph.addListener(mxEvent.DONE, new mxIEventListener() {
 
 					@Override
-					public void invoke(Object sender, mxEventObject evt) {
+					public void invoke(final Object sender,
+							final mxEventObject evt) {
 						graph.getModel().endUpdate();
 					}
 				});
@@ -596,21 +633,23 @@ public class WorkflowEditor extends JTabContent {
 		mi.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent ae) {
-				mxCell cell = (mxCell) graphComponent.getGraph()
+			public void actionPerformed(final ActionEvent ae) {
+				final mxCell cell = (mxCell) graphComponent.getGraph()
 						.getSelectionCell();
 				if (cell != null) {
-					GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
+					final GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
 							.getValue();
-					NodePropertiesDialog npd = new NodePropertiesDialog(
+					final NodePropertiesDialog npd = new NodePropertiesDialog(
 							getFrame(), node);
 					npd.setVisible(true);
 					npd.addWindowListener(new WindowAdapter() {
-						public void windowClosed(WindowEvent e) {
+						@Override
+						public void windowClosed(final WindowEvent e) {
 							refresh();
 						}
 
-						public void windowClosing(WindowEvent e) {
+						@Override
+						public void windowClosing(final WindowEvent e) {
 							refresh();
 						}
 					});
@@ -622,8 +661,8 @@ public class WorkflowEditor extends JTabContent {
 		mi.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mxCell cell = (mxCell) graphComponent.getGraph()
+			public void actionPerformed(final ActionEvent arg0) {
+				final mxCell cell = (mxCell) graphComponent.getGraph()
 						.getSelectionCell();
 				removeNode(graphComponent.getGraph(), cell);
 			}
@@ -634,114 +673,116 @@ public class WorkflowEditor extends JTabContent {
 	// TODO i18n
 	private void setupWorkspacePopup() {
 		workspacePopup = new JPopupMenu();
-		JMenu layoutMenu = new JMenu("Layout");
-		JMenuItem verticalHierarchical = new JMenuItem("Vertical Hierarchical");
+		final JMenu layoutMenu = new JMenu("Layout");
+		final JMenuItem verticalHierarchical = new JMenuItem(
+				"Vertical Hierarchical");
 		verticalHierarchical.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				setGraphLayout(WorkflowGraphLayoutType.VERTICAL_HIERARCHICAL,
 						true);
 			}
 		});
 		layoutMenu.add(verticalHierarchical);
-		JMenuItem horizontalHierarchical = new JMenuItem(
+		final JMenuItem horizontalHierarchical = new JMenuItem(
 				"Horizontal Hierarchical");
 		horizontalHierarchical.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.HORIZONTAL_HIERARCHICAL,
 						true);
 			}
 		});
 		layoutMenu.add(horizontalHierarchical);
-		JMenuItem verticalTree = new JMenuItem("Vertical Tree");
+		final JMenuItem verticalTree = new JMenuItem("Vertical Tree");
 		verticalTree.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.VERTICAL_TREE, true);
 			}
 		});
 		layoutMenu.add(verticalTree);
-		JMenuItem horizontalTree = new JMenuItem("Horizontal Tree");
+		final JMenuItem horizontalTree = new JMenuItem("Horizontal Tree");
 		horizontalTree.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.HORIZONTAL_TREE, true);
 			}
 		});
 		layoutMenu.add(horizontalTree);
-		JMenuItem parallelEdges = new JMenuItem("Parallel Edges");
+		final JMenuItem parallelEdges = new JMenuItem("Parallel Edges");
 		parallelEdges.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.PARALLEL_EDGES, true);
 			}
 		});
 		layoutMenu.add(parallelEdges);
-		JMenuItem placeEdgeLabels = new JMenuItem("Place Edge Labels");
+		final JMenuItem placeEdgeLabels = new JMenuItem("Place Edge Labels");
 		placeEdgeLabels.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.PLACE_EDGE_LABELS, true);
 			}
 		});
 		layoutMenu.add(placeEdgeLabels);
-		JMenuItem organicLayout = new JMenuItem("Organic Layout");
+		final JMenuItem organicLayout = new JMenuItem("Organic Layout");
 		organicLayout.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.ORGANIC_LAYOUT, true);
 			}
 		});
-		JMenuItem verticalPartition = new JMenuItem("Vertical Partition");
+		final JMenuItem verticalPartition = new JMenuItem("Vertical Partition");
 		verticalPartition.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.VERTICAL_PARTITION, true);
 			}
 		});
 		layoutMenu.add(verticalPartition);
-		JMenuItem horizontalPartition = new JMenuItem("Horizontal Partition");
+		final JMenuItem horizontalPartition = new JMenuItem(
+				"Horizontal Partition");
 		horizontalPartition.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.HORIZONTAL_PARTITION,
 						true);
 			}
 		});
 		layoutMenu.add(horizontalPartition);
-		JMenuItem verticalStack = new JMenuItem("Vertical Stack");
+		final JMenuItem verticalStack = new JMenuItem("Vertical Stack");
 		verticalStack.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.VERTICAL_STACK, true);
 			}
 		});
 		layoutMenu.add(verticalStack);
-		JMenuItem horizontalStack = new JMenuItem("Horizontal Stack");
+		final JMenuItem horizontalStack = new JMenuItem("Horizontal Stack");
 		horizontalStack.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.HORIZONTAL_STACK, true);
 			}
 		});
 		layoutMenu.add(horizontalStack);
-		JMenuItem circleLayout = new JMenuItem("Circle Layout");
+		final JMenuItem circleLayout = new JMenuItem("Circle Layout");
 		circleLayout.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				setGraphLayout(WorkflowGraphLayoutType.CIRCLE_LAYOUT, true);
 			}
 		});
@@ -753,26 +794,27 @@ public class WorkflowEditor extends JTabContent {
 	public void undoAction() {
 		undoManager.undo();
 	}
-	
-	protected IProject getProject(){
+
+	protected IProject getProject() {
 		return project;
 	}
 
-	private void updateProjectGraphAccordingToChange(mxUndoableEdit edit) {
-		List<mxUndoableChange> changes = edit.getChanges();
-		for (mxUndoableChange change : changes) {
+	private void updateProjectGraphAccordingToChange(final mxUndoableEdit edit) {
+		final List<mxUndoableChange> changes = edit.getChanges();
+		for (final mxUndoableChange change : changes) {
 			if (change instanceof mxChildChange) {
-				mxChildChange childChange = (mxChildChange) change;
-				mxCell cell = (mxCell) childChange.getChild();
+				final mxChildChange childChange = (mxChildChange) change;
+				final mxCell cell = (mxCell) childChange.getChild();
 				if (cell.isVertex()) {// vertex
-					GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
+					final GUIGraphNodeDecorator node = (GUIGraphNodeDecorator) cell
 							.getValue();
 					if (childChange.getPrevious() == null) {// restore
 						project.addProjectNode(node);
 						for (int i = 0; i < cell.getEdgeCount(); i++) {
-							mxICell source = cell.getEdgeAt(i)
+							final mxICell source = cell.getEdgeAt(i)
 									.getTerminal(true);
-							mxICell end = cell.getEdgeAt(i).getTerminal(false);
+							final mxICell end = cell.getEdgeAt(i).getTerminal(
+									false);
 							if (cell.equals(source)) {// add following node
 								node.getGraphNode()
 										.addFollowingNode(
@@ -812,11 +854,11 @@ public class WorkflowEditor extends JTabContent {
 						project.removeProjectNode(node, false);
 					}
 				} else {// edge
-					mxICell source = cell.getSource();
-					mxICell target = cell.getTarget();
-					GUIGraphNodeDecorator sourceNode = (GUIGraphNodeDecorator) source
+					final mxICell source = cell.getSource();
+					final mxICell target = cell.getTarget();
+					final GUIGraphNodeDecorator sourceNode = (GUIGraphNodeDecorator) source
 							.getValue();
-					GUIGraphNodeDecorator targetNode = (GUIGraphNodeDecorator) target
+					final GUIGraphNodeDecorator targetNode = (GUIGraphNodeDecorator) target
 							.getValue();
 
 					if (childChange.getPrevious() == null) {// restore

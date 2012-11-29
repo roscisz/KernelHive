@@ -19,7 +19,7 @@ public abstract class JTabContent extends JPanel {
 	protected boolean dirty;
 	protected File file;
 
-	public JTabContent(MainFrame frame) {
+	public JTabContent(final MainFrame frame) {
 		this.frame = frame;
 		dirty = false;
 	}
@@ -85,7 +85,7 @@ public abstract class JTabContent extends JPanel {
 	 * select all content
 	 */
 	public abstract void selectAll();
-	
+
 	public abstract void clearSelection();
 
 	/**
@@ -93,18 +93,21 @@ public abstract class JTabContent extends JPanel {
 	 */
 	public abstract void refresh();
 
-	public boolean find(String toFind, boolean matchCase, boolean wholeWord,
-			boolean isRegex, boolean searchBack) {
+	public boolean find(final String toFind, final boolean matchCase,
+			final boolean wholeWord, final boolean isRegex,
+			final boolean searchBack) {
 		return true;
 	}
 
-	public boolean replace(String toFind, String toReplace, boolean matchCase,
-			boolean wholeWord, boolean isRegex, boolean searchBack) {
+	public boolean replace(final String toFind, final String toReplace,
+			final boolean matchCase, final boolean wholeWord,
+			final boolean isRegex, final boolean searchBack) {
 		return true;
 	}
 
-	public int replaceAll(String toFind, String toReplace, boolean matchCase,
-			boolean wholeWord, boolean isRegex, boolean searchBack) {
+	public int replaceAll(final String toFind, final String toReplace,
+			final boolean matchCase, final boolean wholeWord,
+			final boolean isRegex, final boolean searchBack) {
 		return 0;
 	}
 
@@ -114,7 +117,7 @@ public abstract class JTabContent extends JPanel {
 	 * @param panel
 	 *            JTabPanel
 	 */
-	public void setTabPanel(JTabPanel panel) {
+	public void setTabPanel(final JTabPanel panel) {
 		tabPanel = panel;
 		tabPanel.setTabContent(this);
 	}
@@ -152,7 +155,7 @@ public abstract class JTabContent extends JPanel {
 	 * @param dirty
 	 *            boolean
 	 */
-	protected void setDirty(boolean dirty) {
+	protected void setDirty(final boolean dirty) {
 		this.dirty = dirty;
 	}
 
@@ -171,12 +174,11 @@ public abstract class JTabContent extends JPanel {
 	 * @param file
 	 *            File
 	 */
-	public void setFile(File file) {
+	public void setFile(final File file) {
 		this.file = file;
 	}
 
-	public void goToLine(int line) {
-		// TODO Auto-generated method stub
-		
+	public void goToLine(final int line) {
+
 	}
 }

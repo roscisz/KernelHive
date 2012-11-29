@@ -36,13 +36,12 @@ import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
  * 
  */
 public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
-
 	private static Logger LOG = Logger
 			.getLogger(WorkflowEditorDropTargetListener.class.getName());
 	protected DropTarget target;
 	protected WorkflowEditor editor;
 
-	public WorkflowEditorDropTargetListener(WorkflowEditor editor) {
+	public WorkflowEditorDropTargetListener(final WorkflowEditor editor) {
 		this.editor = editor;
 		editor.graphComponent.setDragEnabled(false);
 		target = new DropTarget(editor.graphComponent,
@@ -50,7 +49,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 	}
 
 	@Override
-	public void drop(DropTargetDropEvent dtde) {
+	public void drop(final DropTargetDropEvent dtde) {
 		File dir = null;
 		GUIGraphNodeDecorator guiNode = null;
 		try {
@@ -61,7 +60,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			if (dtde.isDataFlavorSupported(TransferableKernelRepositoryEntry.entryFlavour)) {
 				dtde.acceptDrop(DnDConstants.ACTION_COPY);
 
-				JFileChooser fc = new JFileChooser(
+				final JFileChooser fc = new JFileChooser(
 						editor.project.getProjectDirectory());
 				fc.setDialogTitle("Choose directory...");
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -69,14 +68,14 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 				fc.setMultiSelectionEnabled(false);
 				if (fc.showDialog(editor, "Select") == JFileChooser.APPROVE_OPTION) {
 					// 1. select directory to store the copied kernels
-					String nodeId = NodeIdGenerator.generateId();
+					final String nodeId = NodeIdGenerator.generateId();
 					dir = new File(fc.getSelectedFile().getAbsolutePath()
 							+ System.getProperty("file.separator") + nodeId);
 					dir.mkdirs();
 
 					// 2. get input streams to the kernel templates, save the
 					// content to new files
-					List<IKernelFile> sourceFiles = copyKernelsFromTemplates(
+					final List<IKernelFile> sourceFiles = copyKernelsFromTemplates(
 							kre, dir);
 
 					// 3. create appropriate graph node
@@ -96,7 +95,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 
 				} else {
 					MessageDialog
-							.showErrorDialog(editor, "Error",
+							.showMessageDialog(editor, "",
 									"You have to choose a directory to place kernel files!");
 					return;
 				}
@@ -105,10 +104,10 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 			} else {
 				dtde.rejectDrop();
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			LOG.severe("KH: " + e.getMessage());
 			if (guiNode != null && dir != null) {
-				for (IKernelFile s : guiNode.getSourceFiles()) {
+				for (final IKernelFile s : guiNode.getSourceFiles()) {
 					s.getFile().delete();
 				}
 				dir.delete();

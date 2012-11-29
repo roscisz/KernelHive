@@ -32,11 +32,15 @@ import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
  * 
  */
 public class SourceCodeEditor extends JTabContent implements DocumentListener {
-
 	private static final long serialVersionUID = 5474455832346699476L;
 	private static Logger LOG = Logger.getLogger(SourceCodeEditor.class
 			.getName());
 
+	/**
+	 * 
+	 * @author marcel
+	 * 
+	 */
 	public static enum SyntaxStyle {
 		CPLUSPLUS(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cpp"), C(
 				SyntaxConstants.SYNTAX_STYLE_C, "c"), XML(
@@ -85,6 +89,11 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	private TextEditorPane textarea;
 	private String fileName;
 
+	/**
+	 * 
+	 * @param frame
+	 * @param name
+	 */
 	public SourceCodeEditor(MainFrame frame, String name) {
 		super(frame);
 		this.fileName = name;
@@ -104,11 +113,11 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	}
 
 	/**
-	 * gets text
+	 * gets text.
 	 * 
 	 * @return text
 	 */
-	public String getText() {
+	public final String getText() {
 		return textarea.getText();
 	}
 
@@ -118,7 +127,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	 * @param text
 	 *            String
 	 */
-	public void setText(String text) {
+	public final void setText(String text) {
 		textarea.setText(text);
 	}
 
@@ -127,7 +136,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	 * 
 	 * @return file name
 	 */
-	public String getFileName() {
+	public final String getFileName() {
 		return fileName;
 	}
 
@@ -137,7 +146,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	 * @param name
 	 *            String
 	 */
-	public void setFileName(String name) {
+	public final void setFileName(String name) {
 		this.fileName = name;
 	}
 
@@ -147,7 +156,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	 * @param style
 	 *            {@link SyntaxStyle}
 	 */
-	public void setSyntaxStyle(SyntaxStyle style) {
+	public final void setSyntaxStyle(SyntaxStyle style) {
 		textarea.setSyntaxEditingStyle(style.getStyle());
 		textarea.repaint();
 	}
@@ -157,13 +166,13 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	 * 
 	 * @return {@link SyntaxStyle}
 	 */
-	public SyntaxStyle getSyntaxStyle() {
+	public final SyntaxStyle getSyntaxStyle() {
 		String style = textarea.getSyntaxEditingStyle();
 		return SyntaxStyle.getSyntaxStyle(style);
 	}
 
 	@Override
-	public boolean saveContent(File file) {
+	public final boolean saveContent(final File file) {
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
 			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
@@ -196,7 +205,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	}
 
 	@Override
-	public boolean loadContent(File file) {
+	public final boolean loadContent(final File file) {
 		try {
 			FileInputStream fis = new FileInputStream(file);
 			DataInputStream dis = new DataInputStream(fis);
@@ -221,7 +230,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	}
 
 	@Override
-	public void changedUpdate(DocumentEvent arg0) {
+	public final void changedUpdate(final DocumentEvent arg0) {
 		if (getTabPanel() != null) {
 			setDirty(true);
 			getTabPanel().getLabel().setText("*" + fileName);
@@ -229,7 +238,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	}
 
 	@Override
-	public void insertUpdate(DocumentEvent arg0) {
+	public final void insertUpdate(final DocumentEvent arg0) {
 		if (getTabPanel() != null) {
 			setDirty(true);
 			getTabPanel().getLabel().setText("*" + fileName);
@@ -237,7 +246,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	}
 
 	@Override
-	public void removeUpdate(DocumentEvent arg0) {
+	public final void removeUpdate(final DocumentEvent arg0) {
 		if (getTabPanel() != null) {
 			setDirty(true);
 			getTabPanel().getLabel().setText("*" + fileName);
@@ -245,37 +254,37 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	}
 
 	@Override
-	public void redoAction() {
+	public final void redoAction() {
 		textarea.redoLastAction();
 	}
 
 	@Override
-	public void undoAction() {
+	public final void undoAction() {
 		textarea.undoLastAction();
 	}
 
 	@Override
-	public void cut() {
+	public final void cut() {
 		textarea.cut();
 	}
 
 	@Override
-	public void copy() {
+	public final void copy() {
 		textarea.copy();
 	}
 
 	@Override
-	public void paste() {
+	public final void paste() {
 		textarea.paste();
 	}
 
 	@Override
-	public void selectAll() {
+	public final void selectAll() {
 		textarea.selectAll();
 	}
 
 	@Override
-	public void refresh() {
+	public final void refresh() {
 		if (getFile() != null) {
 			loadContent(getFile());
 		}
@@ -284,19 +293,19 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 	}
 
 	@Override
-	public boolean saveContent() {
+	public final boolean saveContent() {
 		return saveContent(getFile());
 	}
 
 	@Override
-	public boolean loadContent() {
+	public final boolean loadContent() {
 		return loadContent(getFile());
 	}
-	
+
 	@Override
-	public boolean find(String toFind, boolean matchCase, boolean wholeWorld,
-			boolean isRegex, boolean searchBack){
-		if(toFind.length()==0){
+	public final boolean find(String toFind, boolean matchCase,
+			boolean wholeWorld, boolean isRegex, boolean searchBack) {
+		if (toFind.length() == 0) {
 			return false;
 		}
 		SearchContext context = new SearchContext();
@@ -305,14 +314,15 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		context.setRegularExpression(isRegex);
 		context.setWholeWord(wholeWorld);
 		context.setSearchForward(!searchBack);
-		
+
 		return SearchEngine.find(textarea, context);
 	}
-	
+
 	@Override
-	public boolean replace(String toFind, String toReplace, boolean matchCase,
-			boolean wholeWorld, boolean isRegex, boolean searchBack) {
-		if(toFind.length()==0){
+	public final boolean replace(String toFind, String toReplace,
+			boolean matchCase, boolean wholeWorld, boolean isRegex,
+			boolean searchBack) {
+		if (toFind.length() == 0) {
 			return false;
 		}
 		SearchContext context = new SearchContext();
@@ -322,14 +332,15 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		context.setRegularExpression(isRegex);
 		context.setWholeWord(wholeWorld);
 		context.setSearchForward(!searchBack);
-		
+
 		return SearchEngine.replace(textarea, context);
 	}
 
 	@Override
-	public int replaceAll(String toFind, String toReplace, boolean matchCase,
-			boolean wholeWorld, boolean isRegex, boolean searchBack) {
-		if(toFind.length()==0){
+	public final int replaceAll(String toFind, String toReplace,
+			boolean matchCase, boolean wholeWorld, boolean isRegex,
+			boolean searchBack) {
+		if (toFind.length() == 0) {
 			return -1;
 		}
 		SearchContext context = new SearchContext();
@@ -339,24 +350,25 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		context.setRegularExpression(isRegex);
 		context.setWholeWord(wholeWorld);
 		context.setSearchForward(!searchBack);
-		
+
 		return SearchEngine.replaceAll(textarea, context);
 	}
 
 	@Override
-	public void clearSelection() {
+	public final void clearSelection() {
 		textarea.setSelectionStart(textarea.getCaretPosition());
 		textarea.setSelectionEnd(textarea.getCaretPosition());
 	}
-	
+
 	@Override
-	public void goToLine(int line) {
+	public final void goToLine(final int line) {
 		try {
-			textarea.scrollRectToVisible(textarea.modelToView(textarea.getLineStartOffset(line-1)));
-			textarea.setCaretPosition(textarea.getLineStartOffset(line-1));
+			textarea.scrollRectToVisible(textarea.modelToView(textarea
+					.getLineStartOffset(line - 1)));
+			textarea.setCaretPosition(textarea.getLineStartOffset(line - 1));
 			textarea.setActiveLineRange(line, line);
 		} catch (BadLocationException e) {
-			LOG.warning("KH: bad line number: "+line);
-		}		
+			LOG.warning("KH: bad line number: " + line);
+		}
 	}
 }

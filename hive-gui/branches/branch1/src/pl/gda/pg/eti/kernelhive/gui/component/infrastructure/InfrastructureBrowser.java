@@ -1,5 +1,7 @@
 package pl.gda.pg.eti.kernelhive.gui.component.infrastructure;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
@@ -11,39 +13,47 @@ import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceException;
 import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceListenerAdapter;
 import pl.gda.pg.eti.kernelhive.gui.networking.IExecutionEngineService;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-public class InfrastructureBrowser extends JTabContent implements ActionListener{
+/**
+ * 
+ * @author marcel
+ * 
+ */
+public class InfrastructureBrowser extends JTabContent implements
+		ActionListener {
 
 	private static final long serialVersionUID = 4776693860508469103L;
-	
+
 	private IExecutionEngineService service;
 	private ExecutionEngineServiceListenerAdapter adapter;
-	private InfrastructureBrowserPanel panel;
+	private final InfrastructureBrowserPanel panel;
 
-	public InfrastructureBrowser(MainFrame frame, String title) {
+	/**
+	 * 
+	 * @param frame
+	 * @param title
+	 */
+	public InfrastructureBrowser(final MainFrame frame, final String title) {
 		super(frame);
 		this.setName(title);
 		panel = new InfrastructureBrowserPanel();
 		panel.addRefreshBtnActionListener(this);
 		add(panel);
-		try{
+		try {
 			service = ExecutionEngineService.getInstance();
 			adapter = new ExecutionEngineServiceListenerAdapter() {
 				@Override
-				public void infrastractureBrowseCompleted(List<ClusterInfo> clusterInfo) {
+				public void infrastractureBrowseCompleted(
+						final List<ClusterInfo> clusterInfo) {
 					panel.reloadTreeContents(clusterInfo);
 				}
 			};
-		} catch(ExecutionEngineServiceException e){
+		} catch (final ExecutionEngineServiceException e) {
 			e.printStackTrace();
 		}
 	}
-	
 
 	@Override
-	public boolean saveContent(File file) {
+	public boolean saveContent(final File file) {
 		return true;
 	}
 
@@ -53,7 +63,7 @@ public class InfrastructureBrowser extends JTabContent implements ActionListener
 	}
 
 	@Override
-	public boolean loadContent(File file) {
+	public boolean loadContent(final File file) {
 		return true;
 	}
 
@@ -64,50 +74,48 @@ public class InfrastructureBrowser extends JTabContent implements ActionListener
 
 	@Override
 	public void redoAction() {
-		
+
 	}
 
 	@Override
 	public void undoAction() {
-		
+
 	}
 
 	@Override
 	public void cut() {
-		
+
 	}
 
 	@Override
 	public void copy() {
-		
+
 	}
 
 	@Override
 	public void paste() {
-		
+
 	}
 
 	@Override
 	public void selectAll() {
-		
+
 	}
 
 	@Override
 	public void refresh() {
-		if(service!=null){
+		if (service != null) {
 			service.browseInfrastructure(adapter);
 		}
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		refresh();
 	}
 
-
 	@Override
 	public void clearSelection() {
-		// TODO Auto-generated method stub
-		
+
 	}
 }
