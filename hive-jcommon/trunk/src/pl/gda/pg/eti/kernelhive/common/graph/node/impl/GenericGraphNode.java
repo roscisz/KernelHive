@@ -28,8 +28,8 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	protected List<IGraphNode> previousNodes;
 	protected List<IGraphNode> childrenNodes;
 	protected Map<String, Object> properties;
-	
-	public GenericGraphNode(String id) {
+
+	public GenericGraphNode(final String id) {
 		followingNodes = new ArrayList<IGraphNode>();
 		previousNodes = new ArrayList<IGraphNode>();
 		childrenNodes = new ArrayList<IGraphNode>();
@@ -37,8 +37,8 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		properties = new HashMap<String, Object>();
 		parentNode = null;
 	}
-	
-	public GenericGraphNode(String id, String name){
+
+	public GenericGraphNode(final String id, final String name) {
 		followingNodes = new ArrayList<IGraphNode>();
 		previousNodes = new ArrayList<IGraphNode>();
 		childrenNodes = new ArrayList<IGraphNode>();
@@ -48,8 +48,11 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		parentNode = null;
 	}
 
-	public GenericGraphNode(String id, String name, List<IGraphNode> followingNodes,
-			List<IGraphNode> childrenNodes, List<IGraphNode> previousNodes, Map<String, Object> properties) {
+	public GenericGraphNode(final String id, final String name,
+			final List<IGraphNode> followingNodes,
+			final List<IGraphNode> childrenNodes,
+			final List<IGraphNode> previousNodes,
+			final Map<String, Object> properties) {
 		nodeId = id;
 		this.name = name;
 		parentNode = null;
@@ -68,9 +71,9 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 		} else {
 			this.previousNodes = new ArrayList<IGraphNode>();
 		}
-		if(properties!=null){
+		if (properties != null) {
 			this.properties = properties;
-		} else{
+		} else {
 			this.properties = new HashMap<String, Object>();
 		}
 	}
@@ -96,7 +99,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public void setParentNode(IGraphNode node) {
+	public void setParentNode(final IGraphNode node) {
 		if (parentNode != null) {
 			parentNode.getChildrenNodes().remove(this);
 			disconnectPreviousNodes(this);
@@ -116,10 +119,10 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean addFollowingNode(IGraphNode node) {
+	public boolean addFollowingNode(final IGraphNode node) {
 		if (!followingNodes.contains(node) && canAddFollowingNode(node)) {
 			followingNodes.add(node);
-			boolean result = node.addPreviousNode(this);
+			final boolean result = node.addPreviousNode(this);
 			if (result == false) {
 				followingNodes.remove(node);
 				node.removePreviousNode(node);
@@ -131,8 +134,8 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean removeFollowingNode(IGraphNode node) {
-		if (node!=null && followingNodes.contains(node)) {
+	public boolean removeFollowingNode(final IGraphNode node) {
+		if (node != null && followingNodes.contains(node)) {
 			boolean result = followingNodes.remove(node);
 			result &= node.removePreviousNode(this);
 			return result;
@@ -142,7 +145,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean addPreviousNode(IGraphNode node) {
+	public boolean addPreviousNode(final IGraphNode node) {
 		if (!previousNodes.contains(node) && canAddPreviousNode(node)) {
 			previousNodes.add(node);
 			node.addFollowingNode(this);
@@ -153,8 +156,8 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean removePreviousNode(IGraphNode node) {
-		if (node!=null && previousNodes.contains(node)) {
+	public boolean removePreviousNode(final IGraphNode node) {
+		if (node != null && previousNodes.contains(node)) {
 			boolean result = previousNodes.remove(node);
 			result &= node.removeFollowingNode(this);
 			return result;
@@ -164,7 +167,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean addChildNode(IGraphNode node) {
+	public boolean addChildNode(final IGraphNode node) {
 		if (!childrenNodes.contains(node) && canAddChildNode(node)) {
 			childrenNodes.add(node);
 			node.setParentNode(this);
@@ -177,9 +180,9 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean removeChildNode(IGraphNode node) {
+	public boolean removeChildNode(final IGraphNode node) {
 		if (childrenNodes.contains(node)) {
-			boolean result = childrenNodes.remove(node);
+			final boolean result = childrenNodes.remove(node);
 			node.setParentNode(null);
 			disconnectPreviousNodes(node);
 			disconnectFollowingNodes(node);
@@ -188,36 +191,37 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 			return true;
 		}
 	}
-	
-	private void disconnectPreviousNodes(IGraphNode node){
-		List<IGraphNode> list = new ArrayList<IGraphNode>(node.getPreviousNodes());
+
+	private void disconnectPreviousNodes(final IGraphNode node) {
+		final List<IGraphNode> list = new ArrayList<IGraphNode>(
+				node.getPreviousNodes());
 		Collections.copy(list, node.getPreviousNodes());
-		for(IGraphNode pNode : list){
+		for (final IGraphNode pNode : list) {
 			node.removePreviousNode(pNode);
 		}
 	}
-	
-	private void disconnectFollowingNodes(IGraphNode node){
-		List<IGraphNode> list = new ArrayList<IGraphNode>(node.getFollowingNodes());
+
+	private void disconnectFollowingNodes(final IGraphNode node) {
+		final List<IGraphNode> list = new ArrayList<IGraphNode>(
+				node.getFollowingNodes());
 		Collections.copy(list, node.getFollowingNodes());
-		for(IGraphNode fNode : list){
+		for (final IGraphNode fNode : list) {
 			node.removeFollowingNode(fNode);
 		}
 	}
 
-	
 	@Override
-	public boolean canAddFollowingNode(IGraphNode node) {
+	public boolean canAddFollowingNode(final IGraphNode node) {
 		return true;
 	}
 
 	@Override
-	public boolean canAddPreviousNode(IGraphNode node) {
+	public boolean canAddPreviousNode(final IGraphNode node) {
 		return true;
 	}
 
 	@Override
-	public boolean canAddChildNode(IGraphNode node) {
+	public boolean canAddChildNode(final IGraphNode node) {
 		return true;
 	}
 
@@ -234,14 +238,14 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GenericGraphNode other = (GenericGraphNode) obj;
+		final GenericGraphNode other = (GenericGraphNode) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -264,13 +268,12 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 
 	@Override
 	public String toString() {
-		return name+" ("+type.toString()+")";
+		return name + " (" + type.toString() + ")";
 	}
 
 	@Override
 	public List<ValidationResult> validate() {
-		//FIXME
-		List<ValidationResult> results = new ArrayList<ValidationResult>();
+		final List<ValidationResult> results = new ArrayList<ValidationResult>();
 		results.add(new ValidationResult("OK", ValidationResultType.VALID));
 		return results;
 	}
@@ -286,7 +289,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -296,7 +299,7 @@ public class GenericGraphNode implements IGraphNode, Serializable {
 	}
 
 	@Override
-	public void setProperties(Map<String, Object> properties) {
+	public void setProperties(final Map<String, Object> properties) {
 		this.properties = properties;
 	}
 
