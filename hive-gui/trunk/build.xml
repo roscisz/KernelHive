@@ -30,7 +30,6 @@
 		<javac destdir="${build.dir}" classpathref="classpath">
 			<src path="${src.dir}"/>
 			<src path="${common-src.dir}"/>
-			<src path="${common-res.dir}"/>
 		</javac>
 		<copy todir="${build.dir}">
 			<fileset dir="${res.dir}">
@@ -57,7 +56,7 @@
             <zipfileset dir="${res.dir}" includes="jlfgr-1_0.jar"/>
             <zipfileset dir="${lib.dir}/jgraphx-1.10" includes="jgraphx.jar"/>
             <zipfileset dir="${lib.dir}/rsyntaxtextarea_2.0.2" includes="rsyntaxtextarea.jar"/>
-            <fileset dir="${common-build.dir}"/>
+            <!--<fileset dir="${common-build.dir}"/>-->
             <zipfileset dir="${common-lib.dir}/commons-configuration-1.8" includes="commons-configuration-1.8.jar"/>
             <zipfileset dir="${common-lib.dir}/commons-lang-2.6" includes="commons-lang-2.6.jar"/>
             <zipfileset dir="${common-lib.dir}/commons-logging-1.1.1" includes="commons-logging-1.1.1.jar"/>
