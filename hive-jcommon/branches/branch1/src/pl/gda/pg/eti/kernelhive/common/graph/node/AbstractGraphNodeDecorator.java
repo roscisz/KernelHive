@@ -9,24 +9,25 @@ import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
 /**
  * 
  * @author mschally
- *
+ * 
  */
-public abstract class AbstractGraphNodeDecorator {
+public abstract class AbstractGraphNodeDecorator implements IGraphNodeDecorator {
 
 	protected IGraphNode node;
-	
-	public AbstractGraphNodeDecorator(IGraphNode node){
+
+	public AbstractGraphNodeDecorator(final IGraphNode node) {
 		this.node = node;
 	}
-	
-	public IGraphNode getGraphNode(){
+
+	@Override
+	public IGraphNode getGraphNode() {
 		return node;
 	}
-	
-	public abstract List<ValidationResult>  validate();
-	
-	protected boolean isValidationSuccess(List<ValidationResult> results) {
-		for (ValidationResult r : results) {
+
+	public abstract List<ValidationResult> validate();
+
+	protected boolean isValidationSuccess(final List<ValidationResult> results) {
+		for (final ValidationResult r : results) {
 			if (r.getType().equals(ValidationResultType.INVALID)) {
 				return false;
 			}

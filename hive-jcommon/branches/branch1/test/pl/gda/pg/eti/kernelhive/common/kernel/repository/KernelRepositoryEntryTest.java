@@ -1,18 +1,13 @@
 package pl.gda.pg.eti.kernelhive.common.kernel.repository;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelPathEntry;
-import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRepositoryEntry;
-
 public class KernelRepositoryEntryTest {
 
-	private KernelRepositoryEntry entry;
+	// private KernelRepositoryEntry entry;
 	// private GraphNodeType type;
-	private List<KernelPathEntry> list;
+	// private List<KernelPathEntry> list;
 	private String desc;
 
 	@Before

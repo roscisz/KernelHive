@@ -7,17 +7,19 @@ import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult.ValidationResultType;
 import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRoleEnum;
 
 public class EngineGraphNodeDecorator extends AbstractGraphNodeDecorator {
 
 	List<IKernelString> kernels;
 
-	public EngineGraphNodeDecorator(IGraphNode node) {
+	public EngineGraphNodeDecorator(final IGraphNode node) {
 		super(node);
 		kernels = new ArrayList<IKernelString>();
 	}
 
-	public EngineGraphNodeDecorator(IGraphNode node, List<IKernelString> kernels) {
+	public EngineGraphNodeDecorator(final IGraphNode node,
+			final List<IKernelString> kernels) {
 		super(node);
 		this.kernels = kernels;
 	}
@@ -26,21 +28,51 @@ public class EngineGraphNodeDecorator extends AbstractGraphNodeDecorator {
 		return kernels;
 	}
 
-	public void setKernels(List<IKernelString> kernels) {
+	public void setKernels(final List<IKernelString> kernels) {
 		this.kernels = kernels;
+	}
+
+	public List<IKernelString> getPartitionKernels() {
+		final List<IKernelString> result = new ArrayList<IKernelString>();
+		for (final IKernelString kernel : kernels) {
+			if (kernel.getKernelRole().equals(KernelRoleEnum.PARTITION)) {
+				result.add(kernel);
+			}
+		}
+		return result;
+	}
+
+	public List<IKernelString> getMergeKernels() {
+		final List<IKernelString> result = new ArrayList<IKernelString>();
+		for (final IKernelString kernel : kernels) {
+			if (kernel.getKernelRole().equals(KernelRoleEnum.MERGE)) {
+				result.add(kernel);
+			}
+		}
+		return result;
+	}
+
+	public List<IKernelString> getProcessKernels() {
+		final List<IKernelString> result = new ArrayList<IKernelString>();
+		for (final IKernelString kernel : kernels) {
+			if (kernel.getKernelRole().equals(KernelRoleEnum.PROCESS)) {
+				result.add(kernel);
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public List<ValidationResult> validate() {
-		//validate node
-		List<ValidationResult> result = node.validate();
+		// validate node
+		final List<ValidationResult> result = node.validate();
 		// validate kernels
-		for (IKernelString ks : kernels) {
+		for (final IKernelString ks : kernels) {
 			result.addAll(ks.validate());
 		}
 
 		if (isValidationSuccess(result)) {
-			List<ValidationResult> finalResult = new ArrayList<ValidationResult>();
+			final List<ValidationResult> finalResult = new ArrayList<ValidationResult>();
 			finalResult.add(new ValidationResult("Graph node (id: "
 					+ node.getNodeId() + ", name: " + node.getName()
 					+ ") and its kernels validated successfully",
@@ -61,14 +93,14 @@ public class EngineGraphNodeDecorator extends AbstractGraphNodeDecorator {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		EngineGraphNodeDecorator other = (EngineGraphNodeDecorator) obj;
+		final EngineGraphNodeDecorator other = (EngineGraphNodeDecorator) obj;
 		if (kernels == null) {
 			if (other.kernels != null)
 				return false;

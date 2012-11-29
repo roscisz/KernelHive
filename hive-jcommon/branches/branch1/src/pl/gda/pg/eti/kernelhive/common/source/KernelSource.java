@@ -5,26 +5,27 @@ import java.util.List;
 import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRoleEnum;
 
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public abstract class KernelSource implements IKernelSource {
-	
+
 	protected String id;
 	protected Map<String, Object> properties;
-	
-	public KernelSource(String id, Map<String, Object> properties){
+
+	public KernelSource(final String id, final Map<String, Object> properties) {
 		this.id = id;
-		if(properties!=null){
+		if (properties != null) {
 			this.properties = properties;
-		} else{
+		} else {
 			this.properties = new HashMap<String, Object>();
 		}
 	}
-	
+
 	@Override
 	public Map<String, Object> getProperties() {
 		return properties;
@@ -37,55 +38,55 @@ public abstract class KernelSource implements IKernelSource {
 
 	@Override
 	public int[] getGlobalSize() {
-		try{
-			String s = (String) properties.get(GLOBAL_SIZES);
-			String[] sizesStr = s.trim().split(" ");
-			if(sizesStr.length<=3){
-				int[] globalSize = new int[3];
-				for(int i=0; i<sizesStr.length; i++){
+		try {
+			final String s = (String) properties.get(GLOBAL_SIZES);
+			final String[] sizesStr = s.trim().split(" ");
+			if (sizesStr.length <= 3) {
+				final int[] globalSize = new int[] { 1, 1, 1 };
+				for (int i = 0; i < sizesStr.length; i++) {
 					globalSize[i] = Integer.parseInt(sizesStr[i]);
 				}
 				return globalSize;
 			}
-		} catch (NullPointerException e){
+		} catch (final NullPointerException e) {
 			return null;
-		}		
+		}
 		return null;
 	}
 
 	@Override
 	public int[] getLocalSize() {
-		try{
-			String s = (String) properties.get(LOCAL_SIZES);
-			String[] sizesStr = s.trim().split(" ");
-			if(sizesStr.length<=3){
-				int[] localSize = new int[3];
-				for(int i=0; i<sizesStr.length; i++){
+		try {
+			final String s = (String) properties.get(LOCAL_SIZES);
+			final String[] sizesStr = s.trim().split(" ");
+			if (sizesStr.length <= 3) {
+				final int[] localSize = new int[] { 1, 1, 1 };
+				for (int i = 0; i < sizesStr.length; i++) {
 					localSize[i] = Integer.parseInt(sizesStr[i]);
 				}
 				return localSize;
 			}
-		} catch (NullPointerException e){
+		} catch (final NullPointerException e) {
 			return null;
-		}		
+		}
 		return null;
 	}
 
 	@Override
 	public int[] getOffset() {
-		try{
-			String s = (String) properties.get(OFFSETS);
-			String[] sizesStr = s.trim().split(" ");
-			if(sizesStr.length<=3){
-				int[] offset = new int[3];
-				for(int i=0; i<sizesStr.length; i++){
+		try {
+			final String s = (String) properties.get(OFFSETS);
+			final String[] sizesStr = s.trim().split(" ");
+			if (sizesStr.length <= 3) {
+				final int[] offset = new int[3];
+				for (int i = 0; i < sizesStr.length; i++) {
 					offset[i] = Integer.parseInt(sizesStr[i]);
 				}
 				return offset;
 			}
-		} catch (NullPointerException e){
+		} catch (final NullPointerException e) {
 			return null;
-		}		
+		}
 		return null;
 	}
 
@@ -95,13 +96,19 @@ public abstract class KernelSource implements IKernelSource {
 	@Override
 	public int getOutputSize() {
 		int outputSize = -1;
-		try{
-			String outputSizeStr = (String) properties.get(OUTPUT_SIZE);
+		try {
+			final String outputSizeStr = (String) properties.get(OUTPUT_SIZE);
 			outputSize = Integer.parseInt(outputSizeStr);
-		} catch(NumberFormatException e){
+		} catch (final NumberFormatException e) {
 			return -1;
 		}
 		return outputSize;
+	}
+
+	@Override
+	public KernelRoleEnum getKernelRole() {
+		final String kernelRoleString = (String) properties.get(KERNEL_ROLE);
+		return KernelRoleEnum.getRoleByName(kernelRoleString);
 	}
 
 }

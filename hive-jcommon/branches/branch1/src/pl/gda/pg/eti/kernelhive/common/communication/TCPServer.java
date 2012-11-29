@@ -19,13 +19,15 @@ import java.util.Set;
  */
 public class TCPServer implements Runnable {
 	
-	private static int MAX_MESSAGE_BYTES = 1024;
+	// TODO: explain :)
+	public static int MAX_MESSAGE_BYTES = 1492;
 	
 	private TCPServerListener listener;
 	private ServerSocketChannel server;
 	private Selector selector;
 	
 	private Map<SocketChannel, ByteBuffer> buffers = new HashMap<SocketChannel, ByteBuffer>();
+	private Map<SocketChannel, ByteBuffer> commandSizeBuffers = new HashMap<SocketChannel, ByteBuffer>();
 		
 	public TCPServer(NetworkAddress address, TCPServerListener listener) throws CommunicationException {
 		this.listener = listener;
@@ -43,7 +45,7 @@ public class TCPServer implements Runnable {
 	}	
 
 	public static void sendMessage(SocketChannel socketChannel, ByteBuffer message) {
-		message.rewind();
+		message.flip();
 		try {
 			socketChannel.write(message);
 		} catch (IOException e) {
@@ -53,7 +55,8 @@ public class TCPServer implements Runnable {
 
 	private void prepareSocket(String host, int port) throws IOException {
 		server = ServerSocketChannel.open();
-		server.configureBlocking(false);		
+		server.configureBlocking(false);	
+		System.out.println("Host " + host + ", port: " + port);
 		server.socket().bind(new InetSocketAddress(host, port));
 		
 		selector = Selector.open();
@@ -114,7 +117,17 @@ public class TCPServer implements Runnable {
 			}
 						
 			while(incomingBuffer.hasRemaining()) {
-				int commandSize = incomingBuffer.getInt();
+				ByteBuffer commandSizeBuffer = getCommandSizeBuffer(client);
+				commandSizeBuffer.put(incomingBuffer.get());
+				if(commandSizeBuffer.position() < 4)
+					continue;
+				commandSizeBuffer.rewind();
+				int commandSize = commandSizeBuffer.getInt();
+				commandSizeBuffer.rewind();
+				//int commandSize = incomingBuffer.getInt();
+				
+				System.out.println("Command size: " + commandSize);
+				
 				if(incomingBuffer.remaining() >= commandSize) {
 					listener.onTCPMessage(client, incomingBuffer);
 				}
@@ -131,6 +144,17 @@ public class TCPServer implements Runnable {
 		}
 	}
 	
+	private ByteBuffer getCommandSizeBuffer(SocketChannel client) {
+		if(!commandSizeBuffers.containsKey(client)) {
+			ByteBuffer commandSizeBuffer = ByteBuffer.allocate(4);
+			commandSizeBuffer.order(ByteOrder.LITTLE_ENDIAN);
+			commandSizeBuffers.put(client, commandSizeBuffer);
+			return commandSizeBuffer;
+		} 
+		else return commandSizeBuffers.get(client);
+		
+	}
+
 	/**
 	 * 
 	 * @param toComplete - the Buffer that needs to be completed with position at limit
@@ -178,6 +202,7 @@ public class TCPServer implements Runnable {
 	}
 	
 	public static byte[] byteBufferToArray(ByteBuffer buffer) {
+		buffer.rewind();
 		byte[] ret = new byte[buffer.remaining()];
 		buffer.get(ret, 0, ret.length);
 		return ret;

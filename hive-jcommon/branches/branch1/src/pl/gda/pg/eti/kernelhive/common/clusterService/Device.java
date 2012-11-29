@@ -2,6 +2,8 @@ package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.DeviceInfo;
+
 public class Device {
 	private static String parameterSeparator = ":";
 	
@@ -50,12 +52,11 @@ public class Device {
 				+ ", workGroupSize=" + workGroupSize + "]";
 	}
 
-	// TODO: scheduling constraints
-	public boolean canBeScheduledOn(Device device) {
-		return true;
-	}
-
 	public void updateReverseReferences(Unit unit) {
 		this.unit = unit;		
+	}
+
+	public DeviceInfo getDeviceInfo() {
+		return new DeviceInfo(this.toString());
 	}	
 }

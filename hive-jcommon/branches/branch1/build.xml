@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project name="hive-jcommon" default="jar"	basedir=".">
 	
 	<!-- set global properties for this build -->
+	<property environment="env"/>
+	<property file="build.properties"/>
+	<property file="build.${user.name}.properties"/>
 	<property name="project.name" value="hive-jcommon" />
 	
 	<property name="src.dir" value="src" />
@@ -9,9 +12,11 @@
 	<property name="dist.dir" value="dist" />
 	<property name="lib.dir" value="lib" />
 	<property name="res.dir" value="res"/>
+	<property name="repo-api.build.dir" value="${kh-repo.dir}/bin-api"/>
 	
 	<path id="project.classpath">
 		<fileset dir="${lib.dir}" includes="*/*.jar" />
+		<fileset dir="${repo-api.build.dir}" includes="**/*.class"/>
 	</path>
 	
 	<target name="init" description="initialize the build">
@@ -22,10 +27,14 @@
     </target>
 	
     <target name="compile" depends="init" description="compile the source">
-        <!-- Compile the java code from ${src.dir} into ${build.dir} -->        
-        <javac srcdir="${src.dir}:${res.dir}" destdir="${build.dir}" includeantruntime="false">
+    	<!-- Compile the java code from ${src.dir} into ${build.dir} -->        
+        <javac srcdir="${src.dir}:${kh-repo.dir}/src-api" destdir="${build.dir}" includeantruntime="false">
             <classpath refid="project.classpath" />
-        </javac>        
+        </javac>
+    	<fileset dir="${common-res.dir}">
+    		<include name="**"/>
+    		<exclude name="**/*.jar"/>
+    	</fileset>
     </target>
 	
 	<target name="jar" depends="compile" description="generate the distribution">

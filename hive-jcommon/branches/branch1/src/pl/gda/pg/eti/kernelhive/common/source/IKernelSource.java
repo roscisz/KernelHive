@@ -4,24 +4,34 @@ import java.util.List;
 import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
+import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRoleEnum;
 
 /**
  * 
  * @author mschally
- *
+ * 
  */
 public interface IKernelSource {
 
-	public static final String GLOBAL_SIZES = "globalSizes";
-	public static final String LOCAL_SIZES = "localSizes";
-	public static final String OFFSETS = "offsets";
-	public static final String OUTPUT_SIZE = "outputSize";
-	
+	static final String GLOBAL_SIZES = "globalSizes";
+	static final String LOCAL_SIZES = "localSizes";
+	static final String OFFSETS = "offsets";
+	static final String OUTPUT_SIZE = "outputSize";
+	static final String KERNEL_ROLE = "role";
+
 	Map<String, Object> getProperties();
+
 	String getId();
+
 	int[] getGlobalSize();
+
 	int[] getLocalSize();
+
 	int[] getOffset();
+
 	int getOutputSize();
+
+	KernelRoleEnum getKernelRole();
+
 	List<ValidationResult> validate();
 }

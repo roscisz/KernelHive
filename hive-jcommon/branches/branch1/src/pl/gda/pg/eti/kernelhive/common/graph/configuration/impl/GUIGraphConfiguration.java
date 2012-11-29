@@ -27,7 +27,8 @@ import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
  * @author mschally
  * 
  */
-public class GUIGraphConfiguration extends AbstractGraphConfiguration implements IGUIGraphConfiguration {
+public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
+		IGUIGraphConfiguration {
 
 	private static final String NODE_X_ATTRIBUTE = "x";
 	private static final String NODE_Y_ATTRIBUTE = "y";
@@ -38,7 +39,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 	private static final String SOURCE_FILE_PROPERTY_NODE = "kh:property";
 	private static final String SOURCE_FILE_PROPERTY_NODE_KEY_ATTRIBUTE = "key";
 	private static final String SOURCE_FILE_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
-	
+
 	private static final Logger LOG = Logger
 			.getLogger(GUIGraphConfiguration.class.getName());
 
@@ -114,7 +115,6 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		return sourcesNode;
 	}
 
-	
 	@Override
 	public List<GUIGraphNodeDecorator> loadGraphForGUI()
 			throws ConfigurationException {
@@ -153,10 +153,10 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 
 	private GUIGraphNodeDecorator loadGraphNodeForGUI(ConfigurationNode node)
 			throws ConfigurationException {
-		
+
 		IGraphNode graphNode = loadGraphNode(node);
 		int x = -1, y = -1;
-		
+
 		List<ConfigurationNode> xAttrList = node
 				.getAttributes(NODE_X_ATTRIBUTE);
 		List<ConfigurationNode> yAttrList = node
@@ -165,13 +165,13 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 			x = Integer.parseInt((String) xAttrList.get(0).getValue());
 		if (yAttrList.size() > 0)
 			y = Integer.parseInt((String) yAttrList.get(0).getValue());
-		
+
 		GUIGraphNodeDecorator guiNode = new GUIGraphNodeDecorator(graphNode);
 		guiNode.setX(x);
 		guiNode.setY(y);
 
 		return guiNode;
-	}	
+	}
 
 	private List<GUIGraphNodeDecorator> loadGraphNodesForGUI()
 			throws ConfigurationException {
@@ -292,6 +292,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		try {
 			config.clear();
 			config.setRootNode(tempConfig.getRootNode());
+			config.getRootNode().removeChildren();
 			for (GUIGraphNodeDecorator guiNode : guiGraphNodes) {
 				config.getRoot().addChild(createGraphNodeForGUI(guiNode, file));
 			}
@@ -301,5 +302,5 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 			config.save(file);
 			throw e;
 		}
-	}	
+	}
 }

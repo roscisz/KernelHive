@@ -35,7 +35,9 @@ public class Decoder {
 	
 	public static ByteBuffer encode(String message) {
 		try {
-			return encoder.encode(CharBuffer.wrap(message));		
+			ByteBuffer ret = encoder.encode(CharBuffer.wrap(message));
+			ret.position(ret.limit());
+			return ret;
 		}
 		catch(CharacterCodingException cce) {
 			cce.printStackTrace();
