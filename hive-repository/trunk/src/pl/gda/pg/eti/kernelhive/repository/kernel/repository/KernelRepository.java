@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.repository.kernel.repository;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
  */
 public class KernelRepository implements IKernelRepository {
 
-	private static String ROOT_NODE = "kh:repository";
+	// private static String ROOT_NODE = "kh:repository";
 	private static String ENTRY_NODE = "kh:entry";
 	private static String ENTRY_NODE_TYPE_ATTRIBUTE = "type";
 	private static String ENTRY_NODE_DESCRIPTION_ATTRIBUTE = "description";
@@ -33,11 +34,12 @@ public class KernelRepository implements IKernelRepository {
 	private static String KERNEL_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
 
 	private final XMLConfiguration config;
-	private final URL resource;
+	private URL resource;
+	private final RepositoryConfiguration repoConfig;
+	private File jarFileLocation;
 
 	public KernelRepository() {
-		resource = RepositoryConfiguration.getInstance()
-				.getKernelRepositoryDescriptorFileURL();
+		repoConfig = RepositoryConfiguration.getInstance();
 		config = new XMLConfiguration();
 	}
 
@@ -45,6 +47,8 @@ public class KernelRepository implements IKernelRepository {
 	public List<IKernelRepositoryEntry> getEntries()
 			throws KernelRepositoryException {
 		try {
+			resource = repoConfig
+					.getKernelRepositoryDescriptorFileURL(jarFileLocation);
 			config.load(resource);
 
 			final List<IKernelRepositoryEntry> entries = new ArrayList<IKernelRepositoryEntry>();
@@ -64,6 +68,8 @@ public class KernelRepository implements IKernelRepository {
 	public IKernelRepositoryEntry getEntryForGraphNodeType(
 			final GraphNodeType type) throws KernelRepositoryException {
 		try {
+			resource = repoConfig
+					.getKernelRepositoryDescriptorFileURL(jarFileLocation);
 			config.load(resource);
 			final List<ConfigurationNode> entryNodes = config.getRootNode()
 					.getChildren(ENTRY_NODE);
@@ -143,6 +149,13 @@ public class KernelRepository implements IKernelRepository {
 			}
 
 			if (srcAttrList.size() > 0) {
+				src = null;
+				// try {
+				// src = new URL("jar:" + jarFileLocation.toURI().toURL()
+				// + "!/" + ((String) srcAttrList.get(0).getValue()));
+				// } catch (final MalformedURLException e) {
+				// e.printStackTrace();
+				// }
 				src = KernelRepository.class.getResource((String) srcAttrList
 						.get(0).getValue());
 				if (src == null) {
@@ -208,4 +221,13 @@ public class KernelRepository implements IKernelRepository {
 		return properties;
 	}
 
+	@Override
+	public File getJarFileLocation() {
+		return jarFileLocation;
+	}
+
+	@Override
+	public void setJarFileLocation(final File file) {
+		jarFileLocation = file;
+	}
 }

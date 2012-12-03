@@ -1,16 +1,17 @@
 package pl.gda.pg.eti.kernelhive.repository.configuration;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-public class RepositoryConfiguration {
+public class RemoteRepositoryConfiguration {
 
-	private static Logger LOG = Logger.getLogger(RepositoryConfiguration.class
-			.getName());
-	private static RepositoryConfiguration _commonConfig = null;
+	private static Logger LOG = Logger
+			.getLogger(RemoteRepositoryConfiguration.class.getName());
+	private static RemoteRepositoryConfiguration _commonConfig = null;
 
 	private PropertiesConfiguration config;
 
@@ -19,10 +20,10 @@ public class RepositoryConfiguration {
 	 * 
 	 * @return {@link AppConfiguration} instance
 	 */
-	public static RepositoryConfiguration getInstance() {
+	public static RemoteRepositoryConfiguration getInstance() {
 		if (_commonConfig == null) {
 			try {
-				_commonConfig = new RepositoryConfiguration();
+				_commonConfig = new RemoteRepositoryConfiguration();
 				_commonConfig.reloadConfiguration();
 				return _commonConfig;
 			} catch (final ConfigurationException e) {
@@ -35,7 +36,7 @@ public class RepositoryConfiguration {
 		}
 	}
 
-	protected RepositoryConfiguration() {
+	protected RemoteRepositoryConfiguration() {
 	}
 
 	/**
@@ -48,27 +49,18 @@ public class RepositoryConfiguration {
 	}
 
 	/**
-	 * get the {@link URL} to the Kernel Repository
-	 * 
-	 * @return {@link URL}
-	 */
-	public URL getKernelRepositoryDescriptorFileURL() {
-		final String prop = this.config
-				.getString("kernel.repository.descriptor.file.path");
-		if (prop != null) {
-			return RepositoryConfiguration.class.getResource(prop);
-		} else {
-			return null;
-		}
-	}
-
-	/**
 	 * 
 	 * @return
 	 */
-	public String getKernelRepositoryJarURL() {
+	public URL getKernelRepositoryJarURL() throws ConfigurationException {
 		final String prop = this.config.getString("kernel.repository.url.path");
-		return prop;
+		try {
+			final URL url = new URL(prop);
+			return url;
+		} catch (final MalformedURLException e) {
+			throw new ConfigurationException(
+					"malformed url of 'kernel.repository.url.path'", e);
+		}
 	}
 
 	/**

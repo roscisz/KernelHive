@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.repository.kernel.repository;
 
+import java.io.File;
 import java.util.List;
 
 import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
@@ -29,4 +30,8 @@ public interface IKernelRepository {
 	 * @throws ConfigurationException
 	 */
 	List<IKernelRepositoryEntry> getEntries() throws KernelRepositoryException;
+
+	File getJarFileLocation();
+
+	void setJarFileLocation(File file);
 }

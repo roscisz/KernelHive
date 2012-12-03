@@ -1,5 +1,6 @@
 package pl.gda.pg.eti.kernelhive.repository.loader;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
@@ -7,11 +8,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import pl.gda.pg.eti.kernelhive.repository.configuration.RepositoryConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+
+import pl.gda.pg.eti.kernelhive.repository.configuration.RemoteRepositoryConfiguration;
 import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepository;
 
@@ -23,65 +25,70 @@ public class RepositoryLoaderService {
 
 	private static RepositoryLoaderService _service = null;
 
-	private String jarUrlStr = null;
+	private URL jarUrl = null;
+	private JarFileLoaderService fileLoader;
+	private boolean loaded = false;
 	@SuppressWarnings("rawtypes")
 	private List<Class> loadedClasses;
 
-	public static RepositoryLoaderService getInstance() {
+	public static RepositoryLoaderService getInstance()
+			throws RepositoryLoaderServiceException {
 		if (_service == null) {
 			_service = new RepositoryLoaderService();
-			_service.loadRemoteRepository();
 		}
 		return _service;
 	}
 
-	private RepositoryLoaderService() {
+	private RepositoryLoaderService() throws RepositoryLoaderServiceException {
+		try {
+			jarUrl = RemoteRepositoryConfiguration.getInstance()
+					.getKernelRepositoryJarURL();
+			fileLoader = new JarFileLoaderService(jarUrl);
+		} catch (final ConfigurationException e) {
+			throw new RepositoryLoaderServiceException(e.getMessage());
+		}
 
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void loadRemoteJAR(String jarUrl) {
+	private void loadJAR(final URL jarUrl)
+			throws RepositoryLoaderServiceException {
 		CustomURLClassLoader cl = null;
 		try {
-			URL url = new URL("jar:" + jarUrl + "!/");
+			final URL url = new URL("jar:" + jarUrl + "!/");
 			url.openConnection();
 			cl = new CustomURLClassLoader(new URL[] { url });
-			List<String> classNames = getClassesNamesInPackage(url,
+			final List<String> classNames = getClassesNamesInPackage(url,
 					PACKAGE_NAME_TO_LOAD);
 			loadedClasses = new ArrayList<Class>();
 
-			for (String className : classNames) {
+			for (final String className : classNames) {
 				loadedClasses.add(Class.forName(className, true, cl));
 			}
 			cl.getLoadedClasses();
 			cl.close();
 			cl = null;
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (final MalformedURLException e) {
+			throw new RepositoryLoaderServiceException(e.getMessage());
+		} catch (final ClassNotFoundException e) {
+			throw new RepositoryLoaderServiceException(e.getMessage());
+		} catch (final IOException e) {
+			throw new RepositoryLoaderServiceException(e.getMessage());
 		}
 	}
 
-	private List<String> getClassesNamesInPackage(URL url, String packageName) {
-		List<String> classes = new ArrayList<String>();
+	private List<String> getClassesNamesInPackage(final URL url,
+			String packageName) {
+		final List<String> classes = new ArrayList<String>();
 		packageName = packageName.replaceAll("\\.", "/");
-		// System.out.println("Jar " + url + " looking for " + packageName);
 		try {
 			JarURLConnection juc = (JarURLConnection) url.openConnection();
 			JarFile jf = juc.getJarFile();
-			Enumeration<JarEntry> entries = jf.entries();
+			final Enumeration<JarEntry> entries = jf.entries();
 			while (entries.hasMoreElements()) {
-				JarEntry je = entries.nextElement();
+				final JarEntry je = entries.nextElement();
 				if ((je.getName().startsWith(packageName))
 						&& (je.getName().endsWith(".class"))) {
-					// System.out.println("Found " +
-					// je.getName().replaceAll("/", "\\."));
 					classes.add(je.getName().replaceAll("/", "\\.")
 							.replaceAll("\\.class", ""));
 				}
@@ -90,46 +97,39 @@ public class RepositoryLoaderService {
 			jf = null;
 			juc = null;
 			System.gc();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return classes;
 	}
 
-	private String getJarVersion(String jarUrl) {
-		String version = null;
+	public void reloadRemoteRepository()
+			throws RepositoryLoaderServiceException {
 		try {
-			URL url = new URL("jar:" + jarUrl + "!/");
-			JarURLConnection juc = (JarURLConnection) url.openConnection();
-			JarFile jf = juc.getJarFile();
-			Attributes attrs = jf.getManifest().getMainAttributes();
-			version = attrs.getValue("Manifest-Version");
-		} catch (IOException e) {
-			e.printStackTrace();
+			fileLoader.downloadJar();
+			final File jarFile = fileLoader.getJar();
+			loadJAR(jarFile.toURI().toURL());
+		} catch (final IOException e) {
+			throw new RepositoryLoaderServiceException(e);
 		}
-		return version;
-	}
-
-	private void loadRemoteRepository() {
-		jarUrlStr = RepositoryConfiguration.getInstance()
-				.getKernelRepositoryJarURL();
-		loadRemoteJAR(jarUrlStr);
-	}
-
-	public String getRepositoryVersion() {
-		return getJarVersion(jarUrlStr);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public IKernelRepository getRepository() {
+	public IKernelRepository getRepository()
+			throws RepositoryLoaderServiceException {
+		if (!loaded) {
+			reloadRemoteRepository();
+			loaded = true;
+		}
 		IKernelRepository repo = null;
-		for (Class clazz : loadedClasses) {
+		for (final Class clazz : loadedClasses) {
 			if (clazz.getName().equals(KERNEL_REPOSITORY_CLASS_NAME)) {
 				try {
 					repo = (IKernelRepository) clazz.newInstance();// singelton?
-				} catch (InstantiationException e) {
+					repo.setJarFileLocation(fileLoader.getJar());
+				} catch (final InstantiationException e) {
 					e.printStackTrace();
-				} catch (IllegalAccessException e) {
+				} catch (final IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}
@@ -140,13 +140,13 @@ public class RepositoryLoaderService {
 	@SuppressWarnings("rawtypes")
 	public IGraphNodeBuilder createGraphNodeBuilder() {
 		IGraphNodeBuilder builder = null;
-		for (Class clazz : loadedClasses) {
+		for (final Class clazz : loadedClasses) {
 			if (clazz.getName().equals(GRAPH_NODE_BUILDER_CLASS_NAME)) {
 				try {
 					builder = (IGraphNodeBuilder) clazz.newInstance();
-				} catch (InstantiationException e) {
+				} catch (final InstantiationException e) {
 					e.printStackTrace();
-				} catch (IllegalAccessException e) {
+				} catch (final IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}

@@ -52,6 +52,7 @@ import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplayExcepti
 import pl.gda.pg.eti.kernelhive.repository.kernel.repository.IKernelRepository;
 import pl.gda.pg.eti.kernelhive.repository.kernel.repository.KernelRepositoryException;
 import pl.gda.pg.eti.kernelhive.repository.loader.RepositoryLoaderService;
+import pl.gda.pg.eti.kernelhive.repository.loader.RepositoryLoaderServiceException;
 
 /**
  * 
@@ -275,6 +276,9 @@ public class MainFrameController {
 								BUNDLE.getString("MainFrameController.newProject.cannotCreate.title"),
 								BUNDLE.getString("MainFrameController.newProject.cannotCreate.text"));
 				e.printStackTrace();
+			} catch (final RepositoryLoaderServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -292,6 +296,15 @@ public class MainFrameController {
 		fc.setFileFilter(ff);
 		if (fc.showDialog(frame.getContentPane(), "Select") == JFileChooser.APPROVE_OPTION) {
 			try {
+
+				final IKernelRepository repository = RepositoryLoaderService
+						.getInstance().getRepository();
+				final ListModel repoModel = new RepositoryViewerModel(
+						repository.getEntries());
+				frame.setRepositoryList(new RepositoryViewer(repoModel));
+				frame.getRepositoryScrollPane().setViewportView(
+						frame.getRepositoryList());
+
 				file = fc.getSelectedFile();
 				project = new KernelHiveProject(file.getParentFile(), null);
 				project.setProjectFile(file);
@@ -304,14 +317,6 @@ public class MainFrameController {
 				frame.setProjectTree(tree);
 				frame.getProjectScrollPane().setViewportView(
 						frame.getProjectTree());
-
-				final IKernelRepository repository = RepositoryLoaderService
-						.getInstance().getRepository();
-				final ListModel repoModel = new RepositoryViewerModel(
-						repository.getEntries());
-				frame.setRepositoryList(new RepositoryViewer(repoModel));
-				frame.getRepositoryScrollPane().setViewportView(
-						frame.getRepositoryList());
 
 				frame.getBtnStart().setEnabled(true);
 
@@ -331,6 +336,9 @@ public class MainFrameController {
 						"Could not open the project file: "
 								+ file.getAbsolutePath() + " Reason: "
 								+ e.getMessage());
+			} catch (final RepositoryLoaderServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

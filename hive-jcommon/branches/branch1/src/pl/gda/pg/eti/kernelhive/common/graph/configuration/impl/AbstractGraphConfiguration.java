@@ -19,6 +19,7 @@ import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.repository.graph.node.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.repository.graph.node.type.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.repository.loader.RepositoryLoaderService;
+import pl.gda.pg.eti.kernelhive.repository.loader.RepositoryLoaderServiceException;
 
 /**
  * 
@@ -300,14 +301,16 @@ public abstract class AbstractGraphConfiguration implements IGraphConfiguration 
 			type = GraphNodeType.getType((String) typeAttrList.get(0)
 					.getValue());
 
-		IGraphNode graphNode;
-		IGraphNodeBuilder gnBuilder = RepositoryLoaderService.getInstance()
-				.createGraphNodeBuilder();
+		IGraphNode graphNode = null;
 		try {
+			final IGraphNodeBuilder gnBuilder = RepositoryLoaderService
+					.getInstance().createGraphNodeBuilder();
 			graphNode = gnBuilder.setType(type).setId(id).setName(name).build();
 		} catch (final GraphNodeBuilderException e) {
 			e.printStackTrace();
 			throw new ConfigurationException(e);
+		} catch (final RepositoryLoaderServiceException e) {
+			e.printStackTrace();
 		}
 		return graphNode;
 	}
