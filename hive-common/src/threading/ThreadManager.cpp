@@ -1,10 +1,12 @@
 #include "ThreadManager.h"
 #include "../commons/Logger.h"
 #include <signal.h>
+#include <cstdlib>
 
 namespace KernelHive {
 
 ThreadManager::ThreadManager() {
+    this->connectSignals();
 }
 
 void ThreadManager::pleaseStopAllThreads() {
@@ -68,6 +70,13 @@ void ThreadManager::connectSignals() {
 	//signal(SIGINT, ThreadManager::abortHandler);
 	//signal(SIGTERM, ThreadManager::abortHandler);
 	//signal(SIGHUP, restartHandler);
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = SA_NOCLDWAIT;
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+	    Logger::log(FATAL, "sigaction failed\n");
+	    exit(1);
+    }
 }
 
 ThreadManager::~ThreadManager() {
