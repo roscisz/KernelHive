@@ -75,6 +75,16 @@ void BasicWorker::runAllUploads() {
 	}
 }
 
+void BasicWorker::runAllUploadsSync() {
+	for(UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
+		if(*it != NULL) {
+			threadManager->runThread(*it);
+			threadManager->waitForThread(*it);
+		}
+	}
+}
+
+
 void BasicWorker::waitForAllUploads() {
 	for (UploaderList::iterator it = uploaders.begin(); it != uploaders.end(); it++ ) {
 		if (*it != NULL) {
@@ -165,6 +175,7 @@ void BasicWorker::deallocateResources() {
 			delete *it;
 		}
 	}
+	delete context;
 }
 
 } /* namespace KernelHive */

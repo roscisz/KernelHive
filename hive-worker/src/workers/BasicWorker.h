@@ -151,6 +151,11 @@ protected:
 	void runAllUploads();
 
 	/**
+	 * Runs all uploaders threads stored in the map synchronously.
+	 */
+	void runAllUploadsSync();
+
+	/**
 	 * Waits until all uploads finish.
 	 */
 	void waitForAllUploads();
