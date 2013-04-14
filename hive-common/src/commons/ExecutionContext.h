@@ -110,6 +110,7 @@ namespace KernelHive {
 		 */
 		OpenClEvent enqueueRead(std::string bufferName, size_t offset, size_t size, void* ptr);
 
+		
 		/**
 		 * Waits for provided OpenCL events to finish, blocking.
 		 *
@@ -117,6 +118,15 @@ namespace KernelHive {
 		 * @param events the events to wait for
 		 */
 		void waitForEvents(size_t eventsCount, OpenClEvent** events);
+
+		/**
+		 * Waits for provided OpenCL event to finish, blocking.
+		 *
+		 * @param event the event to wait for
+		 */
+		void waitForEvent(OpenClEvent* event);
+
+		void waitForEvent(OpenClEvent** event);
 
 		/**
 		 * Build a new program to use by this execution context.
@@ -207,6 +217,9 @@ namespace KernelHive {
 		 */
 		void finishPreviousExecution();
 
+		static void pfn_notify(cl_program a, void *user_data);
+
+
 	private:
 		/** The OpenCL device to use for this context. */
 		OpenClDevice device;
@@ -268,6 +281,7 @@ namespace KernelHive {
 		 * Releases the current program and any kernel associated with it.
 		 */
 		void releaseProgram();
+
 
 	};
 

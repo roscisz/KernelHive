@@ -2,6 +2,7 @@
 #include "KernelHiveException.h"
 
 #include <cstdio>
+#include <unistd.h>
 #include "Logger.h"
 
 #define ITERATIVE_EXECUTION
@@ -124,6 +125,14 @@ namespace KernelHive {
 		}
 	}
 
+	void ExecutionContext::waitForEvent(OpenClEvent *event) {
+		cl_event clEvent = event->getOpenClEvent();
+		cl_int errorCode = clWaitForEvents(1, &clEvent);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error waiting for events to finish", errorCode);
+		}
+	}
+
 	void ExecutionContext::buildProgramFromSource(std::string source) {
 		releaseProgram();
 		buildProgramFromSourceInternal(source.data(), source.length());
@@ -181,6 +190,7 @@ namespace KernelHive {
 			throw OpenClException("Error executing a kernel", errorCode);
 		}
 		clWaitForEvents(1, &event);
+		clReleaseEvent(event);
 	}
 
 	OpenClEvent ExecutionContext::enqueueKernelExecution(cl_uint numDimensions,
@@ -234,6 +244,11 @@ namespace KernelHive {
 		}
 	}
 
+ 	void ExecutionContext::pfn_notify(cl_program a, void *user_data)
+	{
+		fprintf(stderr, "OpenCL Error (via pfn_notify): %s\n", user_data);
+	}
+
 	void ExecutionContext::buildProgramFromSourceInternal(const char* source,
 			size_t sourceLength)
 	{
@@ -247,7 +262,7 @@ namespace KernelHive {
 		// TODO Think about adding the callback function...
 		cl_device_id openClDeviceId = device.getClDeviceId();
 		errorCode = clBuildProgram(clProgram, 1, &openClDeviceId,
-				NULL, NULL, NULL);
+				/*"-cl-nv-verbose"*/NULL, /*&pfn_notify*/NULL, NULL);
 		if (errorCode != CL_SUCCESS) {
 			if (errorCode == CL_BUILD_PROGRAM_FAILURE) {
 
@@ -273,6 +288,7 @@ namespace KernelHive {
 
 			}
 			throw OpenClException("Error building the program", errorCode);
+			clUnloadCompiler();
 		}
 	}
 
