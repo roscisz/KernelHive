@@ -1,8 +1,9 @@
-#ifndef KERNEL_HIVE_DATA_UPLOADER_H
-#define KERNEL_HIVE_DATA_UPLOADER_H
+#ifndef KERNEL_HIVE_DATA_UPLOADER_MULTI_H
+#define KERNEL_HIVE_DATA_UPLOADER_MULTI_H
 
 #include <string>
 
+#include "network/TCPClient.h"
 #include "network/TCPMessage.h"
 #include "network/TCPClientListener.h"
 #include "threading/SynchronizedBuffer.h"
@@ -10,7 +11,7 @@
 
 namespace KernelHive {
 
-class DataUploader
+class DataUploaderMulti
 	: public IDataUploader, public TCPClientListener {
 
 public:
@@ -20,12 +21,12 @@ public:
 	 * @param address the data repository address
 	 * @param buffer the buffer with data to upload
 	 */
-	DataUploader(NetworkAddress* address, SynchronizedBuffer* buffer);
+	DataUploaderMulti(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount);
 
 	/**
 	 * The destructor
 	 */
-	virtual ~DataUploader();
+	virtual ~DataUploaderMulti();
 
 	/**
 	 * Called upon receiving data via the socket.
@@ -38,8 +39,6 @@ public:
 	 * Called when a connection is established.
 	 */
 	void onConnected();
-
-	int getDataIdentifier();
 
 	void getDataURL(std::string *param);
 
@@ -63,11 +62,17 @@ private:
 	/** The current state of this data uploader. */
 	int currentState;
 
+	/** The current part of data to be sent */
+	int currentPart;
+
+	/** Number of parts to send */
+	int partsCount;
+
 	/** Data server address */
 	NetworkAddress* address;
 
 	/** A pointer to the buffer with data to be uploaded. */
-	SynchronizedBuffer* buffer;
+	SynchronizedBuffer** buffers;
 
 	/** The command which tells the repository that data will be uploaded to it. */
 	TCPMessage* dataPublish;
@@ -75,7 +80,7 @@ private:
 	int *dataPublishData;
 
 	/** The identifier of uploaded data - returned by the repository after uploading. */
-	int dataIdentifier;
+	int* dataIdentifiers;
 
 	/**
 	 * Pre-compiles the commands which will be sent to the data repository.
@@ -104,4 +109,4 @@ private:
 
 } /* namespace KernelHive */
 
-#endif /* KERNEL_HIVE_DATA_UPLOADER_H */
+#endif /* KERNEL_HIVE_DATA_UPLOADER_MULTI_H */
