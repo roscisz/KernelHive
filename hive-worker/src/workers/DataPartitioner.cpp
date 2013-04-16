@@ -3,6 +3,7 @@
 #include "DataPartitioner.h"
 
 #include "commons/KhUtils.h"
+#include "../communication/DataUploaderMulti.h"
 
 namespace KernelHive {
 
@@ -91,14 +92,17 @@ void DataPartitioner::workSpecific() {
 		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, readOffset,
 				outputSize*sizeof(byte), (void*)resultBuffers[i]->getRawData());
 		copyEvents[i] = &dataCopy;
-		uploaders.push_back(new DataUploader(outputDataAddress, resultBuffers[i]));
+//		uploaders.push_back(new DataUploader(outputDataAddress, resultBuffers[i]));
 		readOffset += outputSize;
 	}
 	context->waitForEvents(partsCount, copyEvents);
 	setPercentDone(90);
 
+	uploaders.push_back(new DataUploaderMulti(outputDataAddress, resultBuffers, partsCount));
+
 	runAllUploads();
 	waitForAllUploads();
+
 	setPercentDone(100);
 }
 

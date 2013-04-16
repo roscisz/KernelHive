@@ -6,6 +6,7 @@
 #include "BasicWorker.h"
 #include "network/NetworkAddress.h"
 #include "threading/SynchronizedBuffer.h"
+#include "../communication/DataUploader.h"
 
 namespace KernelHive {
 

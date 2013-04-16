@@ -9,12 +9,12 @@
 #include "commons/ExecutionContext.h"
 #include "threading/SynchronizedBuffer.h"
 #include "../communication/DataDownloader.h"
-#include "../communication/DataUploader.h"
+#include "../communication/IDataUploader.h"
 
 namespace KernelHive {
 
 typedef std::map<int, DataDownloader *> DownloaderMap;
-typedef std::vector<DataUploader *> UploaderList;
+typedef std::vector<IDataUploader *> UploaderList;
 typedef std::map<int, SynchronizedBuffer *> DataBufferMap;
 
 /**

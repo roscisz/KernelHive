@@ -3,6 +3,7 @@
 
 #include "BasicWorker.h"
 #include "threading/SynchronizedBuffer.h"
+#include "../communication/IDataUploader.h"
 
 namespace KernelHive {
 
