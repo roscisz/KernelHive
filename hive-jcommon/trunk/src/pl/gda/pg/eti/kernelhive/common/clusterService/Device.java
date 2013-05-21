@@ -15,7 +15,7 @@ public class Device {
 	
 	public String name;
 	public String vendor;
-	private boolean isAvailable;
+	public boolean isAvailable;
 	public int computeUnitsNumber;
 	public int clock;
 	public Long globalMemoryBytes;
