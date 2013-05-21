@@ -5,11 +5,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import pl.gda.pg.eti.kernelhive.common.clientService.DeviceInfo;
 
 public class Device {
+	
+	public enum DeviceType {
+		GPU,
+		CPU
+	}
+	
 	private static String parameterSeparator = ":";
 	
 	public String name;
 	public String vendor;
-	public boolean isAvailable;
+	private boolean isAvailable;
 	public int computeUnitsNumber;
 	public int clock;
 	public Long globalMemoryBytes;
@@ -24,23 +30,22 @@ public class Device {
 	public Device() {
 		
 	}
-	
+		
 	public Device(String serializedInfo, Unit myUnit) {
 		unserialize(serializedInfo);
 		this.unit = myUnit;
 	}
 
-	private void unserialize(String serializedInfo) {
-		String[] parameters = serializedInfo.split(parameterSeparator);
-		
+	private void unserialize(String serializedInfo) {		
+		String[] parameters = serializedInfo.split(parameterSeparator);		
 		name = parameters[0];
-		vendor = parameters[1];
-		isAvailable = !parameters[2].equals("0");
-		computeUnitsNumber = Integer.parseInt(parameters[3]);
-		clock = Integer.parseInt(parameters[4]);
-		globalMemoryBytes = Long.parseLong(parameters[5]);
-		localMemoryBytes = Long.parseLong(parameters[6]);
-		workGroupSize = Integer.parseInt(parameters[7]);
+		vendor = parameters[2];
+		isAvailable = parameters[3].equals("1");
+		computeUnitsNumber = Integer.parseInt(parameters[4]);
+		clock = Integer.parseInt(parameters[5]);
+		globalMemoryBytes = Long.parseLong(parameters[6]);
+		localMemoryBytes = Long.parseLong(parameters[7]);
+		workGroupSize = Integer.parseInt(parameters[8]);
 	}
 
 	@Override
@@ -59,4 +64,23 @@ public class Device {
 	public DeviceInfo getDeviceInfo() {
 		return new DeviceInfo(this.toString());
 	}	
+	
+	/**
+	 * FIXME: should be moved to low-level OpenCl methods
+	 */
+	public DeviceType getDeviceType() {
+		if(this.name.matches(".*CPU.*"))
+			return DeviceType.CPU;
+		return DeviceType.GPU;
+	}
+
+	public boolean isBusy() {
+		return busy;
+	}
+	
+	public boolean isAvailable() {
+		if(name.matches(".*Quad.*"))
+			return false; 
+		return isAvailable;
+	}
 }
