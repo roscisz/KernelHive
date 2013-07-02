@@ -27,7 +27,7 @@ public class Workflow extends HasID {
 
 	private final List<EngineGraphNodeDecorator> graph;
 
-	private final Date startTime;
+	private final Date startTime;	
 
 	public Workflow(final List<EngineGraphNodeDecorator> graph,
 			final String workflowName, final String inputDataURL) {
@@ -118,7 +118,16 @@ public class Workflow extends HasID {
 		this.state = WorkflowState.COMPLETED;
 		this.info.result = resultURL;
 		System.out.println("Time in seconds: "
-				+ ((new Date()).getSeconds() - this.startTime.getSeconds()));
+				+ ((new Date()).getTime() - this.startTime.getTime())/1000);
+	}
+	
+	public void debugTime() {
+		System.out.println("Debug time in seconds: "
+				+ getDebugTime());
+	}
+	
+	public long getDebugTime() {
+		return ((new Date()).getTime() - this.startTime.getTime())/1000;		
 	}
 
 	public void registerJob(final EngineJob job) {

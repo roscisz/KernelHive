@@ -66,7 +66,7 @@ public class ClientBean implements IClientBeanRemote {
 
 	@Override
 	@WebMethod
-	public List<ClusterInfo> browseInfrastructure() {	
+	public List<ClusterInfo> browseInfrastructure() {		
 		return HiveEngine.getInstance().getInfrastructureInfo();
 	}
 

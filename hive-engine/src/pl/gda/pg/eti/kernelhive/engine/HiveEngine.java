@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.engine;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,7 +25,12 @@ import pl.gda.pg.eti.kernelhive.common.communication.DataDownloader;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.engine.http.file.utils.HttpFileUploadClient;
+import pl.gda.pg.eti.kernelhive.engine.interfaces.IOptimizer;
 import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
+import pl.gda.pg.eti.kernelhive.engine.job.MergerJob;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.EnergyOptimizer;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.GreedyKnapsackSolver;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.KnapsackSolverStub;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 
 public class HiveEngine {
@@ -36,8 +42,19 @@ public class HiveEngine {
 	
 	private Map<String, Cluster> clusters = new HashMap<String, Cluster>();
 	private Map<Integer, Workflow> workflows = new HashMap<Integer, Workflow>();
+	
+	private IOptimizer optimizer;
+	
+	// TEMPORARY FOR TESTS:
+	private static int energyLimit = 1460;
+	private List<EngineGraphNodeDecorator> nodes;
+	private String projectName;
+	private String inputDataURL;
 		
 	private HiveEngine() {
+		
+		//this.optimizer = new EnergyOptimizer(new GreedyKnapsackSolver());
+		this.optimizer = new SimpleOptimizer();
 	
 	}
 	
@@ -55,11 +72,21 @@ public class HiveEngine {
 		}
 		this.clusters.put(id, cluster);
 		System.out.println("Engine knows about clusters: " + clusters);
+		for(Cluster cl : clusters.values()) {
+			for(Unit un : cl.unitList) {
+				for(Device dev : un.devices)
+					System.out.println("" + dev);
+			}
+		}
 	}
 	
 	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes, String projectName, String inputDataURL) {
 		Workflow newWorkflow = new Workflow(nodes, projectName, inputDataURL);
 		workflows.put(newWorkflow.ID, newWorkflow);
+		// FIXME TEMPORAry foR TESTS:
+		this.nodes = nodes;
+		this.projectName = projectName;
+		this.inputDataURL = inputDataURL;
 		
 		processWorkflow(newWorkflow);			
 		
@@ -67,11 +94,31 @@ public class HiveEngine {
 	}
 
 	private void processWorkflow(Workflow workflow) {
-		//System.out.println("Processing workflow: " + workflow.ID);				
-		List<Job> readyJobs = new SimpleOptimizer().processWorkflow(workflow, clusters.values());	
+		/*
+		List<EngineJob> readyJobs = workflow.getReadyJobs();
+
 		
-		for(Job job : readyJobs)
-			job.run();
+		if(readyJobs.size() == 0) {
+			if(workflow.checkFinished())
+				; // przygotowujemy wyniki do pobrania
+			else
+				; // coś się zablokowało
+		}*/
+				
+		List<Job> scheduledJobs = optimizer.processWorkflow(workflow, clusters.values());	
+		 
+		for(Job job : scheduledJobs) {
+			// FIXME temporary only for tests
+			/*if(job instanceof MergerJob) {
+				System.out.println("RESULT FOR LIMIT " + energyLimit + ": " + workflow.getDebugTime());
+				job.finish();
+				workflows.clear();
+				energyLimit += 40;
+				if(energyLimit <= 2000)
+					runWorkflow(nodes, projectName, inputDataURL);
+			}			
+			else*/ job.run();
+		}
 	}
 	
 	public void cleanup() {
@@ -124,8 +171,11 @@ public class HiveEngine {
 		List<DataAddress> resultAddresses = parseResults(returnData);
 		Iterator<DataAddress> dataIterator = resultAddresses.iterator();
 				
-		if(jobOver.followingJobs.size() == 0)			
-			deployResults(jobOver.workflow, dataIterator);							
+		jobOver.workflow.debugTime();	
+						
+		if(jobOver.followingJobs.size() == 0) {
+			deployResults(jobOver.workflow, dataIterator);
+		}
 		else {
 			jobOver.tryCollectFollowingJobsData(dataIterator);
 			processWorkflow(jobOver.workflow);
@@ -133,9 +183,10 @@ public class HiveEngine {
 	}	
 	
 	private void deployResults(Workflow finishingWorkflow, Iterator<DataAddress> dataIterator) {		
-		DataAddress resultAddress = dataIterator.next();
-		byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);		
-		finishingWorkflow.finish(resultDownloadURL + deployResult(result));
+		//DataAddress resultAddress = dataIterator.next();
+		//byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);		
+		//finishingWorkflow.finish(resultDownloadURL + deployResult(result));
+		finishingWorkflow.finish("test");
 		System.out.println(finishingWorkflow.info.result);
 	}
 
@@ -190,9 +241,32 @@ public class HiveEngine {
 		for(Cluster cluster : instance.clusters.values())
 			for(Unit unit : cluster.unitList)
 				for(Device device : unit.devices)
-					if(!device.busy)
+					if(device.isAvailable())
 						ret++;
 		return ret;
+	}
+	
+	// FIXME: dirty dirty code
+	public static int queryFreeDevicesNumberSpecific() {
+		return ((EnergyOptimizer)instance.optimizer).chooseDevices(instance.clusters.values()).size();		
+	}
+	
+	public static List<Device> getAvailableDevices(Collection<Cluster> infrastructure) {
+		List<Device> ret = new ArrayList<Device>();
+		for(Cluster cluster : infrastructure)
+			for(Unit unit : cluster.unitList)
+				for(Device device : unit.devices)
+					if(device.isAvailable())
+						ret.add(device);
+		return ret;
+	}
+	
+	public static int getEnergyLimit() {
+		return energyLimit;
+	}
+
+	public static void setEnergyLimit(int energyLimit) {
+		HiveEngine.energyLimit = energyLimit;
 	}
 
 }

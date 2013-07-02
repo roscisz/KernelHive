@@ -15,7 +15,7 @@ public class PartitionerJob extends EngineJob {
 	public PartitionerJob(EngineGraphNodeDecorator node, Workflow workflow) {
 		super(node, workflow);
 		
-		System.out.println("Created partitionerJob with workflow " + workflow);
+		//System.out.println("Created partitionerJob with workflow " + workflow);
 		
 		// TODO: obtain unrolling arguments from node 
 		
@@ -33,14 +33,14 @@ public class PartitionerJob extends EngineJob {
 	}
 
 	private void unroll() {
-		System.out.println("Ok dude i'm unrolling, workflow " + this.workflow);
 		MergerJob merger = new MergerJob(this.node, this.workflow);
 		this.workflow.registerJob(merger);
 		merger.followingJobs = this.followingJobs;
 		this.followingJobs = new ArrayList<EngineJob>();			
-				
-		// FIXME: what if there's no free devices?
-		int processorCounter = HiveEngine.queryFreeDevicesNumber() * 4;
+			
+		// FIXME: dirty dirty code
+		int processorCounter = HiveEngine.queryFreeDevicesNumber() * 30;//HiveEngine.queryFreeDevicesNumberSpecific() * 22;
+		System.out.println("SET processorCounter " + processorCounter);
 		for(int i = 0; i != processorCounter; i++) {			
 			ProcessorJob processor = new ProcessorJob(this.node, this.workflow);
 			processor.followingJobs.add(merger);
