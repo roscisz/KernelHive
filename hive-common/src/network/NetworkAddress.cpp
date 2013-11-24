@@ -22,3 +22,9 @@ NetworkAddress::NetworkAddress(char *host, char *port) {
 NetworkAddress::~NetworkAddress() {
 	// TODO Auto-generated destructor stub
 }
+
+const char* NetworkAddress::toString() {
+	char buff[100];
+	sprintf(buff, "%s:%d", host, port);
+	return buff;
+}

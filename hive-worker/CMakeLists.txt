@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+
 file( GLOB sources "src/workers/*" "src/communication/*" )
 
 # Add include files directories

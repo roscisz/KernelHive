@@ -1,6 +1,7 @@
 #include "BasicWorker.h"
 
 #include <iostream>
+#include <algorithm>
 
 #include "commons/OpenClHost.h"
 #include "commons/KhUtils.h"
@@ -34,7 +35,7 @@ BasicWorker::~BasicWorker() {
 }
 
 void BasicWorker::work(char *const argv[]) {
-	std::cout << ">>> " << std::endl;
+	std::cout << ">>> " << "BasicWorker::work " << std::endl;
 	init(argv);
 	workSpecific();
 	std::string uploadStrings = "";
@@ -111,6 +112,8 @@ const void BasicWorker::getAllUploadIDStrings(std::string* param) {
 
 void BasicWorker::init(char *const argv[]) {
 	deviceId = nextParam(argv);
+	std::replace(deviceId.begin(), deviceId.end(), '+', ' ');
+
 	device = OpenClHost::getInstance()->lookupDevice(deviceId);
 	if (device == NULL) {
 		throw KernelHiveException(deviceId);

@@ -34,7 +34,7 @@ void DataDownloader::onMessage(TCPMessage* message) {
 	switch (currentState) {
 	case STATE_INITIAL:
 		if (acquireDataSize(message)) {
-			Logger::log(INFO, "Data size has been acquired: %u\n", totalDataSize);
+			Logger::log(INFO, "Data size of package %d has been acquired: %u\n", dataId, totalDataSize);
 			buffer->allocate(totalDataSize);
 			currentState = STATE_SIZE_ACQUIRED;
 			sendMessage(dataQuery);
@@ -46,11 +46,11 @@ void DataDownloader::onMessage(TCPMessage* message) {
 	case STATE_SIZE_ACQUIRED:
 		buffer->append(message->data, message->nBytes);
 		progressSize += message->nBytes;
-		Logger::log(INFO, "%d/%d bytes available\n", progressSize, totalDataSize);
+		Logger::log(INFO, "%d/%d bytes available of package %d\n", progressSize, totalDataSize, dataId);
 		if (!(progressSize < totalDataSize)) {
 			currentState = STATE_DATA_ACQUIRED;
 			Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) WILL LOG the amount of DATA HE GOT: %d\n", dataId, buffer->getSize());
-			buffer->logMyFloatData();
+			//buffer->logMyFloatData();
 			Logger::log(DEBUG, ">>> DOWNLOADER (dataId: %d) FINISHED LOGGING DATA HE GOT\n", dataId);
 			pleaseStop();
 		}

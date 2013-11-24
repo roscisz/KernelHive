@@ -15,6 +15,7 @@
 #include "network/TCPClient.h"
 #include "network/TCPClientListener.h"
 #include "network/NetworkAddress.h"
+#include "HostStatus.h"
 
 namespace KernelHive {
 
@@ -22,7 +23,7 @@ class ClusterProxy : public TCPClient {
 public:
 	ClusterProxy(NetworkAddress *clusterAddress, TCPClientListener *listener);
 	virtual ~ClusterProxy();
-	void sendUpdate();
+	void sendUpdate(HostStatus* hoststatus);
 };
 
 #endif /* CLUSTERPROXY_H_ */

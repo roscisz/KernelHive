@@ -16,7 +16,8 @@ namespace KernelHive {
 // 							Public Members									 //
 // ========================================================================= //
 
-DataUploaderMulti::DataUploaderMulti(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount) :
+DataUploaderMulti::DataUploaderMulti(NetworkAddress* address,
+		SynchronizedBuffer** buffers, int partsCount) :
 		IDataUploader(address, this) {
 	this->address = address;
 	this->buffers = buffers;
@@ -68,7 +69,7 @@ void DataUploaderMulti::onConnected() {
 void DataUploaderMulti::getDataURL(std::string *param) {
 	std::stringstream ret;
 
-	for(int i = 0; i != this->partsCount; i++) {
+	for (int i = 0; i != this->partsCount; i++) {
 		ret << address->host;
 		ret << " ";
 		ret << KhUtils::itoa(address->port);
@@ -87,6 +88,7 @@ void DataUploaderMulti::getDataURL(std::string *param) {
 void DataUploaderMulti::uploadData() {
 	byte* uploadBuffer = NULL;
 	SynchronizedBuffer* buffer = buffers[currentPart];
+
 	while (!buffer->isAtEnd()) {
 		size_t amount = buffer->getSize() - buffer->getOffset();
 		size_t uploadPackageSize =
@@ -100,12 +102,13 @@ void DataUploaderMulti::uploadData() {
 		//strcpy(uploadBuffer, uploadCmd.c_str());
 		// FIXME:
 		//copyCommand(uploadBuffer, uploadCmd);
-		byte *tmp = (byte *)uploadCmd;
+		byte *tmp = (byte *) uploadCmd;
 		for (int i = 0; i < cmdSize; i++) {
 			uploadBuffer[i] = tmp[i];
 		}
 
 		buffer->read(uploadBuffer + cmdSize, uploadPackageSize);
+
 		TCPMessage message(uploadBuffer, msgSize);
 		sendMessage(&message);
 		Logger::log(DEBUG, ">>>>>> SENT %u BYTES\n", msgSize);
@@ -116,10 +119,9 @@ void DataUploaderMulti::uploadData() {
 		delete[] uploadBuffer;
 	}
 
-	if(++currentPart == partsCount) {
+	if (++currentPart == partsCount) {
 		pleaseStop();
-	}
-	else {
+	} else {
 		currentState = STATE_INITIAL;
 		dataPublishData[1] = buffers[currentPart]->getSize();
 		sendMessage(dataPublish);
@@ -130,7 +132,7 @@ void DataUploaderMulti::prepareCommands() {
 	dataPublishData = new int[2];
 	dataPublishData[0] = PUBLISH_DATA;
 	// TODO: add before each sending: dataPublishData[1] = buffer->getSize();
-	dataPublish = new TCPMessage((byte *)dataPublishData, 2*sizeof(int));
+	dataPublish = new TCPMessage((byte *) dataPublishData, 2 * sizeof(int));
 }
 
 void DataUploaderMulti::prepareDataAppend(int *command, size_t packageSize) {
@@ -140,7 +142,7 @@ void DataUploaderMulti::prepareDataAppend(int *command, size_t packageSize) {
 }
 
 void DataUploaderMulti::copyCommand(byte *buffer, int *command) {
-	byte *tmp = (byte *)command;
+	byte *tmp = (byte *) command;
 	for (int i = 0; i < TCP_COMMAND_SIZE; i++) {
 		buffer[i] = tmp[i];
 	}
@@ -149,11 +151,11 @@ void DataUploaderMulti::copyCommand(byte *buffer, int *command) {
 bool DataUploaderMulti::acquireDataIdentifier(TCPMessage* message) {
 	bool outcome = false;
 	//if (message->nBytes == sizeof(int)) {
-		int* tmp = new int;
-		tmp = (int *)message->data;
-		dataIdentifiers[currentPart] = *tmp;
-		outcome = true;
-		delete tmp;
+	int* tmp = new int;
+	tmp = (int *) message->data;
+	dataIdentifiers[currentPart] = *tmp;
+	outcome = true;
+	delete tmp;
 	//}
 	return outcome;
 }

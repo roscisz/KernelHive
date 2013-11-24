@@ -71,14 +71,21 @@ byte* SynchronizedBuffer::getRawData() {
 void SynchronizedBuffer::logMyFloatData() {
 	Logger::log(DEBUG, "(buffer) >>> WILL NOW LOG BUFFER DATA AS FLOATS\n");
 	float *tmp;
-	for (int i = 0; i < size; i += sizeof(float)) {
-		if (i == 40) {
-			break;
-		}
+	for (int i = 0; i < size && i < 400; i += sizeof(float)) {
 		tmp = (float *)(data+i);
-		printf("%d: [ %d, %d, %d, %d ] %f\n", i/sizeof(float), data[i], data[i+1], data[i+2], data[i+3], *tmp);
+		printf("%lu: [ %.2X %.2X %.2X %.2X ] %f\n", (long unsigned int)(i/4), data[i], data[i+1], data[i+2], data[i+3], *tmp);
 	}
 	Logger::log(DEBUG, "(buffer) >>> FINISHED LOGGING BUFFER DATA AS FLOATS\n");
+}
+
+void SynchronizedBuffer::logRawData() {
+	Logger::log(DEBUG, "(buffer) >>> WILL NOW LOG BUFFER DATA AS HEX\n");
+	float *tmp;
+	for (int i = 0; i < size && i < 400; i++) {
+		printf("%.2X ", data[i]);
+	}
+	printf("\n");
+	Logger::log(DEBUG, "(buffer) >>> FINISHED LOGGING BUFFER DATA AS HEX\n");
 }
 
 // ========================================================================= //

@@ -9,6 +9,7 @@
 #define UNITMANAGER_H_
 
 #include "ClusterProxy.h"
+#include "SystemMonitor.h"
 #include "network/TCPClientListener.h"
 #include "network/TCPMessage.h"
 
@@ -17,13 +18,15 @@ namespace KernelHive {
 class UnitManager : public TCPClientListener {
 private:
 	ClusterProxy *clusterProxy;
+	SystemMonitor *systemMonitor;
 public:
-	UnitManager(char *clusterHostname);
+	UnitManager(char *clusterHostname, SystemMonitor* systemMonitor);
 	virtual ~UnitManager();
 
 	void listen();
 	void onMessage(TCPMessage *message);
 	void onConnected();
+	int getId();
 };
 
 }

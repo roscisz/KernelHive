@@ -17,6 +17,7 @@ class UDPClient : public NetworkEndpoint {
 public:
 	UDPClient(NetworkAddress *serverAddress);
 	void sendMessage(char* message);
+	void sendMessage(char* message, size_t length);
 	virtual ~UDPClient();
 };
 

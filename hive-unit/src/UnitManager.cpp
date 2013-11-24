@@ -13,16 +13,17 @@
 #include "commons/Logger.h"
 #include "commons/OpenClPlatform.h"
 #include "commons/WorkerProxy.h"
-
 #include "network/NetworkAddress.h"
 #include "network/UDPClient.h"
 #include "network/DataPublisher.h"
 #include "threading/ThreadManager.h"
 #include "commons/SampleWorker.h"
+#include "HostStatus.h"
 
 namespace KernelHive {
 
-UnitManager::UnitManager(char *clusterHostname) {
+UnitManager::UnitManager(char *clusterHostname, SystemMonitor* systemMonitor) {
+	this->systemMonitor = systemMonitor;
 	try {
 		this->clusterProxy = new ClusterProxy(new NetworkAddress(clusterHostname, 31338), this);
 	}
@@ -47,9 +48,17 @@ void UnitManager::listen() {
 }
 
 void UnitManager::onMessage(TCPMessage *message) {
+	short int id;
+	if(sscanf((const char *)message->data, "%hd", &id) > 0) {
+		printf("Got ID: %hd\n", id);
+		systemMonitor->setId(id);
+		HostStatus* hostStatus = systemMonitor->createHostStatus();
+		clusterProxy->sendUpdate(hostStatus);
+		return;
+	}
+
 	// FIXME: extract a constant
-	char *type;
-	type = (char *) calloc(30, sizeof(char));
+	char *type = (char *) calloc(30, sizeof(char));
 
 	sscanf((const char *)message->data, "%s ", type);
 
@@ -62,7 +71,7 @@ void UnitManager::onMessage(TCPMessage *message) {
 }
 
 void UnitManager::onConnected() {
-	clusterProxy->sendUpdate();
+	printf("Connected to cluster\n");
 }
 
 }

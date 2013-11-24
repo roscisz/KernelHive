@@ -69,6 +69,11 @@ namespace KernelHive {
 		std::string getDeviceVendor();
 
 		/**
+		 * Gets device vendor unique id
+		 */
+		cl_uint getDeviceVendorId();
+
+		/**
 		 * Gets device availability.
 		 *
 		 * @return CL_TRUE if the device is available,

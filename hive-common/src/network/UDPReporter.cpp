@@ -20,13 +20,13 @@ UDPReporter::UDPReporter(int jobID, NetworkAddress *serverAddress, IReportable *
 
 void UDPReporter::executeLoopCycle() {
 	sendReport(reportable->getPercentDone());
-	sleep(UDP_REPORT_SECONDS);
+	usleep(UDP_REPORT_MSECONDS*1000);
 }
 
 void UDPReporter::sendReport(int percentDone) {
 	// FIXME: message size
 	char message[60];
-	sprintf(message, "%d %d\n", jobID, percentDone);
+	sprintf(message, "1 %d %d\n", jobID, percentDone);
 	udpClient->sendMessage(message);
 }
 

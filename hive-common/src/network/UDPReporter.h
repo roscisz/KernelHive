@@ -8,7 +8,7 @@
 #ifndef UDPREPORTER_H_
 #define UDPREPORTER_H_
 
-#define UDP_REPORT_SECONDS 4
+#define UDP_REPORT_MSECONDS 500
 
 #include "../network/NetworkAddress.h"
 #include "../threading/LoopedThread.h"

@@ -5,9 +5,9 @@
 	<property name="project.name" value="hive-repo" />
 	
 	<property name="src.dir" value="src" />
-	<property name="src.api.dir" value="src-api"/>
+	<property name="src.api.dir" value="../../hive-repository-api/trunk/src"/>
 	<property name="build.dir" value="bin" />
-	<property name="build.api.dir" value="bin-api"/>
+	<property name="build.api.dir" value="../../hive-repository-api/trunk/bin"/>
 	<property name="dist.dir" value="dist" />
 	<property name="lib.dir" value="lib" />
 	<property name="res.dir" value="res" />

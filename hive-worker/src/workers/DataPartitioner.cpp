@@ -49,19 +49,20 @@ void DataPartitioner::workSpecific() {
 	setPercentDone(40);
 
 	totalDataSize = buffers[dataIdInt]->getSize();
+	int outputSizeInBytes = outputSize*sizeof(byte);
 
 	// Allocate local result buffers
 	for (int i = 0; i < partsCount; i++) {
-		resultBuffers[i]->allocate(outputSize);
+		resultBuffers[i]->allocate(outputSizeInBytes);
 	}
 
 	// Allocate input and output buffers on the device
-	context->createBuffer(INPUT_BUFFER, totalDataSize*sizeof(byte), CL_MEM_READ_WRITE);
-	context->createBuffer(OUTPUT_BUFFER, outputSize*partsCount*sizeof(byte), CL_MEM_READ_WRITE);
+	context->createBuffer(INPUT_BUFFER, totalDataSize, CL_MEM_READ_WRITE);
+	context->createBuffer(OUTPUT_BUFFER, partsCount * outputSizeInBytes, CL_MEM_READ_WRITE);
 
 	// Begin copying data to the device
 	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
-			totalDataSize*sizeof(byte), (void*)buffers[dataIdInt]->getRawData());
+			totalDataSize, (void*)buffers[dataIdInt]->getRawData());
 
 	// Compile and prepare the kernel for execution
 	context->buildProgramFromSource((char *)buffers[kernelDataIdInt]->getRawData(),
@@ -86,16 +87,14 @@ void DataPartitioner::workSpecific() {
 	setPercentDone(80);
 
 	// Copy the result:
-	size_t readOffset = 0;
 	OpenClEvent** copyEvents = new OpenClEvent*[partsCount];
 	for (int i = 0; i < partsCount; i++) {
-		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, readOffset,
-				outputSize*sizeof(byte), (void*)resultBuffers[i]->getRawData());
+		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, i * outputSizeInBytes,
+				outputSizeInBytes, (void*)resultBuffers[i]->getRawData());
 		copyEvents[i] = &dataCopy;
 //		uploaders.push_back(new DataUploader(outputDataAddress, resultBuffers[i]));
-		readOffset += outputSize;
 	}
-	context->waitForEvents(partsCount, copyEvents);
+
 	setPercentDone(90);
 
 	uploaders.push_back(new DataUploaderMulti(outputDataAddress, resultBuffers, partsCount));
@@ -112,24 +111,22 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 	nextParam(argv);
 	std::cout << ">>> param skip" << std::endl;
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	std::cout << ">>> input address ready" << std::endl;
+	std::cout << ">>> input address ready: " << inputDataAddress->toString() << std::endl;
 	dataId = nextParam(argv);
 	dataIdInt = KhUtils::atoi(dataId.c_str());
-	std::cout << ">>> dataId ready" << std::endl;
-
-	std::cout << ">>> dataId: " << dataId << std::endl;
+	std::cout << ">>> dataId ready: " << dataId << std::endl;
 	std::cout << ">>> dataIdInt: " << dataIdInt << std::endl;
 
 	buffers[dataIdInt] = new SynchronizedBuffer();
 
 	partsCount = KhUtils::atoi(nextParam(argv));
-	std::cout << ">>> partsCount ready" << std::endl;
+	std::cout << ">>> partsCount ready: " << partsCount << std::endl;
 	resultBuffers = new SynchronizedBuffer*[partsCount];
 	for (int i = 0; i < partsCount; i++) {
 		resultBuffers[i] = new SynchronizedBuffer();
 	}
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	std::cout << ">>> output address ready" << std::endl;
+	std::cout << ">>> output address ready: " << outputDataAddress->toString() << std::endl;
 
 	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);

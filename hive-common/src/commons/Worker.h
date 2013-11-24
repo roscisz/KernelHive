@@ -11,9 +11,11 @@
 #define WORKER_STD_ARGS		5
 
 #include "../threading/ThreadManager.h"
+#include "../threading/SynchronizedBuffer.h"
 #include "../network/NetworkAddress.h"
 #include "../network/UDPReporter.h"
 #include "../network/IReportable.h"
+#include "../network/ProgressReporter.h"
 
 namespace KernelHive {
 
@@ -42,9 +44,13 @@ protected:
 	void setPercentDone(int percentDone);
 
 	void reportOver(const char* uploadIDs);
+
+	void reportPreview(SynchronizedBuffer *buffer);
+
 private:
 	NetworkAddress *clusterTCPAddress;
 	UDPReporter *reporter;
+	ProgressReporter *previewReporter;
 	int percentDone;
 	int jobID;
 };

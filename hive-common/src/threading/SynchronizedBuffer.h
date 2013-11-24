@@ -98,6 +98,11 @@ public:
 	 */
 	void logMyFloatData();
 
+	/**
+	 * Logs raw data as hex to STDOUT.
+	 */
+	void logRawData();
+
 private:
 	/** The number of bytes allocated by this buffer. */
 	size_t size;

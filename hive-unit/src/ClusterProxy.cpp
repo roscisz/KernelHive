@@ -13,18 +13,20 @@
 #include "ClusterProxy.h"
 #include "commons/Logger.h"
 #include "commons/OpenClHost.h"
+#include "HostStatusSerializer.h"
 
 namespace KernelHive {
 
-ClusterProxy::ClusterProxy(NetworkAddress *clusterAddress, TCPClientListener *listener) : TCPClient(clusterAddress, listener) {
+ClusterProxy::ClusterProxy(NetworkAddress *clusterAddress, TCPClientListener *listener)
+		: TCPClient(clusterAddress, listener) {
 
 }
 
-void ClusterProxy::sendUpdate() {
-	char data[MAX_MESSAGE_BYTES];
-	const char *devices = OpenClHost::getDevicesInfo().c_str();
-	sprintf(data, "UPDATE %s", devices);
-	TCPMessage *message = new TCPMessage((byte *) data, strlen(data));
+void ClusterProxy::sendUpdate(HostStatus* hoststatus) {
+	HostStatusSerializer *serializer = new HostStatusSerializer();
+	std::string data = "UPDATE " + serializer->serializeToStringInitialMessage(hoststatus);
+
+	TCPMessage *message = new TCPMessage((byte *) data.c_str(), data.size());
 	sendMessage(message);
 }
 

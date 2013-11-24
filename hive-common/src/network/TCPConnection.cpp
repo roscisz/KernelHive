@@ -32,7 +32,7 @@ void TCPConnection::executeLoopCycle() {
 		listener->onDisconnected(this->sockfd);
 		return;
 	}
-	if(listener != NULL)
+	if(listener != NULL && message != NULL)
 		listener->onMessage(this->sockfd, message);
 }
 
@@ -43,8 +43,10 @@ TCPMessage* TCPConnection::readMessage() {
         if(n < 0)
             throw (strerror(errno));
 
-        if(n == 0)
-            throw ("Server disconnected.");
+        if(n == 0) {
+            //throw ("Server disconnected.");
+        	return NULL;
+        }
 
         return new TCPMessage(message, n);
 }

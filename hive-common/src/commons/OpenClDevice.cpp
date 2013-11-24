@@ -77,6 +77,14 @@ namespace KernelHive {
 		return deviceVendor;
 	}
 
+	cl_uint OpenClDevice::getDeviceVendorId() {
+		cl_uint val;
+		// TODO Error handling
+		/*cl_int retVal = */clGetDeviceInfo(clDeviceId, CL_DEVICE_VENDOR_ID,
+				sizeof(cl_uint), &val, NULL);
+		return val;
+	}
+
 	cl_bool OpenClDevice::getDeviceAvailability() {
 		cl_bool val;
 		// TODO Error handling

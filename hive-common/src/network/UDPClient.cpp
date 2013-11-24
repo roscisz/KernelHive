@@ -25,10 +25,14 @@ UDPClient::UDPClient(NetworkAddress *serverAddress) : NetworkEndpoint(serverAddr
 }
 
 void UDPClient::sendMessage(char *message) {
-	if (sendto(this->sockfd, message, strlen(message), 0,
-			   (struct sockaddr *)&this->serverAddress, sizeof(this->serverAddress)) < 0)
+	sendMessage(message, strlen(message));
+}
+
+void UDPClient::sendMessage(char *message, size_t length) {
+	if (sendto(this->sockfd, message, length, 0,
+			   (struct sockaddr *)&this->serverAddress, sizeof(this->serverAddress)) < 0) {
 		Logger::log(ERROR, "Error writing to socket.\n");
-	Logger::log(INFO, "Sent UDP message %s", message);
+	}
 }
 
 UDPClient::~UDPClient() {

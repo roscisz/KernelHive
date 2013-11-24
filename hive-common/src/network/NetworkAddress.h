@@ -15,6 +15,7 @@ public:
 	NetworkAddress(char *host, int port);
 	NetworkAddress(char *host, char *port);
 	virtual ~NetworkAddress();
+	const char* toString();
 
 	char *host;
 	int port;

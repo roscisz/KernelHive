@@ -13,6 +13,8 @@
 #include "KhUtils.h"
 #include "Worker.h"
 
+using namespace std;
+
 namespace KernelHive {
 
 Worker::Worker(char **argv) {
@@ -20,6 +22,7 @@ Worker::Worker(char **argv) {
 
 	this->clusterTCPAddress = new NetworkAddress(argv[2], argv[3]);
 	this->reporter = new UDPReporter(jobID, new NetworkAddress(argv[2], argv[4]), this);
+	this->previewReporter = new ProgressReporter(jobID, new NetworkAddress(argv[2], argv[4]));
 
 	this->percentDone = -1;
 	this->paramOffset = 0;
@@ -34,6 +37,7 @@ int Worker::getPercentDone() {
 }
 
 void Worker::setPercentDone(int progress) {
+	printf("done %d\n", progress);
 	this->percentDone = progress;
 }
 
@@ -52,9 +56,14 @@ void Worker::reportOver(const char* uploadIDs) {
 
 	TCPMessage *message = new TCPMessage((byte *)report.c_str(), report.length());
 	TCPReporter *tcpReporter = new TCPReporter(clusterTCPAddress, message);
-	printf("Port %d", clusterTCPAddress->port);
+	printf("Reporting start\n", uploadIDs);
 	ThreadManager::Get()->runThread(tcpReporter);
 	ThreadManager::Get()->waitForThread(tcpReporter);
+	printf("Reported\n", uploadIDs);
+}
+
+void Worker::reportPreview(SynchronizedBuffer *buffer) {
+	previewReporter->sendReport(buffer);
 }
 
 Worker::~Worker() {
