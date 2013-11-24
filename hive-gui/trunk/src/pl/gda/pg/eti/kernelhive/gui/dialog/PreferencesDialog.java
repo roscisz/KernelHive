@@ -12,12 +12,14 @@ import javax.swing.JComboBox;
 
 import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
 import java.awt.Dimension;
+import java.net.URL;
+import javax.swing.JTextField;
 
 public class PreferencesDialog extends JDialog {
 
 	private static final long serialVersionUID = -5061336150519876896L;
-	
 	private JComboBox comboBox;
+	JTextField textEngineAddress;
 
 	public PreferencesDialog(Frame frame) {
 		super(frame);
@@ -30,10 +32,17 @@ public class PreferencesDialog extends JDialog {
 		lblLanguage.setBounds(12, 12, 80, 15);
 		getContentPane().add(lblLanguage);
 
+		JLabel lblEngineAddress = new JLabel("Engine base address");
+		lblEngineAddress.setBounds(12, 40, 150, 15);
+		getContentPane().add(lblEngineAddress);
+
+		textEngineAddress = new JTextField();
+		textEngineAddress.setBounds(170, 40, 150, 20);
+		getContentPane().add(textEngineAddress);
+
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(12, 230, 117, 25);
 		btnCancel.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
@@ -45,7 +54,6 @@ public class PreferencesDialog extends JDialog {
 		JButton btnSave = new JButton("Save");
 		btnSave.setBounds(319, 230, 117, 25);
 		btnSave.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				savePreferences();
@@ -67,10 +75,16 @@ public class PreferencesDialog extends JDialog {
 				.getSelectedLanguage());
 		comboBox.setBounds(110, 7, 102, 24);
 		getContentPane().add(comboBox);
+
+		URL engineAddress = AppConfiguration.getInstance().getEngineAddress();
+		if (engineAddress != null) {
+			textEngineAddress.setText(engineAddress.toString());
+		}
 	}
 
 	private void savePreferences() {
 		String language = (String) comboBox.getSelectedItem();
 		AppConfiguration.getInstance().setLanguage(language);
+		AppConfiguration.getInstance().setEngineAddress(textEngineAddress.getText());
 	}
 }

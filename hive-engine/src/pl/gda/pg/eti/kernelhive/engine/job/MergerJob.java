@@ -18,7 +18,7 @@ public class MergerJob extends EngineJob {
 	}
 
 	@Override
-	protected GraphNodeType getJobType() {
+	public GraphNodeType getJobType() {
 		return GraphNodeType.MERGER;
-	}		
+	}
 }

@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kernelhive.common.graph.node;
+package pl.gda.pg.eti.kernelhive.common.graph.node.util;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import pl.gda.pg.eti.kernelhive.common.graph.builder.GraphNodeBuilderException;
 import pl.gda.pg.eti.kernelhive.common.graph.builder.impl.GraphNodeBuilder;
-import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverter;
-import pl.gda.pg.eti.kernelhive.common.graph.node.util.GraphNodeDecoratorConverterException;
+import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GUIGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
+import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 
 public class GraphNodeDecoratorConverterTest {
 
@@ -17,7 +19,7 @@ public class GraphNodeDecoratorConverterTest {
 	}
 
 	@Test
-	public void testConvertGuiToEngine() throws GraphNodeBuilderException, GraphNodeDecoratorConverterException {
+	public void testConvertGuiToEngine() throws GraphNodeBuilderException {
 		IGraphNode node = new GraphNodeBuilder().setType(GraphNodeType.GENERIC).setId("test").build();
 		GUIGraphNodeDecorator guiNode = new GUIGraphNodeDecorator(node);
 		EngineGraphNodeDecorator engineNode = GraphNodeDecoratorConverter.convertGuiToEngine(guiNode);

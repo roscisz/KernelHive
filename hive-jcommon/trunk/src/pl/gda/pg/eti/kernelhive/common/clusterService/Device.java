@@ -1,18 +1,17 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import pl.gda.pg.eti.kernelhive.common.clientService.DeviceInfo;
 
 public class Device {
-	
+
 	public enum DeviceType {
+
 		GPU,
 		CPU
 	}
-	
-	private static String parameterSeparator = ":";
-	
+	private static final int PROPERTIES_COUNT = 6;
+	public int id;
+	public String identifier;
 	public String name;
 	public String vendor;
 	public boolean isAvailable;
@@ -21,66 +20,83 @@ public class Device {
 	public Long globalMemoryBytes;
 	public Long localMemoryBytes;
 	public int workGroupSize;
-	
 	public boolean busy = false;
-	
-	@XmlTransient
-	public Unit unit;
+	private Unit unit;
 
 	public Device() {
-		
 	}
-		
-	public Device(String serializedInfo, Unit myUnit) {
-		unserialize(serializedInfo);
+
+	public Device(String[] parameters, Unit myUnit) {
+		unserialize(parameters);
 		this.unit = myUnit;
 	}
 
-	private void unserialize(String serializedInfo) {		
-		String[] parameters = serializedInfo.split(parameterSeparator);		
-		name = parameters[0];
-		vendor = parameters[2];
-		isAvailable = parameters[3].equals("1");
-		computeUnitsNumber = Integer.parseInt(parameters[4]);
-		clock = Integer.parseInt(parameters[5]);
-		globalMemoryBytes = Long.parseLong(parameters[6]);
-		localMemoryBytes = Long.parseLong(parameters[7]);
-		workGroupSize = Integer.parseInt(parameters[8]);
+	private void unserialize(String[] parameters) {
+		int offset = 0;
+		id = Integer.valueOf(parameters[offset++]);
+		name = parameters[offset++];
+		vendor = parameters[offset++];
+		identifier = parameters[offset++];
+		globalMemoryBytes = Long.getLong(parameters[offset++]);
+		isAvailable = parameters[offset++].equals("1");
+		/*name = parameters[0];
+		 vendor = parameters[1];
+		 isAvailable = !parameters[2].equals("0");
+		 computeUnitsNumber = Integer.parseInt(parameters[3]);
+		 clock = Integer.parseInt(parameters[4]);
+		 globalMemoryBytes = Long.parseLong(parameters[5]);
+		 localMemoryBytes = Long.parseLong(parameters[6]);
+		 workGroupSize = Integer.parseInt(parameters[7]);*/
 	}
 
 	@Override
 	public String toString() {
 		return "Device [name=" + name + ", vendor=" + vendor + ", isAvailable="
-				+ isAvailable + ", computeUnitsNumber=" + computeUnitsNumber
+				+ isAvailable + ", isBusy=" + busy + ", computeUnitsNumber=" + computeUnitsNumber
 				+ ", clock=" + clock + ", globalMemoryBytes="
 				+ globalMemoryBytes + ", localMemoryBytes=" + localMemoryBytes
 				+ ", workGroupSize=" + workGroupSize + "]";
 	}
 
 	public void updateReverseReferences(Unit unit) {
-		this.unit = unit;		
+		this.unit = unit;
 	}
 
 	public DeviceInfo getDeviceInfo() {
 		return new DeviceInfo(this.toString());
-	}	
-	
+	}
+
+	public static int getPropertiesCount() {
+		return PROPERTIES_COUNT;
+	}
+
+	public Unit getUnit() {
+		return unit;
+	}
+
+	/**
+	 * Overrides changable data (such as clock speed) from the updated object
+	 *
+	 * @param device
+	 */
+	public void merge(Device device) {
+		clock = device.clock;
+	}
+
 	/**
 	 * FIXME: should be moved to low-level OpenCl methods
 	 */
 	public DeviceType getDeviceType() {
-		if(this.name.matches(".*CPU.*"))
-			return DeviceType.CPU;
-		return DeviceType.GPU;
+		return this.name.matches(".*CPU.*")
+				? DeviceType.CPU
+				: DeviceType.GPU;
 	}
 
 	public boolean isBusy() {
 		return busy;
 	}
-	
+
 	public boolean isAvailable() {
-		if(name.matches(".*Quad.*"))
-			return false; 
-		return isAvailable;
+		return isAvailable && !name.matches(".*Quad.*");
 	}
 }

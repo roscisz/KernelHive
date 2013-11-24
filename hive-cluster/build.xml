@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="hive-cluster" default="perm"	basedir=".">
+<project name="hive-cluster" default="jar"	basedir=".">
 	
 	<!-- set global properties for this build -->
 	<property name="project.name" value="hive-cluster" />
+	<property name="main.class" value="pl.gda.pg.eti.kernelhive.cluster.HiveCluster" />
 	
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="bin" />
@@ -12,52 +13,62 @@
 	<property name="jcommon.dir" value="../hive-jcommon/trunk" />	
 	
 	<path id="project.classpath">
-		<fileset dir="${lib.dir}" includes="*/*.jar" />
+		<fileset dir="${lib.dir}" includes="*.jar" />
 		<fileset dir="${jcommon.dir}/${dist.dir}" includes="*.jar" />
 	</path>
 	
-	<target name="init" description="initialize the build">
-	    <!-- Create the time stamp -->
-	    <tstamp />
-	    <!-- Create the build directory structure used by compile -->
-	    <mkdir dir="${build.dir}" />
-	    <!-- Build the hive-jcommon lib. -->
-	    <ant dir="${jcommon.dir}" inheritAll="false" />
-    </target>
+	<path id="execute-classpath">
+		<fileset dir="${dist.dir}/">
+			<include name="${project.name}.jar"/>
+		</fileset>
+	</path>
 	
-    <target name="compile" depends="init" description="compile the source">
-        <!-- Compile the java code from ${src.dir} into ${build.dir} -->        
-        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
-            <classpath refid="project.classpath" />
-        </javac>        
-    </target>        
+	<target name="init" description="initialize the build">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build.dir}" />
+		<!-- Build the hive-jcommon lib. -->
+		<ant dir="${jcommon.dir}" inheritAll="false" />
+	</target>
+	
+	<target name="compile" depends="init" description="compile the source">
+		<!-- Compile the java code from ${src.dir} into ${build.dir} -->
+		<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
 	
 	<target name="jar" depends="compile" description="generate the distribution">
 		<!-- Create the distribution directory -->
 		<mkdir dir="${dist.dir}" />		
 		<!-- Put everything in ${build.dir} into the MyProject-${DSTAMP}.jar file -->
-		<jar destfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}">
-		    <zipgroupfileset dir="${lib.dir}" includes="*.jar" />
-		    <zipgroupfileset dir="${jcommon.dir}/${dist.dir}" includes="*.jar"/>
+		<jar jarfile="${dist.dir}/deps.jar">
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
+			<zipgroupfileset dir="${jcommon.dir}/${dist.dir}" includes="*.jar"/>
 		</jar>
-    </target>
-    
-    <target name="perm" depends="jar" description="elevate file permissions (jsvc/commons deamon bug workaround)">
+		<sleep seconds="1" />
+		<jar jarfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}">
+			<zipfileset src="${dist.dir}/deps.jar" excludes="META-INF/*.SF" />
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+			</manifest>
+		</jar>
+		<!-- <jar destfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}">
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
+			<zipgroupfileset dir="${jcommon.dir}/${dist.dir}" includes="*.jar"/>
+			
+		</jar>-->
+	</target>
+	
+	<target name="dist" depends="jar" description="elevate file permissions (jsvc/commons deamon bug workaround)">
 		<unzip src="${dist.dir}/${project.name}.jar" dest="${dist.dir}/${project.name}" />
-        <chmod perm="777" type="both">
-            <fileset dir="${dist.dir}/${project.name}">
-                <include name="**/*" />
-            </fileset>
-		</chmod>       
-		<!--
-        <zip destfile="${dist.dir}/${project.name}.jar" update="true">
-			<zipfileset dir="${tmp.dir}" filemode="755">
-				<include name="**/**" />
-			</zipfileset>
-        </zip>
-		<delete dir="${tmp.dir}" />
-		-->
-    </target>
+		<chmod perm="777" type="both">
+			<fileset dir="${dist.dir}/${project.name}">
+				<include name="**/*" />
+			</fileset>
+		</chmod> 
+	</target>
 	
 	<target name="clean" description="clean up" >
 		<!-- Delete the ${build.dir} and ${dist.dir} directory trees -->
@@ -72,6 +83,14 @@
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${tmp.dir}" />
+	</target>
+	
+	<target name="run" depends="jar">
+		<java classname="${main.class}" failonerror="true" fork="true">
+			<classpath refid="execute-classpath"/>
+			<arg value="ubuntu-pc"/>
+			<arg value="szymonb.com.pl"/>
+		</java>   
 	</target>
 
 </project>

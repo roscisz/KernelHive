@@ -40,7 +40,7 @@ public class EnergyOptimizer implements IOptimizer {
 					scheduledJobs.add(readyJob);
 				}
 				if(readyJob.state == JobState.SCHEDULED) {				
-					System.out.println("Scheduled job " + readyJob.ID + " on device: " + device.name + " on unit " + device.unit.ID);
+					System.out.println("Scheduled job " + readyJob.getId() + " on device: " + device.name + " on unit " + device.getUnit().getId());
 					break;
 				}				
 			}

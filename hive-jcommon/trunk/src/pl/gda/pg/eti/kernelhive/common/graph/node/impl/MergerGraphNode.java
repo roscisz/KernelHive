@@ -52,7 +52,7 @@ public class MergerGraphNode extends GenericGraphNode {
 					ValidationResultType.INVALID));
 		}
 		// previous nodes? (must be at least 1)
-		if (!(getPreviousNodes() == null || getPreviousNodes().size() > 1)) {
+		if (!(getPreviousNodes() == null || getPreviousNodes().size() >= 1)) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
 					+ name + ") of type '" + type
 					+ "' cannot has less then 1 previous node",

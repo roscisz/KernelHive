@@ -9,10 +9,10 @@ LOGFILE=hive-cluster.log
 BOOTSTRAP_CLASS=pl.gda.pg.eti.kernelhive.cluster.HiveCluster
 
 #JAVA_HOME=/usr/lib/jvm/java-6-openjdk-i386/
-JAVA_HOME=/usr/lib/jvm/java-6-sun/
+JAVA_HOME=/usr/lib/jvm/java-7-oracle/
 
 CLUSTER_HOSTNAME=127.0.0.1
-ENGINE_HOSTNAME=hive-engine
+ENGINE_HOSTNAME=localhost
 #ARGS="$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME"
 
 set -e

@@ -25,7 +25,6 @@ import pl.gda.pg.eti.kernelhive.common.kernel.repository.IKernelRepository;
 import pl.gda.pg.eti.kernelhive.common.kernel.repository.impl.KernelRepository;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabPanel;
-import pl.gda.pg.eti.kernelhive.gui.component.infrastructure.InfrastructureBrowser;
 import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.RepositoryViewer;
 import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.RepositoryViewerModel;
 import pl.gda.pg.eti.kernelhive.gui.component.source.SourceCodeEditor;
@@ -43,6 +42,8 @@ import pl.gda.pg.eti.kernelhive.gui.dialog.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NewProjectDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.PreferencesDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.ProjectPropertiesDialog;
+import pl.gda.pg.eti.kernelhive.gui.monitoring.infrastructure.InfrastructureBrowser;
+import pl.gda.pg.eti.kernelhive.gui.monitoring.resourcemonitor.ResourceMonitor;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 import pl.gda.pg.eti.kernelhive.gui.project.impl.KernelHiveProject;
 import pl.gda.pg.eti.kernelhive.gui.workflow.execution.IWorkflowExecution;
@@ -53,9 +54,9 @@ import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplay;
 import pl.gda.pg.eti.kernelhive.gui.workflow.wizard.WorkflowWizardDisplayException;
 
 /**
- * 
+ *
  * @author mschally
- * 
+ *
  */
 public class MainFrameController {
 
@@ -63,16 +64,14 @@ public class MainFrameController {
 			.getLogger(MainFrameController.class.getName());
 	private static ResourceBundle BUNDLE = AppConfiguration.getInstance()
 			.getLanguageResourceBundle();
-
 	private final MainFrame frame;
 	private IProject project;
 	private int newFileCounter;
 
 	/**
 	 * constructor
-	 * 
-	 * @param frame
-	 *            {@link MainFrame}
+	 *
+	 * @param frame {@link MainFrame}
 	 */
 	public MainFrameController(final MainFrame frame) {
 		this.frame = frame;
@@ -111,9 +110,8 @@ public class MainFrameController {
 
 	/**
 	 * closes the selected tab
-	 * 
-	 * @param tab
-	 *            {@link JTabPanel}
+	 *
+	 * @param tab {@link JTabPanel}
 	 */
 	public void closeTab(final JTabPanel tab) {
 		JTabContent content;
@@ -137,12 +135,17 @@ public class MainFrameController {
 				return;
 			}
 		}
+
+		if (content != null) {
+			content.onClose();
+		}
+
 		// TODO i18n
 		if (content.isDirty()) {
 			final int result = JOptionPane.showConfirmDialog(
 					frame.getContentPane(),
 					"The selected file has been modified. "
-							+ "Do you wanto to save it?", "Save file?",
+					+ "Do you wanto to save it?", "Save file?",
 					JOptionPane.YES_NO_CANCEL_OPTION);
 			if (result == JOptionPane.YES_OPTION) {
 				final File f = content.getFile();
@@ -181,7 +184,7 @@ public class MainFrameController {
 
 	/**
 	 * controls the display of the side panel component
-	 * 
+	 *
 	 * @param visible
 	 */
 	public void displaySidePanel(final boolean visible) {
@@ -191,9 +194,8 @@ public class MainFrameController {
 
 	/**
 	 * controls the display of the statusbar component
-	 * 
-	 * @param visible
-	 *            boolean
+	 *
+	 * @param visible boolean
 	 */
 	public void displayStatusbar(final boolean visible) {
 		frame.getStatusbar().setVisible(visible);
@@ -201,9 +203,8 @@ public class MainFrameController {
 
 	/**
 	 * controls the display of the toolbox component
-	 * 
-	 * @param visible
-	 *            boolean
+	 *
+	 * @param visible boolean
 	 */
 	public void displayToolbox(final boolean visible) {
 		frame.getToolBar().setVisible(visible);
@@ -262,9 +263,9 @@ public class MainFrameController {
 				LOG.warning("KH: cannot create new project");
 				MessageDialog
 						.showErrorDialog(
-								frame,
-								BUNDLE.getString("MainFrameController.newProject.cannotCreate.title"),
-								BUNDLE.getString("MainFrameController.newProject.cannotCreate.text"));
+						frame,
+						BUNDLE.getString("MainFrameController.newProject.cannotCreate.title"),
+						BUNDLE.getString("MainFrameController.newProject.cannotCreate.text"));
 				e.printStackTrace();
 			}
 		}
@@ -313,17 +314,16 @@ public class MainFrameController {
 						frame,
 						"Error",
 						"Could not open the project file: "
-								+ file.getAbsolutePath() + " Reason: "
-								+ e.getMessage());
+						+ file.getAbsolutePath() + " Reason: "
+						+ e.getMessage());
 			}
 		}
 	}
 
 	/**
 	 * opens new Tab and associates it with the given {@link File}
-	 * 
-	 * @param f
-	 *            {@link File}
+	 *
+	 * @param f {@link File}
 	 */
 	public void openTab(final File f) {
 		SourceCodeEditor sourcePanel;
@@ -333,7 +333,7 @@ public class MainFrameController {
 			sourcePanel.loadContent(f);
 			sourcePanel.setSyntaxStyle(SyntaxStyle.resolveSyntaxStyle(f
 					.getName().substring(f.getName().indexOf(".") + 1,
-							f.getName().length())));
+					f.getName().length())));
 		} else {
 			sourcePanel = new SourceCodeEditor(frame, "new" + newFileCounter);
 			newFileCounter++;
@@ -354,9 +354,9 @@ public class MainFrameController {
 		} else {
 			MessageDialog
 					.showErrorDialog(
-							frame,
-							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.title"),
-							BUNDLE.getString("MainFrameController.openWorkflowEditor.error.text"));
+					frame,
+					BUNDLE.getString("MainFrameController.openWorkflowEditor.error.title"),
+					BUNDLE.getString("MainFrameController.openWorkflowEditor.error.text"));
 		}
 	}
 
@@ -375,7 +375,7 @@ public class MainFrameController {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void pauseWorkflowGraphExecution() {
 	}
@@ -435,9 +435,8 @@ public class MainFrameController {
 
 	/**
 	 * saves the tab content
-	 * 
-	 * @param tab
-	 *            {@link JTabPanel}
+	 *
+	 * @param tab {@link JTabPanel}
 	 */
 	public void saveTab(final JTabPanel tab) {
 		JTabContent content;
@@ -456,9 +455,8 @@ public class MainFrameController {
 
 	/**
 	 * saves the tab as...
-	 * 
-	 * @param tab
-	 *            {@link JTabPanel}
+	 *
+	 * @param tab {@link JTabPanel}
 	 */
 	public void saveTabAs(final JTabPanel tab) {
 		JTabContent content;
@@ -482,8 +480,8 @@ public class MainFrameController {
 							frame,
 							"Error",
 							"The file: " + nfd.getFileDirectory()
-									+ System.getProperty("file.separator")
-									+ nfd.getFileName() + " already exists");
+							+ System.getProperty("file.separator")
+							+ nfd.getFileName() + " already exists");
 				} else {
 					content.saveContent(f);
 					if (content.getFile() == null) {
@@ -529,7 +527,7 @@ public class MainFrameController {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void startWorkflowGraphExecution() {
 		final IEngineGraphConfiguration engConfig = new EngineGraphConfiguration();
@@ -537,12 +535,11 @@ public class MainFrameController {
 		IWorkflowWizardDisplay wizardDisplay;
 		final IWorkflowExecution execution = new WorkflowExecution();
 		execution.addWorkflowExecutionListener(new WorkflowExecutionListener() {
-
 			@Override
 			public void workflowSubmissionCompleted(final Integer workflowId) {
 				JOptionPane.showMessageDialog(frame,
 						"Workflow sent to execution. Workflow ID is "
-								+ workflowId, "Success",
+						+ workflowId, "Success",
 						JOptionPane.INFORMATION_MESSAGE, null);
 
 				frame.getBtnPause().setEnabled(true);
@@ -574,9 +571,9 @@ public class MainFrameController {
 			} catch (final GraphNodeDecoratorConverterException e) {
 				MessageDialog.showErrorDialog(frame, "Error",
 						"Could not convert the graph node with id: "
-								+ e.getNodeDecorator().getGraphNode()
-										.getNodeId()
-								+ " to the format required by engine!");
+						+ e.getNodeDecorator().getGraphNode()
+						.getNodeId()
+						+ " to the format required by engine!");
 				e.printStackTrace();
 			} catch (final ConfigurationException e) {
 				MessageDialog.showErrorDialog(frame, "Error",
@@ -585,14 +582,14 @@ public class MainFrameController {
 			} catch (final UnsupportedEncodingException e) {
 				MessageDialog
 						.showErrorDialog(frame, "Error",
-								"The graph stream could not be created - unsupported encoding: 'utf-8'");
+						"The graph stream could not be created - unsupported encoding: 'utf-8'");
 				e.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void stopWorkflowGraphExecution() {
 		// TODO Auto-generated method stub
@@ -616,12 +613,13 @@ public class MainFrameController {
 	}
 
 	public void openResourceMonitor() {
-		// TODO Auto-generated method stub
+		final ResourceMonitor rm = new ResourceMonitor(frame,
+				"Resource monitor", null);
+		addTabToWorkspacePane(rm);
 	}
 
 	public void loginUser() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void clearHighlight() {
@@ -638,22 +636,23 @@ public class MainFrameController {
 
 	public void openAboutDialog() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void logoutUser() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void deleteSelected() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void openFindReplaceDialog() {
 		final FindReplaceDialog dialog = new FindReplaceDialog(frame);
 		dialog.setModal(false);
 		dialog.setVisible(true);
+	}
+
+	public IProject getProject() {
+		return project;
 	}
 }

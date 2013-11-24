@@ -1,6 +1,8 @@
 package pl.gda.pg.eti.kernelhive.common.graph.configuration.impl;
 
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +25,9 @@ import pl.gda.pg.eti.kernelhive.common.source.KernelFile;
 /**
  * {@link GUIGraphConfiguration} object is responsible for persisting project
  * graph to the underlying file layer (XML)
- * 
+ *
  * @author mschally
- * 
+ *
  */
 public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		IGUIGraphConfiguration {
@@ -39,7 +41,6 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 	private static final String SOURCE_FILE_PROPERTY_NODE = "kh:property";
 	private static final String SOURCE_FILE_PROPERTY_NODE_KEY_ATTRIBUTE = "key";
 	private static final String SOURCE_FILE_PROPERTY_NODE_VALUE_ATTRIBUTE = "value";
-
 	private static final Logger LOG = Logger
 			.getLogger(GUIGraphConfiguration.class.getName());
 
@@ -89,7 +90,7 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 			Node srcAttr = new Node(
 					SOURCE_FILE_SRC_ATTRIBUTE,
 					(new File(FileUtils.translateAbsoluteToRelativePath(file
-							.getAbsolutePath(), f.getFile().getAbsolutePath()))));
+					.getAbsolutePath(), f.getFile().getAbsolutePath()))));
 			Node srcIdAttr = new Node(SOURCE_FILE_ID_ATTRIBUTE, f.getId());
 			srcIdAttr.setAttribute(true);
 			srcAttr.setAttribute(true);
@@ -161,10 +162,12 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 				.getAttributes(NODE_X_ATTRIBUTE);
 		List<ConfigurationNode> yAttrList = node
 				.getAttributes(NODE_Y_ATTRIBUTE);
-		if (xAttrList.size() > 0)
+		if (xAttrList.size() > 0) {
 			x = Integer.parseInt((String) xAttrList.get(0).getValue());
-		if (yAttrList.size() > 0)
+		}
+		if (yAttrList.size() > 0) {
 			y = Integer.parseInt((String) yAttrList.get(0).getValue());
+		}
 
 		GUIGraphNodeDecorator guiNode = new GUIGraphNodeDecorator(graphNode);
 		guiNode.setX(x);
@@ -205,25 +208,25 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 		List<ConfigurationNode> srcAttrs = src
 				.getAttributes(SOURCE_FILE_SRC_ATTRIBUTE);
 		if (srcAttrs.size() > 0) {
-			String absolutePath = FileUtils.translateRelativeToAbsolutePath(
-					config.getBasePath(), (String) srcAttrs.get(0).getValue());
-			if (absolutePath == null) {
+			Path path = FileSystems.getDefault().getPath(config.getBasePath(),
+					(String) srcAttrs.get(0).getValue());
+			if (path == null) {
 				throw new ConfigurationException(
 						"KH: could not found source file with a stored filepath: "
-								+ srcAttrs.get(0).getValue()
-								+ ", basepath of the config file: "
-								+ config.getBasePath());
+						+ srcAttrs.get(0).getValue()
+						+ ", basepath of the config file: "
+						+ config.getBasePath());
 			}
-			file = new File(absolutePath);
+			file = path.toFile(); // new File(absolutePath);
 			if (!file.exists()) {
 				throw new ConfigurationException(
 						"KH: could not found source file with a filepath: "
-								+ absolutePath);
+						+ path.toString());
 			}
 		} else {
 			throw new ConfigurationException(
 					"KH: no required attribute 'src' in " + SOURCE_FILE
-							+ " node");
+					+ " node");
 		}
 
 		Map<String, Object> properties = loadSourceFileProperties(src);

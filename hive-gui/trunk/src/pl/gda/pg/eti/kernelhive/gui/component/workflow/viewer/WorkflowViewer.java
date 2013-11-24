@@ -4,19 +4,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
+import pl.gda.pg.eti.kernelhive.gui.component.workflow.preview.WorkflowPreview;
+import pl.gda.pg.eti.kernelhive.gui.component.workflow.progress.WorkflowProgressViewer;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
+import pl.gda.pg.eti.kernelhive.gui.helpers.WorkspaceHelper;
 import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineService;
 import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceException;
 import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceListenerAdapter;
 import pl.gda.pg.eti.kernelhive.gui.networking.IExecutionEngineService;
 
-public class WorkflowViewer extends JTabContent implements ActionListener {
+public class WorkflowViewer extends JTabContent implements ActionListener, WorkflowViewerHandler {
 
 	private static final long serialVersionUID = -3495327114777372433L;
-
+	private static final Logger LOGGER = Logger.getLogger(WorkflowViewer.class.getName());
 	private WorkflowViewerPanel panel;
 	private IExecutionEngineService service;
 	private ExecutionEngineServiceListenerAdapter adapter;
@@ -26,6 +32,7 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 		this.setName(title);
 		panel = new WorkflowViewerPanel();
 		panel.addRefreshBtnActionListener(this);
+		panel.setWorkflowViewerHandler(this);
 		add(panel);
 		try {
 			service = ExecutionEngineService.getInstance();
@@ -37,8 +44,15 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 				}
 			};
 		} catch (ExecutionEngineServiceException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Engine execution exception", e);
 		}
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				refresh();
+			}
+		});
 	}
 
 	@Override
@@ -61,17 +75,14 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 
 	@Override
 	public void cut() {
-
 	}
 
 	@Override
 	public void copy() {
-
 	}
 
 	@Override
 	public void paste() {
-
 	}
 
 	@Override
@@ -106,4 +117,20 @@ public class WorkflowViewer extends JTabContent implements ActionListener {
 		panel.clearSelection();
 	}
 
+	@Override
+	public void showProgress(WorkflowInfo workflowInfo) {
+		WorkflowProgressViewer tab = new WorkflowProgressViewer(frame, workflowInfo);
+		new WorkspaceHelper().addTab(frame.getWorkspacePane(), tab, true);
+	}
+
+	@Override
+	public void terminate(WorkflowInfo workflowInfo) {
+		service.terminateWorkflow(workflowInfo.ID, null);
+	}
+
+	@Override
+	public void previewWork(WorkflowInfo workflowInfo) {
+		WorkflowPreview tab = new WorkflowPreview(frame, workflowInfo);
+		new WorkspaceHelper().addTab(frame.getWorkspacePane(), tab, true);
+	}
 }

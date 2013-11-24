@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
@@ -31,11 +32,12 @@ import pl.gda.pg.eti.kernelhive.gui.component.repository.viewer.TransferableKern
 import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
 /**
- * 
+ *
  * @author mschally
- * 
+ *
  */
 public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
+
 	private static Logger LOG = Logger
 			.getLogger(WorkflowEditorDropTargetListener.class.getName());
 	protected DropTarget target;
@@ -55,7 +57,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 		try {
 			final KernelRepositoryEntry kre = (KernelRepositoryEntry) dtde
 					.getTransferable().getTransferData(
-							TransferableKernelRepositoryEntry.entryFlavour);
+					TransferableKernelRepositoryEntry.entryFlavour);
 
 			if (dtde.isDataFlavorSupported(TransferableKernelRepositoryEntry.entryFlavour)) {
 				dtde.acceptDrop(DnDConstants.ACTION_COPY);
@@ -93,19 +95,18 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 					// 5. refresh graph
 					editor.refresh();
 
+					dtde.dropComplete(true);
+
 				} else {
-					MessageDialog
-							.showMessageDialog(editor, "",
-									"You have to choose a directory to place kernel files!");
-					return;
+					MessageDialog.showMessageDialog(editor, "",
+							"You have to choose a directory to place kernel files!");
+					dtde.rejectDrop();
 				}
-				dtde.dropComplete(true);
-				return;
 			} else {
 				dtde.rejectDrop();
 			}
-		} catch (final Exception e) {
-			LOG.severe("KH: " + e.getMessage());
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, "Error while dropping", e);
 			if (guiNode != null && dir != null) {
 				for (final IKernelFile s : guiNode.getSourceFiles()) {
 					s.getFile().delete();

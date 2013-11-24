@@ -2,7 +2,7 @@ package pl.gda.pg.eti.kernelhive.engine;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,15 +19,12 @@ import pl.gda.pg.eti.kernelhive.engine.job.PartitionerJob;
 
 public class Workflow extends HasID {
 
-	private final Map<Integer, EngineJob> jobs = new Hashtable<Integer, EngineJob>();
-
+	private final Map<Integer, EngineJob> jobs = new HashMap<>();
 	public WorkflowInfo info = new WorkflowInfo();
 	private WorkflowState state = WorkflowState.PENDING;
 	private final String result = null;
-
 	private final List<EngineGraphNodeDecorator> graph;
-
-	private final Date startTime;	
+	private final Date startTime;
 
 	public Workflow(final List<EngineGraphNodeDecorator> graph,
 			final String workflowName, final String inputDataURL) {
@@ -46,8 +43,9 @@ public class Workflow extends HasID {
 	private void configureJobs(final IGraphNode node,
 			final EngineJob previousJob) {
 		final EngineJob newJob = configureJob(node);
-		if (previousJob != null)
+		if (previousJob != null) {
 			previousJob.addFollowingJob(newJob);
+		}
 		for (final IGraphNode followingNode : node.getFollowingNodes()) {
 			configureJobs(followingNode, newJob);
 		}
@@ -56,39 +54,46 @@ public class Workflow extends HasID {
 	private EngineJob configureJob(final IGraphNode node) {
 		EngineJob ret;
 		final EngineGraphNodeDecorator decoratorNode = getDecoratorByIGraphNode(node);
-		if (node.getType().equals(GraphNodeType.EXPANDABLE))
+		if (node.getType().equals(GraphNodeType.EXPANDABLE)) {
 			ret = new PartitionerJob(decoratorNode, this);
-		else
+		} else {
 			ret = new EngineJob(decoratorNode, this);
+		}
 		registerJob(ret);
 		return ret;
 	}
 
 	private EngineGraphNodeDecorator getRootNode() {
-		for (final EngineGraphNodeDecorator node : this.graph)
-			if (node.getGraphNode().getPreviousNodes().isEmpty())
+		for (final EngineGraphNodeDecorator node : this.graph) {
+			if (node.getGraphNode().getPreviousNodes().isEmpty()) {
 				return node;
+			}
+		}
 		return null;
 	}
 
 	private void initWorkflowInfo(final String workflowName) {
-		this.info.ID = this.ID;
+		this.info.ID = getId();
 		this.info.name = workflowName;
 	}
 
 	public List<EngineJob> getReadyJobs() {
 		final List<EngineJob> ret = new ArrayList<EngineJob>();
-		for (final EngineJob job : jobs.values())
-			if (job.state == JobState.READY)
+		for (final EngineJob job : jobs.values()) {
+			if (job.state == JobState.READY) {
 				ret.add(job);
+			}
+		}
 		return ret;
 	}
 
 	public boolean checkFinished() {
 
-		for (final Job job : jobs.values())
-			if (job.state != JobState.FINISHED)
+		for (final Job job : jobs.values()) {
+			if (job.state != JobState.FINISHED) {
 				return false;
+			}
+		}
 
 		return true;
 	}
@@ -104,9 +109,11 @@ public class Workflow extends HasID {
 	}
 
 	public EngineJob getJobByGraphNode(final IGraphNode graphNode) {
-		for (final EngineJob job : jobs.values())
-			if (job.node.getGraphNode().equals(graphNode))
+		for (final EngineJob job : jobs.values()) {
+			if (job.node.getGraphNode().equals(graphNode)) {
 				return job;
+			}
+		}
 		return null;
 	}
 
@@ -118,27 +125,37 @@ public class Workflow extends HasID {
 		this.state = WorkflowState.COMPLETED;
 		this.info.result = resultURL;
 		System.out.println("Time in seconds: "
-				+ ((new Date()).getTime() - this.startTime.getTime())/1000);
+				+ ((new Date()).getTime() - this.startTime.getTime()) / 1000);
 	}
-	
+
 	public void debugTime() {
 		System.out.println("Debug time in seconds: "
 				+ getDebugTime());
 	}
-	
+
 	public long getDebugTime() {
-		return ((new Date()).getTime() - this.startTime.getTime())/1000;		
+		return ((new Date()).getTime() - this.startTime.getTime()) / 1000;
 	}
 
 	public void registerJob(final EngineJob job) {
-		this.jobs.put(job.ID, job);
+		this.jobs.put(job.getId(), job);
 	}
 
 	private EngineGraphNodeDecorator getDecoratorByIGraphNode(
 			final IGraphNode node) {
-		for (final EngineGraphNodeDecorator decorator : this.graph)
-			if (decorator.getGraphNode().equals(node))
+		for (final EngineGraphNodeDecorator decorator : this.graph) {
+			if (decorator.getGraphNode().equals(node)) {
 				return decorator;
+			}
+		}
 		return null;
+	}
+
+	public Map<Integer, EngineJob> getJobs() {
+		return jobs;
+	}
+
+	public void cancel() {
+		jobs.clear();
 	}
 }

@@ -1,39 +1,45 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 public class HasID {
-	
+
 	private static int lastID = 0;
-	
-	public int ID;
-	
+	private int id;
+
 	public HasID() {
-		this.ID = HasID.generateID();		
+		this.id = HasID.generateID();
 	}
-	
+
 	private static int generateID() {
-		return ++lastID;		
+		return ++lastID;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ID;
+		result = prime * result + id;
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof HasID))
+		}
+		if (!(obj instanceof HasID)) {
 			return false;
+		}
 		HasID other = (HasID) obj;
-		if (ID != other.ID)
+		if (id != other.id) {
 			return false;
+		}
 		return true;
-	}		
+	}
 
+	public int getId() {
+		return id;
+	}
 }

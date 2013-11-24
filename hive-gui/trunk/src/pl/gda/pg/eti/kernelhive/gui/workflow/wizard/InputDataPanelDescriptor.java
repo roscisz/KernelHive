@@ -40,12 +40,10 @@ public class InputDataPanelDescriptor extends WizardPanelDescriptor implements
 
 	@Override
 	public void displayingPanel() {
-
 	}
 
 	@Override
 	public void aboutToHidePanel() {
-
 	}
 
 	private void showURLValidationResult() {
@@ -53,10 +51,11 @@ public class InputDataPanelDescriptor extends WizardPanelDescriptor implements
 		try {
 			URL url = new URL(
 					((InputDataPanel) getPanelComponent())
-							.getInputDataUrlString());
+					.getInputDataUrlString());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.connect();
+			isInvalid = false;
 			int code = conn.getResponseCode();
 			if (code == 200) {
 				isInvalid = false;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="jar" name="kernelhive-gui">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
 	
 	<property environment="env"/>
 	<property file="build.properties"/>
@@ -20,14 +20,16 @@
 	<property name="common-dist.dir" location="${kh-common.dir}/dist"/>
 	<property name="common-build.dir" location="${kh-common.dir}/bin"/>
 	<property name="common-lib.dir" location="${kh-common.dir}/lib"/>
+	<property name="repository-dist.dir" location="${kh-repository.dir}/dist"/>
 	<path id="classpath">
 		<fileset dir="${common-build.dir}" includes="**/*.class"/>
 		<fileset dir="${lib.dir}" includes="**/*.jar"/>
 		<fileset dir="${common-lib.dir}" includes="**/*.jar"/>
+		<fileset dir="${repository-dist.dir}" includes="**/*.jar"/>
 	</path>
 	
 	<target name="compile" depends="init">
-		<javac destdir="${build.dir}" classpathref="classpath">
+		<javac destdir="${build.dir}" classpathref="classpath" includeantruntime="false">
 			<src path="${src.dir}"/>
 			<src path="${common-src.dir}"/>
 		</javac>
@@ -44,24 +46,24 @@
 	</target>
 	
 	<target name="jar" depends="compile">
-        <jar destfile="${kh-gui-jar.path}">
-            <manifest>
-                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-                <attribute name="Rsrc-Main-Class" value="pl.gda.pg.eti.kernelhive.gui.KernelHiveMain"/>
-                <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ jlfgr-1_0.jar jgraphx.jar rsyntaxtextarea.jar commons-configuration-1.8.jar commons-lang-2.6.jar commons-logging-1.1.1.jar"/>
-            </manifest>
-            <zipfileset src="jar-in-jar-loader.zip"/>
-            <fileset dir="${build.dir}"/>
-            <zipfileset dir="${res.dir}" includes="jlfgr-1_0.jar"/>
-            <zipfileset dir="${lib.dir}/jgraphx-1.10" includes="jgraphx.jar"/>
-            <zipfileset dir="${lib.dir}/rsyntaxtextarea_2.0.2" includes="rsyntaxtextarea.jar"/>
-            <!--<fileset dir="${common-build.dir}"/>-->
-            <zipfileset dir="${common-lib.dir}/commons-configuration-1.8" includes="commons-configuration-1.8.jar"/>
-            <zipfileset dir="${common-lib.dir}/commons-lang-2.6" includes="commons-lang-2.6.jar"/>
-            <zipfileset dir="${common-lib.dir}/commons-logging-1.1.1" includes="commons-logging-1.1.1.jar"/>
-        </jar>
-    </target>
+		<jar destfile="${kh-gui-jar.path}">
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+				<attribute name="Rsrc-Main-Class" value="pl.gda.pg.eti.kernelhive.gui.KernelHiveMain"/>
+				<attribute name="Class-Path" value="."/>
+				<attribute name="Rsrc-Class-Path" value="./ jlfgr-1_0.jar jgraphx.jar rsyntaxtextarea.jar commons-configuration-1.8.jar commons-lang-2.6.jar commons-logging-1.1.1.jar"/>
+			</manifest>
+			<zipfileset src="jar-in-jar-loader.zip"/>
+			<fileset dir="${build.dir}"/>
+			<zipfileset dir="${lib.dir}" includes="jlfgr-1_0.jar"/>
+			<zipfileset dir="${lib.dir}/jgraphx-1.10" includes="jgraphx.jar"/>
+			<zipfileset dir="${lib.dir}/rsyntaxtextarea_2.0.2" includes="rsyntaxtextarea.jar"/>
+			<!--<fileset dir="${common-build.dir}"/>-->
+			<zipfileset dir="${common-lib.dir}/commons-configuration-1.8" includes="commons-configuration-1.8.jar"/>
+			<zipfileset dir="${common-lib.dir}/commons-lang-2.6" includes="commons-lang-2.6.jar"/>
+			<zipfileset dir="${common-lib.dir}/commons-logging-1.1.1" includes="commons-logging-1.1.1.jar"/>
+		</jar>
+	</target>
 	
 	<target name="run" depends="jar">
 		<exec executable="java">

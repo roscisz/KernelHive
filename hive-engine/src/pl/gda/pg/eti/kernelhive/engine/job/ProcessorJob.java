@@ -18,8 +18,7 @@ public class ProcessorJob extends EngineJob {
 	}
 
 	@Override
-	protected GraphNodeType getJobType() {
+	public GraphNodeType getJobType() {
 		return GraphNodeType.PROCESSOR;
-	}		
-	
+	}
 }

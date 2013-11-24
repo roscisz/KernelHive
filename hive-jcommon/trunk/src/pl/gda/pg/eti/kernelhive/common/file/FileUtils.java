@@ -7,15 +7,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * Util Class for file operations
- * 
+ *
  * @author mschally
- * 
+ *
  */
 public class FileUtils {
 
@@ -24,9 +26,8 @@ public class FileUtils {
 
 	/**
 	 * creates new file
-	 * 
-	 * @param filePath
-	 *            - File path
+	 *
+	 * @param filePath - File path
 	 * @return File if success, null if failure
 	 * @throws IOException
 	 * @throws SecurityException
@@ -55,7 +56,7 @@ public class FileUtils {
 
 	/**
 	 * creates new directory
-	 * 
+	 *
 	 * @param dirPath
 	 * @return file handle to the directory
 	 * @throws SecurityException
@@ -72,106 +73,25 @@ public class FileUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param basePath
 	 * @param pathToTranslate
 	 * @return translated absolute path. Null if a translation could not be made
 	 */
 	public static String translateRelativeToAbsolutePath(String basePath,
 			String pathToTranslate) {
-		File f = new File(basePath);
-		String[] tokens = pathToTranslate.split(System
-				.getProperty("file.separator"));
-
-		for (String t : tokens) {
-			if (t.equalsIgnoreCase("..")) {
-				f = f.getParentFile();
-			} else if (t.equalsIgnoreCase(".")) {
-				// do nothing
-			} else if (t.equalsIgnoreCase("")) {
-				// do nothing
-			} else {
-				f = new File(f.getAbsolutePath()
-						+ System.getProperty("file.separator") + t);
-				if (!f.exists()) {
-					return null;
-				}
-			}
-		}
-		return f.getAbsolutePath();
+		return Paths.get(basePath, pathToTranslate).toString();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param basePath
 	 * @param pathToTranslate
 	 * @return
 	 */
 	public static String translateAbsoluteToRelativePath(String basePath,
 			String pathToTranslate) {
-		File baseFile = new File(basePath);
-		boolean dir = true;
-		if (baseFile.exists()) {
-			if (baseFile.isFile()) {
-				dir = false;
-			}
-		}
-
-		String[] baseTokens = basePath.split(System
-				.getProperty("file.separator"));
-		List<String> baseList = new ArrayList<String>();
-		for (String token : baseTokens) {
-			if (!token.equalsIgnoreCase("")) {
-				baseList.add(token);
-			}
-		}
-		String[] pathTokens = pathToTranslate.split(System
-				.getProperty("file.separator"));
-		List<String> pathList = new ArrayList<String>();
-		for (String token : pathTokens) {
-			if (!token.equalsIgnoreCase("")) {
-				pathList.add(token);
-			}
-		}
-		int i = 0;
-
-		while (i < baseList.size() && i < pathList.size()) {
-			if (baseList.get(i).equalsIgnoreCase(pathList.get(i))) {
-				i++;
-			} else {
-				break;
-			}
-		}
-		i--;
-		StringBuffer sb = new StringBuffer();
-		int j = (baseList.size() - 1) - i;
-		if (j == 0) {
-			if (dir) {
-				sb.append("." + System.getProperty("file.separator"));
-			} else {
-				return null;
-			}
-		} else if (j == 1) {
-			if (dir) {
-				sb.append(".." + System.getProperty("file.separator"));
-			} else {
-				sb.append("." + System.getProperty("file.separator"));
-			}
-		} else {
-			for (int n = 0; n < j; n++) {
-				sb.append(".." + System.getProperty("file.separator"));
-			}
-		}
-
-		for (int n = (i + 1); n < pathList.size(); n++) {
-			if (n < pathList.size() - 1) {
-				sb.append(pathList.get(n)
-						+ System.getProperty("file.separator"));
-			} else {
-				sb.append(pathList.get(n));
-			}
-		}
-		return sb.toString();
+		return Paths.get(basePath).relativize(Paths.get(pathToTranslate)).toString();
 	}
 
 	public static String readFileToString(File file) throws IOException {
@@ -184,16 +104,15 @@ public class FileUtils {
 			br = new BufferedReader(isr);
 			StringBuffer sb = new StringBuffer();
 			String buffer;
-			while((buffer = br.readLine())!=null){
-				sb.append(buffer+"\n");
+			while ((buffer = br.readLine()) != null) {
+				sb.append(buffer + "\n");
 			}
 			return sb.toString();
-		} catch(SecurityException e){
+		} catch (SecurityException e) {
 			throw new IOException(e);
-		} catch(UnsupportedEncodingException e){
+		} catch (UnsupportedEncodingException e) {
 			throw new IOException(e);
-		}
-		finally {
+		} finally {
 			is.close();
 		}
 	}

@@ -7,9 +7,9 @@ import javax.swing.JPanel;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 /**
- * 
+ *
  * @author mschally
- * 
+ *
  */
 public abstract class JTabContent extends JPanel {
 
@@ -26,32 +26,30 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * Saves the contents to specified File
-	 * 
-	 * @param file
-	 *            File
+	 *
+	 * @param file File
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean saveContent(File file);
 
 	/**
 	 * saves content
-	 * 
+	 *
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean saveContent();
 
 	/**
 	 * Loads the content from specified file
-	 * 
-	 * @param file
-	 *            File
+	 *
+	 * @param file File
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean loadContent(File file);
 
 	/**
 	 * loads content
-	 * 
+	 *
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean loadContent();
@@ -113,9 +111,8 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * sets the corresponding JTabPanel
-	 * 
-	 * @param panel
-	 *            JTabPanel
+	 *
+	 * @param panel JTabPanel
 	 */
 	public void setTabPanel(final JTabPanel panel) {
 		tabPanel = panel;
@@ -124,7 +121,7 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * gets the corresponding JTabPanel
-	 * 
+	 *
 	 * @return
 	 */
 	public JTabPanel getTabPanel() {
@@ -133,7 +130,7 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * gets the MainFrame object
-	 * 
+	 *
 	 * @return MainFrame object
 	 */
 	protected MainFrame getFrame() {
@@ -142,7 +139,7 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * checks if the content is dirty (unsaved)
-	 * 
+	 *
 	 * @return true if the content is dirty, otherwise false
 	 */
 	public boolean isDirty() {
@@ -151,9 +148,8 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * sets the content state (if it's dirty)
-	 * 
-	 * @param dirty
-	 *            boolean
+	 *
+	 * @param dirty boolean
 	 */
 	protected void setDirty(final boolean dirty) {
 		this.dirty = dirty;
@@ -161,7 +157,7 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * gets file
-	 * 
+	 *
 	 * @return File
 	 */
 	public File getFile() {
@@ -170,15 +166,16 @@ public abstract class JTabContent extends JPanel {
 
 	/**
 	 * sets file
-	 * 
-	 * @param file
-	 *            File
+	 *
+	 * @param file File
 	 */
 	public void setFile(final File file) {
 		this.file = file;
 	}
 
 	public void goToLine(final int line) {
+	}
 
+	public void onClose() {
 	}
 }

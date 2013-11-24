@@ -27,28 +27,30 @@ import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
 import pl.gda.pg.eti.kernelhive.gui.frame.MainFrame;
 
 /**
- * 
+ *
  * @author mschally
- * 
+ *
  */
 public class SourceCodeEditor extends JTabContent implements DocumentListener {
+
 	private static final long serialVersionUID = 5474455832346699476L;
 	private static Logger LOG = Logger.getLogger(SourceCodeEditor.class
 			.getName());
 
 	/**
-	 * 
+	 *
 	 * @author marcel
-	 * 
+	 *
 	 */
 	public static enum SyntaxStyle {
-		CPLUSPLUS(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cpp"), C(
-				SyntaxConstants.SYNTAX_STYLE_C, "c"), XML(
-				SyntaxConstants.SYNTAX_STYLE_XML, "xml"), PROPERTIES(
-				SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE, "properties"), NONE(
-				SyntaxConstants.SYNTAX_STYLE_NONE, ""), OPENCL(
-				SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cl");
 
+		CPLUSPLUS(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cpp"),
+		C(SyntaxConstants.SYNTAX_STYLE_C, "c"),
+		XML(SyntaxConstants.SYNTAX_STYLE_XML, "xml"),
+		PROPERTIES(SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE, "properties"),
+		NONE(SyntaxConstants.SYNTAX_STYLE_NONE, ""),
+		OPENCL(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS, "cl"),
+		JAVA(SyntaxConstants.SYNTAX_STYLE_JAVA, "java");
 		private final String style;
 		private final String filetype;
 
@@ -68,7 +70,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 		public static SyntaxStyle getSyntaxStyle(String mimeType) {
 			SyntaxStyle[] styles = SyntaxStyle.values();
 			for (SyntaxStyle s : styles) {
-				if (s.getStyle() == mimeType) {
+				if (s.getStyle().equals(mimeType)) {
 					return s;
 				}
 			}
@@ -85,12 +87,11 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 			return SyntaxStyle.NONE;
 		}
 	}
-
 	private TextEditorPane textarea;
 	private String fileName;
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @param name
 	 */
@@ -114,7 +115,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * gets text.
-	 * 
+	 *
 	 * @return text
 	 */
 	public final String getText() {
@@ -123,9 +124,8 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * sets text
-	 * 
-	 * @param text
-	 *            String
+	 *
+	 * @param text String
 	 */
 	public final void setText(String text) {
 		textarea.setText(text);
@@ -133,7 +133,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * gets file name
-	 * 
+	 *
 	 * @return file name
 	 */
 	public final String getFileName() {
@@ -142,9 +142,8 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * sets file name
-	 * 
-	 * @param name
-	 *            String
+	 *
+	 * @param name String
 	 */
 	public final void setFileName(String name) {
 		this.fileName = name;
@@ -152,9 +151,8 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * sets syntax style
-	 * 
-	 * @param style
-	 *            {@link SyntaxStyle}
+	 *
+	 * @param style {@link SyntaxStyle}
 	 */
 	public final void setSyntaxStyle(SyntaxStyle style) {
 		textarea.setSyntaxEditingStyle(style.getStyle());
@@ -163,7 +161,7 @@ public class SourceCodeEditor extends JTabContent implements DocumentListener {
 
 	/**
 	 * gets syntax style
-	 * 
+	 *
 	 * @return {@link SyntaxStyle}
 	 */
 	public final SyntaxStyle getSyntaxStyle() {

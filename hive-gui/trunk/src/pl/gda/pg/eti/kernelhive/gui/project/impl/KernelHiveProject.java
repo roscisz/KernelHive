@@ -3,6 +3,7 @@ package pl.gda.pg.eti.kernelhive.gui.project.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -17,7 +18,7 @@ import pl.gda.pg.eti.kernelhive.common.source.IKernelFile;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
 
 /**
- * 
+ *
  * @author mschally
  *
  */
@@ -26,7 +27,6 @@ public class KernelHiveProject implements Serializable, IProject {
 	private static final long serialVersionUID = -4797108604024696381L;
 	private static final Logger LOG = Logger.getLogger(KernelHiveProject.class
 			.getName());
-
 	private String projectName;
 	private File projectDir;
 	private File projectFile;
@@ -100,8 +100,9 @@ public class KernelHiveProject implements Serializable, IProject {
 	@Override
 	public void save() throws ConfigurationException {
 		if ((projectFile == null) || (!projectFile.exists())) {
-			projectFile = new File(projectDir
-					+ System.getProperty("file.separator") + "project.xml");
+			projectFile = new File(
+					Paths.get(projectDir.getPath().toString(), "project.xml")
+					.toUri());
 		}
 		save(projectFile);
 	}
@@ -144,5 +145,4 @@ public class KernelHiveProject implements Serializable, IProject {
 	public void setProjectNodes(List<GUIGraphNodeDecorator> nodes) {
 		this.nodes = nodes;
 	}
-
 }

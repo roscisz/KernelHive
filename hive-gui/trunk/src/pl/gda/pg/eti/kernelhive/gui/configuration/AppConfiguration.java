@@ -1,10 +1,14 @@
 package pl.gda.pg.eti.kernelhive.gui.configuration;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -12,25 +16,24 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
  * Configuration class (Singleton pattern)
- * 
+ *
  * @author mschally
- * 
+ *
  */
 public class AppConfiguration {
 
 	private static final String AVAILABLE_LANG_PACKS = "available.language.packs";
 	private static final String LANGUAGE = "language.bundle";
 	private static final String PREVIOUS_INPUT_DATA_URLS = "previous.input.data.urls";
-
+	private static final String ENGINE_ADDRESS = "engine.address";
 	private static Logger LOG = Logger.getLogger(AppConfiguration.class
 			.getName());
 	private static AppConfiguration _appconfig = null;
-
 	private PropertiesConfiguration config;
 
 	/**
 	 * gets instance
-	 * 
+	 *
 	 * @return {@link AppConfiguration} instance
 	 */
 	public static AppConfiguration getInstance() {
@@ -40,8 +43,10 @@ public class AppConfiguration {
 				_appconfig.reloadConfiguration();
 				return _appconfig;
 			} catch (ConfigurationException e) {
-				LOG.severe("KH: " + e.getMessage());
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, null, e);
+				return null;
+			} catch (URISyntaxException e) {
+				LOG.log(Level.SEVERE, null, e);
 				return null;
 			}
 		} else {
@@ -54,16 +59,16 @@ public class AppConfiguration {
 
 	/**
 	 * reload the configuration file
-	 * 
+	 *
 	 * @throws ConfigurationException
 	 */
-	public void reloadConfiguration() throws ConfigurationException {
+	public void reloadConfiguration() throws ConfigurationException, URISyntaxException {
 		config = new PropertiesConfiguration("config.properties");
 	}
 
 	/**
 	 * get the language resource bundle
-	 * 
+	 *
 	 * @return {@link ResourceBundle}
 	 */
 	public ResourceBundle getLanguageResourceBundle() {
@@ -88,7 +93,7 @@ public class AppConfiguration {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public List<String> getAvailableLanguageResourceBundles() {
@@ -115,7 +120,7 @@ public class AppConfiguration {
 
 	/**
 	 * get the {@link URL} to the Kernel Repository
-	 * 
+	 *
 	 * @return {@link URL}
 	 */
 	public URL getKernelRepositoryURL() {
@@ -129,9 +134,8 @@ public class AppConfiguration {
 
 	/**
 	 * get the property using the given key
-	 * 
-	 * @param key
-	 *            {@link String}
+	 *
+	 * @param key {@link String}
 	 * @return {@link String}
 	 */
 	public String getProperty(String key) {
@@ -162,5 +166,23 @@ public class AppConfiguration {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public URL getEngineAddress() {
+		String address = (String) config.getProperty(ENGINE_ADDRESS);
+		if (address != null) {
+			try {
+				return new URL(address);
+			} catch (MalformedURLException ex) {
+				Logger.getLogger(AppConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	public void setEngineAddress(String address) {
+		config.setProperty(ENGINE_ADDRESS, address);
 	}
 }

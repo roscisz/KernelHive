@@ -1,266 +1,129 @@
 package pl.gda.pg.eti.kernelhive.cluster;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
+import pl.gda.pg.eti.kernelhive.cluster.monitoring.MonitoringServer;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBeanService;
-import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.CommunicationException;
 import pl.gda.pg.eti.kernelhive.common.communication.DataPublisher;
-import pl.gda.pg.eti.kernelhive.common.communication.Decoder;
 import pl.gda.pg.eti.kernelhive.common.communication.NetworkAddress;
-import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
-import pl.gda.pg.eti.kernelhive.common.communication.TCPServerListener;
-import pl.gda.pg.eti.kernelhive.common.communication.UDPServer;
-import pl.gda.pg.eti.kernelhive.common.communication.UDPServerListener;
 
-public class ClusterManager implements TCPServerListener, UDPServerListener {	
-	
-	//private final String clusterDataHostname = "hive-cluster";
-	//private final String clusterTcpHostname = "hive-cluster";
+public class ClusterManager {
+
+	private static final Logger logger = Logger.getLogger(ClusterManager.class.getName());
+	private static final int UPDATE_PERIOD = 30 * 1000;   // every 30s
+	private static final int TCP_PORT = 31338;
+	private static final int DATA_PORT = 31339;
+	private static final int UDP_PORT = 31340;
+	private static final int MONITORING_UDP_PORT = 31341;
+	private String engineHostname;
 	private String clusterHostname;
-	private final int clusterTCPPort = 31338;
-	private final int clusterDataPort = 31339;
-	private final int clusterUDPPort = 31340;	
-
-	private Hashtable<SocketChannel, UnitProxy> unitsMap = new Hashtable<SocketChannel, UnitProxy>();
-	
 	private Cluster cluster;
 	private ClusterBean clusterBean;
 	private DataPublisher dataPublisher;
-		
+	private UnitServer unitServer;
+	private MonitoringServer monitoringServer;
+	private RunnerServer runnerServer;
+	private JobRunner jobRunner;
+	private Timer clusterUpdateTimer = new Timer();
+
 	public ClusterManager(String clusterHostname, String engineHostname) {
+		this.engineHostname = engineHostname;
 		this.clusterHostname = clusterHostname;
-		 this.cluster = new Cluster(clusterTCPPort, clusterDataPort, clusterUDPPort, clusterHostname);
+
+		this.setClusterBean();
+
+		cluster = new Cluster(TCP_PORT, DATA_PORT, UDP_PORT, clusterHostname);
+		updateClusterInEngine(true);
+	}
+
+	private void initClusterManager() {
+		dataPublisher = new DataPublisher(new NetworkAddress(clusterHostname, DATA_PORT));
+		unitServer = new UnitServer(clusterHostname, TCP_PORT, cluster, clusterBean);
+		monitoringServer = new MonitoringServer(MONITORING_UDP_PORT, cluster);
+		runnerServer = new RunnerServer(UDP_PORT, clusterBean);
+		jobRunner = new JobRunner(cluster, clusterBean, unitServer, dataPublisher);
+
 		try {
-			TCPServer unitServer = new TCPServer(new NetworkAddress(clusterHostname, clusterTCPPort), this);
-			dataPublisher = new DataPublisher(new NetworkAddress(clusterHostname, clusterDataPort));
-			UDPServer runnerServer = new UDPServer(clusterUDPPort, this);
-			//dataPublisher.publish(13, new byte[9]);
-		} catch (CommunicationException e) {
-			// TODO: Exit gracefully
-			e.printStackTrace();
+			unitServer.start();
+			runnerServer.start();
+			dataPublisher.start();
+			monitoringServer.start();
+		} catch (CommunicationException ex) {
+			logger.log(Level.SEVERE, "Error while starting one of the servers", ex);
+			try {
+				unitServer.stop();
+			} catch (CommunicationException e) {
+				logger.log(Level.SEVERE, "Error while stopping UnitServer", ex);
+			}
+			try {
+				dataPublisher.stop();
+			} catch (CommunicationException ex1) {
+				Logger.getLogger(ClusterManager.class.getName()).log(Level.SEVERE, null, ex1);
+			}
+			runnerServer.stop();
+			monitoringServer.stop();
+			return;
 		}
 
-		ClusterBeanService cbs;
+		jobRunner.run();
+
+		clusterUpdateTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				logger.info("Timer run 1");
+				updateClusterInEngine(true);
+			}
+		}, UPDATE_PERIOD);
+	}
+
+	private void setClusterBean() {
 		try {
-			cbs = new ClusterBeanService(new URL("http://" + engineHostname +":8080/ClusterBeanService/ClusterBean?wsdl"), new QName("http://engine.kernelhive.eti.pg.gda.pl/", "ClusterBeanService"));
+			ClusterBeanService cbs = new ClusterBeanService(
+					new URL("http://" + engineHostname + ":8080/ClusterBeanService/ClusterBean?wsdl"),
+					new QName("http://engine.kernelhive.eti.pg.gda.pl/",
+					"ClusterBeanService"));
 			clusterBean = cbs.getClusterBeanPort();
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		}	
-		
-		tryUpdateInEngine();
-		
-		while(true) {
-			//System.out.println("Cluster getJobThread cycle");
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			tryProcessJob();
-		}
-	}
-	
-	private void tryUpdateInEngine() {
-		while(clusterBean == null)
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		updateClusterInEngine(cluster, clusterBean);
-	}
-
-	private void tryProcessJob() {
-		JobInfo jobInfo = tryGetJob(cluster, clusterBean);
-		if(jobInfo != null) {
-			runJob(jobInfo);
-			tryProcessJob();
-		}
-	}
-
-	private void runJob(JobInfo jobInfo) {
-		//System.out.println("Kernel: " + jobInfo.kernelString);
-		UnitProxy proxy = getProxyById(jobInfo.unitID);
-		deployKernel(jobInfo);
-		deployDataIfURL(jobInfo);
-		proxy.runJob(jobInfo);		
-	}
-
-	private void deployKernel(JobInfo jobInfo) {
-		jobInfo.kernelHost = this.cluster.hostname;
-		jobInfo.kernelPort = this.cluster.dataPort;
-		jobInfo.kernelID = dataPublisher.publish(TCPServer.byteBufferToArray(Decoder.encode(jobInfo.kernelString)));		
-	}
-	
-	private void deployDataIfURL(JobInfo jobInfo) {
-		
-		// TODO: error if inputdataUrl and dataString are both not null
-		if(jobInfo.inputDataUrl != null) {
-			System.out.println("Deploying data from " + jobInfo.inputDataUrl);
-			byte[] data = downloadURL(jobInfo.inputDataUrl);
-			jobInfo.dataString = "1 " + clusterHostname + " " + clusterDataPort + " " + dataPublisher.publish(data);
-		}		
-	}
-
-	private UnitProxy getProxyById(int unitID) {
-		for(UnitProxy proxy : unitsMap.values())
-			if(proxy.unit.ID == unitID)
-				return proxy;
-		return null;
-	}
-
-	private JobInfo tryGetJob(Cluster cluster, ClusterBean clusterBean) {
-		if(clusterBean != null) {
-			JobInfo ret = clusterBean.getJob();
-			System.out.println("Got job: " + ret);
-			return ret;
-		}
-		return null;
-	}
-
-	@Override
-	public void onConnection(SocketChannel channel) {
-		
-		System.out.println("Got connection from channel " + channel);	
-		
-	}
-
-	@Override
-	public void onTCPMessage(SocketChannel channel, ByteBuffer messageBuffer) {
-		String message = Decoder.decode(messageBuffer);	
-		
-		System.out.println("Message " + message + " from channel " + channel);		
-		
-		// FIXME: define separators in one place
-		String[] command = message.split(" ", 2);
-		
-		if(command[0].equals("UPDATE")) {
-			commandUpdate(channel, command[1]);
-		}
-		else if(command[0].equals("OVER")) {
-			commandOver(command[1]);
-		}
-		
-	}
-
-	private void commandUpdate(SocketChannel channel, String data) {
-		UnitProxy proxy = unitsMap.get(channel);
-		if(proxy == null) {
-			Unit unit = new Unit(cluster);
-			cluster.unitList.add(unit);
-			proxy = new UnitProxy(channel, unit);
-			unitsMap.put(channel,  proxy);
-		}
-		proxy.unit.update(data);
-		System.out.println("Now we have " + unitsMap.size() + " clients");
-		for(UnitProxy up : unitsMap.values())
-			System.out.println(up.unit);		
-		tryUpdateInEngine();
-	}
-	
-	private void updateClusterInEngine(Cluster cluster, ClusterBean clusterBean) {
-		System.out.println("Updating cluster in engine");
-		clusterBean.update(cluster);
-		System.out.println("Updated cluster in engine");
-	}
-
-	private void commandOver(String message) {
-		String[] command = message.split(" ", 2);
-		int id = Integer.parseInt(command[0]);
-		onJobDone(id, command[1]);		
-	}
-	
-	@Override
-	public void onDisconnection(SocketChannel channel) {
-		
-		System.out.println("Channel " + channel + " disconnected.");
-		if(cluster.unitList.contains(channel))
-			cluster.unitList.remove(unitsMap.get(channel).unit);
-		if(unitsMap.containsKey(channel))
-			unitsMap.remove(channel);
-		System.out.println("Now we have " + unitsMap.size() + " clients");		
-		
-	}
-
-	@Override
-	public void onUDPMessage(String message) {
-		String[] report = message.split(" ", 3);
-		int id = Integer.parseInt(report[0]);		
-		int percent = Integer.parseInt(report[1]);
-		
-		// TODO: Update progress in Job representation
-		//System.out.println("JobID " + id + ": " + percent + "% done.");
-	}
-
-	private void onJobDone(int id, String status) {
-		System.out.println("Job " + id + " over.");				
-		
-		clusterBean.reportOver(id, status);		
-	}
-	
-	private UnitProxy findUnitProxy(Unit unit) {
-		for(UnitProxy proxy : unitsMap.values())
-			if(proxy.unit.equals(unit))
-				return proxy;
-		return null;
-	}
-	
-	private byte[] downloadURL(String urlString)
-	{
-		List<Byte> bytes = new LinkedList<Byte>();
-
-	    URL url;
-		try {
-			url = new URL(urlString);			
-			InputStream is = url.openStream();
-			DataInputStream dis = new DataInputStream(new BufferedInputStream(is));
-			int i = 0;
-			Byte c;
-			while(true) {
-				c = dis.readByte();
-				bytes.add(c);
-			}
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (EOFException eoe) {
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.log(Level.SEVERE, "Error while starting ClusterBeanService", e);
 		}
-	    	
-		System.out.println("Bytes: " + bytes);
-		
-	    return byteListToByteArray(bytes);
-	  }
-
-	private byte[] byteListToByteArray(List<Byte> bytes) {
-		System.out.println("Bytes: " + bytes.size());		
-		byte[] ret = new byte[bytes.size()];
-		
-		int i = 0;
-		for(Byte b : bytes) {
-			ret[i] = b;
-			i++;
-		}
-		
-		return ret;
 	}
 
+	private void updateClusterInEngine(final boolean init) {
+		logger.info("Updating cluster in engine: " + cluster.hostname + " with " + cluster.getUnitList().size() + " units");
+		try {
+			int clusterId = clusterBean.update(cluster);
+			cluster.id = clusterId;
+			logger.info("Updated cluster in engine. Got ID: " + clusterId);
+			if (init) {
+				initClusterManager();
+			}
+			clusterUpdateTimer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					updateClusterInEngine(false);
+				}
+			}, UPDATE_PERIOD);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Error updating cluster in engine. Next try in 3s...", e);
+			clusterUpdateTimer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					updateClusterInEngine(init);
+				}
+			}, 3000);
+		}
+	}
 }

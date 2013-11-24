@@ -13,36 +13,33 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * TODO: TCP buffering
  */
 public class TCPServer implements Runnable {
-	
+
 	// TODO: explain :)
 	public static int MAX_MESSAGE_BYTES = 1492;
-	
+	private static final Logger logger = Logger.getLogger(TCPServer.class.getName());
 	private TCPServerListener listener;
 	private ServerSocketChannel server;
+	private NetworkAddress address;
 	private Selector selector;
-	
-	private Map<SocketChannel, ByteBuffer> buffers = new HashMap<SocketChannel, ByteBuffer>();
-	private Map<SocketChannel, ByteBuffer> commandSizeBuffers = new HashMap<SocketChannel, ByteBuffer>();
-		
-	public TCPServer(NetworkAddress address, TCPServerListener listener) throws CommunicationException {
+	private Map<SocketChannel, ByteBuffer> buffers = new HashMap<>();
+	private Map<SocketChannel, ByteBuffer> commandSizeBuffers = new HashMap<>();
+	private boolean stop = false;
+	private final Thread thread;
+
+	public TCPServer(NetworkAddress address, TCPServerListener listener) {
 		this.listener = listener;
-		
-		try {
-			prepareSocket(address.host, address.port);
-		} catch (IOException e) {
-			throw new CommunicationException(e);
-		}		
-		
-		System.out.println("TCP server starts listening on " + address.host + ":" + address.port + ".");
-		
+		this.address = address;
+
 		// FIXME: Who's responsible for thread management?
-		new Thread(this).start();
-	}	
+		thread = new Thread(this);
+	}
 
 	public static void sendMessage(SocketChannel socketChannel, ByteBuffer message) {
 		message.flip();
@@ -55,42 +52,62 @@ public class TCPServer implements Runnable {
 
 	private void prepareSocket(String host, int port) throws IOException {
 		server = ServerSocketChannel.open();
-		server.configureBlocking(false);	
-		System.out.println("Host " + host + ", port: " + port);
+		server.configureBlocking(false);
 		server.socket().bind(new InetSocketAddress(host, port));
-		
+
 		selector = Selector.open();
 		server.register(selector, SelectionKey.OP_ACCEPT);
 	}
 
 	@Override
 	public void run() {
-		// FIXME: WHEN TO STOP
-		while(true) {
+		stop = false;
+		while (!stop) {
 			try {
 				handleSelector();
-			}
-			catch(IOException e) {
-				e.printStackTrace();				
+			} catch (IOException e) {
+				logger.log(Level.SEVERE, "Error while receiving TCP message", e);
 			}
 		}
+		try {
+			server.close();
+		} catch (IOException e) {
+			logger.log(Level.SEVERE, "Error while closing connection", e);
+		}
 	}
-	
+
+	public void start() throws CommunicationException {
+		try {
+			prepareSocket(address.host, address.port);
+			thread.start();
+			System.out.println("TCP server starts listening on " + address.host + ":" + address.port + ".");
+		} catch (IOException e) {
+			throw new CommunicationException(e);
+		}
+	}
+
+	public void stop() {
+		this.stop = true;
+	}
+
 	private void handleSelector() throws IOException {
 		selector.select();
-		
+
 		Set<SelectionKey> keys = selector.selectedKeys();
 		Iterator<SelectionKey> i = keys.iterator();
-		
-		while(i.hasNext()) {
+
+		while (i.hasNext()) {
 			processKey((SelectionKey) i.next());
-			i.remove();				
+			i.remove();
 		}
 	}
 
 	private void processKey(SelectionKey key) throws IOException {
-		if(key.isAcceptable()) processConnection(key);
-		else if(key.isReadable()) processMessage(key);
+		if (key.isAcceptable()) {
+			processConnection(key);
+		} else if (key.isReadable()) {
+			processMessage(key);
+		}
 	}
 
 	private void processConnection(SelectionKey key) throws IOException {
@@ -99,99 +116,101 @@ public class TCPServer implements Runnable {
 		socketChannel.register(selector, SelectionKey.OP_READ);
 		listener.onConnection(socketChannel);
 	}
-	
+
 	private void processMessage(SelectionKey key) throws IOException {
 		SocketChannel client = (SocketChannel) key.channel();
-		
+
 		try {
 			ByteBuffer incomingBuffer = readBuffer(client);
-			
-			if(buffers.containsKey(client)) {
+
+			if (buffers.containsKey(client)) {
 				ByteBuffer existingBuffer = buffers.get(client);
-				if(completeBuffer(existingBuffer, incomingBuffer)) {
+				if (completeBuffer(existingBuffer, incomingBuffer)) {
 					existingBuffer.rewind();
 					listener.onTCPMessage(client, existingBuffer);
 					buffers.remove(client);
+				} else {
+					return;
 				}
-				else return;
 			}
-						
-			while(incomingBuffer.hasRemaining()) {
+
+			while (incomingBuffer.hasRemaining()) {
 				ByteBuffer commandSizeBuffer = getCommandSizeBuffer(client);
 				commandSizeBuffer.put(incomingBuffer.get());
-				if(commandSizeBuffer.position() < 4)
+				if (commandSizeBuffer.position() < 4) {
 					continue;
+				}
 				commandSizeBuffer.rewind();
 				int commandSize = commandSizeBuffer.getInt();
 				commandSizeBuffer.rewind();
 				//int commandSize = incomingBuffer.getInt();
-				
-				System.out.println("Command size: " + commandSize);
-				
-				if(incomingBuffer.remaining() >= commandSize) {
+
+				// System.out.println("Command size: " + commandSize);
+
+				if (incomingBuffer.remaining() >= commandSize) {
 					listener.onTCPMessage(client, incomingBuffer);
-				}
-				else {
+				} else {
 					ByteBuffer incompleteBuffer = ByteBuffer.allocate(commandSize);
 					incompleteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 					incompleteBuffer.put(incomingBuffer);
 					buffers.put(client, incompleteBuffer);
 				}
-			}			
-		}
-		catch(CommunicationException ce) {
+			}
+		} catch (CommunicationException ce) {
 			return;
 		}
 	}
-	
+
 	private ByteBuffer getCommandSizeBuffer(SocketChannel client) {
-		if(!commandSizeBuffers.containsKey(client)) {
+		if (!commandSizeBuffers.containsKey(client)) {
 			ByteBuffer commandSizeBuffer = ByteBuffer.allocate(4);
 			commandSizeBuffer.order(ByteOrder.LITTLE_ENDIAN);
 			commandSizeBuffers.put(client, commandSizeBuffer);
 			return commandSizeBuffer;
-		} 
-		else return commandSizeBuffers.get(client);
-		
+		} else {
+			return commandSizeBuffers.get(client);
+		}
+
 	}
 
 	/**
-	 * 
-	 * @param toComplete - the Buffer that needs to be completed with position at limit
+	 *
+	 * @param toComplete - the Buffer that needs to be completed with position
+	 * at limit
 	 * @param supplement - the complementary buffer
-	 * @return boolean - true if the complementary buffer was sufficient to complete the toComplete buffer
+	 * @return boolean - true if the complementary buffer was sufficient to
+	 * complete the toComplete buffer
 	 */
 	boolean completeBuffer(ByteBuffer toComplete, ByteBuffer supplement) {
 		int remaining = toComplete.capacity() - toComplete.position();
 		byte[] bytes = new byte[remaining];
-		
+
 		try {
 			supplement.get(bytes);
-		}
-		catch(BufferUnderflowException bue) {
+		} catch (BufferUnderflowException bue) {
 			toComplete.put(supplement);
 			return false;
 		}
-		
+
 		toComplete.put(bytes);
-		
+
 		return true;
 	}
-	
+
 	private ByteBuffer readBuffer(SocketChannel client) throws CommunicationException, IOException {
 		ByteBuffer buffer = prepareEmptyBuffer();
 
 		int bytesRead = client.read(buffer);
-		
-		if(bytesRead <= 0) {
+
+		if (bytesRead <= 0) {
 			client.close();
 			listener.onDisconnection(client);
 			throw new CommunicationException(null);
 		}
-		
+
 		buffer.limit(bytesRead);
 		buffer.rewind();
-		
+
 		return buffer;
 	}
 
@@ -200,7 +219,7 @@ public class TCPServer implements Runnable {
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		return buffer;
 	}
-	
+
 	public static byte[] byteBufferToArray(ByteBuffer buffer) {
 		buffer.rewind();
 		byte[] ret = new byte[buffer.remaining()];

@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.gui.component.JTabContent;
@@ -14,21 +16,20 @@ import pl.gda.pg.eti.kernelhive.gui.networking.ExecutionEngineServiceListenerAda
 import pl.gda.pg.eti.kernelhive.gui.networking.IExecutionEngineService;
 
 /**
- * 
+ *
  * @author marcel
- * 
+ *
  */
 public class InfrastructureBrowser extends JTabContent implements
 		ActionListener {
 
 	private static final long serialVersionUID = 4776693860508469103L;
-
 	private IExecutionEngineService service;
 	private ExecutionEngineServiceListenerAdapter adapter;
 	private final InfrastructureBrowserPanel panel;
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @param title
 	 */
@@ -48,7 +49,7 @@ public class InfrastructureBrowser extends JTabContent implements
 				}
 			};
 		} catch (final ExecutionEngineServiceException e) {
-			e.printStackTrace();
+			Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
 		}
 	}
 
@@ -74,32 +75,26 @@ public class InfrastructureBrowser extends JTabContent implements
 
 	@Override
 	public void redoAction() {
-
 	}
 
 	@Override
 	public void undoAction() {
-
 	}
 
 	@Override
 	public void cut() {
-
 	}
 
 	@Override
 	public void copy() {
-
 	}
 
 	@Override
 	public void paste() {
-
 	}
 
 	@Override
 	public void selectAll() {
-
 	}
 
 	@Override
@@ -116,6 +111,5 @@ public class InfrastructureBrowser extends JTabContent implements
 
 	@Override
 	public void clearSelection() {
-
 	}
 }
