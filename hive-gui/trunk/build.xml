@@ -56,7 +56,7 @@
 			<zipfileset src="jar-in-jar-loader.zip"/>
 			<fileset dir="${build.dir}"/>
 			<zipfileset dir="${lib.dir}" includes="jlfgr-1_0.jar"/>
-			<zipfileset dir="${lib.dir}/jgraphx-1.10" includes="jgraphx.jar"/>
+			<zipfileset dir="${lib.dir}/jgraphx-2.1.0.5" includes="jgraphx.jar"/>
 			<zipfileset dir="${lib.dir}/rsyntaxtextarea_2.0.2" includes="rsyntaxtextarea.jar"/>
 			<!--<fileset dir="${common-build.dir}"/>-->
 			<zipfileset dir="${common-lib.dir}/commons-configuration-1.8" includes="commons-configuration-1.8.jar"/>
