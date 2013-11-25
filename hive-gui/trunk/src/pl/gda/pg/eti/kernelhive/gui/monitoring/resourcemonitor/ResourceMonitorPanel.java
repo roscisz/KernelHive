@@ -72,7 +72,6 @@ public class ResourceMonitorPanel extends JPanel {
 
 	public void addImage(String path) {
 		try {
-			Logger.getLogger(getClass().getName()).severe("add image " + path);
 			BufferedImage bi = ImageIO.read(new URL(path));
 			ImageIcon icon = new ImageIcon(bi);
 			JLabel pictureLabel = new JLabel(icon);
