@@ -30,6 +30,7 @@ public class ClusterManager {
 	private static final int MONITORING_UDP_PORT = 31341;
 	private String engineHostname;
 	private String clusterHostname;
+	private Integer enginePort;
 	private Cluster cluster;
 	private ClusterBean clusterBean;
 	private DataPublisher dataPublisher;
@@ -39,9 +40,10 @@ public class ClusterManager {
 	private JobRunner jobRunner;
 	private Timer clusterUpdateTimer = new Timer();
 
-	public ClusterManager(String clusterHostname, String engineHostname) {
-		this.engineHostname = engineHostname;
+	public ClusterManager(String clusterHostname, String engineHostname, Integer enginePort) {
 		this.clusterHostname = clusterHostname;
+		this.engineHostname = engineHostname;
+		this.enginePort = enginePort;
 
 		this.setClusterBean();
 
@@ -92,7 +94,7 @@ public class ClusterManager {
 	private void setClusterBean() {
 		try {
 			ClusterBeanService cbs = new ClusterBeanService(
-					new URL("http://" + engineHostname + ":8080/ClusterBeanService/ClusterBean?wsdl"),
+					new URL("http://" + engineHostname + ":" + enginePort + "/ClusterBeanService/ClusterBean?wsdl"),
 					new QName("http://engine.kernelhive.eti.pg.gda.pl/",
 					"ClusterBeanService"));
 			clusterBean = cbs.getClusterBeanPort();

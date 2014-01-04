@@ -9,18 +9,19 @@ LOGFILE=hive-cluster.log
 BOOTSTRAP_CLASS=pl.gda.pg.eti.kernelhive.cluster.HiveCluster
 
 #JAVA_HOME=/usr/lib/jvm/java-6-openjdk-i386/
-JAVA_HOME=/usr/lib/jvm/java-7-oracle/
+#JAVA_HOME=/usr/lib/jvm/java-7-oracle/
 
+# CLUSTER_HOSTNAME should be a name recognized by all nodes in the cluster
 CLUSTER_HOSTNAME=127.0.0.1
-ENGINE_HOSTNAME=localhost
-#ARGS="$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME"
+ENGINE_HOSTNAME=apl08.eti.pg.gda.pl
+ENGINE_PORT=9295
 
 set -e
 
 case "$1" in
     start)
         echo -n "Starting $DESC: "
-	if sudo "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "./dist/hive-cluster" "$BOOTSTRAP_CLASS" "$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME"; then
+	if sudo "$DAEMON" -home $JAVA_HOME -pidfile "$PIDFILE" -outfile "$LOGFILE" -errfile "$LOGFILE" -cp "./dist/hive-cluster" "$BOOTSTRAP_CLASS" "$CLUSTER_HOSTNAME" "$ENGINE_HOSTNAME" "$ENGINE_PORT"; then
         	echo "$NAME."
 	else
                 echo "(already running)."

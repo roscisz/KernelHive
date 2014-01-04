@@ -10,6 +10,7 @@ public class HiveCluster implements Daemon {
 
 	private String clusterHostname;
 	private static String engineHostname;
+	private static Integer enginePort;
 	private static final Logger logger = Logger.getLogger(HiveCluster.class.getName());
 
 	/**
@@ -18,10 +19,11 @@ public class HiveCluster implements Daemon {
 	public static void main(String[] args) {
 		try {
 			HiveCluster cluster = new HiveCluster();
+			System.out.println("Args: " + args.toString());
 			parseArguments(args, cluster);
 			cluster.start();
 		} catch (IllegalArgumentException e) {
-			logger.severe("Cluster and engine hostnames should be provided as argument.");
+			logger.severe("Cluster hostname, engine hostname and engine port should be provided as argument.");
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Exception during initialization", e);
 		}
@@ -41,7 +43,7 @@ public class HiveCluster implements Daemon {
 	@Override
 	public void start() throws Exception {
 		System.out.println("SVC START");
-		ClusterManager cm = new ClusterManager(this.clusterHostname, this.engineHostname);
+		ClusterManager cm = new ClusterManager(this.clusterHostname, this.engineHostname, this.enginePort);
 
 		// FIXME:
 		while (true);
@@ -53,11 +55,15 @@ public class HiveCluster implements Daemon {
 	}
 
 	private static void parseArguments(String[] args, HiveCluster instance) throws IllegalArgumentException {
-		if (args.length < 2) {
+		if (args.length < 3) {
 			throw new IllegalArgumentException();
 		}
-		instance.clusterHostname = args[0];
-		engineHostname = args[1];
+		instance.clusterHostname = args[1];
+		System.out.println("Cluster hostname: " + instance.clusterHostname);
+		engineHostname = args[2];
+		System.out.println("Engine hostname: " + engineHostname);
+		enginePort = Integer.parseInt(args[3]);
+		System.out.println("Engine port: " + enginePort);
 	}
 
 	public static String getEngineHostname() {
