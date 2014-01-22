@@ -47,7 +47,7 @@ namespace KernelHive {
 		 * @return a string containing the GPU devices
 		 * 		information
 		 */
-		static std::string getDevicesInfo();
+		std::string getDevicesInfo();
 
 		/**
 		 * Attempts to lookup a device using the provided identifier.
@@ -72,7 +72,7 @@ namespace KernelHive {
 		cl_uint getPlatformsCount();
 
 	private:
-		static OpenClHost instance;
+		static OpenClHost* instance;
 
 		/** The OpenCL platforms on this host. */
 		OpenClPlatform** platforms;

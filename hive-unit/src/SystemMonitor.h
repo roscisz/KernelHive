@@ -13,6 +13,7 @@
 #include "commons/BashRunner.h"
 #include "HostStatus.h"
 #include "BashCommands.h"
+#include "commons/OpenClDevice.h"
 
 using namespace std;
 
@@ -43,6 +44,8 @@ private:
 	void getCpuStats();
 	void getMemoryStats();
 	void getGpuStats();
+
+	GPUStatus* fillWithOpenCLDevices(OpenClDevice* openClDevice, short int id);
 
 	void getCurrentJiffies(vector<unsigned int> *workJiffies, vector<unsigned int> *totalJiffies);
 };

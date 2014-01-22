@@ -15,7 +15,6 @@
 
 #include "commons/OpenClHost.h"
 #include "commons/OpenClPlatform.h"
-#include "commons/OpenClDevice.h"
 #include "Helpers.h"
 
 using namespace std;
@@ -44,32 +43,39 @@ HostStatus* SystemMonitor::createHostStatus() {
 	if(cpuCores == 0)
 		throw std::string("Cannot detect any CPU core");
 
-	short int gpuDevicesCount = 0;
+	short int openclDevicesCount = 0;
 	short int gpuId = 0;
 	OpenClHost* openClHost = OpenClHost::getInstance();
 	OpenClPlatform** openClPlatforms = openClHost->getPlatforms();
 	cl_uint platformsCount = openClHost->getPlatformsCount();
 	for(int i = 0; i < platformsCount; i++) {
-		OpenClDevice** openClDevices = openClPlatforms[i]->getGpuDevices();
-		gpuDevicesCount = openClPlatforms[i]->getGpuDevicesCount();
-		for(int j = 0; j < gpuDevicesCount; j++) {
-			cl_device_id clId = openClDevices[j]->getClDeviceId();
-			cl_uint vendorId = openClDevices[j]->getDeviceVendorId();
-			GPUStatus* gpu = new GPUStatus();
-			gpu->setId(gpuId++);
-			gpu->setTotalMemory(openClDevices[j]->getGlobalMemSize());
-			gpu->setName(openClDevices[j]->getDeviceName());
-			gpu->setVendorName(openClDevices[j]->getDeviceVendor());
-			gpu->setIdentifier(openClDevices[j]->getIdentifier());
-			gpu->setAvailable(openClDevices[j]->getDeviceAvailability());
-			gpus.push_back(gpu);
+		printf("cpus: %d / gpus: %d\n", openClPlatforms[i]->getCpuDevicesCount(), openClPlatforms[i]->getGpuDevicesCount());
+		for (int j = 0; j < openClPlatforms[i]->getCpuDevicesCount(); j++) {
+			gpus.push_back(fillWithOpenCLDevices(openClPlatforms[i]->getCpuDevices()[j], gpuId++));
+		}
+		for (int j = 0; j < openClPlatforms[i]->getGpuDevicesCount(); j++) {
+			gpus.push_back(fillWithOpenCLDevices(openClPlatforms[i]->getGpuDevices()[j], gpuId++));
 		}
 	}
 
 	int memoryTotal = strtol((new BashRunner(BashCommands::TOTAL_MEMORY_STATS_COMMAND))->execute(), NULL, 0);
-
+	printf("total devices: %d\n", gpus.size());
 	hostStatus = new HostStatus(id, cpuCores, memoryTotal, gpus);
 	return hostStatus;
+}
+
+GPUStatus* SystemMonitor::fillWithOpenCLDevices(OpenClDevice* openClDevice, short int id) {
+		cl_device_id clId = openClDevice->getClDeviceId();
+		cl_uint vendorId = openClDevice->getDeviceVendorId();
+		GPUStatus* gpu = new GPUStatus();
+		gpu->setId(id);
+		gpu->setTotalMemory(openClDevice->getGlobalMemSize());
+		printf("device: %s\n", openClDevice->getDeviceName().c_str());
+		gpu->setName(openClDevice->getDeviceName());
+		gpu->setVendorName(openClDevice->getDeviceVendor());
+		gpu->setIdentifier(openClDevice->getIdentifier());
+		gpu->setAvailable(openClDevice->getDeviceAvailability());
+		return gpu;
 }
 
 HostStatus* SystemMonitor::getStatus() {

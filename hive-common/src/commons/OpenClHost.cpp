@@ -1,5 +1,6 @@
 #include <CL/cl.h>
 #include <sstream>
+#include <cstdio>
 
 #include "OpenClHost.h"
 
@@ -18,10 +19,13 @@ namespace KernelHive {
 // 							Static Members									 //
 // ========================================================================= //
 
-	OpenClHost OpenClHost::instance;
+	OpenClHost* OpenClHost::instance;
 
 	/*static*/ OpenClHost* OpenClHost::getInstance() {
-		return &instance;
+		if(instance == NULL) {
+			instance = new OpenClHost();
+		}
+		return instance;
 	}
 
 	/*static*/ std::string OpenClHost::getDevicesInfo() {
@@ -30,8 +34,8 @@ namespace KernelHive {
 		cl_uint counts = 0;
 		cl_uint count = 0;
 		OpenClDevice** devices;
-		OpenClPlatform** platforms = instance.getPlatforms();
-		for (cl_uint i = 0; i < instance.getPlatformsCount(); i++) {
+		OpenClPlatform** platforms = getPlatforms();
+		for (cl_uint i = 0; i < getPlatformsCount(); i++) {
 #ifdef USE_GPU
 			count = platforms[i]->getGpuDevicesCount();
 			if (count > 0) {
@@ -59,7 +63,7 @@ namespace KernelHive {
 			}
 #endif
 #ifndef SINGLE_TYPE
-			if (i + 1 < instance.getPlatformsCount()) {
+			if (i + 1 < getPlatformsCount()) {
 				stream << OpenClPlatform::DEVICES_INFO_SEPARATOR;
 			}
 #endif
@@ -80,12 +84,14 @@ namespace KernelHive {
 		cl_uint count = getAvailablePlatformsCount();
 		cl_platform_id* ids = new cl_platform_id[count];
 		getAvailablePlatformIds(ids, count);
-
+printf("OpenClHost init\n");
 		platforms = new OpenClPlatform*[count];
 		platformsCount = count;
+		printf("platforms: %d\n", count);
 		for (cl_uint i = 0; i < count; i++) {
 			platforms[i] = new OpenClPlatform(ids[i]);
 			OpenClDevice** devices = platforms[i]->getCpuDevices();
+			printf("cpus: %d\n", platforms[i]->getCpuDevicesCount());
 			for (cl_uint j = 0; j < platforms[i]->getCpuDevicesCount(); j++) {
 				devicesMap[devices[j]->getIdentifier()].push_back(devices[j]);
 			}

@@ -89,7 +89,7 @@
 		<java classname="${main.class}" failonerror="true" fork="true">
 			<classpath refid="execute-classpath"/>
 			<arg value="ubuntu-pc"/>
-			<arg value="szymonb.com.pl"/>
+			<arg value="ubuntu-pc"/>
 		</java>   
 	</target>
 
