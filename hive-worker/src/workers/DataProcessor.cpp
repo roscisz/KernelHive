@@ -52,12 +52,13 @@ const char* DataProcessor::getKernelName() {
 }
 
 void DataProcessor::initSpecific(char *const argv[]) {
+
 	// TODO For processor only - skip the number of inputs:
 	nextParam(argv);
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	dataId = nextParam(argv);
 	dataIdInt = KhUtils::atoi(dataId.c_str());
-
+	
 	// TODO For processor only - skip the number of outputs:
 	nextParam(argv);
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
@@ -65,22 +66,26 @@ void DataProcessor::initSpecific(char *const argv[]) {
 	buffers[dataIdInt] = new SynchronizedBuffer();
 	resultBuffer = new SynchronizedBuffer(outputSize);
 
-	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
+	downloaders[dataIdInt] = new DataDownloaderGridFs(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
-	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
+	downloaders[kernelDataIdInt] = new DataDownloaderTCP(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
+	
+	Logger::log(DEBUG, "(processor) >>> PROCESSOR INIT SPECIFIC END\n");
 }
 
 void DataProcessor::workSpecific() {
 	runAllDownloads(); // Download data and the kernel
 
 	// Wait for the data to be ready
+	Logger::log(DEBUG, "(processor) >>> PROCESSOR BEFORE WAIT FOR DOWNLOADS\n");
 	waitForAllDownloads();
+	Logger::log(DEBUG, "(processor) >>> PROCESSOR AFTER WAIT FOR DOWNLOADS\n");
 	setPercentDone(40);
 
 	size_t size = buffers[dataIdInt]->getSize();
 
-	Logger::log(DEBUG, "(processor) >>> PROCESSOR BEFORE COMPUTE");
+	Logger::log(DEBUG, "(processor) >>> PROCESSOR BEFORE COMPUTE\n");
 	buffers[dataIdInt]->logMyFloatData();
 
 	SynchronizedBuffer* previewBuffer = new SynchronizedBuffer(outputSize * sizeof(PreviewObject));

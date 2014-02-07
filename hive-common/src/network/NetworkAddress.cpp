@@ -9,6 +9,8 @@
 #include <string.h>
 #include "NetworkAddress.h"
 
+namespace KernelHive {
+
 NetworkAddress::NetworkAddress(char *host, int port) {
 	this->host = host;
 	this->port = port;
@@ -27,4 +29,6 @@ const char* NetworkAddress::toString() {
 	char buff[100];
 	sprintf(buff, "%s:%d", host, port);
 	return buff;
+}
+
 }

@@ -113,6 +113,8 @@ const void BasicWorker::getAllUploadIDStrings(std::string* param) {
 void BasicWorker::init(char *const argv[]) {
 	deviceId = nextParam(argv);
 	std::replace(deviceId.begin(), deviceId.end(), '+', ' ');
+	
+	std::cout << deviceId;
 
 	device = OpenClHost::getInstance()->lookupDevice(deviceId);
 	if (device == NULL) {

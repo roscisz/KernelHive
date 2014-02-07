@@ -18,11 +18,11 @@ class LoopedThread : public Thread {
 public:
 	LoopedThread();
 	virtual ~LoopedThread();
+	void run();
 protected:
 	virtual void executeLoopCycle() = 0;
 	void pleaseStop();
 private:
-	void run();
 	bool stopFlag;
 	pthread_mutex_t stopMutex;
 };

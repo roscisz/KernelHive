@@ -1,4 +1,5 @@
 #include <CL/cl.h>
+#include <cstdio>
 #include <sstream>
 #include <cstdio>
 

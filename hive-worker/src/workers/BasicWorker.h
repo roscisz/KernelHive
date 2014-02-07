@@ -8,12 +8,12 @@
 #include "commons/OpenClDevice.h"
 #include "commons/ExecutionContext.h"
 #include "threading/SynchronizedBuffer.h"
-#include "../communication/DataDownloader.h"
+#include "../communication/DataDownloaderTCP.h"
 #include "../communication/IDataUploader.h"
 
 namespace KernelHive {
 
-typedef std::map<int, DataDownloader *> DownloaderMap;
+typedef std::map<int, IDataDownloader *> DownloaderMap;
 typedef std::vector<IDataUploader *> UploaderList;
 typedef std::map<int, SynchronizedBuffer *> DataBufferMap;
 

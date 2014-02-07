@@ -10,6 +10,8 @@
 
 #define MAX_HOSTPORT_SIZE 50
 
+namespace KernelHive {
+
 class NetworkAddress {
 public:
 	NetworkAddress(char *host, int port);
@@ -21,5 +23,7 @@ public:
 	int port;
 
 };
+
+}
 
 #endif /* NETWORKADDRESS_H_ */

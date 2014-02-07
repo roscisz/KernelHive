@@ -3,7 +3,8 @@
 
 #include "BasicWorker.h"
 #include "threading/SynchronizedBuffer.h"
-#include "../communication/DataDownloader.h"
+#include "../communication/DataDownloaderTCP.h"
+#include "../communication/DataDownloaderGridFs.h"
 
 namespace KernelHive {
 

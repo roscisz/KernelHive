@@ -105,10 +105,10 @@ void DataMerger::initSpecific(char *const argv[]) {
 		dataIds[i] = new std::string(nextParam(argv));
 		dataIdsInt[i] = KhUtils::atoi(dataIds[i]->c_str());
 		buffers[dataIdsInt[i]] = new SynchronizedBuffer();
-		downloaders[dataIdsInt[i]] = new DataDownloader(inputDataAddresses[i],
+		downloaders[dataIdsInt[i]] = new DataDownloaderTCP(inputDataAddresses[i],
 			dataIds[i]->c_str(), buffers[dataIdsInt[i]]);
 	}
-	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
+	downloaders[kernelDataIdInt] = new DataDownloaderTCP(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 
 	// TODO For merger only - skip the number of outputs:

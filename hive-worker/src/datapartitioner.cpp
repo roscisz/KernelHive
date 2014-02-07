@@ -29,6 +29,3 @@ int main(int argc, char** argv) {
 		std::cout << e.getMessage() << std::endl;
 	}
 }
-
-
-

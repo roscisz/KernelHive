@@ -7,7 +7,8 @@ include_directories( "${PROJECT_SOURCE_DIR}/hive-common/src" )
 
 # Build the hive worker library
 add_library( hiveworker SHARED ${sources} )
-target_link_libraries( hiveworker hivecommons )
+#target_link_libraries( hiveworker hivecommons mongo-client )
+target_link_libraries( hiveworker mongoclient boost_thread-mt boost_system boost_filesystem crypto ssl)
 
 # Build the executables, link the built commons library to them
 add_executable( SampleWorker "src/hive-worker.cpp" )
@@ -28,4 +29,10 @@ add_executable( DataPartitioner "src/datapartitioner.cpp" )
 target_link_libraries( DataPartitioner hiveworker )
 target_link_libraries( DataPartitioner hivecommons )
 target_link_libraries( DataPartitioner pthread )
+
+add_executable( DataServerTester "src/dataservertester.cpp" )
+target_link_libraries( DataServerTester hiveworker )
+target_link_libraries( DataServerTester hivecommons )
+target_link_libraries( DataServerTester pthread )
+target_link_libraries( DataServerTester mongoclient)
 

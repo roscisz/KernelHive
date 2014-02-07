@@ -128,10 +128,10 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	std::cout << ">>> output address ready: " << outputDataAddress->toString() << std::endl;
 
-	downloaders[dataIdInt] = new DataDownloader(inputDataAddress,
+	downloaders[dataIdInt] = new DataDownloaderTCP(inputDataAddress,
 			dataId.c_str(), buffers[dataIdInt]);
 
-	downloaders[kernelDataIdInt] = new DataDownloader(kernelAddress,
+	downloaders[kernelDataIdInt] = new DataDownloaderTCP(kernelAddress,
 			kernelDataId.c_str(), buffers[kernelDataIdInt]);
 }
 
