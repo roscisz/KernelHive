@@ -41,7 +41,7 @@ public class InputDataPanel extends JPanel {
 
 		btnValidate = new JButton("Validate");
 		btnValidate.setBounds(335, 34, 93, 25);
-		add(btnValidate);
+		//add(btnValidate);
 
 		comboBox = new JComboBox();
 		comboBox.setEditable(true);

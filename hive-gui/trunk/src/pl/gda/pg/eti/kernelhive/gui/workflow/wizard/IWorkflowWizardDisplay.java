@@ -12,6 +12,6 @@ public interface IWorkflowWizardDisplay {
 	int displayWizard() throws WorkflowWizardDisplayException;
 	char[] getPassword();
 	String getUsername();
-	URL getInputDataUrl();
+	String getInputDataUrl();
 	
 }

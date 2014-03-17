@@ -61,12 +61,7 @@ public class WorkflowWizardDisplay implements IWorkflowWizardDisplay {
 	}
 	
 	@Override
-	public URL getInputDataUrl(){
-		try {
-			return new URL(((InputDataPanel)desc2.getPanelComponent()).getInputDataUrlString());
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public String getInputDataUrl(){
+		return ((InputDataPanel)desc2.getPanelComponent()).getInputDataUrlString();
 	}
 }

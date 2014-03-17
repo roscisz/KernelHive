@@ -35,7 +35,8 @@ public class InputDataPanelDescriptor extends WizardPanelDescriptor implements
 
 	@Override
 	public void aboutToDisplayPanel() {
-		getWizard().setNextFinishButtonEnabled(false);
+		// FIXME: turned off validation
+		getWizard().setNextFinishButtonEnabled(true);
 	}
 
 	@Override

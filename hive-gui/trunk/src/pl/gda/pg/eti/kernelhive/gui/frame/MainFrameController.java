@@ -553,8 +553,7 @@ public class MainFrameController {
 						"Send Workflow To Execution", project);
 				if (wizardDisplay.displayWizard() == IWorkflowWizardDisplay.WIZARD_FINISH_RETURN_CODE) {
 					engConfig.setProjectName(project.getProjectName());
-					engConfig.setInputDataURL(wizardDisplay.getInputDataUrl()
-							.toExternalForm());
+					engConfig.setInputDataURL(wizardDisplay.getInputDataUrl());
 					engConfig.saveGraphForEngine(GraphNodeDecoratorConverter
 							.convertGuiToEngine(project.getProjectNodes()), w);
 					final byte[] graphStream = w.getBuffer().toString()

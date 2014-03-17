@@ -55,6 +55,7 @@ public class WorkflowExecution implements IWorkflowExecution {
 
 	@Override
 	public void submitForExecution() {
+//		System.out.println(new String(graphStream));
 		if(graphStream!=null&&service!=null){
 			service.submitWorkflow(new String(graphStream), serviceAdapter);
 		}	
