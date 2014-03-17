@@ -1,7 +1,0 @@
-Projekt KH-common-java bedzie zawieral w sobie nastepujace rzeczy:
-1. pliki openCL z kernelami
-2. definicje klas poszczegolnych typow wezlow
-3. fabryke do tworzenia nowych instancji powyzszych wezlow, powiazanych z kernelami
-4. klase z metodami odczytujacymi/zapisujacymi graf z/do pliku XML
-
-Powyzsza lista jest oczywiscie otwarta.
