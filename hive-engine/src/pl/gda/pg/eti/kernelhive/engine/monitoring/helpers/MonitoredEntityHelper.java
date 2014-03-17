@@ -18,8 +18,6 @@ import pl.gda.pg.eti.kernelhive.engine.monitoring.MonitoredEntity;
  */
 public class MonitoredEntityHelper {
 
-	private static final String HOSTNAME = "szymonb.com.pl";
-
 	private MonitoredEntityHelper() {
 	}
 

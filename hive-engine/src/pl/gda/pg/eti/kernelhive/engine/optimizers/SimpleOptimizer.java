@@ -17,11 +17,11 @@ public class SimpleOptimizer implements IOptimizer {
 
 	@Override
 	public List<Job> processWorkflow(Workflow workflow, Collection<Cluster> infrastructure) {
-		List<EngineJob> readyJobs = workflow.getReadyJobs();
+		List<EngineJob> readyJobs = workflow.getJobsByState(Job.JobState.READY);
 		List<Job> scheduledJobs = new ArrayList<>();
 
 		for (Job readyJob : readyJobs) {
-			//System.out.println("Trying to schedule job " + readyJob.ID);
+			System.out.println("Trying to schedule job " + readyJob.getId());
 			for (Device device : HiveEngine.getAvailableDevices(infrastructure)) {
 				if (!device.isBusy()) {
 					readyJob.schedule(device);

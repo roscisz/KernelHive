@@ -27,7 +27,7 @@ public class EnergyOptimizer implements IOptimizer {
 
 	@Override
 	public List<Job> processWorkflow(Workflow workflow, Collection<Cluster> infrastructure) {
-		List<EngineJob> readyJobs = workflow.getReadyJobs();
+		List<EngineJob> readyJobs = workflow.getJobsByState(Job.JobState.READY);
 		List<Job> scheduledJobs = new ArrayList<Job>();
 		
 		List<Device> chosenDevices = chooseDevices(infrastructure);

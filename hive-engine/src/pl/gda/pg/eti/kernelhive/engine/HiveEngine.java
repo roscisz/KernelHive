@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.print.attribute.standard.JobState;
+
 import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.JobProgress;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
@@ -33,6 +35,7 @@ import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.ClusterDefinition;
 import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.DeviceDefinition;
 import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.UnitDefinition;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.EnergyOptimizer;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.PrefetchingOptimizer;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 
 public class HiveEngine {
@@ -55,7 +58,8 @@ public class HiveEngine {
 
 	private HiveEngine() {
 		//this.optimizer = new EnergyOptimizer(new GreedyKnapsackSolver());
-		this.optimizer = new SimpleOptimizer();
+		//this.optimizer = new SimpleOptimizer();
+		this.optimizer = new PrefetchingOptimizer(new SimpleOptimizer());
 	}
 
 	public static synchronized HiveEngine getInstance() {
@@ -169,20 +173,6 @@ public class HiveEngine {
 	private void processWorkflow(Workflow workflow) {
 		LOG.log(Level.INFO, "Processing workflow {0}", workflow.getId());
 
-		//List<Job> readyJobs = new SimpleOptimizer().processWorkflow(workflow, clusters.values());
-
-		/*
-		 List<EngineJob> readyJobs = workflow.getReadyJobs();
-		
-		 for(Job job : readyJobs)
-		 job.run();
-		 if(readyJobs.size() == 0) {
-		 if(workflow.checkFinished())
-		 ; // przygotowujemy wyniki do pobrania
-		 else
-		 ; // coś się zablokowało
-		 }*/
-
 		List<Job> scheduledJobs = optimizer.processWorkflow(workflow, clusters.values());
 
 		for (Job job : scheduledJobs) {
@@ -195,12 +185,13 @@ public class HiveEngine {
 			 if(energyLimit <= 2000)
 			 runWorkflow(nodes, projectName, inputDataURL);
 			 }
-			 else*/ job.run();
+			 else*/
+			job.run();
 		}
 	}
 
 	public void cleanup() {
-		// TODO: jeżeli któryś job za długo nie odpowiada to najpierw włącz mu tryb nie odpowiada, a potem wywal
+		// TODO: timeout
 		for (Workflow workflow : workflows.values()) {
 			processWorkflow(workflow);
 		}
@@ -243,43 +234,61 @@ public class HiveEngine {
 		LOG.info(String.format("ON progress job %d, progress %d", jobID, progress));
 		EngineJob job = getJobByID(jobID);
 		if (job != null) {
-			job.progress = progress;
+			Job.JobState stateBefore = job.state;
+			job.setProgress(progress);
+			if(job.state != stateBefore)
+				processWorkflow(job.workflow);
 		}
 	}
 
 	public void onJobOver(int jobID, String returnData) {
-		LOG.warning(String.format("JOB OVER %d, %s", jobID, returnData));
-
 		EngineJob jobOver = getJobByID(jobID);
+		
+		if(jobOver.state == Job.JobState.PREFETCHING)
+			onPrefetchingOver(jobOver, returnData);
+		else onProcessingOver(jobOver, returnData);
+	}
+	
+	private void onProcessingOver(EngineJob jobOver, String returnData) {
+			
+		LOG.warning(String.format("JOB OVER %d, %s", jobOver.getId(), returnData));
+		
 		if (jobOver != null) {
 			jobOver.finish();
 
-			List<DataAddress> resultAddresses = parseResults(returnData);
+			List<DataAddress> resultAddresses = Job.parseAddresses(returnData);
 			Iterator<DataAddress> dataIterator = resultAddresses.iterator();
 
 			jobOver.workflow.debugTime();
 
-			if (jobOver.followingJobs.isEmpty()) {
+			if (jobOver.workflow.getJobsByState(pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState.FINISHED).size() ==
+					jobOver.workflow.getJobs().keySet().size()) {
 				deployResults(jobOver.workflow, dataIterator);
 			} else {
 				jobOver.tryCollectFollowingJobsData(dataIterator);
 				processWorkflow(jobOver.workflow);
 			}
 		} else {
-			LOG.warning(String.format("Job %d not found", jobID));
+			LOG.warning(String.format("Job %d not found", jobOver.getId()));
 		}
+	}
+	
+	private void onPrefetchingOver(EngineJob jobOver, String returnData) {
+		System.out.println(jobOver.getId() + " - Prefetching over");
+		jobOver.finishPrefetching(Job.getAddressesForDataString(returnData));
 	}
 
 	private void deployResults(Workflow finishingWorkflow, Iterator<DataAddress> dataIterator) {
-		DataAddress resultAddress = dataIterator.next();
+		/*DataAddress resultAddress = dataIterator.next();
 		byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);
 		finishingWorkflow.finish(resultDownloadURL + deployResult(result));
+		*/
 
 		//DataAddress resultAddress = dataIterator.next();
 		//byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);		
 		//finishingWorkflow.finish(resultDownloadURL + deployResult(result));
 
-		finishingWorkflow.finish("test");
+		finishingWorkflow.finish("" + finishingWorkflow.getDebugTime());
 		System.out.println(finishingWorkflow.info.result);
 	}
 
@@ -312,25 +321,7 @@ public class HiveEngine {
 		}
 		return null;
 	}
-
-	private List<DataAddress> parseResults(String returnData) {
-		List<DataAddress> ret = new ArrayList<>();
-
-		String[] addresses = returnData.split(" ");
-
-		int nAddresses = addresses.length / 3;
-
-		for (int i = 0; i != nAddresses; i++) {
-			DataAddress newAddress = new DataAddress();
-			newAddress.hostname = addresses[3 * i];
-			newAddress.port = Integer.parseInt(addresses[3 * i + 1]);
-			newAddress.ID = Integer.parseInt(addresses[3 * i + 2]);
-			ret.add(newAddress);
-		}
-
-		return ret;
-	}
-
+	
 	public static int queryFreeDevicesNumber() {
 		int ret = 0;
 		for (Cluster cluster : instance.clusters.values()) {
