@@ -123,7 +123,7 @@ public class UnitServer implements TCPServerListener {
 		onJobDone(id, command[1]);
 	}
 
-	private void onJobDone(int id, String status) {
+	public void onJobDone(int id, String status) {
 		LOGGER.info(String.format("Job %d over.", id));
 
 		boolean succeded = false;

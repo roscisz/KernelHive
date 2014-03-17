@@ -10,13 +10,16 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
 import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
 import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
 import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
 import pl.gda.pg.eti.kernelhive.common.communication.DataPublisher;
 import pl.gda.pg.eti.kernelhive.common.communication.Decoder;
 import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
@@ -68,6 +71,12 @@ public class JobRunner {
 	}
 
 	private void runJob(JobInfo jobInfo) {
+		if(jobInfo.state == Job.JobState.PREFETCHING)
+			runPrefetching(jobInfo);
+		else runJobOnUnit(jobInfo);
+	}
+		
+	private void runJobOnUnit(JobInfo jobInfo) {
 		//System.out.println("Kernel: " + jobInfo.kernelString);
 		Logger.getLogger(getClass().getName()).info("run job for unit id: " + jobInfo.unitID);
 		UnitProxy proxy = unitServer.getProxy(jobInfo.unitID);
@@ -78,6 +87,17 @@ public class JobRunner {
 		deployKernel(jobInfo);
 		deployDataIfURL(jobInfo);
 		proxy.runJob(jobInfo);
+	}
+	
+	private void runPrefetching(JobInfo jobInfo) {
+		logger.info("Running prefetching for job " + jobInfo.ID);
+		Unit destUnit = unitServer.getProxy(jobInfo.unitID).getUnit();
+		try {
+			//new Thread(new DataPrefetcher(jobInfo, destUnit.getHostname(), destUnit.getDataServerPort(), clusterBean)).run();
+			new Thread(new DataPrefetcher(jobInfo, "172.20.0.75", 27017, unitServer)).run();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void deployKernel(JobInfo jobInfo) {
