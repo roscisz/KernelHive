@@ -32,9 +32,6 @@ UnitManager::UnitManager(char *clusterHostname, SystemMonitor* systemMonitor) {
 		exit(EXIT_FAILURE);
 	}
 	ThreadManager::Get()->runThread(clusterProxy);
-
-	//DataPublisher *dataPublisher = new DataPublisher(new NetworkAddress("hive-cluster", 31350));
-	//dataPublisher->publish(123, "DANE PRZYKLADOWE C++");
 }
 
 UnitManager::~UnitManager() {
