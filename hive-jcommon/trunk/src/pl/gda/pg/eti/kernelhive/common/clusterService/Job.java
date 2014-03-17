@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import pl.gda.pg.eti.kernelhive.common.clusterService.Device.DeviceType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
@@ -13,10 +14,12 @@ import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
 public class Job extends HasID {
 
 	public enum JobState {
-
 		PENDING,
 		READY,
+		PREFETCHING,
+		PREFETCHING_FINISHED,
 		SCHEDULED,
+		PREPARING,
 		PROCESSING,
 		FINISHED
 	}
@@ -45,11 +48,15 @@ public class Job extends HasID {
 
 	private String getGlobalSizes() {
 		int[] globalSizes = getAssignedKernel().getGlobalSize();
+		if(this.device.getDeviceType() == DeviceType.CPU)
+			return "8 1 1";
 		return concatKernelAttrs(globalSizes);
 	}
 
 	private String getLocalSizes() {
 		int[] localSizes = getAssignedKernel().getLocalSize();
+		if(this.device.getDeviceType() == DeviceType.CPU)
+			return "1 1 1";
 		return concatKernelAttrs(localSizes);
 	}
 
@@ -58,20 +65,7 @@ public class Job extends HasID {
 	}
 
 	private String getDataString() {
-		StringBuilder ret = new StringBuilder();
-
-		ret.append(numData);
-
-		for (DataAddress da : dataAddresses) {
-			ret.append(" ")
-					.append(da.hostname)
-					.append(" ")
-					.append(da.port)
-					.append(" ")
-					.append(da.ID);
-		}
-
-		return ret.toString();
+		return numData + serializeAddresses(dataAddresses);
 	}
 
 	private String concatKernelAttrs(int[] attrs) {
@@ -127,8 +121,13 @@ public class Job extends HasID {
 	}
 
 	public void run() {
+		this.state = JobState.PREPARING;
 		this.device.getUnit().cluster.runJob(this);
-		this.state = JobState.PROCESSING;
+	}
+	
+	public void runPrefetching() {
+		this.state = JobState.PREFETCHING;
+		this.device.getUnit().cluster.runJob(this);
 	}
 
 	public void schedule(Device device) {
@@ -138,8 +137,6 @@ public class Job extends HasID {
 	}
 
 	public JobInfo getJobInfo() {
-		// TODO: assert state
-
 		JobInfo ret = new JobInfo();
 
 		ret.unitID = getUnitId();
@@ -159,6 +156,7 @@ public class Job extends HasID {
 		ret.jobType = getJobType();
 		ret.nOutputs = nOutputs;
 		ret.resultDataHost = getResultDataHost();
+		ret.state = this.state;
 
 		System.out.println("Setting inputDataUrl " + inputDataUrl);
 		ret.inputDataUrl = inputDataUrl;
@@ -167,6 +165,7 @@ public class Job extends HasID {
 	}
 
 	protected IKernelString getAssignedKernel() {
+		// TODO: many kernels for one job?
 		return this.node.getKernels().get(0);
 	}
 
@@ -186,10 +185,15 @@ public class Job extends HasID {
 			getReady();
 		}
 	}
-
+	
 	public void finish() {
 		this.state = JobState.FINISHED;
 		this.device.busy = false;
+	}
+	
+	public void finishPrefetching(List<DataAddress> prefetchedAddresses) {
+		this.dataAddresses = prefetchedAddresses;		
+		this.state = JobState.PREFETCHING_FINISHED;
 	}
 
 	public boolean canBeScheduledOn(Device device) {
@@ -198,5 +202,51 @@ public class Job extends HasID {
 
 	protected void getReady() {
 		this.state = JobState.READY;
+	}
+	
+	public void setProgress(int progress) {
+		this.progress = progress;
+		// TODO: change progress to enum
+		if(progress >= 40)
+			this.state = JobState.PROCESSING;		
+		if(progress == 100)
+			this.finish();
+	}
+	
+	public static List<DataAddress> parseAddresses(String returnData) {
+		List<DataAddress> ret = new ArrayList<>();
+
+		String[] addresses = returnData.split(" ");
+
+		int nAddresses = addresses.length / 3;
+
+		for (int i = 0; i != nAddresses; i++) {
+			DataAddress newAddress = new DataAddress();
+			newAddress.hostname = addresses[3 * i];
+			newAddress.port = Integer.parseInt(addresses[3 * i + 1]);
+			newAddress.ID = Integer.parseInt(addresses[3 * i + 2]);
+			ret.add(newAddress);
+		}
+
+		return ret;
+	}
+	
+	public static String serializeAddresses(List<DataAddress> dataAddresses) {		
+		StringBuilder ret = new StringBuilder();
+		
+		for (DataAddress da : dataAddresses) {
+			ret.append(" ")
+					.append(da.hostname)
+					.append(" ")
+					.append(da.port)
+					.append(" ")
+					.append(da.ID);
+		}
+		
+		return ret.toString();		
+	}
+	
+	public static List<DataAddress> getAddressesForDataString(String dataString) {
+		return parseAddresses(dataString.split(" ", 2)[1]);
 	}
 }

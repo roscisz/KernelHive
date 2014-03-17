@@ -26,6 +26,7 @@ public class JobInfo {
 	public String dataString;
 	public int nOutputs;
 	public String resultDataHost;
+	public Job.JobState state;
 	
 	@Override
 	public String toString() {	

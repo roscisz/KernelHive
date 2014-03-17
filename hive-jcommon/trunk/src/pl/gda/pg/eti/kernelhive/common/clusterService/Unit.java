@@ -22,6 +22,7 @@ public class Unit {
 	private String hostname;
 	private int memorySize;
 	private int cpuCores;
+	private int dataServerPort = 27017;
 
 	public Unit() {
 	}
@@ -161,5 +162,13 @@ public class Unit {
 			}
 		}
 		devices = newDevices;
+	}
+
+	public int getDataServerPort() {
+		return dataServerPort;
+	}
+
+	public void setDataServerPort(int dataServerPort) {
+		this.dataServerPort = dataServerPort;
 	}
 }
