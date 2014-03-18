@@ -1,9 +1,22 @@
-/*
- * DataDownloaderGridFs.cpp
+/**
+ * Copyright (c) 2014 Gdansk University of Technology
+ * Copyright (c) 2014 Pawel Rosciszewski
  *
- *  Created on: 18-01-2014
- *      Author: roy
+ * This file is part of KernelHive.
+ * KernelHive is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * KernelHive is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
+// FIXME: mongo hack, sometimes needed
 //#define MONGO_BOOST_TIME_UTC_HACK
 
 #include "DataDownloaderGridFs.h"
@@ -22,32 +35,21 @@ DataDownloaderGridFs::DataDownloaderGridFs(NetworkAddress *serverAddress, const 
 void DataDownloaderGridFs::run() {
 
 	mongo::DBClientConnection connection;
-	//mongo::HostAndPort address(this->serverAddress->host, this->serverAddress->port);
 	connection.connect(this->serverAddress->host);
 	connection.auth(BSON("user" << "hive-dataserver" <<
 				"userSource" << "hive-dataserver" <<
 				"pwd" << "hive-dataserver" <<
 				"mechanism" << "MONGODB-CR"));
-	printf("after connect\n");
 	mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
-//	printf("chunk size: %d\n", database.getChunkSize());
 	
 	mongo::BSONObj query = BSON("_id"<< KhUtils::atoi(dataId));
 	mongo::GridFile gFile=database.findFile(query);
-	printf("test\n");
-	
-	printf("robote %s\n", gFile.getMD5().c_str());
-	printf("chunk size %d\n", gFile.getChunkSize());
-//	gFile.write(std::cout);
-	printf("length %d\n", gFile.getContentLength());
 	
 	std::stringstream ss;
 	gFile.write(ss);
 	
 	this->buffer->allocate(gFile.getContentLength());
 	buffer->append((byte *)ss.str().c_str(), gFile.getContentLength() * sizeof(char));
-	
-//	printf("%d %s\n", buffer->getSize(), buffer->getRawData());
 }
 
 void DataDownloaderGridFs::pleaseStop() {
