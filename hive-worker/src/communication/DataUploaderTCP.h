@@ -20,7 +20,6 @@
 #define KERNEL_HIVE_DATA_UPLOADER_MULTI_H
 
 #include <string>
-
 #include "network/TCPClient.h"
 #include "network/TCPMessage.h"
 #include "network/TCPClientListener.h"
@@ -29,7 +28,7 @@
 
 namespace KernelHive {
 
-class DataUploaderMulti
+class DataUploaderTCP
 	: public IDataUploader, public TCPClientListener {
 
 public:
@@ -39,12 +38,12 @@ public:
 	 * @param address the data repository address
 	 * @param buffer the buffer with data to upload
 	 */
-	DataUploaderMulti(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount);
+	DataUploaderTCP(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount);
 
 	/**
 	 * The destructor
 	 */
-	virtual ~DataUploaderMulti();
+	virtual ~DataUploaderTCP();
 
 	/**
 	 * Called upon receiving data via the socket.
@@ -60,7 +59,13 @@ public:
 
 	void getDataURL(std::string *param);
 
+	void run();
+
+	void pleaseStop();
+
 private:
+	TCPClient *tcpClient;
+
 	/** The initial state. */
 	static const int STATE_INITIAL = 0;
 

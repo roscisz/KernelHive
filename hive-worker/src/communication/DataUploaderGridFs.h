@@ -16,24 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef I_DATA_UPLOADER_H_
-#define I_DATA_UPLOADER_H_
+#ifndef DATAUPLOADERGRIDFS_H_
+#define DATAUPLOADERGRIDFS_H_
 
-#include <string>
-#include "threading/Thread.h"
-#include "network/NetworkAddress.h"
 #include "threading/SynchronizedBuffer.h"
+#include "network/NetworkAddress.h"
+#include "IDataUploader.h"
 
 namespace KernelHive {
 
-class IDataUploader : public Thread {
+class DataUploaderGridFs: public IDataUploader {
 public:
-	IDataUploader(NetworkAddress *serverAddress, SynchronizedBuffer** buffers, int nBuffers) {};
-
-	virtual void getDataURL(std::string *param) = 0;
-
+	DataUploaderGridFs(NetworkAddress *address, SynchronizedBuffer** buffers, int partsCount);
+	virtual ~DataUploaderGridFs();
 };
 
 }
 
-#endif /* I_DATA_UPLOADER */
+#endif /* DATAUPLOADERGRIDFS_H_ */

@@ -36,10 +36,10 @@ void DataDownloaderGridFs::run() {
 
 	mongo::DBClientConnection connection;
 	connection.connect(this->serverAddress->host);
-	connection.auth(BSON("user" << "hive-dataserver" <<
+	/*connection.auth(BSON("user" << "hive-dataserver" <<
 				"userSource" << "hive-dataserver" <<
 				"pwd" << "hive-dataserver" <<
-				"mechanism" << "MONGODB-CR"));
+				"mechanism" << "MONGODB-CR"));*/
 	mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
 	
 	mongo::BSONObj query = BSON("_id"<< KhUtils::atoi(dataId));

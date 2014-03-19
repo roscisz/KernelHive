@@ -21,7 +21,7 @@
 #include <cstring>
 #include <sstream>
 
-#include "DataUploaderMulti.h"
+#include "DataUploaderTCP.h"
 #include "network/TCPClient.h"
 #include "network/TCPClientListener.h"
 #include "network/TCPMessage.h"
@@ -35,9 +35,10 @@ namespace KernelHive {
 // 							Public Members									 //
 // ========================================================================= //
 
-DataUploaderMulti::DataUploaderMulti(NetworkAddress* address,
+DataUploaderTCP::DataUploaderTCP(NetworkAddress* address,
 		SynchronizedBuffer** buffers, int partsCount) :
-		IDataUploader(address, this) {
+		IDataUploader(address, buffers, partsCount) {
+	this->tcpClient = new TCPClient(address, this);
 	this->address = address;
 	this->buffers = buffers;
 	this->partsCount = partsCount;
@@ -51,10 +52,10 @@ DataUploaderMulti::DataUploaderMulti(NetworkAddress* address,
 //	Logger::log(DEBUG, ">>> UPLOADER %s:%d FINISHED LOGGING DATA HE GOT\n", address->host, address->port);
 }
 
-DataUploaderMulti::~DataUploaderMulti() {
+DataUploaderTCP::~DataUploaderTCP() {
 }
 
-void DataUploaderMulti::onMessage(TCPMessage* message) {
+void DataUploaderTCP::onMessage(TCPMessage* message) {
 	switch (currentState) {
 	case STATE_INITIAL:
 		if (acquireDataIdentifier(message) == true) {
@@ -70,12 +71,12 @@ void DataUploaderMulti::onMessage(TCPMessage* message) {
 	}
 }
 
-void DataUploaderMulti::onConnected() {
+void DataUploaderTCP::onConnected() {
 	Logger::log(INFO, "Uploader connection established\n");
 	switch (currentState) {
 	case STATE_INITIAL:
 		dataPublishData[1] = buffers[currentPart]->getSize();
-		sendMessage(dataPublish);
+		this->tcpClient->sendMessage(dataPublish);
 		break;
 
 	case STATE_IDENTIFIER_ACQUIRED:
@@ -85,7 +86,7 @@ void DataUploaderMulti::onConnected() {
 }
 
 /* SKLEIĆ WSZYSTKIE URLE tak jak jest sklejane w BasicWorker - GetAllUploadStrings */
-void DataUploaderMulti::getDataURL(std::string *param) {
+void DataUploaderTCP::getDataURL(std::string *param) {
 	std::stringstream ret;
 
 	for (int i = 0; i != this->partsCount; i++) {
@@ -104,7 +105,7 @@ void DataUploaderMulti::getDataURL(std::string *param) {
 // 							Private Members									 //
 // ========================================================================= //
 
-void DataUploaderMulti::uploadData() {
+void DataUploaderTCP::uploadData() {
 	byte* uploadBuffer = NULL;
 	SynchronizedBuffer* buffer = buffers[currentPart];
 
@@ -129,7 +130,7 @@ void DataUploaderMulti::uploadData() {
 		buffer->read(uploadBuffer + cmdSize, uploadPackageSize);
 
 		TCPMessage message(uploadBuffer, msgSize);
-		sendMessage(&message);
+		this->tcpClient->sendMessage(&message);
 		Logger::log(DEBUG, ">>>>>> SENT %u BYTES\n", msgSize);
 
 		// TODO Find out why this is necessary
@@ -143,31 +144,31 @@ void DataUploaderMulti::uploadData() {
 	} else {
 		currentState = STATE_INITIAL;
 		dataPublishData[1] = buffers[currentPart]->getSize();
-		sendMessage(dataPublish);
+		this->tcpClient->sendMessage(dataPublish);
 	}
 }
 
-void DataUploaderMulti::prepareCommands() {
+void DataUploaderTCP::prepareCommands() {
 	dataPublishData = new int[2];
 	dataPublishData[0] = PUBLISH_DATA;
 	// TODO: add before each sending: dataPublishData[1] = buffer->getSize();
 	dataPublish = new TCPMessage((byte *) dataPublishData, 2 * sizeof(int));
 }
 
-void DataUploaderMulti::prepareDataAppend(int *command, size_t packageSize) {
+void DataUploaderTCP::prepareDataAppend(int *command, size_t packageSize) {
 	command[0] = APPEND_DATA;
 	command[1] = dataIdentifiers[currentPart];
 	command[2] = packageSize;
 }
 
-void DataUploaderMulti::copyCommand(byte *buffer, int *command) {
+void DataUploaderTCP::copyCommand(byte *buffer, int *command) {
 	byte *tmp = (byte *) command;
 	for (int i = 0; i < TCP_COMMAND_SIZE; i++) {
 		buffer[i] = tmp[i];
 	}
 }
 
-bool DataUploaderMulti::acquireDataIdentifier(TCPMessage* message) {
+bool DataUploaderTCP::acquireDataIdentifier(TCPMessage* message) {
 	bool outcome = false;
 	//if (message->nBytes == sizeof(int)) {
 	int* tmp = new int;
@@ -177,6 +178,14 @@ bool DataUploaderMulti::acquireDataIdentifier(TCPMessage* message) {
 	delete tmp;
 	//}
 	return outcome;
+}
+
+void DataUploaderTCP::run() {
+	tcpClient->run();
+}
+
+void DataUploaderTCP::pleaseStop() {
+	tcpClient->pleaseStop();
 }
 
 } /* namespace KernelHive */

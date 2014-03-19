@@ -108,7 +108,7 @@ void DataMerger::workSpecific() {
 	setPercentDone(90);
 
 	// Upload data to repository
-	uploaders.push_back(new DataUploader(outputDataAddress, resultBuffer));
+	uploaders.push_back(new DataUploaderTCP(outputDataAddress, &resultBuffer, 1));
 	runAllUploads();
 	waitForAllUploads();
 	setPercentDone(100);

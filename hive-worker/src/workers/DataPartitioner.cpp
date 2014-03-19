@@ -23,7 +23,7 @@
 #include "DataPartitioner.h"
 
 #include "commons/KhUtils.h"
-#include "../communication/DataUploaderMulti.h"
+#include "../communication/DataUploaderTCP.h"
 
 namespace KernelHive {
 
@@ -117,7 +117,7 @@ void DataPartitioner::workSpecific() {
 
 	setPercentDone(90);
 
-	uploaders.push_back(new DataUploaderMulti(outputDataAddress, resultBuffers, partsCount));
+	uploaders.push_back(new DataUploaderTCP(outputDataAddress, resultBuffers, partsCount));
 
 	runAllUploads();
 	waitForAllUploads();
