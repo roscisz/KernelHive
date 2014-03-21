@@ -24,32 +24,12 @@ import java.util.List;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IKnapsackItem;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IKnapsackSolver;
 
-public class FPTASKnapsackSolver implements IKnapsackSolver {
+public class DynamicKnapsackSolver implements IKnapsackSolver {
 	
-	private int scalingFactor;
-	
-	public FPTASKnapsackSolver(int scalingFactor) {
-		this.scalingFactor = scalingFactor;		
-	}
-
 	@Override
-	public boolean[] solve(List<IKnapsackItem> items, int capacity) {	
-		int normalizedCapacity = capacity / this.scalingFactor;	
-		List<IKnapsackItem> normalizedItems = normalizeItems(items, capacity);		
-		int[][] dynamicTable = dynamicAlgorithm(normalizedItems, normalizedCapacity);
-		/*for(int i = 0; i != dynamicTable.length; i++) {
-			for(int j = 0; j != dynamicTable[i].length; j++)
-				System.out.print(dynamicTable[i][j] + " ");
-			System.out.println();
-		}*/
-		return backtrack(dynamicTable, normalizedCapacity, normalizedItems);		
-	}
-
-	private List<IKnapsackItem> normalizeItems(List<IKnapsackItem> items, int capacity) {
-		List<IKnapsackItem> normalizedItems = new ArrayList<IKnapsackItem>();
-		for(IKnapsackItem item : items)
-			normalizedItems.add(new KnapsackItemStub(item.getWeight() / scalingFactor, item.getValue(), ""));
-		return normalizedItems;
+	public boolean[] solve(List<IKnapsackItem> items, int capacity) {
+		int[][] dynamicTable = dynamicAlgorithm(items, capacity);
+		return backtrack(dynamicTable, items, capacity);		
 	}
 	
 	private int[][] dynamicAlgorithm(List<IKnapsackItem> normalizedItems, int normalizedCapacity) {
@@ -79,7 +59,7 @@ public class FPTASKnapsackSolver implements IKnapsackSolver {
 		return table;
 	}
 	
-	private boolean[] backtrack(int[][] dynamicTable, int remainingCapacity, List<IKnapsackItem> items) {
+	private boolean[] backtrack(int[][] dynamicTable, List<IKnapsackItem> items, int remainingCapacity) {
 		boolean[] ret = new boolean[items.size()];
 		for(int k = dynamicTable.length - 1; k >= 1; k--) {
 			if(dynamicTable[k][remainingCapacity] != dynamicTable[k - 1][remainingCapacity]) {
