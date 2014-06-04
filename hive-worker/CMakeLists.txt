@@ -13,30 +13,35 @@ include_directories(${MongoDB_INCLUDE_DIR})
 
 # Build the hive worker library
 add_library( hiveworker SHARED ${sources} )
-target_link_libraries( hiveworker ${Boost_LIBRARIES} ${MongoDB_LIBRARIES})
+target_link_libraries( hiveworker ${Boost_LIBRARIES} ${MongoDB_LIBRARIES} )
 
 # Build the executables, link the built commons library to them
 add_executable( SampleWorker "src/hive-worker.cpp" )
 target_link_libraries( SampleWorker hiveworker )
 target_link_libraries( SampleWorker hivecommons )
+target_link_libraries( SampleWorker ssl )
 
 add_executable( DataProcessor "src/dataprocessor.cpp" )
 target_link_libraries( DataProcessor hiveworker )
 target_link_libraries( DataProcessor hivecommons )
 target_link_libraries( DataProcessor pthread )
+target_link_libraries( DataProcessor ssl )
 
 add_executable( DataMerger "src/datamerger.cpp" )
 target_link_libraries( DataMerger hiveworker )
 target_link_libraries( DataMerger hivecommons )
 target_link_libraries( DataMerger pthread )
+target_link_libraries( DataMerger ssl )
 
 add_executable( DataPartitioner "src/datapartitioner.cpp" )
 target_link_libraries( DataPartitioner hiveworker )
 target_link_libraries( DataPartitioner hivecommons )
 target_link_libraries( DataPartitioner pthread )
+target_link_libraries( DataPartitioner ssl )
 
 add_executable( DataServerTester "src/dataservertester.cpp" )
 target_link_libraries( DataServerTester hiveworker )
 target_link_libraries( DataServerTester hivecommons )
 target_link_libraries( DataServerTester pthread )
+target_link_libraries( DataServerTester ssl )
 
