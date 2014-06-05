@@ -59,25 +59,26 @@ import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 public class HiveEngine {
 
 	private static HiveEngine instance;
+	// FIXME: obsolete
 	private static String resultUploadURL = "http://localhost:8080/hive-engine/upload";
 	private static String resultDownloadURL = "http://localhost:8080/hive-engine/download?filename=";
+	
 	private Map<Integer, Cluster> clusters = new HashMap<>();
 	private Map<String, Cluster> clustersIps = new HashMap<>();
 	private Map<Integer, Workflow> workflows = new HashMap<>();
 	private Map<Integer, List<PreviewObject>> jobPreviews = new HashMap<>();
 	int nextClusterId = 0;
 	private IOptimizer optimizer;
-	// TEMPORARY FOR TESTS:
-	private static int energyLimit = 1460;
+
 	private List<EngineGraphNodeDecorator> nodes;
 	private String projectName;
 	private String inputDataURL;
 	private static final Logger LOG = Logger.getLogger(HiveEngine.class.getName());
 
 	private HiveEngine() {
+		this.optimizer = new SimpleOptimizer();
+		//this.optimizer = new PrefetchingOptimizer(new SimpleOptimizer());
 		//this.optimizer = new EnergyOptimizer(new GreedyKnapsackSolver());
-		//this.optimizer = new SimpleOptimizer();
-		this.optimizer = new PrefetchingOptimizer(new SimpleOptimizer());
 	}
 
 	public static synchronized HiveEngine getInstance() {
@@ -413,13 +414,5 @@ public class HiveEngine {
 			}
 		}
 		return ret;
-	}
-
-	public static int getEnergyLimit() {
-		return energyLimit;
-	}
-
-	public static void setEnergyLimit(int energyLimit) {
-		HiveEngine.energyLimit = energyLimit;
 	}
 }

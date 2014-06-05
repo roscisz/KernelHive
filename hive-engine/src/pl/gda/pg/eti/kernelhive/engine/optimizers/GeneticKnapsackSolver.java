@@ -126,7 +126,7 @@ class KnapsackEvaluation implements Function {
 	    }
 	    
 	    if(weight > mySolver.currentCapacity)
-	    	return - 3 * (weight - mySolver.currentCapacity);
+	    	return - 1 * (weight - mySolver.currentCapacity);
 	    else return value;
 	}
 	
