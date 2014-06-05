@@ -70,6 +70,8 @@ public class HiveEngine {
 	int nextClusterId = 0;
 	private IOptimizer optimizer;
 
+	private static int energyLimit = 1000;
+	
 	private List<EngineGraphNodeDecorator> nodes;
 	private String projectName;
 	private String inputDataURL;
@@ -414,5 +416,13 @@ public class HiveEngine {
 			}
 		}
 		return ret;
+	}
+
+	public static int getEnergyLimit() {
+		return energyLimit;
+	}
+
+	public static void setEnergyLimit(int energyLimit) {
+		HiveEngine.energyLimit = energyLimit;
 	}
 }
