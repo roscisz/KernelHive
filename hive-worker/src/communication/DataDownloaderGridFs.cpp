@@ -34,16 +34,16 @@ DataDownloaderGridFs::DataDownloaderGridFs(NetworkAddress *serverAddress, const 
 
 void DataDownloaderGridFs::run() {
 
+	mongo::HostAndPort hostAndPort(this->serverAddress->host, this->serverAddress->port);
+  
 	mongo::DBClientConnection connection;
-	connection.connect(this->serverAddress->host);
-	/*connection.auth(BSON("user" << "hive-dataserver" <<
-				"userSource" << "hive-dataserver" <<
-				"pwd" << "hive-dataserver" <<
-				"mechanism" << "MONGODB-CR"));*/
+	connection.connect(hostAndPort);
+
+	std::string errmsg;
+	connection.auth("admin", "hive-dataserver", "hive-dataserver", errmsg);
 	mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
 	
-	mongo::BSONObj query = BSON("_id"<< KhUtils::atoi(dataId));
-	mongo::GridFile gFile=database.findFile(query);
+	mongo::GridFile gFile=database.findFile(std::string(dataId));
 	
 	std::stringstream ss;
 	gFile.write(ss);
