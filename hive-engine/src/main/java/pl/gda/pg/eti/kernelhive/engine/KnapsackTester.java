@@ -27,7 +27,6 @@ import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IKnapsackItem;
 import pl.gda.pg.eti.kernelhive.engine.interfaces.IKnapsackSolver;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.DynamicKnapsackSolver;
-import pl.gda.pg.eti.kernelhive.engine.optimizers.GeneticKnapsackSolver;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.GreedyKnapsackSolver;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.KnapsackItemStub;
 
@@ -122,8 +121,8 @@ public class KnapsackTester {
 		float tStartup = 0.0f;
 		//System.out.println("tStartup = " + tStartup);
 		int nPackages;
-		//IKnapsackSolver solver = new GreedyKnapsackSolver();
-		IKnapsackSolver solver = new GeneticKnapsackSolver(1000, 50, 0.1, 0.2);		
+		IKnapsackSolver solver = new GreedyKnapsackSolver();
+		//IKnapsackSolver solver = new GeneticKnapsackSolver(1000, 50, 0.1, 0.2);		
 		//IKnapsackSolver solver = new DynamicKnapsackSolver();
 		
 		for(int limit = 100; limit <= maxLimit; limit++) {

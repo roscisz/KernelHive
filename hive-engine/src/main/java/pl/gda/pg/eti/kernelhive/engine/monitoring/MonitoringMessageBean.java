@@ -29,10 +29,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import pl.gda.pg.eti.kernelhive.engine.monitoring.messages.MonitoringMessage;
 
-@MessageDriven(mappedName = "monitoringAMQQueue", activationConfig = {
+@MessageDriven(mappedName = "jms/monitoringQueue", activationConfig = {
 	@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
 	@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-	@ActivationConfigProperty(propertyName = "destination", propertyValue = "monitoringAMQQueue")
 })
 public class MonitoringMessageBean implements MessageListener {
 
