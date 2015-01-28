@@ -118,6 +118,7 @@ public class HiveEngine {
 					}
 				} catch (H2Persistance.H2PersistanceException ex) {
 					LOG.log(Level.SEVERE, "Error getting cluster", ex);
+					cluster.id = ClusterHelper.getNextId();
 				}
 			}
 		}
