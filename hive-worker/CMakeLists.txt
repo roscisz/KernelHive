@@ -4,7 +4,7 @@ file( GLOB sources "src/workers/*" "src/communication/*" )
 
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
-find_package(Boost 1.53 REQUIRED COMPONENTS system filesystem thread-mt)
+find_package(Boost 1.53 REQUIRED COMPONENTS system filesystem thread)
 find_package(MongoDB REQUIRED)
 
 # Add include files directories
