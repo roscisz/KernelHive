@@ -29,7 +29,7 @@
 #include "DataProcessor.h"
 #include "commons/KhUtils.h"
 
-#define ITERATIVE_EXECUTION
+//#define ITERATIVE_EXECUTION
 #define ITERATION_LIMIT 10000
 #define PreviewObject struct PreviewObjectStruct
 
