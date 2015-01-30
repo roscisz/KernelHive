@@ -68,7 +68,7 @@ public class H2Persistance {
 		Collections.sort(columns);
 		String sql = String.format("CREATE TABLE IF NOT EXISTS %s(%s)",
 				name, StringUtils.join(columns, ","));
-		logger.severe("sql: " + sql);
+		logger.log(Level.INFO, "sql: {0}", sql);
 		try {
 			connection.createStatement().execute(sql);
 		} catch (SQLException ex) {
@@ -91,7 +91,7 @@ public class H2Persistance {
 		List<String> values = helper.serialize(unit);
 		String sql = String.format("INSERT INTO %s VALUES(%s)", unit.getTableName(),
 				StringUtils.join(values, ","));
-		logger.severe("sql: " + sql);
+		logger.log(Level.INFO, "sql: {0}", sql);
 		try {
 			prepareTable(unit);
 			connection.createStatement().execute(sql);
@@ -117,7 +117,7 @@ public class H2Persistance {
 		}
 		String sql = String.format("UPDATE %s SET %s WHERE id=%s", unit.getTableName(),
 				StringUtils.join(entries, ","), String.valueOf(unit.getId()));
-		logger.severe("sql: " + sql);
+		logger.log(Level.INFO, "sql: {0}", sql);
 		try {
 			connection.createStatement().execute(sql);
 		} catch (SQLException ex) {
@@ -129,7 +129,7 @@ public class H2Persistance {
 	public <T extends H2Entity> T select(T entity) throws H2PersistanceException {
 		String sql = String.format("SELECT * FROM %s WHERE ID = '%d'",
 				entity.getTableName(), entity.getId());
-		logger.severe("sql: " + sql);
+		logger.log(Level.INFO, "sql: {0}", sql);
 		try {
 			prepareTable(entity);
 			ResultSet result = connection.createStatement().executeQuery(sql);
@@ -171,7 +171,7 @@ public class H2Persistance {
 	}
 
 	private <T extends H2Entity> List<T> selectAll(T entity, String sql) throws H2PersistanceException {
-		logger.severe("sql: " + sql);
+		logger.log(Level.INFO, "sql: {0}", sql);
 		List<T> results = new LinkedList<>();
 		try {
 			prepareTable(entity);
@@ -205,7 +205,7 @@ public class H2Persistance {
 	}
 
 	private <T extends H2Entity> void execute(T entity, String sql) throws H2PersistanceException {
-		logger.severe("sql: " + sql);
+		logger.log(Level.INFO, "sql: {0}", sql);
 		try {
 			prepareTable(entity);
 			connection.createStatement().execute(sql);
@@ -220,7 +220,7 @@ public class H2Persistance {
 			ResultSet result = connection.createStatement().executeQuery(String.format("SELECT * \n"
 					+ "                 FROM INFORMATION_SCHEMA.TABLES \n"
 					+ "                 WHERE TABLE_SCHEMA = 'PUBLIC' \n"
-					+ "                 AND  TABLE_NAME = '%s'", entity.getTableName()));
+					+ "                 AND  TABLE_NAME = '%s'", entity.getTableName().toUpperCase()));
 			if (!result.first()) {
 				createTable(entity);
 			}
