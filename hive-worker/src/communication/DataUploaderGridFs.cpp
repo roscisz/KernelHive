@@ -16,14 +16,42 @@
  * You should have received a copy of the GNU General Public License
  * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "mongo/client/dbclient.h"
+#include "mongo/client/gridfs.h"
 #include "DataUploaderGridFs.h"
 
 namespace KernelHive {
 
 DataUploaderGridFs::DataUploaderGridFs(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount) :
 			IDataUploader(address, buffers, partsCount) {
-	// TODO
+	this->serverAddress = address; 
 
+}
+
+void DataUploaderGridFs::run() {
+
+	mongo::HostAndPort hostAndPort(this->serverAddress->host, this->serverAddress->port);
+
+        mongo::DBClientConnection connection;
+        connection.connect(hostAndPort);
+
+        std::string errmsg;
+        connection.auth("admin", "hive-dataserver", "hive-dataserver", errmsg);
+        mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
+
+//        mongo::GridFile gFile=database.findFile(std::string(dataId));
+	database.storeFile((const char *) buffers[0]->getRawData(), buffers[0]->getSize(), "tester33");
+
+	// private String costam = " ustaw"+ ';;;;
+}
+
+// GetURL() { return costam wyzej; }
+
+void DataUploaderGridFs::pleaseStop() {
+}
+
+void DataUploaderGridFs::getDataURL(std::string *param) {
+	// TODO
 }
 
 DataUploaderGridFs::~DataUploaderGridFs() {

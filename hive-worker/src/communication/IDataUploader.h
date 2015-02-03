@@ -28,9 +28,16 @@ namespace KernelHive {
 
 class IDataUploader : public Thread {
 public:
-	IDataUploader(NetworkAddress *serverAddress, SynchronizedBuffer** buffers, int nBuffers) {};
+	IDataUploader(NetworkAddress *serverAddress, SynchronizedBuffer** buffers, int nBuffers) {
+		this->buffers = buffers;
+		this->nBuffers = nBuffers;
+	};
 
 	virtual void getDataURL(std::string *param) = 0;
+
+protected:
+        SynchronizedBuffer** buffers;
+	int nBuffers;
 
 };
 

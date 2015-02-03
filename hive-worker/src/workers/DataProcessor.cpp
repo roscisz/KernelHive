@@ -26,6 +26,7 @@
 #include "commons/OpenClEvent.h"
 #include "threading/ThreadManager.h"
 #include "../communication/DataUploaderTCP.h"
+#include "../communication/DataUploaderGridFs.h"
 #include "DataProcessor.h"
 #include "commons/KhUtils.h"
 
@@ -172,7 +173,7 @@ void DataProcessor::workSpecific() {
 
 	Logger::log(INFO, "(processor) >>> UPLOADING DATA TO ");
 	// Upload data to repository
-	uploaders.push_back(new DataUploaderTCP(outputDataAddress, &resultBuffer, 1));
+	uploaders.push_back(new DataUploaderGridFs(outputDataAddress, &resultBuffer, 1));
 	runAllUploads();
 	waitForAllUploads();
 	setPercentDone(100);

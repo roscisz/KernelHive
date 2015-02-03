@@ -18,12 +18,17 @@
  */
 #include <cstdio>
 #include "communication/DataDownloaderGridFs.h"
+#include "communication/DataUploaderGridFs.h"
 #include "network/NetworkAddress.h"
 
 int main(int argc, char** argv) {
-	KernelHive::NetworkAddress *address = new KernelHive::NetworkAddress("172.20.0.75", 27017);
-	KernelHive::SynchronizedBuffer buffer;
-	KernelHive::DataDownloaderGridFs sut = KernelHive::DataDownloaderGridFs(address, "12", &buffer);
+	KernelHive::NetworkAddress *address = new KernelHive::NetworkAddress("127.0.0.1", 27017);
+//	KernelHive::SynchronizedBuffer buffer;
+	KernelHive::SynchronizedBuffer *buffers = new KernelHive::SynchronizedBuffer[1];
+	char tester[7] = "dobrze";
+	buffers[0].append((byte *) tester, 7);
+//	KernelHive::DataDownloaderGridFs sut = KernelHive::DataDownloaderGridFs(address, "12", &buffer);
+	KernelHive::DataUploaderGridFs sut = KernelHive::DataUploaderGridFs(address, &buffers, 31337);
 	sut.run();
-	buffer.logMyFloatData();
+//	buffer.logMyFloatData();
 }

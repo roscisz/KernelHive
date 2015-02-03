@@ -28,7 +28,14 @@ namespace KernelHive {
 class DataUploaderGridFs: public IDataUploader {
 public:
 	DataUploaderGridFs(NetworkAddress *address, SynchronizedBuffer** buffers, int partsCount);
+        void run();
+        void pleaseStop();
 	virtual ~DataUploaderGridFs();
+	virtual void getDataURL(std::string *param);
+private:
+        const char* dataId;
+        NetworkAddress *serverAddress;
+
 };
 
 }
