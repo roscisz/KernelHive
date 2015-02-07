@@ -1,0 +1,131 @@
+#!/bin/bash
+
+GLASSFISH_BIN_PATH=~/glassfish3/bin/
+
+# Check if specified which target to run.
+if [ $# -eq 0 ]; then
+	echo "No target specified."
+        exit 1
+fi
+
+function run_devices_info() {
+	cd build/hive-common
+	./DevicesInfo
+}
+
+function run_gui() {
+	cd hive-gui
+	mvn exec:java
+}
+
+function start_domain() {
+	echo "Starting domain."
+	# Start domain if it's not running.
+	${GLASSFISH_BIN_PATH}/asadmin list-domains | grep "kernelhive-domain running" >/dev/null
+	case $? in
+		0) ;;
+		1) 	${GLASSFISH_BIN_PATH}/asadmin start-domain kernelhive-domain
+			if [ $? -ne 0 ]
+			then
+				echo "Error starting kernelhive-domain."
+				exit 3
+			fi
+			;;
+		*) exit 3 ;;
+	esac
+}
+
+function deploy_engine() {
+	echo "Deploying engine."
+	# Create domain if doesn't exist.
+	${GLASSFISH_BIN_PATH}/asadmin list-domains | grep kernelhive-domain
+	case $? in
+		0) ;;
+		1) 	${GLASSFISH_BIN_PATH}/asadmin create-domain kernelhive-domain
+			if [ $? -ne 0 ]
+			then
+				echo "Error creating kernelhive-domain."
+				exit 2
+			fi
+			;;
+		*) exit 2 ;;
+	esac
+
+	# Start domain if it's not running
+	start_domain
+	
+	# Add jms resources if needed.
+	${GLASSFISH_BIN_PATH}/asadmin list-jms-resources | grep "jms/monitoringQueue" >/dev/null
+	case $? in
+		0) ;;
+		1) 	${GLASSFISH_BIN_PATH}/asadmin add-resources hive-engine/src/main/setup/glassfish-resources.xml
+			if [ $? -ne 0 ]
+			then
+				echo "Error adding jms resources."
+				exit 4
+			fi
+			;;
+		*) exit 4 ;;
+	esac
+
+	# Deploy or redeploy application.
+	${GLASSFISH_BIN_PATH}/asadmin deploy --force hive-engine/target/hive-engine-1.0-SNAPSHOT.war
+	if [ $? -ne 0 ]
+	then
+		echo "Error deploying application."
+		exit 5
+	fi
+}
+
+function stop_domain() {
+	echo "Stopping domain."
+	${GLASSFISH_BIN_PATH}/asadmin stop-domain kernelhive-domain
+}
+
+function clean_domain() {
+	stop_domain
+	echo "Deleting domain"
+	${GLASSFISH_BIN_PATH}/asadmin delete-domain kernelhive-domain
+}
+
+function run_engine() {
+	TARGET="$1"
+	if [ -z "$TARGET" ]
+	then
+		TARGET="deploy"
+	fi
+
+	case "$TARGET" in
+		"start") start_domain ;;
+		"deploy") deploy_engine ;;
+		"stop") stop_domain ;;
+		"clean") clean_domain ;;
+		*) echo "Unsupported engine target: $TARGET" ;;
+	esac
+}
+
+function run_cluster() {
+	cd hive-cluster
+	if [ $# -eq 0 ]
+	then
+		mvn exec:java
+	else
+		mvn exec:java -Dexec.args="$*"
+	fi
+}
+
+function run_unit() {
+	cd build/hive-unit
+	./HiveUnit $@
+}
+
+case "$1" in
+	"devices-info") run_devices_info ;;
+	"gui") run_gui ;;
+        "engine") run_engine $2 ;;
+        "cluster")	shift
+			run_cluster $@ ;;
+	"unit")	shift
+		run_unit $@ ;;
+        *) echo "Unsupported target: $1"
+esac

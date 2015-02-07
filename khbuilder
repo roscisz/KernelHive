@@ -11,7 +11,7 @@ function check_dependencies() {
 	echo "Will now check for required tools"
 	for CMD in $@
 	do
-		echo -ne " Checking for $CMD.. "
+		echo -ne " Checking for $CMD... "
 		command -v $CMD >/dev/null 2>&1
 		if [ $? -gt 0 ]; then
 			echo "FAILED"
@@ -23,28 +23,38 @@ function check_dependencies() {
 }
 
 function build_kh() {
-	check_dependencies gcc make cmake java ant
+	check_dependencies make cmake mvn
 	echo "Will now build KernelHive modules"
-}
 
-function deploy_kh() {
-	echo "Will now deploy KernelHive modules"
+	echo "Building C++ part."
+	mkdir -p build
+	cd build
+	cmake ..
+	if [ $? -ne 0 ]
+	then
+		exit 2
+	fi
+	make
+	if [ $? -ne 0 ]
+	then
+		exit 3
+	fi
+
+	echo "Building Java part."
+	cd ..
+	mvn install
 }
 
 function clean_kh() {
-	check_dependencies make ant
-	echo "Will now clean build output"
-}
-
-function purge_kh() {
+	check_dependencies mvn
 	echo "Will now remove all build output"
+	rm -rf build
+	mvn clean
 }
 
 case "$TARGET" in
 	"build") build_kh ;;
-	"deploy") deploy_kh ;;
 	"clean") clean_kh ;;
-	"purge") purge_kh ;;
 	*) echo "Unsupported target: $TARGET"
 esac
 
