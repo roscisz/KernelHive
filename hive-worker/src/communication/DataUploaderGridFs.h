@@ -33,9 +33,9 @@ public:
 	virtual ~DataUploaderGridFs();
 	virtual void getDataURL(std::string *param);
 private:
-        const char* dataId;
         NetworkAddress *serverAddress;
-
+        int partsCount;
+        int baseOutputId;
 };
 
 }

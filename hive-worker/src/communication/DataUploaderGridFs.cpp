@@ -19,39 +19,52 @@
 #include "mongo/client/dbclient.h"
 #include "mongo/client/gridfs.h"
 #include "DataUploaderGridFs.h"
+#include "commons/KhUtils.h"
 
 namespace KernelHive {
 
 DataUploaderGridFs::DataUploaderGridFs(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount) :
 			IDataUploader(address, buffers, partsCount) {
 	this->serverAddress = address; 
-
+	this->partsCount = partsCount;
+	baseOutputId = 1000000;
 }
 
 void DataUploaderGridFs::run() {
 
 	mongo::HostAndPort hostAndPort(this->serverAddress->host, this->serverAddress->port);
 
-        mongo::DBClientConnection connection;
-        connection.connect(hostAndPort);
+	mongo::DBClientConnection connection;
+    connection.connect(hostAndPort);
 
-        std::string errmsg;
-        connection.auth("admin", "hive-dataserver", "hive-dataserver", errmsg);
-        mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
+    std::string errmsg;
+	connection.auth("admin", "hive-dataserver", "hive-dataserver", errmsg);
+	mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
 
-//        mongo::GridFile gFile=database.findFile(std::string(dataId));
-	database.storeFile((const char *) buffers[0]->getRawData(), buffers[0]->getSize(), "tester33");
-
-	// private String costam = " ustaw"+ ';;;;
+	std::stringstream ss;
+	for (int i = 0; i < partsCount; i++) {
+		ss.str("");
+		ss << (baseOutputId + i);
+		database.storeFile((const char *) buffers[i]->getRawData(), buffers[i]->getSize(), ss.str());
+	}
 }
-
-// GetURL() { return costam wyzej; }
 
 void DataUploaderGridFs::pleaseStop() {
 }
 
 void DataUploaderGridFs::getDataURL(std::string *param) {
-	// TODO
+	std::stringstream ret;
+
+	for (int i = 0; i != this->partsCount; i++) {
+		ret << serverAddress->host;
+		ret << " ";
+		ret << KhUtils::itoa(serverAddress->port);
+		ret << " ";
+		ret << (baseOutputId + i);
+		ret << " ";
+	}
+
+	param->append(ret.str());
 }
 
 DataUploaderGridFs::~DataUploaderGridFs() {

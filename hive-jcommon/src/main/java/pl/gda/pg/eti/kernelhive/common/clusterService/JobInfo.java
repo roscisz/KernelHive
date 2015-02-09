@@ -24,7 +24,7 @@ public class JobInfo {
 	
 	public int unitID;
 	// change to localhost? 
-	private int resultDataPort = 31339;
+	private int resultDataPort = 27017;
 	public String kernelString;
 	public GraphNodeType jobType;
 	public String inputDataUrl;

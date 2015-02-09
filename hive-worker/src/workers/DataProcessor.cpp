@@ -167,7 +167,7 @@ void DataProcessor::workSpecific() {
 	setPercentDone(90);
 
 	Logger::log(INFO, "(processor) >>> PROCESSOR AFTER COMPUTE");
-	//resultBuffer->logMyFloatData();
+	resultBuffer->logMyFloatData();
 
 	reportPreview(previewBuffer);
 
