@@ -35,7 +35,7 @@ namespace KernelHive {
 SystemMonitor::SystemMonitor() {
 	id = -1;
 	keepRunning = false;
-	clusterInitRequest = false;
+	clusterInitRequest = true;
 	hostStatus = NULL;
 }
 
@@ -202,7 +202,8 @@ void SystemMonitor::setClusterInitRequest(bool clusterInitRequest) {
 void SystemMonitor::getGpuStats() {
 	list<GPUStatus*> gpuDevices = hostStatus->getGpuDevices();
 	char command[256];
-	for(list<GPUStatus*>::const_iterator it = gpuDevices.begin(); it != gpuDevices.end(); it++) {
+	int i = 0; // This i is COMPLETELY unnecessary, but fixes segmentation fault.
+	for(list<GPUStatus*>::const_iterator it = gpuDevices.begin(); it != gpuDevices.end(); it++, i++) {
 		GPUStatus* gpu = *it;
 		sprintf(command, BashCommands::NVIDIA_ID_COMMAND, gpu->getName().c_str());
 		const char* buff = (new BashRunner(command))->execute();
