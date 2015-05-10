@@ -127,6 +127,7 @@ public class MainFrame extends JFrame {
 	private MainFrameController controller;
 	private JMenuItem mntmInfrastructureBrowser;
 	private JMenuItem mntmResourceMonitor;
+        private JMenuItem mntmDatabaseManager;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));
@@ -630,6 +631,16 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnTools.add(mntmResourceMonitor);
+                
+                mntmDatabaseManager = new JMenuItem("Database Manager");
+		mntmDatabaseManager.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				controller.showDatabaseManager();
+			}
+		});
+		mnTools.add(mntmDatabaseManager);
 	}
 
 	private void initHelpMenu() {

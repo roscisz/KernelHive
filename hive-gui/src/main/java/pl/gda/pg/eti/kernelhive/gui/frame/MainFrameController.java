@@ -61,6 +61,7 @@ import pl.gda.pg.eti.kernelhive.gui.dialog.NewFileDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.NewProjectDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.PreferencesDialog;
 import pl.gda.pg.eti.kernelhive.gui.dialog.ProjectPropertiesDialog;
+import pl.gda.pg.eti.kernelhive.gui.dbmanager.DatabaseManagerDialog;
 import pl.gda.pg.eti.kernelhive.gui.monitoring.infrastructure.InfrastructureBrowser;
 import pl.gda.pg.eti.kernelhive.gui.monitoring.resourcemonitor.ResourceMonitor;
 import pl.gda.pg.eti.kernelhive.gui.project.IProject;
@@ -527,7 +528,11 @@ public class MainFrameController {
 		dialog.setModal(true);
 		dialog.setVisible(true);
 	}
-
+        
+        public void showDatabaseManager() {
+            final DatabaseManagerDialog dialog = new DatabaseManagerDialog(frame, true);
+            dialog.setVisible(true);
+        }
 	/**
 	 * shows the project properties window
 	 */
