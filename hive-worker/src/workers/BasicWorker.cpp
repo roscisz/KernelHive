@@ -164,8 +164,7 @@ void BasicWorker::init(char *const argv[]) {
 
 	kernelAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	kernelDataId = nextParam(argv);
-	kernelDataIdInt = KhUtils::atoi(kernelDataId.c_str());
-	buffers[kernelDataIdInt] = new SynchronizedBuffer();
+	buffers[kernelDataId] = new SynchronizedBuffer();
 
 	setPercentDone(0);
 

@@ -32,9 +32,9 @@
 
 namespace KernelHive {
 
-typedef std::map<int, IDataDownloader *> DownloaderMap;
+typedef std::map<std::string, IDataDownloader *> DownloaderMap;
 typedef std::vector<IDataUploader *> UploaderList;
-typedef std::map<int, SynchronizedBuffer *> DataBufferMap;
+typedef std::map<std::string, SynchronizedBuffer *> DataBufferMap;
 
 /**
  * A a base class for basic worker types.
@@ -130,9 +130,6 @@ protected:
 
 	/** The identifier which can be used to download the kernel. */
 	std::string kernelDataId;
-
-	/** Kernel data identifier as an integer number. */
-	int kernelDataIdInt;
 
 	/**
 	 * Performs initialization specific to a worker subclassing this.

@@ -39,7 +39,6 @@ DataMerger::DataMerger(char **argv) : BasicWorker(argv) {
 	inputDataAddresses = NULL;
 	outputDataAddress = NULL;
 	dataIds = NULL;
-	dataIdsInt = NULL;
 	resultBuffer = NULL;
 }
 
@@ -65,7 +64,7 @@ void DataMerger::workSpecific() {
 	setPercentDone(40);
 
 	for (int i = 0; i < datasCount; i++) {
-		totalDataSize += buffers[dataIdsInt[i]]->getSize();
+		totalDataSize += buffers[dataIds[i]]->getSize();
 	}
 
 	// Allocate input and output buffers on the device
@@ -77,14 +76,14 @@ void DataMerger::workSpecific() {
 	OpenClEvent** copyEvents = new OpenClEvent*[datasCount];
 	for (int i = 0; i < datasCount; i++) {
 		OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, copyOffset,
-				buffers[dataIdsInt[i]]->getSize()*sizeof(byte), (void*)buffers[dataIdsInt[i]]->getRawData());
+				buffers[dataIds[i]]->getSize()*sizeof(byte), (void*)buffers[dataIds[i]]->getRawData());
 		copyEvents[i] = &dataCopy;
-		copyOffset += buffers[dataIdsInt[i]]->getSize();
+		copyOffset += buffers[dataIds[i]]->getSize();
 	}
 
 	// Compile and prepare the kernel for execution
-	context->buildProgramFromSource((char *)buffers[kernelDataIdInt]->getRawData(),
-			buffers[kernelDataIdInt]->getSize());
+	context->buildProgramFromSource((char *)buffers[kernelDataId]->getRawData(),
+			buffers[kernelDataId]->getSize());
 	context->prepareKernel(getKernelName());
 
 	// Wait for copy to finish.
@@ -117,18 +116,16 @@ void DataMerger::workSpecific() {
 void DataMerger::initSpecific(char *const argv[]) {
 	datasCount = KhUtils::atoi(nextParam(argv));
 	inputDataAddresses = new NetworkAddress*[datasCount];
-	dataIds = new std::string*[datasCount];
-	dataIdsInt = new int[datasCount];
+	dataIds = new std::string[datasCount];
 	for (int i = 0; i < datasCount; i++) {
 		inputDataAddresses[i] = new NetworkAddress(nextParam(argv), nextParam(argv));
-		dataIds[i] = new std::string(nextParam(argv));
-		dataIdsInt[i] = KhUtils::atoi(dataIds[i]->c_str());
-		buffers[dataIdsInt[i]] = new SynchronizedBuffer();
-		downloaders[dataIdsInt[i]] = new DataDownloaderTCP(inputDataAddresses[i],
-			dataIds[i]->c_str(), buffers[dataIdsInt[i]]);
+		dataIds[i] = std::string(nextParam(argv));
+		buffers[dataIds[i]] = new SynchronizedBuffer();
+		downloaders[dataIds[i]] = new DataDownloaderTCP(inputDataAddresses[i],
+			dataIds[i].c_str(), buffers[dataIds[i]]);
 	}
-	downloaders[kernelDataIdInt] = new DataDownloaderTCP(kernelAddress,
-			kernelDataId.c_str(), buffers[kernelDataIdInt]);
+	downloaders[kernelDataId] = new DataDownloaderTCP(kernelAddress,
+			kernelDataId.c_str(), buffers[kernelDataId]);
 
 	// TODO For merger only - skip the number of outputs:
 	nextParam(argv);
@@ -142,9 +139,6 @@ void DataMerger::initSpecific(char *const argv[]) {
 
 void DataMerger::cleanupResources() {
 	if (dataIds != NULL) {
-		for (int i = 0; i < datasCount; i++) {
-			delete dataIds[i];
-		}
 		delete [] dataIds;
 	}
 	if (inputDataAddresses != NULL) {
@@ -155,9 +149,6 @@ void DataMerger::cleanupResources() {
 	}
 	if (outputDataAddress != NULL) {
 		delete outputDataAddress;
-	}
-	if (dataIdsInt != NULL) {
-		delete [] dataIdsInt;
 	}
 	if (resultBuffer != NULL) {
 		delete resultBuffer;

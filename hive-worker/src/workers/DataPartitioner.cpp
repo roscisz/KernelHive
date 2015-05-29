@@ -68,7 +68,7 @@ void DataPartitioner::workSpecific() {
 
 	setPercentDone(40);
 
-	totalDataSize = buffers[dataIdInt]->getSize();
+	totalDataSize = buffers[dataId]->getSize();
 	int outputSizeInBytes = outputSize*sizeof(byte);
 
 	// Allocate local result buffers
@@ -82,11 +82,11 @@ void DataPartitioner::workSpecific() {
 
 	// Begin copying data to the device
 	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
-			totalDataSize, (void*)buffers[dataIdInt]->getRawData());
+			totalDataSize, (void*)buffers[dataId]->getRawData());
 
 	// Compile and prepare the kernel for execution
-	context->buildProgramFromSource((char *)buffers[kernelDataIdInt]->getRawData(),
-			buffers[kernelDataIdInt]->getSize());
+	context->buildProgramFromSource((char *)buffers[kernelDataId]->getRawData(),
+			buffers[kernelDataId]->getSize());
 	context->prepareKernel(getKernelName());
 
 	// Wait for data copy to finish
@@ -133,11 +133,9 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	std::cout << ">>> input address ready: " << inputDataAddress->toString() << std::endl;
 	dataId = nextParam(argv);
-	dataIdInt = KhUtils::atoi(dataId.c_str());
 	std::cout << ">>> dataId ready: " << dataId << std::endl;
-	std::cout << ">>> dataIdInt: " << dataIdInt << std::endl;
 
-	buffers[dataIdInt] = new SynchronizedBuffer();
+	buffers[dataId] = new SynchronizedBuffer();
 
 	partsCount = KhUtils::atoi(nextParam(argv));
 	std::cout << ">>> partsCount ready: " << partsCount << std::endl;
@@ -148,11 +146,11 @@ void DataPartitioner::initSpecific(char *const argv[]) {
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	std::cout << ">>> output address ready: " << outputDataAddress->toString() << std::endl;
 
-	downloaders[dataIdInt] = new DataDownloaderTCP(inputDataAddress,
-			dataId.c_str(), buffers[dataIdInt]);
+	downloaders[dataId] = new DataDownloaderTCP(inputDataAddress,
+			dataId.c_str(), buffers[dataId]);
 
-	downloaders[kernelDataIdInt] = new DataDownloaderTCP(kernelAddress,
-			kernelDataId.c_str(), buffers[kernelDataIdInt]);
+	downloaders[kernelDataId] = new DataDownloaderTCP(kernelAddress,
+			kernelDataId.c_str(), buffers[kernelDataId]);
 }
 
 // ========================================================================= //

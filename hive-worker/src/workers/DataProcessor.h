@@ -84,9 +84,6 @@ private:
 	/** The identifier which can be used to download data for this worker. */
 	std::string dataId;
 
-	/** The data identifier in the integer number form. */
-	int dataIdInt;
-
 	/** The address from which the data can be downloaded. */
 	NetworkAddress* outputDataAddress;
 

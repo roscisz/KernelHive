@@ -57,7 +57,6 @@ DataProcessor::DataProcessor(char **argv) : BasicWorker(argv) {
 	inputDataAddress = NULL;
 	outputDataAddress = NULL;
 	resultBuffer = NULL;
-	dataIdInt = 0;
 }
 
 DataProcessor::~DataProcessor() {
@@ -78,19 +77,18 @@ void DataProcessor::initSpecific(char *const argv[]) {
 	nextParam(argv);
 	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 	dataId = nextParam(argv);
-	dataIdInt = KhUtils::atoi(dataId.c_str());
 	
 	// TODO For processor only - skip the number of outputs:
 	nextParam(argv);
 	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
 
-	buffers[dataIdInt] = new SynchronizedBuffer();
+	buffers[dataId] = new SynchronizedBuffer();
 	resultBuffer = new SynchronizedBuffer(outputSize);
 
-	downloaders[dataIdInt] = new DataDownloaderGridFs(inputDataAddress,
-			dataId.c_str(), buffers[dataIdInt]);
-	downloaders[kernelDataIdInt] = new DataDownloaderTCP(kernelAddress,
-			kernelDataId.c_str(), buffers[kernelDataIdInt]);
+	downloaders[dataId] = new DataDownloaderGridFs(inputDataAddress,
+			dataId.c_str(), buffers[dataId]);
+	downloaders[kernelDataId] = new DataDownloaderGridFs(kernelAddress,
+			kernelDataId.c_str(), buffers[kernelDataId]);
 	
 	Logger::log(DEBUG, "(processor) >>> PROCESSOR INIT SPECIFIC END\n");
 }
@@ -104,10 +102,10 @@ void DataProcessor::workSpecific() {
 	Logger::log(DEBUG, "(processor) >>> PROCESSOR AFTER WAIT FOR DOWNLOADS\n");
 	setPercentDone(40);
 
-	size_t size = buffers[dataIdInt]->getSize();
+	size_t size = buffers[dataId]->getSize();
 
 	Logger::log(DEBUG, "(processor) >>> PROCESSOR BEFORE COMPUTE\n");
-	buffers[dataIdInt]->logMyFloatData();
+	buffers[dataId]->logMyFloatData();
 
 	SynchronizedBuffer* previewBuffer = new SynchronizedBuffer(outputSize * sizeof(PreviewObject));
 
@@ -118,11 +116,11 @@ void DataProcessor::workSpecific() {
 
 	// Begin copying data to the device
 	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
-			size*sizeof(byte), (void*)buffers[dataIdInt]->getRawData());
+			size*sizeof(byte), (void*)buffers[dataId]->getRawData());
 
 	// Compile and prepare the kernel for execution
-	context->buildProgramFromSource((char *)buffers[kernelDataIdInt]->getRawData(),
-			buffers[kernelDataIdInt]->getSize());
+	context->buildProgramFromSource((char *)buffers[kernelDataId]->getRawData(),
+			buffers[kernelDataId]->getSize());
 	context->prepareKernel(getKernelName());
 
 	// Wait for data copy to finish
@@ -173,9 +171,9 @@ void DataProcessor::workSpecific() {
 
 	Logger::log(INFO, "(processor) >>> UPLOADING DATA TO ");
 	// Upload data to repository
-	uploaders.push_back(new DataUploaderGridFs(outputDataAddress, &resultBuffer, 1));
-	runAllUploads();
-	waitForAllUploads();
+	//uploaders.push_back(new DataUploaderGridFs(outputDataAddress, &resultBuffer, 1));
+	//runAllUploads();
+	//waitForAllUploads();
 	setPercentDone(100);
 }
 

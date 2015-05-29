@@ -86,10 +86,7 @@ private:
 	NetworkAddress** inputDataAddresses;
 
 	/** The identifier which can be used to download data for this worker. */
-	std::string** dataIds;
-
-	/** The data identifier in the integer number form. */
-	int* dataIdsInt;
+	std::string* dataIds;
 
 	/** The total size of data received from all sources. */
 	size_t totalDataSize;
