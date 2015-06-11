@@ -242,7 +242,7 @@ public class Job extends HasID {
 			DataAddress newAddress = new DataAddress();
 			newAddress.hostname = addresses[3 * i];
 			newAddress.port = Integer.parseInt(addresses[3 * i + 1]);
-			newAddress.ID = Integer.parseInt(addresses[3 * i + 2]);
+			newAddress.ID = addresses[3 * i + 2];
 			ret.add(newAddress);
 		}
 

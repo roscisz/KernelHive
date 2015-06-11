@@ -62,6 +62,7 @@ public class ClusterBean implements IClusterBeanRemote {
 		data.updateReverseReferences();
 		HiveEngine.getInstance().updateCluster(data, ip);
 		System.out.println("Updated cluster: " + data + ", units: " + data.getUnitList().size());
+		if(data == null) return 0;
 		return data.id;
 	}
 
