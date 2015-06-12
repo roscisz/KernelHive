@@ -103,7 +103,6 @@ public class Cluster implements Serializable {
 			jobsToRun.remove(0);
 			return jobToRun;
 		}
-		System.out.println("cluster getJob() no job");
 		return null;
 	}
 

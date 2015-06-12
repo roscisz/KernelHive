@@ -31,7 +31,7 @@ public class JobInfo {
 	
 	public String kernelHost;
 	public int kernelPort;
-	public int kernelID;
+	public Object kernelID;
 	public int ID;
 	public String clusterHost;
 	public int clusterTCPPort;
