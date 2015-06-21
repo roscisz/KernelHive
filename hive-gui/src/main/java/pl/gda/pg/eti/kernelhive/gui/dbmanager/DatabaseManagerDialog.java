@@ -16,16 +16,25 @@
  */
 package pl.gda.pg.eti.kernelhive.gui.dbmanager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
@@ -38,6 +47,7 @@ import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.jdesktop.beansbinding.Binding;
 
 /**
  *
@@ -50,12 +60,22 @@ public class DatabaseManagerDialog extends javax.swing.JDialog {
      */
     public DatabaseManagerDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        packageList = new ArrayList<>();
         initComponents();
         dbManager = hBaseManager;
     }
     
     private ManagerInterface dbManager;
+    
+    private class NotEditableTable extends JTable {
 
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; //To change body of generated methods, choose Tools | Templates.
+        }
+        
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -64,184 +84,229 @@ public class DatabaseManagerDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         hBaseManager = new pl.gda.pg.eti.kernelhive.gui.dbmanager.HBaseManager();
         mySQLManager = new pl.gda.pg.eti.kernelhive.gui.dbmanager.MySQLManager();
-        buttonGroup2 = new javax.swing.ButtonGroup();
         cassandraManager = new pl.gda.pg.eti.kernelhive.gui.dbmanager.CassandraManager();
-        jLabel1 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        mongoDBManager = new pl.gda.pg.eti.kernelhive.gui.dbmanager.MongoDBManager();
+        selectedDataPackage = new pl.gda.pg.eti.kernelhive.gui.dbmanager.DataPackage();
+        packageList = new java.util.ArrayList<DataPackage>();
+        fileChooser = new javax.swing.JFileChooser();
+        redisManager = new pl.gda.pg.eti.kernelhive.gui.dbmanager.RedisManager();
+        mongoKHManager = new pl.gda.pg.eti.kernelhive.gui.dbmanager.MongoKHManager();
+        lblTitle = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
-        jTextField2 = new javax.swing.JTextField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jButton4 = new javax.swing.JButton();
+        tblPackages = new NotEditableTable();
+        jPanel1 = new javax.swing.JPanel();
+        lblDesc = new javax.swing.JLabel();
+        tfDescription = new javax.swing.JTextField();
+        btUpload = new javax.swing.JButton();
+        btDownload = new javax.swing.JButton();
+        btInitiate = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        cbDatabaseEngine = new javax.swing.JComboBox();
+        btGetList = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setText("Welcome to the Database Manager");
+        lblTitle.setText("Database Manager");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        getContentPane().add(lblTitle, gridBagConstraints);
 
-        jButton2.setText("Upload");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, packageList, tblPackages, "tablePackages");
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${id}"));
+        columnBinding.setColumnName("Id");
+        columnBinding.setColumnClass(Long.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${description}"));
+        columnBinding.setColumnName("Description");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, selectedDataPackage, org.jdesktop.beansbinding.ObjectProperty.create(), tblPackages, org.jdesktop.beansbinding.BeanProperty.create("selectedElement"));
+        bindingGroup.addBinding(binding);
+
+        tblPackages.getColumnModel().getColumn(0).setPreferredWidth(100);
+        jScrollPane1.setViewportView(tblPackages);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(jScrollPane1, gridBagConstraints);
+
+        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
+
+        lblDesc.setText("Description:");
+        jPanel1.add(lblDesc);
+
+        tfDescription.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                tfDescriptionActionPerformed(evt);
             }
         });
+        jPanel1.add(tfDescription);
 
-        jButton3.setText("Download");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btUpload.setText("Upload");
+        btUpload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btUploadActionPerformed(evt);
             }
         });
+        jPanel1.add(btUpload);
 
-        jScrollPane1.setViewportView(jList1);
-
-        buttonGroup2.add(jRadioButton1);
-        jRadioButton1.setText("MySQL");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+        btDownload.setText("Download");
+        btDownload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
+                btDownloadActionPerformed(evt);
             }
         });
+        jPanel1.add(btDownload);
 
-        buttonGroup2.add(jRadioButton2);
-        jRadioButton2.setText("HBase");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        btInitiate.setText("Initiate");
+        btInitiate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                btInitiateActionPerformed(evt);
             }
         });
+        jPanel1.add(btInitiate);
 
-        buttonGroup2.add(jRadioButton3);
-        jRadioButton3.setText("Cassandra");
-        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        getContentPane().add(jPanel1, gridBagConstraints);
+
+        jLabel1.setText("Select database engine:");
+        jPanel2.add(jLabel1);
+
+        cbDatabaseEngine.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "HBase", "MySQL", "Cassandra", "Redis", "MongoDB", "MongoKH" }));
+        cbDatabaseEngine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton3ActionPerformed(evt);
+                cbDatabaseEngineActionPerformed(evt);
             }
         });
+        jPanel2.add(cbDatabaseEngine);
 
-        jButton4.setText("Initiate");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btGetList.setText("Get list");
+        btGetList.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btGetListActionPerformed(evt);
             }
         });
+        jPanel2.add(btGetList);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 649, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jButton2)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jTextField1))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jButton3)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton2)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jRadioButton3))))
-                .addContainerGap(26, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton4)
-                .addGap(158, 158, 158))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(39, 39, 39))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jRadioButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton3)
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4)
-                .addGap(0, 81, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        getContentPane().add(jPanel2, gridBagConstraints);
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void cbDatabaseEngineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDatabaseEngineActionPerformed
+        switch(cbDatabaseEngine.getSelectedItem().toString()) {
+            case "HBase":
+                dbManager = hBaseManager;
+                break;
+            case "MySQL":
+                dbManager = mySQLManager;
+                break;
+            case "Cassandra":
+                dbManager = cassandraManager;
+                break;
+            case "MongoDB":
+                dbManager = mongoDBManager;
+                break;      
+            case "MongoKH":
+                dbManager = mongoKHManager;
+                break;
+            case "Redis":
+                dbManager = redisManager;
+                break;
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_cbDatabaseEngineActionPerformed
+
+    private void btGetListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGetListActionPerformed
+        Binding b = bindingGroup.getBinding("tablePackages");
+        b.unbind();
+        packageList.clear();
+        for(DataPackage pack : dbManager.listPackages()) {
+            packageList.add(pack);
+        }
+        b.bind();
+        tblPackages.repaint();
+    }//GEN-LAST:event_btGetListActionPerformed
+
+    private void btUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUploadActionPerformed
         DataPackage dataPack = new DataPackage();
-        dataPack.setId(12345);
-        dataPack.setDescription(jTextField1.getText());
-        dataPack.setData(jTextField1.getText().getBytes());
-        long id = dbManager.uploadPackage(dataPack);
-        jTextField2.setText(String.valueOf(id));
-    }//GEN-LAST:event_jButton2ActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (file.length() < 1000000) {
+                FileInputStream fileInputStream;
+                try {
+                    fileInputStream = new FileInputStream(file);
+                    byte[] data = new byte[(int)file.length()];
+                    fileInputStream.read(data);
+                    dataPack.setData(data);
+                    dataPack.setDescription(tfDescription.getText());
+                    dbManager.uploadPackage(dataPack);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(DatabaseManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(DatabaseManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+            }
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        List<DataPackage> packages = dbManager.listPackages();
-        jList1.setListData(packages.toArray());
-    }//GEN-LAST:event_jButton3ActionPerformed
+        } else {
+            System.out.println("File access cancelled by user.");
+        }
+    }//GEN-LAST:event_btUploadActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void tfDescriptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDescriptionActionPerformed
         // TODO add your handling code here:
-        dbManager = mySQLManager;
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    }//GEN-LAST:event_tfDescriptionActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
-        // TODO add your handling code here:
-        dbManager = hBaseManager;
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    private void btDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDownloadActionPerformed
+        dbManager.downloadPackage(selectedDataPackage.getId());
+    }//GEN-LAST:event_btDownloadActionPerformed
 
-    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
-        dbManager = cassandraManager;
-    }//GEN-LAST:event_jRadioButton3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        dbManager.intiateKernelHiveManager();
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void btInitiateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInitiateActionPerformed
+        dbManager.intiateKernelHiveManager();        // TODO add your handling code here:
+    }//GEN-LAST:event_btInitiateActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JButton btDownload;
+    private javax.swing.JButton btGetList;
+    private javax.swing.JButton btInitiate;
+    private javax.swing.JButton btUpload;
     private pl.gda.pg.eti.kernelhive.gui.dbmanager.CassandraManager cassandraManager;
+    private javax.swing.JComboBox cbDatabaseEngine;
+    private javax.swing.JFileChooser fileChooser;
     private pl.gda.pg.eti.kernelhive.gui.dbmanager.HBaseManager hBaseManager;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList jList1;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel lblDesc;
+    private javax.swing.JLabel lblTitle;
+    private pl.gda.pg.eti.kernelhive.gui.dbmanager.MongoDBManager mongoDBManager;
+    private pl.gda.pg.eti.kernelhive.gui.dbmanager.MongoKHManager mongoKHManager;
     private pl.gda.pg.eti.kernelhive.gui.dbmanager.MySQLManager mySQLManager;
+    private java.util.ArrayList<DataPackage> packageList;
+    private pl.gda.pg.eti.kernelhive.gui.dbmanager.RedisManager redisManager;
+    private pl.gda.pg.eti.kernelhive.gui.dbmanager.DataPackage selectedDataPackage;
+    private javax.swing.JTable tblPackages;
+    private javax.swing.JTextField tfDescription;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
