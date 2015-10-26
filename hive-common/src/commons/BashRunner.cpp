@@ -17,7 +17,6 @@
  * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "BashRunner.h"
-#include <string>
 #include <iostream>
 
 namespace KernelHive {
@@ -31,7 +30,7 @@ BashRunner::~BashRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-const char* BashRunner::execute() {
+std::string BashRunner::execute() {
 	FILE* pipe = popen(command, "r");
 	std::string content;
 	char line[1024];
@@ -41,7 +40,7 @@ const char* BashRunner::execute() {
 		}
 	}
 	pclose(pipe);
-	return content.c_str();
+	return content;
 }
 
 } /* namespace KernelHive */

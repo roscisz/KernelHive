@@ -50,7 +50,7 @@ HostStatus* SystemMonitor::createHostStatus() {
 
 	list<GPUStatus*> gpus = list<GPUStatus*>();
 
-	int cpuCores = strtol((new BashRunner(BashCommands::CPU_CORES_COMMAND))->execute(), NULL, 0);
+	int cpuCores = strtol((new BashRunner(BashCommands::CPU_CORES_COMMAND))->execute().c_str(), NULL, 0);
 	if(cpuCores == 0)
 		throw std::string("Cannot detect any CPU core");
 
@@ -69,7 +69,7 @@ HostStatus* SystemMonitor::createHostStatus() {
 		}
 	}
 
-	int memoryTotal = strtol((new BashRunner(BashCommands::TOTAL_MEMORY_STATS_COMMAND))->execute(), NULL, 0);
+	int memoryTotal = strtol((new BashRunner(BashCommands::TOTAL_MEMORY_STATS_COMMAND))->execute().c_str(), NULL, 0);
 	printf("total devices: %d\n", gpus.size());
 	hostStatus = new HostStatus(id, cpuCores, memoryTotal, gpus);
 	return hostStatus;
@@ -127,7 +127,7 @@ void SystemMonitor::getCpuStats() {
 		}
 	}*/
 
-	const char* buff = (new BashRunner(BashCommands::CPU_SPEED_COMMAND))->execute();
+	const char* buff = (new BashRunner(BashCommands::CPU_SPEED_COMMAND))->execute().c_str();
 	unsigned int cpuSpeed;
 	if(Helpers::parseString(buff, &cpuSpeed)) {
 		hostStatus->setCpuSpeed(cpuSpeed);
@@ -172,12 +172,12 @@ void SystemMonitor::getMemoryStats() {
 	const char* buff;
 	unsigned int unsignedValue;
 
-	buff = (new BashRunner(BashCommands::TOTAL_MEMORY_STATS_COMMAND))->execute();
+	buff = (new BashRunner(BashCommands::TOTAL_MEMORY_STATS_COMMAND))->execute().c_str();
 	if(Helpers::parseString(buff, &unsignedValue)) {
 		hostStatus->setMemoryTotal(unsignedValue);
 	}
 
-	buff = (new BashRunner(BashCommands::FREE_MEMORY_STATS_COMMAND))->execute();
+	buff = (new BashRunner(BashCommands::FREE_MEMORY_STATS_COMMAND))->execute().c_str();
 	if(Helpers::parseString(buff, &unsignedValue)) {
 		hostStatus->setMemoryFree(unsignedValue);
 	}
@@ -206,19 +206,19 @@ void SystemMonitor::getGpuStats() {
 	for(list<GPUStatus*>::const_iterator it = gpuDevices.begin(); it != gpuDevices.end(); it++, i++) {
 		GPUStatus* gpu = *it;
 		sprintf(command, BashCommands::NVIDIA_ID_COMMAND, gpu->getName().c_str());
-		const char* buff = (new BashRunner(command))->execute();
+		const char* buff = (new BashRunner(command))->execute().c_str();
 		unsigned int id;
 		if(Helpers::parseString(buff, &id)) {
 			int usedMemory;
 			sprintf(command, BashCommands::NVIDIA_MEMORY_USED_COMMAND, id);
-			buff = (new BashRunner(command))->execute();
+			buff = (new BashRunner(command))->execute().c_str();
 			if(Helpers::parseString(buff, &usedMemory)) {
 				gpu->setUsedMemory(usedMemory);
 			}
 
 			short int gpuUsage;
 			sprintf(command, BashCommands::NVIDIA_GPU_COMMAND, id);
-			buff = (new BashRunner(command))->execute();
+			buff = (new BashRunner(command))->execute().c_str();
 			if(Helpers::parseString(buff, &gpuUsage)) {
 				gpu->setGpuUsage(gpuUsage);
 			} else {
@@ -227,7 +227,7 @@ void SystemMonitor::getGpuStats() {
 
 			short int fanSpeed;
 			sprintf(command, BashCommands::NVIDIA_FAN_COMMAND, id);
-			buff = (new BashRunner(command))->execute();
+			buff = (new BashRunner(command))->execute().c_str();
 			if(Helpers::parseString(buff, &fanSpeed)) {
 				gpu->setFanSpeed(fanSpeed);
 			} else {

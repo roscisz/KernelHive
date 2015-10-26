@@ -20,6 +20,7 @@
 #define BASHRUNNER_H_
 
 #include <stdio.h>
+#include <string>
 
 namespace KernelHive {
 
@@ -28,10 +29,10 @@ public:
 	BashRunner(const char* command);
 	virtual ~BashRunner();
 
-	const char* execute();
-	const char* execute(char* param);
-	const char* execute(int param);
-	const char* execute(unsigned int param);
+	std::string execute();
+	std::string execute(char* param);
+	std::string execute(int param);
+	std::string execute(unsigned int param);
 
 private:
 	const char* command;
