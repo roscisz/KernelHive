@@ -134,8 +134,8 @@ public class KernelHiveProject implements Serializable, IProject {
 				throw new ConfigurationException(e);
 			}
 		}
-		config.setConfigurationFile(file);
 		config.setProjectName(projectName);
+		config.setConfigurationFile(file);
 		config.saveGraphForGUI(this.nodes);
 	}
 

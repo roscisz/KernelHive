@@ -107,8 +107,8 @@ public class GUIGraphConfiguration extends AbstractGraphConfiguration implements
 			Node sourceNode = new Node(SOURCE_FILE);
 			Node srcAttr = new Node(
 					SOURCE_FILE_SRC_ATTRIBUTE,
-					(new File(FileUtils.translateAbsoluteToRelativePath(file
-					.getAbsolutePath(), f.getFile().getAbsolutePath()))));
+					(new File(FileUtils.translateAbsoluteToRelativePath(
+							file.getParentFile().getAbsolutePath(), f.getFile().getAbsolutePath()))));
 			Node srcIdAttr = new Node(SOURCE_FILE_ID_ATTRIBUTE, f.getId());
 			srcIdAttr.setAttribute(true);
 			srcAttr.setAttribute(true);
