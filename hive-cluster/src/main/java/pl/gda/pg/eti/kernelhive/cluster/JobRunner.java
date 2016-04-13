@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Pawel Rosciszewski
  * Copyright (c) 2014 Szymon Bultrowicz
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -19,6 +20,14 @@
  */
 package pl.gda.pg.eti.kernelhive.cluster;
 
+import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
+import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
+import pl.gda.pg.eti.kernelhive.common.clusterService.DataAddress;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
+import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
+import pl.gda.pg.eti.kernelhive.common.communication.DataPublisher;
+
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -30,14 +39,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
-import pl.gda.pg.eti.kernelhive.common.clusterService.ClusterBean;
-import pl.gda.pg.eti.kernelhive.common.clusterService.JobInfo;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
-import pl.gda.pg.eti.kernelhive.common.communication.DataPublisher;
-import pl.gda.pg.eti.kernelhive.common.communication.Decoder;
-import pl.gda.pg.eti.kernelhive.common.communication.TCPServer;
 
 public class JobRunner {
 
@@ -104,17 +105,24 @@ public class JobRunner {
 		logger.info("Running prefetching for job " + jobInfo.ID);
 		Unit destUnit = unitServer.getProxy(jobInfo.unitID).getUnit();
 		try {
-			//new Thread(new DataPrefetcher(jobInfo, destUnit.getHostname(), destUnit.getDataServerPort(), clusterBean)).run();
-			new Thread(new DataPrefetcher(jobInfo, "172.20.0.75", 27017, unitServer)).run();
+			//new Thread(new DataManager(jobInfo, destUnit.getHostname(), destUnit.getDataServerPort(), clusterBean)).run();
+			new Thread(new DataManager(jobInfo, "172.20.0.75", 27017, unitServer)).run();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void deployKernel(JobInfo jobInfo) {
-		jobInfo.kernelHost = cluster.hostname;
-		jobInfo.kernelPort = cluster.dataPort;
-		jobInfo.kernelID = dataPublisher.publish(TCPServer.byteBufferToArray(Decoder.encode(jobInfo.kernelString)));
+		Unit destUnit = unitServer.getProxy(jobInfo.unitID).getUnit();
+		try {
+			DataManager dp = new DataManager(jobInfo, destUnit.getHostname(), destUnit.getDataServerPort(), null);
+			DataAddress dataAddress = dp.uploadData(jobInfo.kernelString, new DataAddress("localhost", 27017, null));
+			jobInfo.kernelHost = dataAddress.hostname;
+			jobInfo.kernelPort = dataAddress.port;
+			jobInfo.kernelID = dataAddress.ID;
+		} catch (UnknownHostException e) {
+			logger.log(Level.SEVERE, null, e);
+		}
 	}
 
 	private void deployDataIfURL(JobInfo jobInfo) {

@@ -19,6 +19,15 @@
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
 public class DataAddress {
+	public DataAddress() {
+	}
+
+	public DataAddress(String hostname, int port, Object ID) {
+		this.hostname = hostname;
+		this.port = port;
+		this.ID = ID;
+	}
+
 	public String hostname;
 	public int port;
 	public Object ID;

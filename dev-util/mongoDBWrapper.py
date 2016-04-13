@@ -1,14 +1,14 @@
-from pymongo import MongoClient
 import gridfs
-import struct
+from pymongo import MongoClient
 
-class MongoDBWrapper():
+
+class MongoDBWrapper:
 
     counterName = "package"
 
     def __init__(self, host=None, port=None):
         database = MongoClient(host, port)['admin']
-	database.authenticate('hive-dataserver', 'hive-dataserver')
+        database.authenticate('hive-dataserver', 'hive-dataserver')
         self.counters = database.counters
         self.packages = gridfs.GridFS(database)
         if self.counters.find({"_id": self.counterName}).count() != 1:
