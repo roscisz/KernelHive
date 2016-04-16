@@ -18,6 +18,8 @@
  */
 package pl.gda.pg.eti.kernelhive.gui.workflow.wizard;
 
+import pl.gda.pg.eti.kernelhive.gui.configuration.AppConfiguration;
+
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -77,7 +79,9 @@ public class InputDataPanel extends JPanel {
 	}
 
 	public String getInputDataUrlString() {
-		return comboBox.getSelectedItem().toString();
+		String url = comboBox.getSelectedItem().toString();
+		AppConfiguration.getInstance().addURLToPreviousURLs(url);
+		return url;
 	}
 
 	private class URLComboBoxModel implements ComboBoxModel {
