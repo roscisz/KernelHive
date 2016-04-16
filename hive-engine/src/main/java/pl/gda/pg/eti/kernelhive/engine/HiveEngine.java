@@ -182,11 +182,6 @@ public class HiveEngine {
 		Workflow newWorkflow = new Workflow(nodes, projectName, inputDataURL);
 		workflows.put(newWorkflow.getId(), newWorkflow);
 
-		// FIXME TEMPORAry foR TESTS:
-		this.nodes = nodes;
-		this.projectName = projectName;
-		this.inputDataURL = inputDataURL;
-
 		processWorkflow(newWorkflow);
 
 		return newWorkflow.getId();
@@ -310,7 +305,7 @@ public class HiveEngine {
 		//byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);		
 		//finishingWorkflow.finish(resultDownloadURL + deployResult(result));
 
-		finishingWorkflow.finish("" + finishingWorkflow.getDebugTime());
+		finishingWorkflow.finish(finishingWorkflow.info.name);
 		System.out.println(finishingWorkflow.info.result);
 	}
 

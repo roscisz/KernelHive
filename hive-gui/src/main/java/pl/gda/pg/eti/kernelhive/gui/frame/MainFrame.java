@@ -127,7 +127,7 @@ public class MainFrame extends JFrame {
 	private MainFrameController controller;
 	private JMenuItem mntmInfrastructureBrowser;
 	private JMenuItem mntmResourceMonitor;
-        private JMenuItem mntmDatabaseManager;
+	private JMenuItem mntmDatabaseManager;
 
 	private void initUI() {
 		setTitle(BUNDLE.getString("MainFrame.this.title"));
