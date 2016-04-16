@@ -171,9 +171,9 @@ void DataProcessor::workSpecific() {
 
 	Logger::log(INFO, "(processor) >>> UPLOADING DATA TO ");
 	// Upload data to repository
-	//uploaders.push_back(new DataUploaderGridFs(outputDataAddress, &resultBuffer, 1));
-	//runAllUploads();
-	//waitForAllUploads();
+	uploaders.push_back(new DataUploaderGridFs(outputDataAddress, &resultBuffer, 1));
+	runAllUploads();
+	waitForAllUploads();
 	setPercentDone(100);
 }
 

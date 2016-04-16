@@ -26,9 +26,10 @@ int main(int argc, char** argv) {
 //	KernelHive::SynchronizedBuffer buffer;
 	KernelHive::SynchronizedBuffer *buffers = new KernelHive::SynchronizedBuffer[1];
 	char tester[7] = "dobrze";
+	buffers[0].allocate(7);
 	buffers[0].append((byte *) tester, 7);
 //	KernelHive::DataDownloaderGridFs sut = KernelHive::DataDownloaderGridFs(address, "12", &buffer);
-	KernelHive::DataUploaderGridFs sut = KernelHive::DataUploaderGridFs(address, &buffers, 31337);
+	KernelHive::DataUploaderGridFs sut = KernelHive::DataUploaderGridFs(address, &buffers, 1);
 	sut.run();
 //	buffer.logMyFloatData();
 }
