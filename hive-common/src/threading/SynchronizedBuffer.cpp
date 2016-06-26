@@ -130,6 +130,13 @@ void SynchronizedBuffer::releaseResources() {
 	}
 	size = 0;
 	position = 0;
+	data = NULL;
+}
+
+void SynchronizedBuffer::deallocate() {
+	pthread_mutex_lock(&bufferLock);
+	releaseResources();
+	pthread_mutex_unlock(&bufferLock);
 }
 
 } /* namespace KernelHive */

@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Rafal Lewandowski
  * Copyright (c) 2014 Pawel Rosciszewski
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -108,6 +109,27 @@ namespace KernelHive {
 		return OpenClEvent(event);
 	}
 
+	void ExecutionContext::writeRect(std::string bufferName, const size_t bufferOrigin[], const size_t hostOrigin[],
+									 const size_t region[], size_t bufferRowPitch, size_t hostRowPitch, const void *ptr)
+	{
+		cl_int errorCode = clEnqueueWriteBufferRect(clCommandQueue, buffers[bufferName], CL_TRUE, bufferOrigin, hostOrigin,
+													region, bufferRowPitch, 0, hostRowPitch, 0, ptr, 0, NULL, NULL);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error writing rectangle to a buffer", errorCode);
+		}
+	}
+
+	OpenClEvent ExecutionContext::enqueueWriteRect(std::string bufferName, const size_t *bufferOrigin, const size_t *hostOrigin,
+											const size_t *region, size_t bufferRowPitch, size_t hostRowPitch, const void *ptr) {
+		cl_event event;
+		cl_int errorCode = clEnqueueWriteBufferRect(clCommandQueue, buffers[bufferName], CL_FALSE, bufferOrigin, hostOrigin,
+													region, bufferRowPitch, 0, hostRowPitch, 0, ptr, 0, NULL, &event);
+		if (errorCode != CL_SUCCESS) {
+			throw OpenClException("Error writing rectangle to a buffer", errorCode);
+		}
+		return OpenClEvent(event);
+	}
+
 	void ExecutionContext::read(std::string bufferName, size_t offset,
 			size_t size, void* ptr)
 	{
@@ -132,7 +154,7 @@ namespace KernelHive {
 		return OpenClEvent(event);
 	}
 
-	void ExecutionContext::waitForEvents(size_t eventsCount, OpenClEvent** events) {
+	void ExecutionContext::waitForEvents(cl_uint eventsCount, OpenClEvent** events) {
 		cl_event* clEvents = new cl_event[eventsCount];
 		for (size_t i = 0; i < eventsCount; i++) {
 			clEvents[i] = events[i]->getOpenClEvent();
@@ -247,7 +269,7 @@ namespace KernelHive {
 
 	void ExecutionContext::initOpenClCommandQueue() {
 		cl_int errorCode;
-		clCommandQueue = clCreateCommandQueue(clContext, device.getClDeviceId(), NULL, &errorCode);
+		clCommandQueue = clCreateCommandQueue(clContext, device.getClDeviceId(), 0, &errorCode);
 		if (errorCode != CL_SUCCESS) {
 			throw OpenClException("Error initializing OpenCL command queue", errorCode);
 		}
@@ -358,5 +380,6 @@ namespace KernelHive {
 			clProgram = NULL;
 		}
 	}
+
 
 } /* namespace KernelHive */

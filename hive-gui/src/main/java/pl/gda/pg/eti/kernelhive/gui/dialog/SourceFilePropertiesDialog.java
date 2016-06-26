@@ -61,13 +61,6 @@ public class SourceFilePropertiesDialog extends JDialog {
 		init();
 	}
 
-	// public SourceFilePropertiesDialog(final Dialog dialog,
-	// final IKernelFile sourceFile) {
-	// super(dialog);
-	// this.sourceFile = sourceFile;
-	// init();
-	// }
-
 	private void init() {
 		setBounds(new Rectangle(getParent().getX(), getParent().getY(), 460,
 				380));

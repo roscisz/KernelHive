@@ -22,10 +22,9 @@
 
 #include <string>
 
-#include "BasicWorker.h"
+#include "OpenCLWorker.h"
 #include "network/NetworkAddress.h"
 #include "threading/SynchronizedBuffer.h"
-#include "../communication/DataUploaderTCP.h"
 
 namespace KernelHive {
 
@@ -39,7 +38,7 @@ namespace KernelHive {
  *   <li>output data port</li>
  * </ul>
  */
-class DataMerger : public BasicWorker {
+class DataMerger : public OpenCLWorker {
 
 public:
 	/**
@@ -78,27 +77,8 @@ protected:
 private:
 	/** The name of the kernel to use for calcaulations. */
 	static const char* KERNEL;
-
-	/** The number of data sources to merge from. */
-	int datasCount;
-
-	/** The addresses from which the data can be downloaded. */
-	NetworkAddress** inputDataAddresses;
-
-	/** The identifier which can be used to download data for this worker. */
-	std::string* dataIds;
-
 	/** The total size of data received from all sources. */
 	size_t totalDataSize;
-
-	/** The address to which the output data will be uploaded. */
-	NetworkAddress* outputDataAddress;
-
-	/** A buffer for storing the result of calculations. */
-	SynchronizedBuffer* resultBuffer;
-
-	void cleanupResources();
-
 };
 
 } /* namespace KernelHive */

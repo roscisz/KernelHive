@@ -62,17 +62,16 @@ void Worker::reportOver(const char* uploadIDs) {
 	printf("Reporting over: %s\n", uploadIDs);
 	std::string report = "OVER ";
 	report.append(KhUtils::itoa(jobID));
+	printf("%d", jobID);
 	report.append(" ");
 	report.append(uploadIDs);
 
-	//TCPClient *client = new TCPClient(clusterTCPAddress, NULL);
-
 	TCPMessage *message = new TCPMessage((byte *)report.c_str(), report.length());
 	TCPReporter *tcpReporter = new TCPReporter(clusterTCPAddress, message);
-	printf("Reporting start\n", uploadIDs);
+	printf("Reporting start %s\n", uploadIDs);
 	ThreadManager::Get()->runThread(tcpReporter);
 	ThreadManager::Get()->waitForThread(tcpReporter);
-	printf("Reported\n", uploadIDs);
+	printf("Reported %s\n", uploadIDs);
 }
 
 void Worker::reportPreview(SynchronizedBuffer *buffer) {

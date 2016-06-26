@@ -68,13 +68,6 @@ public class MergerGraphNode extends GenericGraphNode {
 					+ "' cannot has children nodes",
 					ValidationResultType.INVALID));
 		}
-		// previous nodes? (must be at least 1)
-		if (getPreviousNodes() == null || getPreviousNodes().size() < 1) {
-			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
-					+ name + ") of type '" + type
-					+ "' cannot has less then 1 previous node",
-					ValidationResultType.INVALID));
-		}
 		// following nodes? (must be 1 or 0)
 		if (getFollowingNodes() != null && getFollowingNodes().size() > 1) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "

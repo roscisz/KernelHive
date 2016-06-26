@@ -20,18 +20,20 @@
 #ifndef NETWORKADDRESS_H_
 #define NETWORKADDRESS_H_
 
+#include <string>
+
 #define MAX_HOSTPORT_SIZE 50
 
 namespace KernelHive {
 
 class NetworkAddress {
 public:
-	NetworkAddress(char *host, int port);
-	NetworkAddress(char *host, char *port);
+	NetworkAddress(const char *host, int port);
+	NetworkAddress(const char *host, const char *port);
 	virtual ~NetworkAddress();
-	const char* toString();
+	std::string toString();
 
-	char *host;
+	const char *host;
 	int port;
 
 };

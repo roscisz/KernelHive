@@ -24,6 +24,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class TransferableKernelRepositoryEntryTest {
 	@Before
 	public void setUp() throws Exception {
 		entry = new KernelRepositoryEntry(GraphNodeType.GENERIC, "",
-				new ArrayList<KernelPathEntry>());
+				new ArrayList<KernelPathEntry>(), new HashMap<String, Object>());
 		tkre = new TransferableKernelRepositoryEntry(entry);
 	}
 

@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Rafal Lewandowski
  * Copyright (c) 2014 Pawel Rosciszewski
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -136,7 +137,7 @@ namespace KernelHive {
 		 * @param eventsCount the number of events to wait for
 		 * @param events the events to wait for
 		 */
-		void waitForEvents(size_t eventsCount, OpenClEvent** events);
+		void waitForEvents(cl_uint eventsCount, OpenClEvent** events);
 
 		/**
 		 * Waits for provided OpenCL event to finish, blocking.
@@ -144,8 +145,6 @@ namespace KernelHive {
 		 * @param event the event to wait for
 		 */
 		void waitForEvent(OpenClEvent* event);
-
-		void waitForEvent(OpenClEvent** event);
 
 		/**
 		 * Build a new program to use by this execution context.
@@ -238,6 +237,11 @@ namespace KernelHive {
 
 		static void pfn_notify(cl_program a, void *user_data);
 
+		void writeRect(std::string bufferName, const size_t bufferOrigin[], const size_t hostOrigin[],
+					   const size_t region[], size_t bufferRowPitch, size_t hostRowPitch, const void *ptr);
+
+		OpenClEvent enqueueWriteRect(std::string bufferName, const size_t bufferOrigin[], const size_t hostOrigin[],
+									 const size_t region[], size_t bufferRowPitch, size_t hostRowPitch, const void *ptr);
 
 	private:
 		/** The OpenCL device to use for this context. */

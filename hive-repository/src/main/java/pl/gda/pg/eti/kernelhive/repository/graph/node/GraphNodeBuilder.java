@@ -68,31 +68,49 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 		}
 		try {
 			switch (type) {
-			case GENERIC:
-				node = new GenericGraphNode(id);
-				break;
-			case COMPOSITE:
-				node = new CompositeGraphNode(id);
-				break;
-			case DAC:
-				// break;
-			case MASTERSLAVE:
-				// break;
-			case MERGER:
-				node = new MergerGraphNode(id);
-				break;
-			case PARTITIONER:
-				node = new PartitionerGraphNode(id);
-				break;
-			case PROCESSOR:
-				node = new ProcessorGraphNode(id);
-				break;
-			case EXPANDABLE:
-				node = new ExpandableGraphNode(id);
-				break;
-			default:
-				throw new GraphNodeBuilderException(
-						"KH: unrecognised graph node type: " + type.toString());
+				case GENERIC:
+					node = new GenericGraphNode(id);
+					break;
+				case COMPOSITE:
+					node = new CompositeGraphNode(id);
+					break;
+				case DAC:
+					// break;
+				case MASTERSLAVE:
+					// break;
+				case MERGER:
+					node = new MergerGraphNode(id);
+					break;
+				case PARTITIONER:
+					node = new PartitionerGraphNode(id);
+					break;
+				case PROCESSOR:
+					node = new ProcessorGraphNode(id);
+					break;
+				case EXPANDABLE:
+					node = new ExpandableGraphNode(id);
+					break;
+				case DECODER:
+					node = new DecoderGraphNode(id);
+					break;
+				case ENCODER:
+					node = new EncoderGraphNode(id);
+					break;
+				case CONVERTER:
+					node = new ConverterGraphNode(id);
+					break;
+				case CONVOLUTION:
+					node = new ConvolutionGraphNode(id);
+					break;
+				case SUM:
+					node = new SumGraphNode(id);
+					break;
+				case SOBEL:
+					node = new SobelGraphNode(id);
+					break;
+				default:
+					throw new GraphNodeBuilderException(
+							"KH: unrecognised graph node type: " + type.toString());
 			}
 			if (name != null) {
 				node.setName(name);

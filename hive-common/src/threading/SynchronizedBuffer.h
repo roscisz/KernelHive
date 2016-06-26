@@ -59,6 +59,11 @@ public:
 	void allocate(size_t size);
 
 	/**
+	 * Deallocates resources used by this buffer.
+	 */
+	void deallocate();
+
+	/**
 	 * Returns the amount of bytes allocated in this buffer.
 	 *
 	 * @return the amount of bytes allocated in this buffer

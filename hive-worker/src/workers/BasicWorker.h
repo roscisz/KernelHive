@@ -1,202 +1,61 @@
 /**
- * Copyright (c) 2014 Gdansk University of Technology
- * Copyright (c) 2014 Rafal Lewandowski
- * Copyright (c) 2014 Pawel Rosciszewski
+ * Copyright (c) 2016 Gdansk University of Technology
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * KernelHive is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KERNEL_HIVE_BASIC_WORKER_H
-#define KERNEL_HIVE_BASIC_WORKER_H
 
-#include <map>
-#include <vector>
+#ifndef KERNELHIVE_BASICWORKER_H
+#define KERNELHIVE_BASICWORKER_H
 
 #include "commons/Worker.h"
-#include "commons/OpenClDevice.h"
-#include "commons/ExecutionContext.h"
-#include "threading/SynchronizedBuffer.h"
-#include "../communication/DataDownloaderTCP.h"
+#include "../communication/IDataDownloader.h"
 #include "../communication/IDataUploader.h"
 
 namespace KernelHive {
 
-typedef std::map<std::string, IDataDownloader *> DownloaderMap;
-typedef std::vector<IDataUploader *> UploaderList;
-typedef std::map<std::string, SynchronizedBuffer *> DataBufferMap;
+typedef std::map<std::string, IDataDownloader*> DownloaderMap;
+typedef std::vector<IDataUploader*> UploaderList;
+typedef std::map<std::string, SynchronizedBuffer*> DataBufferMap;
 
-/**
- * A a base class for basic worker types.
- *
- * Parameters currently expected as input:
- * <ul>
- *   <li>data provider host</li>
- *   <li>data provider port</li>
- *   <li>kernel provider host</li>
- *   <li>kernel provider port</li>
- *   <li>device identifier</li>
- *   <li>number of dimensions to use - n</li>
- *   <li>n numbers specifying the offset in each dimension</li>
- *   <li>n numbers specifying the global workgroup size in each dimension</li>
- *   <li>n numbers specifying the local workgroup size in each dimension</li>
- *   <li>kernel code identifier</li>
- * </ul>
- */
-class BasicWorker : public Worker {
-
+class BasicWorker: public Worker {
 public:
-	/**
-	 * Initializes this BasicWorker instance.
-	 *
-	 * @param clusterAddress the address of the KernelHive cluster.
-	 */
-	BasicWorker(char **argv);
-
-	/**
-	 * The destructor.
-	 */
-	virtual ~BasicWorker();
-
-	/**
-	 * The processing logic should be implemented in this method.
-	 *
-	 * @param argv the parameters passed to the worker by the KernelHive
-	 * 		system
-	 */
-	void work(char *const argv[]);
-
-	/**
-	 * Returns a pointer to the vector of DataUploaders
-	 * used by this worker.
-	 *
-	 * @return the pointer to vector of uploaders used by this
-	 * 		worker
-	 */
-	UploaderList* getUploaders();
+    BasicWorker(char **argv);
+    virtual ~BasicWorker();
+    virtual void work(char *const argv[]) = 0;
 
 protected:
-	/** The execution context name of the input data buffer. */
-	static const char* INPUT_BUFFER;
-
-	/** The execution context name of the output data buffer. */
-	static const char* OUTPUT_BUFFER;
-
-	/** The address from which the kernel can be downloaded. */
-	NetworkAddress* kernelAddress;
-
-	/** Map for storing data downloaders of this worker. */
-	DownloaderMap downloaders;
-
-	/** A map for storing data uploaders of this worker. */
-	UploaderList uploaders;
-
-	/** A map for storing buffers of this worker. */
-	DataBufferMap buffers;
-
-	/** The kernel identifier. */
-	std::string deviceId;
-
-	/** The number of dimensions to use for kernel execution. */
-	unsigned int numberOfDimensions;
-
-	/** An array of offsets in each dimensions. */
-	size_t* dimensionOffsets;
-
-	/** Global workgroup sizes in each dimension. */
-	size_t* globalSizes;
-
-	/** Local workgroup sizes in each dimension. */
-	size_t* localSizes;
-
-	/** Defines the size of the output that will be produced by this worker. */
-	size_t outputSize;
-
-	/** The OpenCL device which will be used for execution. */
-	OpenClDevice* device;
-
-	/** The execution context in which the data will be processed. */
-	ExecutionContext* context;
-
-	/** The identifier which can be used to download the kernel. */
-	std::string kernelDataId;
-
-	/**
-	 * Performs initialization specific to a worker subclassing this.
-	 *
-	 * @param argv the parameters specific for a given BasicWorker subclass
-	 */
-	virtual void initSpecific(char *const argv[]) = 0;
-
-	/**
-	 * The method in which a concrete BasicWorker implementation should perform
-	 * it's processing logic.
-	 */
-	virtual void workSpecific() = 0;
-
-	/**
-	 * Returns the name of the kernel to use for calculations.
-	 *
-	 * @return the name of the kernel to use.
-	 */
-	virtual const char* getKernelName() = 0;
-
-	/**
-	 * Runs or downloader threads stored in the map.
-	 */
-	void runAllDownloads();
-
-	/**
-	 * Waits until all downloads finish.
-	 */
-	void waitForAllDownloads();
-
-	/**
-	 * Runs all uploader threads stored in the map.
-	 */
-	void runAllUploads();
-
-	/**
-	 * Runs all uploaders threads stored in the map synchronously.
-	 */
-	void runAllUploadsSync();
-
-	/**
-	 * Waits until all uploads finish.
-	 */
-	void waitForAllUploads();
-
-	/**
-	 * Returns concatenated list of uploaded data ID's
-	 */
-	const void getAllUploadIDStrings(std::string* param);
-
-
-private:
-	/**
-	 * A generic method initializing a BasicWorker.
-	 *
-	 * @param argv the parameters passed to the worker
-	 */
-	void init(char *const argv[]);
-
-	/**
-	 * Deallocates resources used by this worker.
-	 */
-	void deallocateResources();
+    int datasCount;
+    NetworkAddress** inputDataAddresses;
+    std::string* dataIds;
+    DataBufferMap buffers;
+    int resultsCount;
+    NetworkAddress *outputDataAddress;
+    SynchronizedBuffer** resultBuffers;
+    DownloaderMap downloaders;
+    UploaderList uploaders;
+    void runAllDownloads();
+    void waitForAllDownloads();
+    void runAllUploads();
+    void runAllUploadsSync();
+    void waitForAllUploads();
+    const void getAllUploadIDStrings(std::string* param);
+    virtual void init(char* const argv[]);
 
 };
 
-} /* namespace KernelHive */
+}
 
-#endif /* KERNEL_HIVE_BASIC_WORKER_H */
+#endif //KERNELHIVE_BASICWORKER_H

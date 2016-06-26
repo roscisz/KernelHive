@@ -18,6 +18,28 @@
  */
 package pl.gda.pg.eti.kernelhive.engine;
 
+import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
+import pl.gda.pg.eti.kernelhive.common.clientService.JobProgress;
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
+import pl.gda.pg.eti.kernelhive.common.clusterService.DataAddress;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
+import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
+import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
+import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
+import pl.gda.pg.eti.kernelhive.common.monitoring.h2.H2Db;
+import pl.gda.pg.eti.kernelhive.common.monitoring.h2.H2Persistance;
+import pl.gda.pg.eti.kernelhive.common.monitoring.service.PreviewObject;
+import pl.gda.pg.eti.kernelhive.engine.http.file.utils.HttpFileUploadClient;
+import pl.gda.pg.eti.kernelhive.engine.interfaces.IOptimizer;
+import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
+import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.ClusterDefinition;
+import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.DeviceDefinition;
+import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.UnitDefinition;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.EnergyOptimizer;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,32 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.print.attribute.standard.JobState;
-
-import pl.gda.pg.eti.kernelhive.common.clientService.ClusterInfo;
-import pl.gda.pg.eti.kernelhive.common.clientService.JobProgress;
-import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Cluster;
-import pl.gda.pg.eti.kernelhive.common.clusterService.DataAddress;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Device;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Job;
-import pl.gda.pg.eti.kernelhive.common.clusterService.Unit;
-import pl.gda.pg.eti.kernelhive.common.communication.DataDownloader;
-import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
-import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
-import pl.gda.pg.eti.kernelhive.engine.http.file.utils.HttpFileUploadClient;
-import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
-import pl.gda.pg.eti.kernelhive.common.monitoring.h2.H2Db;
-import pl.gda.pg.eti.kernelhive.common.monitoring.h2.H2Persistance;
-import pl.gda.pg.eti.kernelhive.common.monitoring.service.PreviewObject;
-import pl.gda.pg.eti.kernelhive.engine.interfaces.IOptimizer;
-import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.ClusterDefinition;
-import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.DeviceDefinition;
-import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.UnitDefinition;
-import pl.gda.pg.eti.kernelhive.engine.optimizers.EnergyOptimizer;
-import pl.gda.pg.eti.kernelhive.engine.optimizers.PrefetchingOptimizer;
-import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 
 public class HiveEngine {
 
@@ -170,13 +166,6 @@ public class HiveEngine {
 		System.out.println("Engine knows about clusters: " + clusters);
 	}
 
-	/**
-	 * Copies memory stored parameters (such as devices busyness) from the old
-	 * cluster to the new one
-	 *
-	 * @param oldCluster
-	 * @param newCluster
-	 */
 	public Integer runWorkflow(List<EngineGraphNodeDecorator> nodes, String projectName, String inputDataURL) {
 		LOG.info("Got new workflow");
 		Workflow newWorkflow = new Workflow(nodes, projectName, inputDataURL);
@@ -269,44 +258,24 @@ public class HiveEngine {
 	private void onProcessingOver(EngineJob jobOver, String returnData) {
 			
 		LOG.warning(String.format("JOB OVER %d, %s", jobOver.getId(), returnData));
-		
-		if (jobOver != null) {
-			jobOver.finish();
 
-			List<DataAddress> resultAddresses = Job.parseAddresses(returnData);
-			Iterator<DataAddress> dataIterator = resultAddresses.iterator();
+		jobOver.finish();
 
-			jobOver.workflow.debugTime();
+		List<DataAddress> resultAddresses = Job.parseAddresses(returnData);
 
-			if (jobOver.workflow.getJobsByState(pl.gda.pg.eti.kernelhive.common.clusterService.Job.JobState.FINISHED).size() ==
-					jobOver.workflow.getJobs().keySet().size()) {
-				deployResults(jobOver.workflow, dataIterator);
-			} else {
-				jobOver.tryCollectFollowingJobsData(dataIterator);
-				processWorkflow(jobOver.workflow);
-			}
+		jobOver.workflow.debugTime();
+
+		if (jobOver.workflow.getJobsByState(Job.JobState.FINISHED).size() == jobOver.workflow.getJobs().keySet().size()) {
+			jobOver.workflow.finish(returnData);
 		} else {
-			LOG.warning(String.format("Job %d not found", jobOver.getId()));
-		}
+			jobOver.tryCollectFollowingJobsData(resultAddresses);
+            processWorkflow(jobOver.workflow);
+        }
 	}
 	
 	private void onPrefetchingOver(EngineJob jobOver, String returnData) {
 		System.out.println(jobOver.getId() + " - Prefetching over");
 		jobOver.finishPrefetching(Job.getAddressesForDataString(returnData));
-	}
-
-	private void deployResults(Workflow finishingWorkflow, Iterator<DataAddress> dataIterator) {
-		/*DataAddress resultAddress = dataIterator.next();
-		byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);
-		finishingWorkflow.finish(resultDownloadURL + deployResult(result));
-		*/
-
-		//DataAddress resultAddress = dataIterator.next();
-		//byte[] result = DataDownloader.downloadData(resultAddress.hostname, resultAddress.port, resultAddress.ID);		
-		//finishingWorkflow.finish(resultDownloadURL + deployResult(result));
-
-		finishingWorkflow.finish(finishingWorkflow.info.name);
-		System.out.println(finishingWorkflow.info.result);
 	}
 
 	private String deployResult(byte[] result) {

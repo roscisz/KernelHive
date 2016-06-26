@@ -58,7 +58,9 @@ namespace KernelHive {
 			 */
 			static int atoi(const char* string);
 
-			static const char *itoa(int number);
+			static float atof(const std::string& s);
+
+			static std::string itoa(int number);
 
 		};
 

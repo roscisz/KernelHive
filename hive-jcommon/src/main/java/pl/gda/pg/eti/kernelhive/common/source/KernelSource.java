@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Marcel Schally-Kacprzak
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -83,6 +84,18 @@ public abstract class KernelSource implements IKernelSource {
 			return null;
 		}
 		return null;
+	}
+
+	@Override
+	public int getDimensions() {
+		int dims;
+		try {
+			final String dimsStr = (String) properties.get(DIMENSIONS_NUMBER);
+			dims = Integer.parseInt(dimsStr);
+		} catch (final NumberFormatException e) {
+			return -1;
+		}
+		return dims;
 	}
 
 	@Override

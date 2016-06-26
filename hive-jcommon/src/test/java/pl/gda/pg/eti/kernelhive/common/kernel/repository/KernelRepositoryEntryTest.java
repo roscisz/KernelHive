@@ -23,7 +23,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,14 +38,16 @@ public class KernelRepositoryEntryTest {
 	private GraphNodeType type;
 	private List<KernelPathEntry> list;
 	private String desc;
-	
+	private Map<String, Object> props;
+
 	@Before
 	public void setUp() throws Exception {
 		list = new ArrayList<KernelPathEntry>();
 		list.add(new KernelPathEntry("test", "test", new URL("http://test.com"), null));
 		type = GraphNodeType.GENERIC;
 		desc = "test";
-		entry = new KernelRepositoryEntry(type, desc, list);
+		props = new HashMap<>();
+		entry = new KernelRepositoryEntry(type, desc, list, props);
 	}
 
 	@Test
@@ -60,7 +64,7 @@ public class KernelRepositoryEntryTest {
 	public void testGetKernelPathForName() {
 		assertEquals(list.get(0).getPath(), entry.getKernelPathEntryForName("test").getPath());
 	}
-	
+
 	@Test
 	public void testGetDescription(){
 		assertEquals(desc, entry.getDescription());

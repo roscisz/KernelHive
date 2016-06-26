@@ -60,7 +60,7 @@ public class KernelRepository implements IKernelRepository {
 			throws ConfigurationException {
 		config.load(resource);
 		
-		List<KernelRepositoryEntry> entries = new ArrayList<KernelRepositoryEntry>();
+		List<KernelRepositoryEntry> entries = new ArrayList<>();
 		
 		List<ConfigurationNode> entryNodes = config.getRoot().getChildren(ENTRY_NODE);
 		for(ConfigurationNode node : entryNodes){
@@ -109,8 +109,9 @@ public class KernelRepository implements IKernelRepository {
 		}
 		
 		List<KernelPathEntry> kernelPathEntries = getKernelPathEntries(node);
-		
-		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc, kernelPathEntries);
+		Map<String, Object> kernelProperties = getKernelProperties(node);
+
+		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc, kernelPathEntries, kernelProperties);
 	}
 	
 	private List<KernelPathEntry> getKernelPathEntries(ConfigurationNode node) throws ConfigurationException{

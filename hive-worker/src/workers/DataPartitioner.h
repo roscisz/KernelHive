@@ -20,9 +20,8 @@
 #ifndef KERNEL_HIVE_DATA_PARTITIONER_H
 #define KERNEL_HIVE_DATA_PARTITIONER_H
 
-#include "BasicWorker.h"
+#include "OpenCLWorker.h"
 #include "threading/SynchronizedBuffer.h"
-#include "../communication/IDataUploader.h"
 
 namespace KernelHive {
 
@@ -37,7 +36,7 @@ namespace KernelHive {
  *   <li>n pairs of output data host and port, one for each part after splitting</li>
  * </ul>
  */
-class DataPartitioner : public BasicWorker {
+class DataPartitioner : public OpenCLWorker {
 
 public:
 	DataPartitioner(char **argv);
@@ -69,29 +68,11 @@ private:
 	/** The name of the kernel to use for calcaulations. */
 	static const char* KERNEL;
 
-	/** The number of parts to split input data to. */
-	int partsCount;
-
-	/** The address from which the data can be downloaded. */
-	NetworkAddress* inputDataAddress;
-
 	/** The total size of data received from all sources. */
 	size_t totalDataSize;
 
-	/** The identifier which can be used to download data for this worker. */
-	std::string dataId;
-
 	/** The data identifier in the integer number form. */
 	int dataIdInt;
-
-	/** The network addresses to which outputs will be uploaded. */
-	NetworkAddress* outputDataAddress;
-
-	/** Buffers array for storing data parts. */
-	SynchronizedBuffer** resultBuffers;
-
-	/** Cleanup resources used by this Partitioner worker. */
-	void cleanupResources();
 
 };
 

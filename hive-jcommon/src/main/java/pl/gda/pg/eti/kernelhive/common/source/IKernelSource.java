@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Marcel Schally-Kacprzak
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -26,15 +27,18 @@ import pl.gda.pg.eti.kernelhive.common.validation.ValidationResult;
 
 public interface IKernelSource {
 
-	static final String GLOBAL_SIZES = "globalSizes";
-	static final String LOCAL_SIZES = "localSizes";
-	static final String OFFSETS = "offsets";
-	static final String OUTPUT_SIZE = "outputSize";
-	static final String KERNEL_ROLE = "role";
+	String GLOBAL_SIZES = "globalSizes";
+	String DIMENSIONS_NUMBER = "numberOfDimensions";
+	String LOCAL_SIZES = "localSizes";
+	String OFFSETS = "offsets";
+	String OUTPUT_SIZE = "outputSize";
+	String KERNEL_ROLE = "role";
 
 	Map<String, Object> getProperties();
 
 	String getId();
+
+	int getDimensions();
 
 	int[] getGlobalSize();
 

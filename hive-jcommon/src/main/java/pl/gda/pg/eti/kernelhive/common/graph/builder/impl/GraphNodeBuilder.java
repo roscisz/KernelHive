@@ -25,11 +25,17 @@ import pl.gda.pg.eti.kernelhive.common.graph.builder.IGraphNodeBuilder;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.CompositeGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.ConverterGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.ConvolutionGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.DecoderGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.EncoderGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.ExpandableGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.GenericGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.MergerGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.PartitionerGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.impl.ProcessorGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.SobelGraphNode;
+import pl.gda.pg.eti.kernelhive.common.graph.node.impl.SumGraphNode;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeIdGenerator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.util.NodeNameGenerator;
 
@@ -75,30 +81,48 @@ public class GraphNodeBuilder implements IGraphNodeBuilder {
 		}
 		try {
 			switch (type) {
-			case GENERIC:
-				node = new GenericGraphNode(id);
-				break;
-			case COMPOSITE:
-				node = new CompositeGraphNode(id);
-				break;
-			case DAC:
-				// break;
-			case MASTERSLAVE:
-				// break;
-			case MERGER:
-				node = new MergerGraphNode(id);
-				break;
-			case PARTITIONER:
-				node = new PartitionerGraphNode(id);
-				break;
-			case PROCESSOR:
-				node = new ProcessorGraphNode(id);
-				break;
-			case EXPANDABLE:
-				node = new ExpandableGraphNode(id);
-				break;
-			default:
-				throw new GraphNodeBuilderException(
+				case GENERIC:
+					node = new GenericGraphNode(id);
+					break;
+				case COMPOSITE:
+					node = new CompositeGraphNode(id);
+					break;
+				case DAC:
+					// break;
+				case MASTERSLAVE:
+					// break;
+				case MERGER:
+					node = new MergerGraphNode(id);
+					break;
+				case PARTITIONER:
+					node = new PartitionerGraphNode(id);
+					break;
+				case PROCESSOR:
+					node = new ProcessorGraphNode(id);
+					break;
+				case EXPANDABLE:
+					node = new ExpandableGraphNode(id);
+					break;
+				case DECODER:
+					node = new DecoderGraphNode(id);
+					break;
+				case ENCODER:
+					node = new EncoderGraphNode(id);
+					break;
+				case CONVERTER:
+					node = new ConverterGraphNode(id);
+					break;
+				case CONVOLUTION:
+					node = new ConvolutionGraphNode(id);
+					break;
+				case SUM:
+					node = new SumGraphNode(id);
+					break;
+				case SOBEL:
+					node = new SobelGraphNode(id);
+					break;
+				default:
+					throw new GraphNodeBuilderException(
 						"KH: unrecognised graph node type: " + type.toString());
 			}
 			if (name != null) {

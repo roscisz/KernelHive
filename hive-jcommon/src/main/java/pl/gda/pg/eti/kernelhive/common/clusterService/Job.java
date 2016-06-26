@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Pawel Rosciszewski
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -64,6 +65,10 @@ public class Job extends HasID {
 		return concatKernelAttrs(offsets);
 	}
 
+	private int getResultDataPort() {
+		return 27017;
+	}
+
 	private String getGlobalSizes() {
 		int[] globalSizes = getAssignedKernel().getGlobalSize();
 		if(this.device.getDeviceType() == DeviceType.CPU)
@@ -78,6 +83,11 @@ public class Job extends HasID {
 		return concatKernelAttrs(localSizes);
 	}
 
+	private String getFilterMatrix() {
+		String val = String.valueOf(node.getGraphNode().getProperties().get("filterMatrix"));
+		return val.replace(" ", ",");
+	}
+
 	private String getOutputSize() {
 		return "" + this.getAssignedKernel().getOutputSize();
 	}
@@ -86,6 +96,20 @@ public class Job extends HasID {
 		return numData + serializeAddresses(dataAddresses);
 	}
 
+	private int getNumOutputs() {
+		Object partsCount = node.getGraphNode().getProperties().get("resultsCount");
+		if (partsCount != null) {
+			return Integer.parseInt(String.valueOf(partsCount));
+		}
+
+		return nOutputs;
+	}
+
+	private Float getFloatValue(String s) {
+		String value = String.valueOf(node.getGraphNode().getProperties().get(s));
+		return Float.parseFloat(value);
+
+	}
 	private String concatKernelAttrs(int[] attrs) {
 		return attrs[0] + " " + attrs[1] + " " + attrs[2];
 	}
@@ -155,35 +179,94 @@ public class Job extends HasID {
 	}
 
 	public JobInfo getJobInfo() {
-		JobInfo ret = new JobInfo();
+		JobInfo ji = new JobInfo();
+		switch (getJobType()) {
+			case ENCODER:
+				fillImageJobInfo(ji);
+				fillEncoderJobInfo(ji);
+			case DECODER:
+				fillBaseJobInfo(ji);
+				break;
+			case CONVOLUTION:
+				fillBaseJobInfo(ji);
+				fillOpenCLJobInfo(ji);
+				fillImageJobInfo(ji);
+				ji.filterMatrix = getFilterMatrix();
+				break;
+			case SUM:
+				ji.firstImageWeight = getFloatValue("firstImageWeight");
+				ji.secondImageWeight = getFloatValue("secondImageWeight");
+			case CONVERTER:
+			case SOBEL:
+				fillBaseJobInfo(ji);
+				fillOpenCLJobInfo(ji);
+				fillImageJobInfo(ji);
+				break;
+			default:
+				fillBaseJobInfo(ji);
+				fillOpenCLJobInfo(ji);
+				break;
+		}
+		return ji;
+	}
 
-		ret.unitID = getUnitId();
-		ret.kernelString = this.getAssignedKernel().getKernel();
+	private void fillImageJobInfo(JobInfo jobInfo) {
+		jobInfo.frameWidth = getIntProperty("frameWidth");
+		jobInfo.frameHeight = getIntProperty("frameHeight");
+	}
 
-		ret.ID = getId();
-		ret.clusterHost = getClusterHost();
-		ret.clusterTCPPort = getClusterTCPPort();
-		ret.clusterUDPPort = getClusterUDPPort();
-		ret.deviceID = getDeviceId();
-		ret.offsets = getOffsets();
-		ret.globalSizes = getGlobalSizes();
-		ret.localSizes = getLocalSizes();
-		ret.outputSize = getOutputSize();
-		ret.dataString = getDataString();
-		System.out.println("Setting data string " + ret.dataString);
-		ret.jobType = getJobType();
-		ret.nOutputs = nOutputs;
-		ret.resultDataHost = getResultDataHost();
-		ret.state = this.state;
+	private void fillEncoderJobInfo(JobInfo jobInfo) {
+		jobInfo.fps = getIntProperty("fps");
+		jobInfo.codec = getStringProperty("fourcc");
+		jobInfo.format = getStringProperty("format");
+	}
 
-		System.out.println("Setting inputDataUrl " + inputDataUrl);
-		ret.inputDataUrl = inputDataUrl;
+	private String getStringProperty(String s) {
+		return String.valueOf(node.getGraphNode().getProperties().get(s));
+	}
 
-		return ret;
+	private int getIntProperty(String s) {
+		return Integer.parseInt(getStringProperty(s));
+	}
+
+	private void fillBaseJobInfo(JobInfo jobInfo) {
+		jobInfo.jobType = getJobType();
+		jobInfo.unitID = getUnitId();
+		jobInfo.ID = getId();
+		jobInfo.clusterHost = getClusterHost();
+		jobInfo.clusterTCPPort = getClusterTCPPort();
+		jobInfo.clusterUDPPort = getClusterUDPPort();
+		jobInfo.dataString = getDataString();
+		jobInfo.nOutputs = getNumOutputs();
+		jobInfo.resultDataHost = getResultDataHost();
+		jobInfo.resultDataPort = getResultDataPort();
+		jobInfo.state = this.state;
+	}
+
+	private void fillOpenCLJobInfo(JobInfo jobInfo) {
+		jobInfo.deviceID = getDeviceId();
+		jobInfo.kernelString = getAssignedKernel().getKernel();
+		jobInfo.offsets = getOffsets();
+		jobInfo.globalSizes = getGlobalSizes();
+		jobInfo.localSizes = getLocalSizes();
+		jobInfo.outputSize = getOutputSize();
+		jobInfo.dimensions = getNumDimensions();
+	}
+
+	private int getNumDimensions() {
+		int dims = getAssignedKernel().getDimensions();
+		if (dims <= 0) {
+			return 3;
+		}
+
+		return dims;
 	}
 
 	protected IKernelString getAssignedKernel() {
 		// TODO: many kernels for one job?
+		if (node.getKernels().size() == 0) {
+			return null;
+		}
 		return this.node.getKernels().get(0);
 	}
 
@@ -253,12 +336,7 @@ public class Job extends HasID {
 		StringBuilder ret = new StringBuilder();
 		
 		for (DataAddress da : dataAddresses) {
-			ret.append(" ")
-					.append(da.hostname)
-					.append(" ")
-					.append(da.port)
-					.append(" ")
-					.append(da.ID);
+			ret.append(" ").append(da.toString());
 		}
 		
 		return ret.toString();		

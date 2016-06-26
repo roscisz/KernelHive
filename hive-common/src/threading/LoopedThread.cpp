@@ -33,8 +33,8 @@ void LoopedThread::run() {
 		if(this->stopFlag) break;
 		pthread_mutex_unlock(&(this->stopMutex));
 		this->executeLoopCycle();
-
 	}
+	pthread_mutex_unlock(&(this->stopMutex));
 }
 
 void LoopedThread::pleaseStop() {

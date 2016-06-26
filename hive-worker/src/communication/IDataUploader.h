@@ -31,13 +31,18 @@ public:
 	IDataUploader(NetworkAddress *serverAddress, SynchronizedBuffer** buffers, int nBuffers) {
 		this->buffers = buffers;
 		this->nBuffers = nBuffers;
+		this->suffix = "";
 	};
 
 	virtual void getDataURL(std::string *param) = 0;
+	void setSuffix(const std::string &suffix) {
+		this->suffix = suffix;
+	}
 
 protected:
-        SynchronizedBuffer** buffers;
+	SynchronizedBuffer** buffers;
 	int nBuffers;
+	std::string suffix;
 
 };
 

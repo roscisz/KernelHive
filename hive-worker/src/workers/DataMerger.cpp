@@ -17,9 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <commons/KernelHiveException.h>
 #include "DataMerger.h"
 
 #include "commons/KhUtils.h"
+#include "../communication/DataUploaderGridFs.h"
+#include "../communication/DataDownloaderGridFs.h"
 
 namespace KernelHive {
 
@@ -33,17 +36,15 @@ const char* DataMerger::KERNEL = "mergeData";
 // 							Public Members									 //
 // ========================================================================= //
 
-DataMerger::DataMerger(char **argv) : BasicWorker(argv) {
+DataMerger::DataMerger(char **argv) : OpenCLWorker(argv) {
 	datasCount = 0;
 	totalDataSize = 0;
 	inputDataAddresses = NULL;
 	outputDataAddress = NULL;
 	dataIds = NULL;
-	resultBuffer = NULL;
 }
 
 DataMerger::~DataMerger() {
-	DataMerger::cleanupResources();
 }
 
 // ========================================================================= //
@@ -103,55 +104,19 @@ void DataMerger::workSpecific() {
 	setPercentDone(80);
 
 	// Copy the result:
-	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffer->getRawData());
+	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffers[0]->getRawData());
 	setPercentDone(90);
 
 	// Upload data to repository
-	uploaders.push_back(new DataUploaderTCP(outputDataAddress, &resultBuffer, 1));
+	uploaders.push_back(new DataUploaderGridFs(outputDataAddress, resultBuffers, 1));
 	runAllUploads();
 	waitForAllUploads();
 	setPercentDone(100);
 }
 
 void DataMerger::initSpecific(char *const argv[]) {
-	datasCount = KhUtils::atoi(nextParam(argv));
-	inputDataAddresses = new NetworkAddress*[datasCount];
-	dataIds = new std::string[datasCount];
-	for (int i = 0; i < datasCount; i++) {
-		inputDataAddresses[i] = new NetworkAddress(nextParam(argv), nextParam(argv));
-		dataIds[i] = std::string(nextParam(argv));
-		buffers[dataIds[i]] = new SynchronizedBuffer();
-		downloaders[dataIds[i]] = new DataDownloaderTCP(inputDataAddresses[i],
-			dataIds[i].c_str(), buffers[dataIds[i]]);
-	}
-	downloaders[kernelDataId] = new DataDownloaderTCP(kernelAddress,
-			kernelDataId.c_str(), buffers[kernelDataId]);
-
-	// TODO For merger only - skip the number of outputs:
-	nextParam(argv);
-	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	resultBuffer = new SynchronizedBuffer(outputSize);
-}
-
-// ========================================================================= //
-// 							Private Members									 //
-// ========================================================================= //
-
-void DataMerger::cleanupResources() {
-	if (dataIds != NULL) {
-		delete [] dataIds;
-	}
-	if (inputDataAddresses != NULL) {
-		for (int i = 0; i < datasCount; i++) {
-			delete inputDataAddresses[i];
-		}
-		delete [] inputDataAddresses;
-	}
-	if (outputDataAddress != NULL) {
-		delete outputDataAddress;
-	}
-	if (resultBuffer != NULL) {
-		delete resultBuffer;
+	if (resultsCount != 1) {
+		throw new KernelHiveException("DataMerger supports only one output file");
 	}
 }
 

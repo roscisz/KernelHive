@@ -97,7 +97,7 @@ public class WorkflowEditorDropTargetListener extends DropTargetAdapter {
 					// 3. create appropriate graph node
 					final IGraphNodeBuilder graphNodeBuilder = new GraphNodeBuilder();
 					final IGraphNode node = graphNodeBuilder
-							.setType(kre.getGraphNodeType()).setId(nodeId)
+							.setType(kre.getGraphNodeType()).setId(nodeId).setProperties(kre.getProperties())
 							.setName(NodeNameGenerator.generateName()).build();
 					guiNode = new GUIGraphNodeDecorator(node, sourceFiles);
 					guiNode.setX(dtde.getLocation().x);

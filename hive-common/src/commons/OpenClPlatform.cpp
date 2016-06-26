@@ -135,7 +135,7 @@ namespace KernelHive {
 		cl_int returnCode;
 
 		returnCode = clGetDeviceIDs(clPlatformId, deviceType,
-				NULL, NULL, numDevices);
+				0, NULL, numDevices);
 		if (returnCode == CL_SUCCESS) {
 			*deviceIds = new cl_device_id[*numDevices];
 			returnCode = clGetDeviceIDs(clPlatformId, deviceType,

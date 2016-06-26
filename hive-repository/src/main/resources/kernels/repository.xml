@@ -81,4 +81,65 @@
             <kh:property key="role" value="process"/>
 		</kh:kernel>
 	</kh:entry>
+	<kh:entry type="ImagePartitioner" description="Image Partitioner Graph Node">
+		<kh:property key="resultsCount" value="10"/>
+	</kh:entry>
+	<kh:entry type="ImageMerger" description="Image Merger Graph Node">
+		<kh:property key="frameWidth" value="1920"/>
+		<kh:property key="frameHeight" value="1080"/>
+		<kh:property key="fps" value="30"/>
+		<kh:property key="fourcc" value="x264"/>
+		<kh:property key="format" value="avi"/>
+	</kh:entry>
+	<kh:entry type="ConverterImageProcessor" description="Image Conversion Graph Node">
+		<kh:kernel id="0e518f6d-75ef-4a1e-8653-a68019f80580" name="kernel.cl" src="/kernels/ConverterImageProcessor/kernel.cl">
+			<kh:property key="numberOfDimensions" value="3"/>
+			<kh:property key="globalSizes" value="1024 1024 1"/>
+			<kh:property key="localSizes" value="16 16 1"/>
+			<kh:property key="offsets" value="0 0 0"/>
+			<kh:property key="outputSize" value="1024"/>
+		</kh:kernel>
+		<kh:property key="resultsCount" value="10"/>
+		<kh:property key="frameWidth" value="1920"/>
+		<kh:property key="frameHeight" value="1080"/>
+	</kh:entry>
+	<kh:entry type="SobelImageProcessor" description="Image Sobel Graph Node">
+		<kh:kernel id="0e518f6d-75ef-4a1e-8653-a68019f80580" name="kernel.cl" src="/kernels/SobelImageProcessor/kernel.cl">
+			<kh:property key="numberOfDimensions" value="3"/>
+			<kh:property key="globalSizes" value="1024 1024 1"/>
+			<kh:property key="localSizes" value="16 16 1"/>
+			<kh:property key="offsets" value="0 0 0"/>
+			<kh:property key="outputSize" value="1024"/>
+		</kh:kernel>
+		<kh:property key="resultsCount" value="10"/>
+		<kh:property key="frameWidth" value="1920"/>
+		<kh:property key="frameHeight" value="1080"/>
+	</kh:entry>
+	<kh:entry type="SumImageProcessor" description="Image Sum Graph Node">
+		<kh:kernel id="0e518f6d-75ef-4a1e-8653-a68019f80580" name="kernel.cl" src="/kernels/SumImageProcessor/kernel.cl">
+			<kh:property key="numberOfDimensions" value="3"/>
+			<kh:property key="globalSizes" value="1024 1024 1"/>
+			<kh:property key="localSizes" value="16 16 1"/>
+			<kh:property key="offsets" value="0 0 0"/>
+			<kh:property key="outputSize" value="1024"/>
+		</kh:kernel>
+		<kh:property key="resultsCount" value="10"/>
+		<kh:property key="frameWidth" value="1920"/>
+		<kh:property key="frameHeight" value="1080"/>
+		<kh:property key="firstImageWeight" value="0.5"/>
+		<kh:property key="secondImageWeight" value="0.5"/>
+	</kh:entry>
+	<kh:entry type="ConvolutionImageProcessor" description="Image Convolution Graph Node">
+		<kh:kernel id="0e518f6d-75ef-4a1e-8653-a68019f80580" name="kernel.cl" src="/kernels/ConvolutionImageProcessor/kernel.cl">
+			<kh:property key="numberOfDimensions" value="3"/>
+			<kh:property key="globalSizes" value="1024 1024 1"/>
+			<kh:property key="localSizes" value="16 16 1"/>
+			<kh:property key="offsets" value="0 0 0"/>
+			<kh:property key="outputSize" value="1024"/>
+		</kh:kernel>
+		<kh:property key="resultsCount" value="10"/>
+		<kh:property key="frameWidth" value="1920"/>
+		<kh:property key="frameHeight" value="1080"/>
+		<kh:property key="filterMatrix" value="1 2 1 0 0 0 -1 -2 -1"/>
+	</kh:entry>
 </kh:repository>

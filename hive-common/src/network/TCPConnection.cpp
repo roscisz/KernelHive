@@ -43,23 +43,26 @@ void TCPConnection::executeLoopCycle() {
 		listener->onDisconnected(this->sockfd);
 		return;
 	}
-	if(listener != NULL && message != NULL)
+	if (message != NULL) {
 		listener->onMessage(this->sockfd, message);
+	}
+
+	usleep(1000);
 }
 
 TCPMessage* TCPConnection::readMessage() {
 	byte *message = (byte *)(calloc(MAX_MESSAGE_BYTES, sizeof (byte)));
-        bzero(message, MAX_MESSAGE_BYTES);
-        int n = read(sockfd, message, MAX_MESSAGE_BYTES);
-        if(n < 0)
-            throw (strerror(errno));
+	bzero(message, MAX_MESSAGE_BYTES);
+	int n = read(sockfd, message, MAX_MESSAGE_BYTES);
+	if(n < 0)
+		throw (strerror(errno));
 
-        if(n == 0) {
-            //throw ("Server disconnected.");
-        	return NULL;
-        }
+	if(n == 0) {
+		delete [] message;
+		return NULL;
+	}
 
-        return new TCPMessage(message, n);
+	return new TCPMessage(message, n);
 }
 
 /*

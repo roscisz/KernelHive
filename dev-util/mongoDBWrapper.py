@@ -7,8 +7,8 @@ class MongoDBWrapper:
     counterName = "package"
 
     def __init__(self, host=None, port=None):
-        database = MongoClient(host, port)['admin']
-        database.authenticate('hive-dataserver', 'hive-dataserver')
+        database = MongoClient(host, port)['hive-dataserver']
+        database.authenticate('hive-dataserver', 'hive-dataserver', source='admin')
         self.counters = database.counters
         self.packages = gridfs.GridFS(database)
         if self.counters.find({"_id": self.counterName}).count() != 1:
@@ -28,4 +28,4 @@ class MongoDBWrapper:
         return self.packages.delete(id)
 
     def put(self, data, id):
-        self.packages.put(data, _id=id)
+        self.packages.put(data, _id=id, filename=id)

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Pawel Rosciszewski
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -31,4 +32,9 @@ public class DataAddress {
 	public String hostname;
 	public int port;
 	public Object ID;
+
+	@Override
+	public String toString() {
+		return hostname + " " + port + " " + ID;
+	}
 }

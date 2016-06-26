@@ -68,10 +68,10 @@ public class TCPServer implements Runnable {
 		}
 	}
 
-	private void prepareSocket(String host, int port) throws IOException {
+	private void prepareSocket(int port) throws IOException {
 		server = ServerSocketChannel.open();
 		server.configureBlocking(false);
-		server.socket().bind(new InetSocketAddress(host, port));
+		server.socket().bind(new InetSocketAddress(port));
 
 		selector = Selector.open();
 		server.register(selector, SelectionKey.OP_ACCEPT);
@@ -96,7 +96,7 @@ public class TCPServer implements Runnable {
 
 	public void start() throws CommunicationException {
 		try {
-			prepareSocket(address.host, address.port);
+			prepareSocket(address.port);
 			thread.start();
 			System.out.println("TCP server starts listening on " + address.host + ":" + address.port + ".");
 		} catch (IOException e) {

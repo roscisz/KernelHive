@@ -20,7 +20,7 @@
  */
 #include <cstdio>
 #include <string>
-#include <iostream>
+#include <commons/KernelHiveException.h>
 
 #include "commons/Logger.h"
 #include "commons/OpenClEvent.h"
@@ -28,39 +28,28 @@
 #include "../communication/DataUploaderTCP.h"
 #include "../communication/DataUploaderGridFs.h"
 #include "DataProcessor.h"
-#include "commons/KhUtils.h"
 
 //#define ITERATIVE_EXECUTION
 #define ITERATION_LIMIT 10000
-#define PreviewObject struct PreviewObjectStruct
 
 namespace KernelHive {
 
-struct PreviewObjectStruct {
-	float f1;
-	float f2;
-	float f3;
-};
 
 // ========================================================================= //
 // 							Constants Init									 //
 // ========================================================================= //
 
 const char* DataProcessor::KERNEL = "processData";
-const char* PREVIEW_BUFFER = "previewBuffer";
 
 // ========================================================================= //
 // 							Public Members									 //
 // ========================================================================= //
 
-DataProcessor::DataProcessor(char **argv) : BasicWorker(argv) {
-	inputDataAddress = NULL;
+DataProcessor::DataProcessor(char **argv) : OpenCLWorker(argv) {
 	outputDataAddress = NULL;
-	resultBuffer = NULL;
 }
 
 DataProcessor::~DataProcessor() {
-	DataProcessor::cleanupResources();
 }
 
 // ========================================================================= //
@@ -72,25 +61,9 @@ const char* DataProcessor::getKernelName() {
 }
 
 void DataProcessor::initSpecific(char *const argv[]) {
-
-	// TODO For processor only - skip the number of inputs:
-	nextParam(argv);
-	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	dataId = nextParam(argv);
-	
-	// TODO For processor only - skip the number of outputs:
-	nextParam(argv);
-	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-
-	buffers[dataId] = new SynchronizedBuffer();
-	resultBuffer = new SynchronizedBuffer(outputSize);
-
-	downloaders[dataId] = new DataDownloaderGridFs(inputDataAddress,
-			dataId.c_str(), buffers[dataId]);
-	downloaders[kernelDataId] = new DataDownloaderGridFs(kernelAddress,
-			kernelDataId.c_str(), buffers[kernelDataId]);
-	
-	Logger::log(DEBUG, "(processor) >>> PROCESSOR INIT SPECIFIC END\n");
+	if (datasCount != 1 || resultsCount != 1) {
+		throw new KernelHiveException("DataProcessor supports only one input and one output file");
+	}
 }
 
 void DataProcessor::workSpecific() {
@@ -102,10 +75,10 @@ void DataProcessor::workSpecific() {
 	Logger::log(DEBUG, "(processor) >>> PROCESSOR AFTER WAIT FOR DOWNLOADS\n");
 	setPercentDone(40);
 
-	size_t size = buffers[dataId]->getSize();
+	size_t size = buffers[dataIds[0]]->getSize();
 
 	Logger::log(DEBUG, "(processor) >>> PROCESSOR BEFORE COMPUTE\n");
-	buffers[dataId]->logMyFloatData();
+	buffers[dataIds[0]]->logMyFloatData();
 
 	SynchronizedBuffer* previewBuffer = new SynchronizedBuffer(outputSize * sizeof(PreviewObject));
 
@@ -116,7 +89,7 @@ void DataProcessor::workSpecific() {
 
 	// Begin copying data to the device
 	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
-			size*sizeof(byte), (void*)buffers[dataId]->getRawData());
+			size*sizeof(byte), (void*)buffers[dataIds[0]]->getRawData());
 
 	// Compile and prepare the kernel for execution
 	context->buildProgramFromSource((char *)buffers[kernelDataId]->getRawData(),
@@ -157,40 +130,24 @@ void DataProcessor::workSpecific() {
 #endif
 	setPercentDone(80);
 
-
+	resultBuffers[0]->allocate(outputSize);
 	// Copy the result:
-	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffer->getRawData());
+	context->read(OUTPUT_BUFFER, 0, outputSize*sizeof(byte), (void*)resultBuffers[0]->getRawData());
 	context->read(PREVIEW_BUFFER, 0, outputSize*sizeof(PreviewObject), (void*)previewBuffer->getRawData());
 
 	setPercentDone(90);
 
 	Logger::log(INFO, "(processor) >>> PROCESSOR AFTER COMPUTE");
-	resultBuffer->logMyFloatData();
+	resultBuffers[0]->logMyFloatData();
 
 	reportPreview(previewBuffer);
 
 	Logger::log(INFO, "(processor) >>> UPLOADING DATA TO ");
 	// Upload data to repository
-	uploaders.push_back(new DataUploaderGridFs(outputDataAddress, &resultBuffer, 1));
+	uploaders.push_back(new DataUploaderGridFs(outputDataAddress, resultBuffers, 1));
 	runAllUploads();
 	waitForAllUploads();
 	setPercentDone(100);
-}
-
-// ========================================================================= //
-// 							Protected Members							     //
-// ========================================================================= //
-
-void DataProcessor::cleanupResources() {
-	if (inputDataAddress != NULL) {
-		delete inputDataAddress;
-	}
-	if (outputDataAddress != NULL) {
-		delete outputDataAddress;
-	}
-	if (resultBuffer != NULL) {
-		delete resultBuffer;
-	}
 }
 
 } /* namespace KernelHive */

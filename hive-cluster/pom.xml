@@ -37,9 +37,9 @@
             <version>5.0</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.main.appclient.client</groupId>
-            <artifactId>gf-client</artifactId>
-            <version>3.1.2.2</version>
+            <groupId>org.glassfish.main.appclient</groupId>
+            <artifactId>gf-client-module</artifactId>
+            <version>4.1.1</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

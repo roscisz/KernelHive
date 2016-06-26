@@ -33,7 +33,7 @@ enum Priority {
 class Logger {
 public:
 	static void log(Priority priority, const char *fmt, ...);
-	static char *priorityToString(Priority priority);
+	static const char *priorityToString(Priority priority);
 };
 
 #endif /* LOGGER_H_ */

@@ -96,7 +96,7 @@ public class JobRunner {
 			logger.severe("No unit proxy found for " + jobInfo.unitID);
 			return;
 		}
-		deployKernel(jobInfo);
+		deployKernelIfExists(jobInfo);
 		deployDataIfURL(jobInfo);
 		proxy.runJob(jobInfo);
 	}
@@ -112,16 +112,18 @@ public class JobRunner {
 		}
 	}
 
-	private void deployKernel(JobInfo jobInfo) {
-		Unit destUnit = unitServer.getProxy(jobInfo.unitID).getUnit();
-		try {
-			DataManager dp = new DataManager(jobInfo, destUnit.getHostname(), destUnit.getDataServerPort(), null);
-			DataAddress dataAddress = dp.uploadData(jobInfo.kernelString, new DataAddress("localhost", 27017, null));
-			jobInfo.kernelHost = dataAddress.hostname;
-			jobInfo.kernelPort = dataAddress.port;
-			jobInfo.kernelID = dataAddress.ID;
-		} catch (UnknownHostException e) {
-			logger.log(Level.SEVERE, null, e);
+	private void deployKernelIfExists(JobInfo jobInfo) {
+		if (jobInfo.kernelString != null && !jobInfo.kernelString.equals("")) {
+			Unit destUnit = unitServer.getProxy(jobInfo.unitID).getUnit();
+			try {
+				DataManager dp = new DataManager(jobInfo, destUnit.getHostname(), destUnit.getDataServerPort(), null);
+				DataAddress dataAddress = dp.uploadData(jobInfo.kernelString, new DataAddress(jobInfo.clusterHost, 27017, null));
+				jobInfo.kernelHost = dataAddress.hostname;
+				jobInfo.kernelPort = dataAddress.port;
+				jobInfo.kernelID = dataAddress.ID;
+			} catch (UnknownHostException e) {
+				logger.log(Level.SEVERE, null, e);
+			}
 		}
 	}
 

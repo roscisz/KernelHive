@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <commons/KernelHiveException.h>
 #include "mongo/client/dbclient.h"
 #include "mongo/client/gridfs.h"
 #include "DataUploaderGridFs.h"
@@ -23,11 +24,10 @@
 
 namespace KernelHive {
 
-DataUploaderGridFs::DataUploaderGridFs(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount) :
+DataUploaderGridFs::DataUploaderGridFs(NetworkAddress* address, SynchronizedBuffer** buffers, int partsCount):
 			IDataUploader(address, buffers, partsCount) {
 	this->serverAddress = address; 
 	this->partsCount = partsCount;
-	baseOutputId = 1000000;
 }
 
 void DataUploaderGridFs::run() {
@@ -35,16 +35,17 @@ void DataUploaderGridFs::run() {
 	mongo::HostAndPort hostAndPort(this->serverAddress->host, this->serverAddress->port);
 
 	mongo::DBClientConnection connection;
-    connection.connect(hostAndPort);
+	std::string errmsg;
+	connection.connect(hostAndPort, errmsg);
 
-    std::string errmsg;
 	connection.auth("admin", "hive-dataserver", "hive-dataserver", errmsg);
 	mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
 
+	baseOutputId = getNextId(connection);
 	std::stringstream ss;
 	for (int i = 0; i < partsCount; i++) {
 		ss.str("");
-		ss << (baseOutputId + i);
+		ss << (baseOutputId + i) << suffix;
 		database.storeFile((const char *) buffers[i]->getRawData(), buffers[i]->getSize(), ss.str());
 	}
 }
@@ -61,7 +62,7 @@ void DataUploaderGridFs::getDataURL(std::string *param) {
 		ret << KhUtils::itoa(serverAddress->port);
 		ret << " ";
 		ret << (baseOutputId + i);
-		ret << " ";
+		ret << suffix;
 	}
 
 	param->append(ret.str());
@@ -69,6 +70,19 @@ void DataUploaderGridFs::getDataURL(std::string *param) {
 
 DataUploaderGridFs::~DataUploaderGridFs() {
 	// TODO
+}
+
+int DataUploaderGridFs::getNextId(mongo::DBClientConnection &connection) {
+	const char *ns = "hive-dataserver.counters";
+	const mongo::BSONObj &query = BSON("_id" << "package");
+	std::unique_ptr<mongo::DBClientCursor> cursor = connection.query(ns, query);
+	if (!cursor->more()) {
+		throw new KernelHiveException("No 'package' id in database");
+	}
+	mongo::BSONObj p = cursor->next();
+	int oldID = p.getIntField("seq");
+	connection.update(ns, query, BSON("seq" << oldID + partsCount));
+	return oldID + 1;
 }
 
 }

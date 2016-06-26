@@ -63,10 +63,26 @@ namespace KernelHive {
 		return value;
 	}
 
-	const char *KhUtils::itoa(int number) {
-		std::string ret;
-		sprintf((char *)ret.c_str(), "%d", number);
-		return ret.c_str();
+	float KhUtils::atof(const std::string& s) {
+		std::stringstream sstream(s);
+		float value;
+
+		if ((sstream >> value).fail() || !(sstream >> std::ws).eof()) {
+			std::stringstream ss;
+			ss << "The value '";
+			ss << s;
+			ss << "' cannot be converted to float!";
+			std::string message = ss.str();
+			throw KernelHiveException(message);
+		}
+
+		return value;
+	}
+
+	std::string KhUtils::itoa(int number) {
+		std::stringstream ss;
+		ss << number;
+		return ss.str();
 	}
 
 // ========================================================================= //

@@ -21,6 +21,7 @@ package pl.gda.pg.eti.kernelhive.common.kernel.repository;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 
@@ -30,12 +31,14 @@ public class KernelRepositoryEntry implements Serializable {
 	private final GraphNodeType type;
 	private final String description;
 	private final List<KernelPathEntry> kernelsPaths;
+	private final Map<String, Object> properties;
 	
 	
-	public KernelRepositoryEntry(GraphNodeType type, String description, List<KernelPathEntry> kernelsPaths){
+	public KernelRepositoryEntry(GraphNodeType type, String description, List<KernelPathEntry> kernelsPaths, Map<String, Object> properties){
 		this.type = type;
 		this.description = description;
 		this.kernelsPaths = kernelsPaths;
+		this.properties = properties;
 	}
 	
 	/**
@@ -89,7 +92,11 @@ public class KernelRepositoryEntry implements Serializable {
 	public String getDescription(){
 		return description;
 	}
-	
+
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
+
 	@Override
 	public String toString(){
 		if(description!=null){

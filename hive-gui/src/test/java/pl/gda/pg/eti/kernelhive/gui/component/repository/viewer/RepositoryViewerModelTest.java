@@ -21,6 +21,7 @@ package pl.gda.pg.eti.kernelhive.gui.component.repository.viewer;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class RepositoryViewerModelTest {
 	@Before
 	public void setUp() throws Exception {
 		dataList = new ArrayList<KernelRepositoryEntry>();
-		dataList.add(new KernelRepositoryEntry(GraphNodeType.GENERIC, "", new ArrayList<KernelPathEntry>()));
+		dataList.add(new KernelRepositoryEntry(GraphNodeType.GENERIC, "", new ArrayList<KernelPathEntry>(), new HashMap<String, Object>()));
 		model = new RepositoryViewerModel(dataList);
 	}
 

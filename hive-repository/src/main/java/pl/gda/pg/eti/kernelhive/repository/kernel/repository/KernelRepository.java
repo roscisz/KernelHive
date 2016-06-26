@@ -130,9 +130,10 @@ public class KernelRepository implements IKernelRepository {
 		}
 
 		final List<IKernelPathEntry> kernelPathEntries = getKernelPathEntries(node);
+		Map<String, Object> kernelProperties = getKernelProperties(node);
 
 		return new KernelRepositoryEntry(GraphNodeType.getType(typeStr), desc,
-				kernelPathEntries);
+				kernelPathEntries, kernelProperties);
 	}
 
 	private List<IKernelPathEntry> getKernelPathEntries(

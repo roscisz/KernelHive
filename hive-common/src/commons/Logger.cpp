@@ -33,7 +33,7 @@ void Logger::log(Priority priority, const char* fmt, ...) {
 	va_end (fmt_args);
 }
 
-char *Logger::priorityToString(Priority priority) {
+const char *Logger::priorityToString(Priority priority) {
 	switch(priority) {
 	case DEBUG:
 		return "DEBUG: ";

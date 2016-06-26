@@ -3,6 +3,7 @@
  * Copyright (c) 2014 Rafal Lewandowski
  * Copyright (c) 2014 Pawel Rosciszewski
  * Copyright (c) 2014 Szymon Bultrowicz
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -19,11 +20,13 @@
  * along with KernelHive. If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
+#include <commons/KernelHiveException.h>
 
 #include "DataPartitioner.h"
 
 #include "commons/KhUtils.h"
-#include "../communication/DataUploaderTCP.h"
+#include "../communication/DataUploaderGridFs.h"
+#include "../communication/DataDownloaderGridFs.h"
 
 namespace KernelHive {
 
@@ -37,15 +40,13 @@ const char* DataPartitioner::KERNEL = "partitionData";
 // 							Public Members									 //
 // ========================================================================= //
 
-DataPartitioner::DataPartitioner(char **argv) : BasicWorker(argv) {
-	partsCount = 0;
+DataPartitioner::DataPartitioner(char **argv) : OpenCLWorker(argv) {
 	totalDataSize = 0;
 	outputDataAddress = NULL;
 	resultBuffers = NULL;
 }
 
 DataPartitioner::~DataPartitioner() {
-	DataPartitioner::cleanupResources();
 }
 
 // ========================================================================= //
@@ -68,21 +69,20 @@ void DataPartitioner::workSpecific() {
 
 	setPercentDone(40);
 
-	totalDataSize = buffers[dataId]->getSize();
-	int outputSizeInBytes = outputSize*sizeof(byte);
+	totalDataSize = buffers[dataIds[0]]->getSize();
+	size_t outputSizeInBytes = outputSize * sizeof(byte);
 
 	// Allocate local result buffers
-	for (int i = 0; i < partsCount; i++) {
+	for (int i = 0; i < resultsCount; i++) {
 		resultBuffers[i]->allocate(outputSizeInBytes);
 	}
 
 	// Allocate input and output buffers on the device
-	context->createBuffer(INPUT_BUFFER, totalDataSize, CL_MEM_READ_WRITE);
-	context->createBuffer(OUTPUT_BUFFER, partsCount * outputSizeInBytes, CL_MEM_READ_WRITE);
+	context->createBuffer(INPUT_BUFFER, totalDataSize * sizeof(byte), CL_MEM_READ_WRITE);
+	context->createBuffer(OUTPUT_BUFFER, resultsCount * outputSizeInBytes, CL_MEM_READ_WRITE);
 
 	// Begin copying data to the device
-	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0,
-			totalDataSize, (void*)buffers[dataId]->getRawData());
+	OpenClEvent dataCopy = context->enqueueWrite(INPUT_BUFFER, 0, totalDataSize, (void*)buffers[dataIds[0]]->getRawData());
 
 	// Compile and prepare the kernel for execution
 	context->buildProgramFromSource((char *)buffers[kernelDataId]->getRawData(),
@@ -97,7 +97,7 @@ void DataPartitioner::workSpecific() {
 	// Set kernel agrguments
 	context->setBufferArg(0, INPUT_BUFFER);
 	context->setValueArg(1, sizeof(unsigned int), (void*)&totalDataSize);
-	context->setValueArg(2, sizeof(unsigned int), (void*)&partsCount);
+	context->setValueArg(2, sizeof(unsigned int), (void*)&resultsCount);
 	context->setBufferArg(3, OUTPUT_BUFFER);
 	context->setValueArg(4, sizeof(unsigned int), (void*)&outputSize);
 
@@ -107,17 +107,16 @@ void DataPartitioner::workSpecific() {
 	setPercentDone(80);
 
 	// Copy the result:
-	OpenClEvent** copyEvents = new OpenClEvent*[partsCount];
-	for (int i = 0; i < partsCount; i++) {
-		OpenClEvent dataCopy  = context->enqueueRead(OUTPUT_BUFFER, i * outputSizeInBytes,
+	OpenClEvent** copyEvents = new OpenClEvent*[resultsCount];
+	for (int i = 0; i < resultsCount; i++) {
+		dataCopy = context->enqueueRead(OUTPUT_BUFFER, i * outputSizeInBytes,
 				outputSizeInBytes, (void*)resultBuffers[i]->getRawData());
 		copyEvents[i] = &dataCopy;
-//		uploaders.push_back(new DataUploader(outputDataAddress, resultBuffers[i]));
 	}
-
+	context->waitForEvents((cl_uint) resultsCount, copyEvents);
 	setPercentDone(90);
 
-	uploaders.push_back(new DataUploaderTCP(outputDataAddress, resultBuffers, partsCount));
+	uploaders.push_back(new DataUploaderGridFs(outputDataAddress, resultBuffers, resultsCount));
 
 	runAllUploads();
 	waitForAllUploads();
@@ -126,46 +125,8 @@ void DataPartitioner::workSpecific() {
 }
 
 void DataPartitioner::initSpecific(char *const argv[]) {
-	std::cout << ">>> DataPartitioner init BEGIN" << std::endl;
-	// TODO For partitioner only:
-	nextParam(argv);
-	std::cout << ">>> param skip" << std::endl;
-	inputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	std::cout << ">>> input address ready: " << inputDataAddress->toString() << std::endl;
-	dataId = nextParam(argv);
-	std::cout << ">>> dataId ready: " << dataId << std::endl;
-
-	buffers[dataId] = new SynchronizedBuffer();
-
-	partsCount = KhUtils::atoi(nextParam(argv));
-	std::cout << ">>> partsCount ready: " << partsCount << std::endl;
-	resultBuffers = new SynchronizedBuffer*[partsCount];
-	for (int i = 0; i < partsCount; i++) {
-		resultBuffers[i] = new SynchronizedBuffer();
-	}
-	outputDataAddress = new NetworkAddress(nextParam(argv), nextParam(argv));
-	std::cout << ">>> output address ready: " << outputDataAddress->toString() << std::endl;
-
-	downloaders[dataId] = new DataDownloaderTCP(inputDataAddress,
-			dataId.c_str(), buffers[dataId]);
-
-	downloaders[kernelDataId] = new DataDownloaderTCP(kernelAddress,
-			kernelDataId.c_str(), buffers[kernelDataId]);
-}
-
-// ========================================================================= //
-// 							Private Members									 //
-// ========================================================================= //
-
-void DataPartitioner::cleanupResources() {
-	delete outputDataAddress;
-	if (resultBuffers != NULL) {
-		for (int i = 0; i < partsCount; i++) {
-			if (resultBuffers[i] != NULL) {
-				delete resultBuffers[i];
-			}
-		}
-		delete [] resultBuffers;
+	if (datasCount != 1) {
+		throw new KernelHiveException("DataPartitioner supports only one input file");
 	}
 }
 

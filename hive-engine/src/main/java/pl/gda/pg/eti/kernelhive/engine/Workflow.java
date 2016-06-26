@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Gdansk University of Technology
  * Copyright (c) 2014 Pawel Rosciszewski
  * Copyright (c) 2014 Marcel Schally-Kacprzak
+ * Copyright (c) 2016 Adrian Boguszewski
  *
  * This file is part of KernelHive.
  * KernelHive is free software; you can redistribute it and/or modify
@@ -19,14 +20,6 @@
  */
 package pl.gda.pg.eti.kernelhive.engine;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
 import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo.WorkflowState;
 import pl.gda.pg.eti.kernelhive.common.clusterService.DataAddress;
@@ -39,14 +32,20 @@ import pl.gda.pg.eti.kernelhive.common.graph.node.IGraphNode;
 import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
 import pl.gda.pg.eti.kernelhive.engine.job.PartitionerJob;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 public class Workflow extends HasID {
 
 	private final Map<Integer, EngineJob> jobs = new HashMap<>();
 	public WorkflowInfo info = new WorkflowInfo();
 	private WorkflowState state = WorkflowState.PENDING;
-	private final String result = null;
 	private final List<EngineGraphNodeDecorator> graph;
-	private final Date startTime;
+	private final long startTime;
 	private static final Logger LOG = Logger.getLogger(Workflow.class.getName());
 	
 	// For tests:
@@ -65,7 +64,7 @@ public class Workflow extends HasID {
 		configureJobs(rootNode.getGraphNode(), new ArrayList<EngineJob>());
 		//getJobByGraphNode(rootNode.getGraphNode()).deployDataFromURL(inputDataURL);
 		initWorkflowInfo(workflowName);
-		this.startTime = new Date();		
+		this.startTime = System.nanoTime();
 	}
 	
 	private void configureJobs(final IGraphNode node,
@@ -81,18 +80,19 @@ public class Workflow extends HasID {
 	}
 
 	private List<EngineJob> configureJob(final IGraphNode node) {
-		List<EngineJob> ret = new ArrayList<EngineJob>();
+		List<EngineJob> ret = new ArrayList<>();
 		final EngineGraphNodeDecorator decoratorNode = getDecoratorByIGraphNode(node);
 		if (node.getType().equals(GraphNodeType.EXPANDABLE)) {
 			ret.add(new PartitionerJob(decoratorNode, this));
 		}
-		else if(true) { // node.getType().equals(GraphNodeType.MULTIDATA)
+		else if(decoratorNode.getGraphNode().getPreviousNodes().isEmpty()) {
 			System.out.println("OK we have data graph node, addresses to assign: " +
 					inputAddresses.size());
 			Iterator<DataAddress> iterator = inputAddresses.iterator();
 			while(iterator.hasNext()) {
 				System.out.println("Adding engineJob");
 				EngineJob nj = new EngineJob(decoratorNode, this);
+				nj.numData = inputAddresses.size();
 				nj.tryToCollectDataAddresses(iterator);
 				ret.add(nj);
 			}
@@ -141,7 +141,6 @@ public class Workflow extends HasID {
 
 	public WorkflowInfo getWorkflowInfo() {
 		this.info.state = this.state;
-		this.info.result = this.result;
 		return this.info;
 	}
 
@@ -165,10 +164,8 @@ public class Workflow extends HasID {
 	public void finish(final String resultURL) {
 		this.state = WorkflowState.COMPLETED;
 		this.info.result = resultURL;
-		// OBSOLETE:
-		this.info.name = resultURL;
-		System.out.println("Time in seconds: "
-				+ ((new Date()).getTime() - this.startTime.getTime()) / 1000);
+		this.info.elapsedTime = getDebugTime();
+		debugTime();
 	}
 
 	public void debugTime() {
@@ -176,8 +173,8 @@ public class Workflow extends HasID {
 				+ getDebugTime());
 	}
 
-	public long getDebugTime() {
-		return ((new Date()).getTime() - this.startTime.getTime()) / 1000;
+	public double getDebugTime() {
+		return (System.nanoTime() - this.startTime) / 1000000000.0;
 	}
 
 	public void registerJob(final EngineJob job) {

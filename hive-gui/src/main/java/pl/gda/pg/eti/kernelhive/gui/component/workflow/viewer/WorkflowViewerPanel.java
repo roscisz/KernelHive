@@ -19,16 +19,19 @@
  */
 package pl.gda.pg.eti.kernelhive.gui.component.workflow.viewer;
 
-import java.awt.BorderLayout;
-import java.awt.Desktop;
-import java.awt.Point;
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
+import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo.WorkflowState;
+import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
+
+import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -37,22 +40,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
-
-import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo;
-import pl.gda.pg.eti.kernelhive.common.clientService.WorkflowInfo.WorkflowState;
-import pl.gda.pg.eti.kernelhive.gui.dialog.MessageDialog;
 
 public class WorkflowViewerPanel extends JPanel {
 
@@ -92,12 +79,12 @@ public class WorkflowViewerPanel extends JPanel {
 		showProgressMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (workflows != null && selectedRow >= 0) {
-					WorkflowInfo workflowInfo = workflows.get(selectedRow);
-					if (workflowViewerHandler != null && workflowInfo != null) {
-						workflowViewerHandler.showProgress(workflowInfo);
-					}
+			if (workflows != null && selectedRow >= 0) {
+				WorkflowInfo workflowInfo = workflows.get(selectedRow);
+				if (workflowViewerHandler != null && workflowInfo != null) {
+					workflowViewerHandler.showProgress(workflowInfo);
 				}
+			}
 			}
 		});
 		contextMenu.add(showProgressMenuItem);
@@ -106,12 +93,12 @@ public class WorkflowViewerPanel extends JPanel {
 		workPreviewMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (workflows != null && selectedRow >= 0) {
-					WorkflowInfo workflowInfo = workflows.get(selectedRow);
-					if (workflowViewerHandler != null && workflowInfo != null) {
-						workflowViewerHandler.previewWork(workflowInfo);
-					}
+			if (workflows != null && selectedRow >= 0) {
+				WorkflowInfo workflowInfo = workflows.get(selectedRow);
+				if (workflowViewerHandler != null && workflowInfo != null) {
+					workflowViewerHandler.previewWork(workflowInfo);
 				}
+			}
 			}
 		});
 		contextMenu.add(workPreviewMenuItem);
@@ -120,13 +107,13 @@ public class WorkflowViewerPanel extends JPanel {
 		terminateMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (workflows != null && selectedRow >= 0) {
-					WorkflowInfo workflowInfo = workflows.get(selectedRow);
-					if (workflowViewerHandler != null && workflowInfo != null) {
-						Logger.getLogger(getClass().getName()).info("panel terminate");
-						workflowViewerHandler.terminate(workflowInfo);
-					}
+			if (workflows != null && selectedRow >= 0) {
+				WorkflowInfo workflowInfo = workflows.get(selectedRow);
+				if (workflowViewerHandler != null && workflowInfo != null) {
+					Logger.getLogger(getClass().getName()).info("panel terminate");
+					workflowViewerHandler.terminate(workflowInfo);
 				}
+			}
 			}
 		});
 		contextMenu.add(terminateMenuItem);
@@ -226,19 +213,19 @@ public class WorkflowViewerPanel extends JPanel {
 	private class WorkflowExecutionsTableModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = 4135149168329669058L;
-		private final int columnSize = 4;
+		private final int columnSize = 5;
 		private final String[] columnNames = new String[]{"ID", "Name",
-			"Status", "Results"};
+			"Status", "Results", "Elapsed time"};
 		@SuppressWarnings("rawtypes")
 		private final Class[] columnClasses = new Class[]{Integer.class,
-			String.class, WorkflowState.class, String.class};
-		List<Object[]> data = new ArrayList<Object[]>();
+			String.class, WorkflowState.class, String.class, Double.class};
+		List<Object[]> data = new ArrayList<>();
 
 		public WorkflowExecutionsTableModel(final List<WorkflowInfo> workflows) {
 			super();
 			if (workflows != null) {
 				for (final WorkflowInfo wi : workflows) {
-					data.add(new Object[]{wi.ID, wi.name, wi.state, wi.result});
+					data.add(new Object[]{wi.ID, wi.name, wi.state, wi.result, wi.elapsedTime});
 				}
 			}
 		}

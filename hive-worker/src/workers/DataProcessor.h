@@ -20,7 +20,7 @@
 #ifndef KERNEL_HIVE_DATA_PROCESSOR_H
 #define KERNEL_HIVE_DATA_PROCESSOR_H
 
-#include "BasicWorker.h"
+#include "OpenCLWorker.h"
 #include "threading/SynchronizedBuffer.h"
 #include "../communication/DataDownloaderTCP.h"
 #include "../communication/DataDownloaderGridFs.h"
@@ -38,7 +38,7 @@ namespace KernelHive {
  *   <li>output data port</li>
  * </ul>
  */
-class DataProcessor : public BasicWorker {
+class DataProcessor : public OpenCLWorker {
 
 public:
 	/**
@@ -77,24 +77,6 @@ protected:
 private:
 	/** The name of the Kernel to use by the DataProcessor worker. */
 	static const char* KERNEL;
-
-	/** The address from which the data can be downloaded. */
-	NetworkAddress* inputDataAddress;
-
-	/** The identifier which can be used to download data for this worker. */
-	std::string dataId;
-
-	/** The address from which the data can be downloaded. */
-	NetworkAddress* outputDataAddress;
-
-	/** A buffer for storing the result of calculations. */
-	SynchronizedBuffer* resultBuffer;
-
-protected:
-	/**
-	 * Cleans up any resources allocated by this DataProcessor.
-	 */
-	void cleanupResources();
 
 };
 

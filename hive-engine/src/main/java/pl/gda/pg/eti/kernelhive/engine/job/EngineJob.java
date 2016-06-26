@@ -42,10 +42,10 @@ public class EngineJob extends Job {
 		this.nOutputs = followingJobs.size();
 	}
 	
-	public void tryCollectFollowingJobsData(Iterator<DataAddress> dataIterator) {
-		//System.out.println("Job " + this.ID + " try to collect following");
+	public void tryCollectFollowingJobsData(List<DataAddress> resultAddresses) {
+		Iterator<DataAddress> dataIterator = resultAddresses.iterator();
 		for(Job followingJob : followingJobs) {
-			//System.out.println("Follow: " + followingJob.ID);
+			followingJob.numData = resultAddresses.size();
 			followingJob.tryToCollectDataAddresses(dataIterator);
 		}
 	}

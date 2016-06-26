@@ -26,7 +26,6 @@ TCPMessage::TCPMessage(byte *data, int nBytes) {
 }
 
 TCPMessage::~TCPMessage() {
-	// TODO Auto-generated destructor stub
 }
 
 }

@@ -21,7 +21,9 @@ package pl.gda.pg.eti.kernelhive.repository.graph.node.type;
 public enum GraphNodeType {
 	GENERIC("generic"), MERGER("DataMerger"), PARTITIONER("DataPartitioner"), PROCESSOR(
 			"DataProcessor"), COMPOSITE("composite"), MASTERSLAVE("masterslave"), DAC(
-			"dac"), EXPANDABLE("expandable");
+			"dac"), EXPANDABLE("expandable"), DECODER("ImagePartitioner"), ENCODER("ImageMerger"),
+			CONVERTER("ConverterImageProcessor"), CONVOLUTION("ConvolutionImageProcessor"),
+			SUM("SumImageProcessor"), SOBEL("SobelImageProcessor");
 
 	private String type;
 
@@ -42,5 +44,14 @@ public enum GraphNodeType {
 			}
 		}
 		return null;
+	}
+
+	public boolean isImageType() {
+		return this == GraphNodeType.DECODER ||
+				this == GraphNodeType.ENCODER ||
+				this == GraphNodeType.CONVERTER ||
+				this == GraphNodeType.CONVOLUTION ||
+				this == GraphNodeType.SOBEL ||
+				this == GraphNodeType.SUM;
 	}
 }

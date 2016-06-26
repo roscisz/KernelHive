@@ -76,14 +76,6 @@ public class PartitionerGraphNode extends GenericGraphNode {
 					+ "' cannot has more then 1 previous node",
 					ValidationResultType.INVALID));
 		}
-		// following nodes? (must be at least 1)
-		if (!(getFollowingNodes() != null && getFollowingNodes().size() >= 1)) {
-			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "
-					+ name + ") of type '" + type
-					+ "' cannot has less than 1 following node",
-					ValidationResultType.INVALID));
-		}
-
 		// previous validations ok?
 		if (results.size() == 0) {
 			results.add(new ValidationResult("Node (id: " + nodeId + ", name: "

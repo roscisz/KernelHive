@@ -36,10 +36,10 @@ void DataDownloaderGridFs::run() {
 
 	mongo::HostAndPort hostAndPort(this->serverAddress->host, this->serverAddress->port);
   
-	mongo::DBClientConnection connection;
-	connection.connect(hostAndPort);
-
 	std::string errmsg;
+	mongo::DBClientConnection connection;
+	connection.connect(hostAndPort, errmsg);
+
 	connection.auth("admin", "hive-dataserver", "hive-dataserver", errmsg);
 	mongo::GridFS database = mongo::GridFS(connection, "hive-dataserver");
 	

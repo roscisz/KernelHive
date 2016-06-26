@@ -27,7 +27,7 @@ NetworkEndpoint::NetworkEndpoint(NetworkAddress *serverAddress) {
 }
 
 struct sockaddr_in NetworkEndpoint::prepareServerAddress(NetworkAddress *serverAddress) {
-	char *host = serverAddress->host;
+	const char *host = serverAddress->host;
 	int port = serverAddress->port;
 	struct hostent *server;
 	struct sockaddr_in serveraddr;

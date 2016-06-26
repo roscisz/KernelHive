@@ -18,28 +18,28 @@
  */
 #include <cstdio>
 #include <string.h>
+#include <sstream>
 #include "NetworkAddress.h"
 
 namespace KernelHive {
 
-NetworkAddress::NetworkAddress(char *host, int port) {
+NetworkAddress::NetworkAddress(const char *host, int port) {
 	this->host = host;
 	this->port = port;
 }
 
-NetworkAddress::NetworkAddress(char *host, char *port) {
+NetworkAddress::NetworkAddress(const char *host, const char *port) {
 	this->host = host;
 	sscanf(port, "%d", &this->port);
 }
 
 NetworkAddress::~NetworkAddress() {
-	// TODO Auto-generated destructor stub
 }
 
-const char* NetworkAddress::toString() {
-	char buff[100];
-	sprintf(buff, "%s:%d", host, port);
-	return buff;
+std::string NetworkAddress::toString() {
+	std::stringstream ss;
+	ss << host << ":" << port;
+	return ss.str();
 }
 
 }

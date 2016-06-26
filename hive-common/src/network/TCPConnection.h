@@ -25,7 +25,7 @@
 #include "TCPMessage.h"
 #include "../commons/byte.h"
 
-#define MAX_MESSAGE_BYTES 1492
+#define MAX_MESSAGE_BYTES 8192
 
 namespace KernelHive {
 

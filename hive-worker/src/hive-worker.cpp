@@ -35,6 +35,4 @@ int main(int argc, char *argv[]) {
 	catch(const char *str) {
 		printf("Error: %s\n", str);
 	}
-
-	//while(true);
 }

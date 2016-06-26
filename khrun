@@ -1,7 +1,5 @@
 #!/bin/bash
 
-GLASSFISH_BIN_PATH=~/glassfish3/bin/
-
 # Check if specified which target to run.
 if [ $# -eq 0 ]; then
 	echo "No target specified."

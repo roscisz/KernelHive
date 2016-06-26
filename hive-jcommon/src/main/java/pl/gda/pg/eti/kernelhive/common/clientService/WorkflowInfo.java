@@ -41,6 +41,6 @@ public class WorkflowInfo {
 	public String name;
 	public WorkflowState state;
 	public String result;
-	
+	public double elapsedTime;
 
 }

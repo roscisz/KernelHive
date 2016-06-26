@@ -85,7 +85,7 @@ void DataUploaderTCP::onConnected() {
 	}
 }
 
-/* SKLEIĆ WSZYSTKIE URLE tak jak jest sklejane w BasicWorker - GetAllUploadStrings */
+/* SKLEIĆ WSZYSTKIE URLE tak jak jest sklejane w OpenCLWorker - GetAllUploadStrings */
 void DataUploaderTCP::getDataURL(std::string *param) {
 	std::stringstream ret;
 

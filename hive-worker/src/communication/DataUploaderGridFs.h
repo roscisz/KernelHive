@@ -21,6 +21,7 @@
 
 #include "threading/SynchronizedBuffer.h"
 #include "network/NetworkAddress.h"
+#include "mongo/client/dbclient.h"
 #include "IDataUploader.h"
 
 namespace KernelHive {
@@ -28,14 +29,15 @@ namespace KernelHive {
 class DataUploaderGridFs: public IDataUploader {
 public:
 	DataUploaderGridFs(NetworkAddress *address, SynchronizedBuffer** buffers, int partsCount);
-        void run();
-        void pleaseStop();
+	void run();
+	void pleaseStop();
 	virtual ~DataUploaderGridFs();
 	virtual void getDataURL(std::string *param);
 private:
-        NetworkAddress *serverAddress;
-        int partsCount;
-        int baseOutputId;
+	int getNextId(mongo::DBClientConnection &connection);
+	NetworkAddress *serverAddress;
+	int partsCount;
+	int baseOutputId;
 };
 
 }
