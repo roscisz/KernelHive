@@ -38,6 +38,7 @@ import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.ClusterDefinition;
 import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.DeviceDefinition;
 import pl.gda.pg.eti.kernelhive.engine.monitoring.dao.UnitDefinition;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.EnergyOptimizer;
+import pl.gda.pg.eti.kernelhive.engine.optimizers.PackageOptimizer;
 import pl.gda.pg.eti.kernelhive.engine.optimizers.SimpleOptimizer;
 
 import java.io.IOException;
@@ -75,6 +76,7 @@ public class HiveEngine {
 
 	private HiveEngine() {
 		this.optimizer = new SimpleOptimizer();
+		//this.optimizer = new PackageOptimizer();
 		//this.optimizer = new PrefetchingOptimizer(new SimpleOptimizer());
 		//this.optimizer = new EnergyOptimizer(new GreedyKnapsackSolver());
 	}
@@ -199,7 +201,8 @@ public class HiveEngine {
 	public void cleanup() {
 		// TODO: timeout
 		for (Workflow workflow : workflows.values()) {
-			processWorkflow(workflow);
+			// maybe it's not good idea, it can cause premature job scheduling of non finished workflows
+//			processWorkflow(workflow);
 		}
 	}
 
@@ -242,8 +245,10 @@ public class HiveEngine {
 		if (job != null) {
 			Job.JobState stateBefore = job.state;
 			job.setProgress(progress);
-			if(job.state != stateBefore)
-				processWorkflow(job.workflow);
+			if (job.state != stateBefore) {
+				// maybe it's not good idea, it can cause premature job scheduling of non finished workflows
+//				processWorkflow(job.workflow);
+			}
 		}
 	}
 
@@ -262,7 +267,6 @@ public class HiveEngine {
 		jobOver.finish();
 
 		List<DataAddress> resultAddresses = Job.parseAddresses(returnData);
-
 		jobOver.workflow.debugTime();
 
 		if (jobOver.workflow.getJobsByState(Job.JobState.FINISHED).size() == jobOver.workflow.getJobs().keySet().size()) {

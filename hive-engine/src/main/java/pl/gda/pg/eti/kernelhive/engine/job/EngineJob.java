@@ -29,7 +29,8 @@ import pl.gda.pg.eti.kernelhive.engine.Workflow;
 
 public class EngineJob extends Job {
 	
-	public List<EngineJob> followingJobs = new ArrayList<EngineJob>();
+	public List<EngineJob> followingJobs = new ArrayList<>();
+	private List<EngineJob> precedingJobs = new ArrayList<>();
 	public Workflow workflow;
 
 	public EngineJob(EngineGraphNodeDecorator node, Workflow workflow) {
@@ -39,14 +40,30 @@ public class EngineJob extends Job {
 	
 	public void addFollowingJob(EngineJob followingJob) {
 		this.followingJobs.add(followingJob);
+		followingJob.precedingJobs.add(this);
 		this.nOutputs = followingJobs.size();
 	}
 	
 	public void tryCollectFollowingJobsData(List<DataAddress> resultAddresses) {
 		Iterator<DataAddress> dataIterator = resultAddresses.iterator();
-		for(Job followingJob : followingJobs) {
-			followingJob.numData = resultAddresses.size();
-			followingJob.tryToCollectDataAddresses(dataIterator);
+		int remainingData = resultAddresses.size();
+		int done = 0;
+		for(EngineJob followingJob : followingJobs) {
+			int dataForJob = 0;
+			int id = 0;
+			if (followingJob.precedingJobs.size() > 1) {
+				for (EngineJob j : followingJob.precedingJobs) {
+					dataForJob += j.nOutputs;
+				}
+				id = getId();
+			} else {
+				dataForJob = remainingData / (followingJobs.size() - done);
+				remainingData -= dataForJob;
+				done += 1;
+				id = followingJob.getId();
+			}
+			followingJob.numData = dataForJob;
+			followingJob.tryToCollectDataAddresses(id, dataIterator);
 		}
 	}
 

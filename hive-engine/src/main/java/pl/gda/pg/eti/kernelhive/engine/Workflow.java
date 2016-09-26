@@ -33,21 +33,21 @@ import pl.gda.pg.eti.kernelhive.engine.job.EngineJob;
 import pl.gda.pg.eti.kernelhive.engine.job.PartitionerJob;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 public class Workflow extends HasID {
 
-	private final Map<Integer, EngineJob> jobs = new HashMap<>();
+	private final Map<Integer, EngineJob> jobs = new TreeMap<>();
 	public WorkflowInfo info = new WorkflowInfo();
 	private WorkflowState state = WorkflowState.PENDING;
 	private final List<EngineGraphNodeDecorator> graph;
 	private final long startTime;
 	private static final Logger LOG = Logger.getLogger(Workflow.class.getName());
-	
+
 	// For tests:
 	List<DataAddress> inputAddresses = new ArrayList<DataAddress>();
 
@@ -91,13 +91,20 @@ public class Workflow extends HasID {
 			Iterator<DataAddress> iterator = inputAddresses.iterator();
 			while(iterator.hasNext()) {
 				System.out.println("Adding engineJob");
-				EngineJob nj = new EngineJob(decoratorNode, this);
+				EngineJob nj = getJobByGraphNode(decoratorNode.getGraphNode());
+				if (nj == null) {
+					nj = new EngineJob(decoratorNode, this);
+				}
 				nj.numData = inputAddresses.size();
-				nj.tryToCollectDataAddresses(iterator);
+				nj.tryToCollectDataAddresses(getId(), iterator);
 				ret.add(nj);
 			}
 		} else {
-			ret.add(new EngineJob(decoratorNode, this));
+			EngineJob nj = getJobByGraphNode(decoratorNode.getGraphNode());
+			if (nj == null) {
+				nj = new EngineJob(decoratorNode, this);
+			}
+			ret.add(nj);
 		}
 		for(EngineJob ej : ret)
 			registerJob(ej);

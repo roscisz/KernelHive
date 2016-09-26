@@ -19,16 +19,19 @@
  */
 package pl.gda.pg.eti.kernelhive.common.clusterService;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import pl.gda.pg.eti.kernelhive.common.clusterService.Device.DeviceType;
 import pl.gda.pg.eti.kernelhive.common.graph.node.EngineGraphNodeDecorator;
 import pl.gda.pg.eti.kernelhive.common.graph.node.GraphNodeType;
 import pl.gda.pg.eti.kernelhive.common.source.IKernelString;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 public class Job extends HasID {
 
@@ -44,7 +47,7 @@ public class Job extends HasID {
 	}
 	public int numData = 1;
 	private int collectedAddresses = 0;
-	private List<DataAddress> dataAddresses = new ArrayList<>();
+	public Map<Integer, List<DataAddress>> dataAddresses = new TreeMap<>();
 	public EngineGraphNodeDecorator node;
 	public Device device;
 	public JobState state = JobState.PENDING;
@@ -93,13 +96,17 @@ public class Job extends HasID {
 	}
 
 	private String getDataString() {
-		return numData + serializeAddresses(dataAddresses);
+		ArrayList<DataAddress> res = new ArrayList<>();
+		for(Collection<DataAddress> list: dataAddresses.values()) {
+			res.addAll(list);
+		}
+		return numData + serializeAddresses(res);
 	}
 
 	private int getNumOutputs() {
 		Object partsCount = node.getGraphNode().getProperties().get("resultsCount");
 		if (partsCount != null) {
-			return Integer.parseInt(String.valueOf(partsCount));
+			nOutputs = Integer.parseInt(String.valueOf(partsCount));
 		}
 
 		return nOutputs;
@@ -187,20 +194,25 @@ public class Job extends HasID {
 			case DECODER:
 				fillBaseJobInfo(ji);
 				break;
-			case CONVOLUTION:
-				fillBaseJobInfo(ji);
-				fillOpenCLJobInfo(ji);
-				fillImageJobInfo(ji);
-				ji.filterMatrix = getFilterMatrix();
-				break;
 			case SUM:
 				ji.firstImageWeight = getFloatValue("firstImageWeight");
 				ji.secondImageWeight = getFloatValue("secondImageWeight");
+				fillBaseJobInfo(ji);
+				fillOpenCLJobInfo(ji);
+				fillImageJobInfo(ji);
+				nOutputs = numData / 2;
+				ji.nOutputs = nOutputs;
+				break;
+			case CONVOLUTION:
+				ji.filterMatrix = getFilterMatrix();
 			case CONVERTER:
 			case SOBEL:
 				fillBaseJobInfo(ji);
 				fillOpenCLJobInfo(ji);
 				fillImageJobInfo(ji);
+				// in case of Sobel, convolution and converter we want to have the same number of inputs and outputs
+				nOutputs = numData;
+				ji.nOutputs = nOutputs;
 				break;
 			default:
 				fillBaseJobInfo(ji);
@@ -270,17 +282,20 @@ public class Job extends HasID {
 		return this.node.getKernels().get(0);
 	}
 
-	public void tryToCollectDataAddresses(Iterator<DataAddress> dataIterator) {
+	public void tryToCollectDataAddresses(Integer id, Iterator<DataAddress> dataIterator) {
 		System.out.println("Job " + getId() + " trying to collect " + numData + " addresses.");
 
+		List<DataAddress> tmp = new ArrayList<>();
 		while (collectedAddresses != numData) {
 			try {
-				dataAddresses.add(dataIterator.next());
+				tmp.add(dataIterator.next());
 				collectedAddresses++;
 			} catch (NoSuchElementException nsee) {
 				break;
 			}
 		}
+		dataAddresses.put(id, tmp);
+
 		System.out.println("Job " + getId() + " collected " + collectedAddresses + " dataAddresses.");
 		if (collectedAddresses == numData) {
 			getReady();
@@ -293,7 +308,7 @@ public class Job extends HasID {
 	}
 	
 	public void finishPrefetching(List<DataAddress> prefetchedAddresses) {
-		this.dataAddresses = prefetchedAddresses;		
+		this.dataAddresses.put(0, prefetchedAddresses);
 		this.state = JobState.PREFETCHING_FINISHED;
 	}
 
@@ -332,7 +347,7 @@ public class Job extends HasID {
 		return ret;
 	}
 	
-	public static String serializeAddresses(List<DataAddress> dataAddresses) {		
+	public static String serializeAddresses(List<DataAddress> dataAddresses) {
 		StringBuilder ret = new StringBuilder();
 		
 		for (DataAddress da : dataAddresses) {

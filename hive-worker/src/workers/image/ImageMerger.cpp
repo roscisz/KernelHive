@@ -80,6 +80,7 @@ std::string ImageMerger::merge() {
     // path to /tmp/filename-w.extension
     path p = temp_directory_path();
     p /= dataIds[0];
+    p.replace_extension();
     p += "-w";
     p.replace_extension(path(fileExtension));
 

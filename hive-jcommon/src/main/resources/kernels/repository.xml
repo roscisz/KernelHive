@@ -99,7 +99,6 @@
 			<kh:property key="offsets" value="0 0 0"/>
 			<kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
-		<kh:property key="resultsCount" value="10"/>
 		<kh:property key="frameWidth" value="1920"/>
 		<kh:property key="frameHeight" value="1080"/>
 	</kh:entry>
@@ -111,7 +110,6 @@
 			<kh:property key="offsets" value="0 0 0"/>
 			<kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
-		<kh:property key="resultsCount" value="10"/>
 		<kh:property key="frameWidth" value="1920"/>
 		<kh:property key="frameHeight" value="1080"/>
 	</kh:entry>
@@ -123,7 +121,6 @@
 			<kh:property key="offsets" value="0 0 0"/>
 			<kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
-		<kh:property key="resultsCount" value="10"/>
 		<kh:property key="frameWidth" value="1920"/>
 		<kh:property key="frameHeight" value="1080"/>
 		<kh:property key="firstImageWeight" value="0.5"/>
@@ -137,7 +134,6 @@
 			<kh:property key="offsets" value="0 0 0"/>
 			<kh:property key="outputSize" value="1024"/>
 		</kh:kernel>
-		<kh:property key="resultsCount" value="10"/>
 		<kh:property key="frameWidth" value="1920"/>
 		<kh:property key="frameHeight" value="1080"/>
 		<kh:property key="filterMatrix" value="1 2 1 0 0 0 -1 -2 -1"/>
