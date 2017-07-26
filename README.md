@@ -4,7 +4,7 @@
 
 Citing KernelHive: Rościszewski, P., Czarnul, P., Lewandowski, R., Schally-Kacprzak, M., 2016. KernelHive: a new workflow-based framework for multilevel high performance computing using clusters and workstations with CPUs and GPUs. Concurrency and Computation: Practice and Experience 28, 2586–2607. doi:10.1002/cpe.3719
 
-BibTex:
+BibTeX:
 <pre>
 @article{rosciszewski_kernelhive_2016,
         title = {{KernelHive}: a new workflow-based framework for multilevel high performance computing using clusters and workstations with {CPUs} and {GPUs}},
@@ -23,8 +23,21 @@ BibTex:
 }
 </pre>
 
+## KernelHive highlights
+- multi-level parallelization
+- utilization of heterogeneous computing devices
+- flexible parallel application model
+- dynamic allocation of computational resources through unrollable nodes
+- dynamic actualization of available infrastructure
+- distributed data storage and transfer
 
-## Installation
+KernelHive system can be a basis for conducting research on:
+- task scheduling algorithms
+- fault tolerance mechanisms
+- load balancing
+- development of parallel applications in various fields
+
+## Getting started
 
 ### Prerequisities
 
@@ -98,13 +111,13 @@ When everything is built you can check if OpenCL recognizes compatible devices b
 
 If you don't see your device (GPU or OpenCL compatible CPU) check if you correctly installed your device drivers.
 
-## Running KernelHive
+### Running KernelHive
 
 In order to run KernelHive you need to run at least one engine (for job management), one cluster (connects to engine, asks for jobs and assign jobs to units connected to it) and one unit (represents one host in cluster, connects to cluster, waits for jobs and create workers to execute jobs). All of them may be run either by khrun script or manually.
 
 You also need to install and configure MongoDB on one of machines to work as dataserver. You can read how to do so [[Configuring MongoDB as dataserver provider|here]].
 
-### Running engine
+#### Running engine
 
 Engine is realized as web application on Java EE platform and thus needs to be deployed to application server, which in this case is glassfish. khrun script makes it easier to deploy engine to local (i.e. on the same machine) glassfish providing 4 mostly used commands:
 * deploy - deploys application to glassfish (creates domain, starts it, adds necessary resources and deploys application)
@@ -141,7 +154,7 @@ If you don't specify 2nd argument (i.e. deploy/start/stop/clean) it will default
 
 When creating domain you will get asked for username and password for domain administrator. You may use defaults (user: admin pass:<empty>) by pressing <enter> or specify your own. If you specify your own you will have to type it each time you run script.
 
-### Running cluster
+#### Running cluster
 
 
 Simply run:
@@ -151,18 +164,18 @@ Simply run:
 
 Parameters <cluster_hostname> <engine_hostname> <engine_port> may be omitted and will default to localhost localhost 8080.
 
-### Running unit
+#### Running unit
 
 Simply run:
 <pre>
 ./khrun unit <cluster_hostname>
 </pre>
 
-### Create and run HelloWorld program
+#### Create and run HelloWorld program
 
 In the previous step you run engine, cluster and unit thus creating infrastructure for executing OpenCL kernels in KernelHive. In this step you will create and run simple KernelHive project. All of this you will do in client application called gui.
 
-#### Running GUI
+##### Running GUI
 
 
 Simply run:
@@ -170,7 +183,7 @@ Simply run:
 ./khrun gui
 </pre>
 
-#### Checking infrastructure
+##### Checking infrastructure
 
 From gui you may check if everything run correctly by checking infrastructure.
 
@@ -178,13 +191,13 @@ First set address to engine (if you are running engine on the same machine it wi
 
 Go to Tools -> Infrastructure browser and you will see currently working infrastructure starting from Engine and ending on Devices (CPUs and GPUs). If you now change something in infrastructure (e.g. run new unit) you may click Refresh in the bottom part of the window.
 
-#### Create and run project
+##### Create and run project
 
-##### Create project
+###### Create project
 
 Go to File -> New, then set Project Name and Project Folder as you like and click OK. You should now see your project structure to the left and empty Workflow Editor to the right. Let's now add some workers.
 
-##### Add data processor
+###### Add data processor
 
 In the left side of gui window choose Repository tab and drag and drop Processor Graph Node (DataProcessor) to Workflow Editor space. In pop-up window choose directory where to put created node - you may safely click Select and put it by default in Project Folder.
 
@@ -196,7 +209,7 @@ Back in properties window for DataProcessor node, again choose source file, but 
 
 The project is now almost ready to run. It only needs some input data.
 
-##### Add input data to MongoDB
+###### Add input data to MongoDB
 
 First download input file from attachment:12345. This file contains consecutive values 0.0 1.0 2.0 ... 1023.0 saved as floats so they may be used as input for the kernel.
 To add this file to mongo run following from the folder you saved the above file:
@@ -206,13 +219,13 @@ mongofiles --db hive-dataserver -u hive-dataserver -p hive-dataserver --authenti
 If you run MongoDB on some other machine just add --host <hostname>:<port>.
 The above line will add the above file to mongo as file with the same name. If you wish you may also use another name for the file but it must be an integer number and it must be different than 1 or 1000000.
 
-##### Run project
+###### Run the project
 
 Now your project is ready to run. In gui click Start Execution then Next. Set input data URL to <mongo_hostname> <mongo_port> <input_filename>. For default configuration when mongo is running on localhost it will be: localhost 27017 12345. Now click Next and finally Finish.
 
 The project will now run. In unit output you may read information about execution and in gui choose Tools -> Workflow Executions to see the status of the job. In opened tab (Workflow Viewer) kernel execution will be finished when Status is completed. Now you may read the results.
 
-##### Read results from MongoDB
+###### Read results from MongoDB
 
 Results are saved in MongoDB in files with names equals to consecutive numbers starting from 1000000 for each of output streams. Since DataProcessor produces only one output it will be saved in file with name 1000000. To download this file into current directory run:
 <pre>
@@ -225,37 +238,4 @@ diff 12345 1000000
 </pre>
 and the output should be empty.
 
-**Congratulations you just run your first KernelHive project!**
-
-## Useful MongoDB commands
-
-In all of the below commands it is assumed that database is at localhost. To connect to database at other server add to the parameters: --host <hostname>:<port>. You may also specify other filename for the file on local filesystem than filename used in mongo by specifying --local <local_filename>.
-
-### Listing available files
-
-To list available files for use as input run:
-<pre>
-mongofiles --db hive-dataserver -u hive-dataserver -p hive-dataserver --authenticationDatabase admin list
-</pre>
-
-### Adding file
-
-To add file run:
-<pre>
-mongofiles --db hive-dataserver -u hive-dataserver -p hive-dataserver --authenticationDatabase admin put <filename>
-</pre>
-
-### Retrieving file
-
-To retrieve file from database run:
-<pre>
-mongofiles --db hive-dataserver -u hive-dataserver -p hive-dataserver --authenticationDatabase admin get <filename>
-</pre>
-
-### Deleting file
-
-To delete file from database run:
-<pre>
-mongofiles --db hive-dataserver -u hive-dataserver -p hive-dataserver --authenticationDatabase admin delete <filename>
-</pre>
-It is especially useful for removing output files as each consecutive run creates output file with the same name.
+**Congratulations you just executed your first KernelHive project!**

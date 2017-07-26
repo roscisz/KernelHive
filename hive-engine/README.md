@@ -1,0 +1,3 @@
+# hive-engine
+
+*hive-engine* is the brain of KernelHive implemented in Java EE technology, responsible for dynamic application analysis, determining next tasks and delegating them to available computing units. In the case of nodes known as unrollable, the computations are parallelized on the currently available infrastructure. The decision about the way of distributing the tasks is made by an exchangable component of optimizer. KernelHive provides an API for defining optimizers wich follow different criteria and priorities (e.g. time, cost, energy consumption).
