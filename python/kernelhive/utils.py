@@ -1,4 +1,3 @@
-import paramiko
 from threading import Thread
 
 
@@ -21,9 +20,3 @@ class StoppableThread(Thread):
     def finalize(self):
         raise NotImplementedError
 
-
-def setup_ssh_client(node):
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(node)
-    return client
