@@ -5,7 +5,6 @@ from kernelhive.monitoring import MonitoringHandler
 from kernelhive.management import Manager
 from kernelhive.monitors.ProcessMonitor import ProcessMonitor
 from kernelhive.monitoring_handlers.PrintingHandler import PrintingHandler
-from kernelhive.monitors.GPUMonitor import GPUMonitor
 
 stop = False
 
@@ -34,7 +33,7 @@ class ProcessEnforcer(Manager, MonitoringHandler):
 
     def handle_monitoring(self, infrastructure):
         for node in infrastructure.keys():
-            for process in self.process_monitor.processes:
+            for process in infrastructure[node]['processes'].keys():
                 if not len(infrastructure[node]['processes'][process]):
                     print('Enforcing %s on %s ' % (process, node))
                     self.connection_manager.run_command(node, process)
