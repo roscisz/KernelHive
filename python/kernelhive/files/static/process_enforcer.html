@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>JS</title>
+
+    <script src="handlebars.min-v4.0.10.js"></script>
+    <script>
+
+    // TODO: mini-framework for for JSON-RPC calls
+
+    function refresh() {
+        var http = new XMLHttpRequest();
+        http.open("POST", "http://localhost:31333/", true);
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                response_json = JSON.parse(http.responseText);
+                var template = document.getElementById("template").innerHTML;
+                var compiled = Handlebars.compile(template);
+                var rendered = compiled(response_json);
+                document.getElementById("target").innerHTML = rendered;
+            }
+        };
+        http.send('{"jsonrpc": "2.0", "method": "get_infrastructure", "id": "1"}');
+    }
+
+    function add_node() {
+        var http = new XMLHttpRequest();
+        http.open("POST", "http://localhost:31333/", true);
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                alert('Add node: ' + http.responseText);
+            }
+        };
+        new_node = document.getElementById("new_node").value;
+        http.send('{"jsonrpc": "2.0", "method": "add_node", "params": ["' + new_node + '"], "id": "1"}');
+    }
+
+    function add_process() {
+        var http = new XMLHttpRequest();
+        http.open("POST", "http://localhost:31333/", true);
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                alert('Add process: ' + http.responseText);
+            }
+        };
+        new_process = document.getElementById("new_process").value;
+        http.send('{"jsonrpc": "2.0", "method": "add_process", "params": ["' + new_process + '"], "id": "1"}');
+    }
+
+    </script>
+</head>
+<body onload="refresh()">
+<div id="target">Loading...</div>
+<script id="template" type="x-tmpl-mustache">
+
+    {{#each result}}
+        {{@key}}:<br/>
+        {{#each processes}}
+            {{@key}}: {{this}}<br/>
+        {{/each}}
+        <br/><br/>
+    {{/each}}
+
+</script>
+<input id="new_node" type="text" value=""/>
+<input type="button" value="Add node" onclick="add_node()"/><br/>
+<input id="new_process" type="text" value=""/>
+<input type="button" value="Add process" onclick="add_process()"/><br/>
+<input type="button" value="Refresh" onclick="refresh()"/>
+</body>
+</html>
