@@ -34,8 +34,13 @@ class GPUMonitor(Monitor):
                 processes.append({'pid': values[1], 'owner': self.check_process_owner(client, values[1])})
         return processes
 
+    def monitor_utilization(self, client, uuid):
+        _, stdout, _ = client.exec_command('%s nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader -i %s' % (timeout_prefix, uuid))
+        return stdout.read().split()[0]
+
     def monitor(self, client, gpus):
         for uuid in gpus.keys():
             gpus[uuid]['processes'] = self.monitor_processes(client, uuid)
+            gpus[uuid]['utilization'] = self.monitor_utilization(client, uuid)
         return gpus
 
