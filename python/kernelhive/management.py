@@ -27,12 +27,16 @@ class Manager(Thread):
 
     def configure_services(self):
         self.add_service(self.add_node)
+        self.add_service(self.get_infrastructure)
 
     def add_service(self, method):
         self.server.add_service(method)
 
     def add_node(self, node_hostname):
         self.monitoring_service.add_node(node_hostname)
+
+    def get_infrastructure(self):
+        return self.monitoring_service.infrastructure
 
     def shutdown(self):
         print('Shutting down the manager...')
