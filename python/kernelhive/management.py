@@ -35,6 +35,7 @@ class Manager(Thread):
         self.monitoring_service.add_node(node_hostname)
 
     def shutdown(self):
+        print('Shutting down the manager...')
         self.monitoring_service.shutdown()
         self.monitoring_service.join()
         self.connection_manager.shutdown()

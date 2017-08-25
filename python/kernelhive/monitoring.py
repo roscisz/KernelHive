@@ -41,6 +41,7 @@ class MonitoringWorker(StoppableThread):
 class MonitoringService(StoppableThread):
     def __init__(self, monitors, handlers, connection_manager):
         StoppableThread.__init__(self)
+        print('Starting the monitoring service...')
         self.monitors = monitors
         self.handlers = handlers
         self.connection_manager = connection_manager
@@ -73,6 +74,7 @@ class MonitoringService(StoppableThread):
             worker.join()
 
     def shutdown(self):
+        print('Shutting down monitoring workers...')
         for worker in self.workers:
             worker.shutdown()
         StoppableThread.shutdown(self)

@@ -26,5 +26,6 @@ class ConnectionManager:
         return client
 
     def shutdown(self):
+        print('Shutting down node connections...')
         for node in self.connections.keys():
             self.connections[node].close()
