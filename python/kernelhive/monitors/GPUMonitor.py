@@ -36,7 +36,10 @@ class GPUMonitor(Monitor):
 
     def monitor_utilization(self, client, uuid):
         _, stdout, _ = client.exec_command('%s nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader -i %s' % (timeout_prefix, uuid))
-        return stdout.read().split()[0]
+        output = stdout.read().split()
+        if not len(output):
+            return 0
+        return output[0]
 
     def monitor(self, client, gpus):
         for uuid in gpus.keys():
