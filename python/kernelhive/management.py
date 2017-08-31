@@ -6,12 +6,12 @@ from serving import HTTPJSONRPCServer
 
 
 class Manager(Thread):
-    def __init__(self, hostname, port, monitors, handlers):
+    def __init__(self, hostname, port, monitors, handlers, name='kernelhive'):
         Thread.__init__(self)
         self.monitors = monitors
         self.handlers = handlers
 
-        self.server = HTTPJSONRPCServer(hostname, port)
+        self.server = HTTPJSONRPCServer(hostname, port, name)
         self.configure_services()
         self.configure_handlers()
         self.configure_monitors()
