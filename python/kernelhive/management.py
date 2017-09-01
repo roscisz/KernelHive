@@ -6,12 +6,12 @@ from serving import HTTPJSONRPCServer
 
 
 class Manager(Thread):
-    def __init__(self, hostname, port, monitors, handlers, name='kernelhive'):
+    def __init__(self, hostname, port, monitors, handlers, landing_page='index.html'):
         Thread.__init__(self)
         self.monitors = monitors
         self.handlers = handlers
 
-        self.server = HTTPJSONRPCServer(hostname, port, name)
+        self.server = HTTPJSONRPCServer(hostname, port, self.get_module_name(), landing_page)
         self.configure_services()
         self.configure_handlers()
         self.configure_monitors()
@@ -28,6 +28,9 @@ class Manager(Thread):
     def configure_services(self):
         self.add_service(self.add_node)
         self.add_service(self.get_infrastructure)
+
+    def get_module_name(self):
+        return 'kernelhive'
 
     def add_service(self, method):
         self.server.add_service(method)

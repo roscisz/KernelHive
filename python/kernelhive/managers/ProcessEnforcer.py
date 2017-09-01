@@ -12,7 +12,7 @@ stop = False
 class ProcessEnforcer(Manager, MonitoringHandler):
     def __init__(self, hostname, port, monitors, handlers):
         self.process_monitor = ProcessMonitor()
-        Manager.__init__(self, hostname, port, monitors, handlers)
+        Manager.__init__(self, hostname, port, monitors, handlers, landing_page='process_enforcer.html')
 
     def configure_services(self):
         Manager.configure_services(self)

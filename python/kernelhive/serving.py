@@ -3,11 +3,14 @@ import importlib
 from werkzeug.wrappers import Request, Response
 from werkzeug.wsgi import SharedDataMiddleware
 from werkzeug.serving import make_server
+from werkzeug.utils import redirect
 from jsonrpc import JSONRPCResponseManager, dispatcher
 
 
 class HTTPJSONRPCServer:
-    def __init__(self, hostname, port, name):
+    def __init__(self, hostname, port, name, landing_page):
+        self.landing_page = landing_page
+
         try:
             module = importlib.import_module(name)
             static_path = os.path.dirname(module.__file__) + '/static'
@@ -23,6 +26,9 @@ class HTTPJSONRPCServer:
 
     @Request.application
     def application(self, request):
+        if request.path == '/' and request.method == 'GET':
+            return redirect(self.landing_page)
+
         path = request.path.split('/')
         if len(path) > 2 and path[1] == 'dynamic':
             with open('/'.join([self.dynamic_path, path[2]]), 'rb') as f:
