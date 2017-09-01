@@ -9,7 +9,7 @@ class GPUMonitor(Monitor):
 
     def discover(self, client):
         gpus = {}
-        _, stdout, _ = client.exec_command('%s nvidia-smi -L' % timeout_prefix)
+        _, stdout, _ = client.exec_command('nvidia-smi -L')
         gpu_descrs = stdout.read().split('\n')[:-1]
         for gpu_descr in gpu_descrs:
             name, model, uuid = gpu_descr.split(': ')
