@@ -31,8 +31,12 @@ class HTTPJSONRPCServer:
 
         path = request.path.split('/')
         if len(path) > 2 and path[1] == 'dynamic':
-            with open('/'.join([self.dynamic_path, path[2]]), 'rb') as f:
-                data = f.read()
+            filename = '/'.join([self.dynamic_path, path[2]])
+            if os.path.isfile(filename):
+                with open(filename, 'rb') as f:
+                    data = f.read()
+            else:
+                data = None
             response = Response(data, mimetype='application/octet-stream')
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
             response.headers['Pragma'] = 'no-cache'
