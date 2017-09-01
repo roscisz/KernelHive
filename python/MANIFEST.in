@@ -1,0 +1,2 @@
+recursive-include kernelhive/static *
+recursive-include kernelhive/scripts *
